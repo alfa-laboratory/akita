@@ -1,0 +1,135 @@
+buildscript {
+    repositories {
+        maven { url "http://mvn/artifactory/public" }
+        maven { url 'http://mvn/artifactory/gradleplugins' }
+    }
+
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
+        classpath 'ru.alfalab.gradle:cucumber-reporting-gradle-plugin:0.1.0'
+        classpath "ru.alfalab.documentation:documentation-gradle-plugin:0.6.0"
+        classpath "ru.alfalab.documentation:documentation-publishing-gradle-plugin:0.7.0"
+        classpath 'ru.alfalab.gradle:cucumber-parallel-test-gradle-plugin:0.1.2'
+
+    }
+}
+
+repositories {
+    maven { url "http://mvn/artifactory/public" }
+    maven { url "http://mvn/artifactory/thirdparty" }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'ru.alfalab.cucumber-reporting'
+apply plugin: 'ru.alfalab.cucumber-parallel-test'
+//apply plugin: 'ru.alfalab.documentation'
+//apply plugin: 'ru.alfalab.documentation.publishing'
+apply plugin: 'maven-publish'
+
+group = 'ru.alfabank.tests'
+
+if (project.hasProperty('artifactBuildNumber')) {
+    project.version = '1.0.' + project.artifactBuildNumber
+} else {
+    project.version = '1.0.0'
+}
+
+
+description = """light testing framework Testiod0r"""
+generateRunner.glue = "ru/alfabank/tests/steps";
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+dependencies {
+    compile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
+
+    compile group: 'junit', name: 'junit', version:'4.12'
+    compile group: 'com.codeborne', name: 'selenide', version:'3.10'
+
+    compile group: 'info.cukes', name: 'cucumber-java', version:'1.2.4'
+    compile group: 'info.cukes', name: 'cucumber-junit', version:'1.2.4'
+    compile group: 'info.cukes', name: 'cucumber-html', version:'0.2.3'
+    compile group: 'info.cukes', name: 'cucumber-jvm-deps', version:'1.0.3'
+    compile group: 'info.cukes', name: 'cucumber-core', version:'1.2.4'
+    compile group: 'info.cukes', name: 'cucumber-picocontainer', version: '1.2.4'
+
+    compile group: 'org.slf4j', name: 'slf4j-simple', version:'1.7.21'
+    compile group: 'org.json', name: 'json', version:'20160810'
+    compile group: 'org.projectlombok', name: 'lombok', version:'1.16.10'
+    compile group: 'io.rest-assured', name:'rest-assured', version:'3.0.1'
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+test {
+    maxParallelForks = 10
+    ignoreFailures = true
+
+    jvmArgs += "-Dbrowser=${browser}"
+    jvmArgs += "-Dprofile=${profile}"
+
+    if (remoteHub) {
+        jvmArgs += "-DremoteHub=${remoteHub}"
+    }
+
+    reports {
+        html.enabled = false
+        junitXml.enabled = false
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+artifactory {
+
+    contextUrl = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            repoKey = 'Autotests'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+        }
+        defaults {
+            publications ('maven')
+        }
+    }
+
+}
+
+artifactoryPublish {
+    dependsOn jar
+}
+
+task buildnumberplusone {
+    Properties props = new Properties()
+    File propsFile = new File('gradle.properties')
+    props.load(propsFile.newDataInputStream())
+    Integer nextbuildnum = ( ((props.getProperty('artifactBuildNumber')) as BigDecimal) + 1 )
+    props.setProperty('artifactBuildNumber', nextbuildnum.toString())
+    props.store(propsFile.newWriter(), null)
+    props.load(propsFile.newDataInputStream())
+}

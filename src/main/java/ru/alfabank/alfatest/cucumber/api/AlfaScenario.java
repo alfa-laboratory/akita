@@ -1,0 +1,102 @@
+package ru.alfabank.alfatest.cucumber.api;
+
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.WebDriverRunner;
+import cucumber.api.Scenario;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
+import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import ru.alfabank.alfatest.cucumber.ScopedVariables;
+
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+
+/**
+ * Created by ruslanmikhalev on 27/01/17.
+ */
+@Slf4j
+final public class AlfaScenario {
+
+    private static AlfaScenario instance = new AlfaScenario();
+
+    private static AlfaEnvironment environment;
+
+    private AlfaScenario() {
+    }
+
+    public static AlfaScenario getInstance() {
+        return instance;
+    }
+
+    public AlfaEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(AlfaEnvironment alfaEnvironment) {
+        environment = alfaEnvironment;
+    }
+
+    public static void sleep(int seconds) {
+        Selenide.sleep(TimeUnit.MILLISECONDS.convert(seconds, TimeUnit.SECONDS));
+    }
+
+    public AlfaPage getCurrentPage() {
+        return environment.getPages().getCurrentPage();
+    }
+
+    public void setCurrentPage(AlfaPage page) {
+        environment.getPages().setCurrentPage(page);
+    }
+
+    public static <T extends AlfaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
+        withPage(clazz, true, consumer);
+    }
+
+    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
+        Pages.withPage(clazz, checkIsAppeared, consumer);
+    }
+
+    public Pages getPages() {
+        return this.getEnvironment().getPages();
+    }
+
+    public AlfaPage getPage(String name) {
+        return this.getEnvironment().getPage(name);
+    }
+
+    public void write(Object o) {
+        this.getEnvironment().write(o);
+    }
+
+    public Object getVar(String name) {
+        return this.getEnvironment().getVar(name);
+    }
+
+    public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
+        return Pages.getPage(clazz, checkIsAppeared);
+    }
+
+    public <T extends AlfaPage> T getPage(Class<T> clazz) {
+        return Pages.getPage(clazz, true);
+    }
+
+    public <T extends AlfaPage> T getPage(Class<T> clazz, String name) {
+        return this.getEnvironment().getPage(clazz, name);
+    }
+
+    public String replaceVariables(String address) {
+        return this.getEnvironment().replaceVariables(address);
+    }
+
+    public void setVar(String name, Object object) {
+        this.getEnvironment().setVar(name, object);
+    }
+
+    public ScopedVariables getVars() {
+        return this.getEnvironment().getVars();
+    }
+}
