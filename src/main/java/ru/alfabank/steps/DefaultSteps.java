@@ -21,6 +21,7 @@ import io.restassured.specification.RequestSender;
 import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.MatcherAssert;
 import org.junit.BeforeClass;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
@@ -279,6 +280,25 @@ public class DefaultSteps {
         SelenideElement el = $(".notification");
         el.waitUntil(Condition.appear, 5000);
         assertEquals(text, el.innerText());
+    }
+
+    @И("^дождался завершения загрузки страницы \"([^\"]*)\"$")
+    public void waitUntilPageLoaded(String pageName) throws Throwable {
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement("Кругляш"));
+        alfaScenario.setCurrentPage(alfaScenario.getPage(pageName));
+    }
+
+    @И("^верно выражение \"([^\"]*)\"$")
+    public void evaluate(String expression) {
+        alfaScenario.write("Начал обрабатывать выражение: " + expression);
+        String[] parts = expression.split("=");
+        if (parts.length != 2) throw new AssertionError("выражение не выглядит как равенство: " + expression);
+        int leftPart = Integer.valueOf(
+                alfaScenario.getVars().evaluate(parts[0]).toString());
+        int rightPart = Integer.valueOf(
+                alfaScenario.getVars().evaluate(parts[1]).toString());
+        MatcherAssert.assertThat("выражение верное", leftPart, equalTo(rightPart));
     }
 
     public static String getURLwithPathParamsCalculated(String urlName) {
