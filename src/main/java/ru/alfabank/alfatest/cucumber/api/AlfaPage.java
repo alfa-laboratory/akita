@@ -21,7 +21,10 @@ abstract public class AlfaPage extends ElementsContainer {
 
     public SelenideElement getElement(String name) {
         Object value = namedElements.get(name);
-        if (value == null) throw new AssertionError("Элемент " + name + " на странице не найден");
+        if (value == null) {
+            log.error("Элемент " + name + " на странице не найден");
+            return null;
+        }
         return (SelenideElement) value;
     }
 
@@ -29,6 +32,7 @@ abstract public class AlfaPage extends ElementsContainer {
     public List<SelenideElement> getElementsList(String name) {
         Object value = namedElements.get(name);
         if(!(value instanceof List)) {
+            log.error("Элемент-список " + name + " на странице не найден");
             return null;
         }
 
