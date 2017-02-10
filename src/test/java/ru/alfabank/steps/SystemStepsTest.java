@@ -1,28 +1,29 @@
 package ru.alfabank.steps;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Created by onotole on 09.02.17.
  */
-class SystemStepsTest {
+public class SystemStepsTest {
     ClassLoader classLoader = getClass().getClassLoader();
 
     @Test
-    void isFilePdfPositive() throws FileNotFoundException {
+    public void isFilePdfPositive() throws FileNotFoundException {
         File file = new File(classLoader.getResource("example.pdf").getFile());
-        assertTrue(SystemSteps.isFilePdf(file), "открытый файл на самом деле pdf");
+        assertThat("открытый файл на самом деле pdf", SystemSteps.isFilePdf(file), equalTo(true));
     }
 
     @Test
-    void isFilePdfNegative() throws FileNotFoundException {
+    public void isFilePdfNegative() throws FileNotFoundException {
         File file = new File(classLoader.getResource("image.png").getFile());
-        assertFalse(SystemSteps.isFilePdf(file), "этот файл не pdf");
+        assertThat("этот файл не pdf", SystemSteps.isFilePdf(file), equalTo(false));
     }
 
 }

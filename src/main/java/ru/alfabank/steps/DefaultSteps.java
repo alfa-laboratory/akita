@@ -13,7 +13,6 @@ import cucumber.api.java.Before;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
-import groovy.lang.GroovyShell;
 import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
@@ -22,22 +21,17 @@ import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
-import org.junit.BeforeClass;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import org.hamcrest.Matchers;
-import ru.alfabank.alfatest.cucumber.api.Pages;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -57,7 +51,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
-import static ru.alfabank.tests.core.pages.BasePage.getSelenideElement;
 
 /**
  * Created by ruslanmikhalev on 27/01/17.
@@ -125,12 +118,16 @@ public class DefaultSteps {
 
     @И("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elemName) {
-        getSelenideElement(alfaScenario.getCurrentPage().getElement(elemName)).is(Condition.appears);
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, 10000, alfaScenario.getCurrentPage().getElement(elemName)
+        );
     }
 
     @И("^элемент \"([^\"]*)\" не отображается на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
-        getSelenideElement(alfaScenario.getCurrentPage().getElement(elemName)).is(Condition.disappears);
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, 10000, alfaScenario.getCurrentPage().getElement(elemName)
+        );
     }
 
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
@@ -234,6 +231,11 @@ public class DefaultSteps {
         alfaScenario.write(" url = " + url);
         WebDriverRunner.getWebDriver().get(url);
         alfaScenario.setCurrentPage(alfaScenario.getPage(pageName));
+    }
+
+    @И("^Установить время ожидания загрузки в \"([^\"]*)\" секунд")
+    public void setWaitingApperTimeout(String timeout) {
+        alfaScenario.setVar("waitingAppearTimeout", timeout);
     }
 
     @Когда("^выполнено ожидание в течение (\\d+) секунд$")

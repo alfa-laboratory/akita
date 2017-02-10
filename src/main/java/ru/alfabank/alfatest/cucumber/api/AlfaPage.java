@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 abstract public class AlfaPage extends ElementsContainer {
+    private static final String WAITING_APPEAR_TIMEOUT = "8000";
 
     public SelenideElement getElement(String name) {
         Object value = namedElements.get(name);
@@ -62,7 +63,10 @@ abstract public class AlfaPage extends ElementsContainer {
     }
 
     protected void isAppeared() {
-        Spectators.waitElementsUntil(Condition.appear, 8000, getPrimaryElements());
+        Object obj = namedElements.get("waitingAppearTimeout");
+        String waitingAppearTimeout = obj == null ? WAITING_APPEAR_TIMEOUT : obj.toString();
+        int timeout = Integer.valueOf(waitingAppearTimeout);
+        Spectators.waitElementsUntil(Condition.appear, timeout, getPrimaryElements());
     }
 
     protected void isDisappeared() {
