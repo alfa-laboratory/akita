@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
@@ -21,6 +22,7 @@ import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -47,6 +49,7 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -298,7 +301,25 @@ public class DefaultSteps {
         MatcherAssert.assertThat("выражение верное", leftPart, equalTo(rightPart));
     }
 
-    public static String getURLwithPathParamsCalculated(String urlName) {
+    @И("^(?:кнопка|ссылка) \"([^\"]*)\" видима$")
+    public void elementVisible(String elementName) throws Throwable {
+        MatcherAssert.assertThat("Элемент видим", alfaScenario.getCurrentPage().getElement(elementName),
+                notNullValue());
+    }
+
+    @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
+    public void setupWindowSize(String widthRaw, String heightRaw) {
+        int width = Integer.valueOf(widthRaw);
+        int height = Integer.valueOf(heightRaw);
+        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
+    }
+
+    @Если("^развернуть окно на весь экран$")
+    public void развернутьОкноНаВесьЭкран() {
+        WebDriverRunner.getWebDriver().manage().window().maximize();
+    }
+
+    private static String getURLwithPathParamsCalculated(String urlName) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(urlName);
         String newString ="";
