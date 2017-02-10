@@ -10,6 +10,7 @@ import ru.alfabank.steps.DefaultSteps;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Created by onotole on 08.02.17.
@@ -23,9 +24,9 @@ public class AlfaScenarioTest {
         alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test()
     public void testGetSetVarNegative1() {
-        alfaScenario.getVar("randomName");
+        assertThat(alfaScenario.getVar("randomName"), nullValue());
     }
 
     @Test

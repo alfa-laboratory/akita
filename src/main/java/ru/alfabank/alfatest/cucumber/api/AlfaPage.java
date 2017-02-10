@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+
 @Slf4j
 abstract public class AlfaPage extends ElementsContainer {
     private static final String WAITING_APPEAR_TIMEOUT = "8000";
@@ -67,10 +69,14 @@ abstract public class AlfaPage extends ElementsContainer {
     }
 
     protected void isAppeared() {
-        Object obj = namedElements.get("waitingAppearTimeout");
-        String waitingAppearTimeout = obj == null ? WAITING_APPEAR_TIMEOUT : obj.toString();
-        int timeout = Integer.valueOf(waitingAppearTimeout);
-        Spectators.waitElementsUntil(Condition.appear, timeout, getPrimaryElements());
+        String timeout;
+        try {
+            Object property = loadProperty("waitingAppearTimeout");
+            timeout = property.toString();
+        } catch (IllegalArgumentException e) {
+            timeout = WAITING_APPEAR_TIMEOUT;
+        }
+        Spectators.waitElementsUntil(Condition.appear, Integer.valueOf(timeout), getPrimaryElements());
     }
 
     protected void isDisappeared() {
