@@ -51,9 +51,7 @@ public class AlfaEnvironment {
     }
 
     public Object getVar(String name) {
-        Object result = variables.get(name);
-        if (result == null) throw new AssertionError("Элемент " + name + " не найден в хранилище");
-        return result;
+        return variables.get(name);
     }
 
     public void setVar(String name, Object object) {

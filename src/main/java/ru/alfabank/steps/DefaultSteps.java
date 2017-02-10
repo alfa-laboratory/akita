@@ -233,7 +233,7 @@ public class DefaultSteps {
         alfaScenario.setCurrentPage(alfaScenario.getPage(pageName));
     }
 
-    @И("^Установить время ожидания загрузки в \"([^\"]*)\" секунд")
+    @И("^установить время ожидания загрузки в \"([^\"]*)\" секунд")
     public void setWaitingApperTimeout(String timeout) {
         alfaScenario.setVar("waitingAppearTimeout", timeout);
     }
