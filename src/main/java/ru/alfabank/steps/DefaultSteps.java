@@ -21,6 +21,7 @@ import io.restassured.specification.RequestSender;
 import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.groovy.transform.ConditionalInterruptibleASTTransformation;
 import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -43,6 +44,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Configuration.remote;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
@@ -105,12 +108,15 @@ public class DefaultSteps {
     public void goTo(String address) {
         String url = replaceVariables(address);
         getWebDriver().get(url);
+        alfaScenario.write("Url = " + url);
     }
 
     @Тогда("^текущий URL равен \"([^\"]*)\"$")
     public void checkCurrentURL(String url) {
         String currentUrl = getWebDriver().getCurrentUrl();
         String expectedUrl = replaceVariables(url);
+        alfaScenario.write("current URL = " + currentUrl + "\n" +
+                "expected URL = " + expectedUrl);
         assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, Matchers.is(expectedUrl));
     }
 
@@ -126,11 +132,10 @@ public class DefaultSteps {
         );
     }
 
-    @И("^элемент \"([^\"]*)\" не отображается на странице$")
+    @И("^элемент \"([^\"]*)\" не найден на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, 10000, alfaScenario.getCurrentPage().getElement(elemName)
-        );
+        sleep(3000);
+        alfaScenario.getCurrentPage().getElement(elemName).shouldBe(not(exist));
     }
 
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
@@ -250,7 +255,7 @@ public class DefaultSteps {
     public void setSummToField(String amount, String nameOfField) {
         SelenideElement summInput = alfaScenario.getCurrentPage().getElement(nameOfField);
         summInput.setValue(String.valueOf(amount));
-        summInput.should(Condition.not(Condition.empty));
+        summInput.should(not(Condition.empty));
         alfaScenario.write("Поле непустое");
     }
 
@@ -301,7 +306,7 @@ public class DefaultSteps {
         MatcherAssert.assertThat("выражение верное", leftPart, equalTo(rightPart));
     }
 
-    @И("^(?:кнопка|ссылка) \"([^\"]*)\" видима$")
+    @И("^(?:кнопка|ссылка|поле) \"([^\"]*)\" видима$")
     public void elementVisible(String elementName) throws Throwable {
         MatcherAssert.assertThat("Элемент видим", alfaScenario.getCurrentPage().getElement(elementName),
                 notNullValue());
@@ -322,14 +327,16 @@ public class DefaultSteps {
     private static String getURLwithPathParamsCalculated(String urlName) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(urlName);
-        String newString ="";
-        while(m.find()){
+        String newString = "";
+        while (m.find()) {
             String varName = m.group(1);
             String value = AlfaScenario.getInstance().getVar(varName).toString();
             newString = m.replaceFirst(value);
             m = p.matcher(newString);
         }
-        if (newString.isEmpty()){newString = urlName;}
+        if (newString.isEmpty()) {
+            newString = urlName;
+        }
         return newString;
     }
 
