@@ -21,7 +21,6 @@ import io.restassured.specification.RequestSender;
 import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.codehaus.groovy.transform.ConditionalInterruptibleASTTransformation;
 import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -121,7 +120,7 @@ public class DefaultSteps {
     }
 
     @И("^нажал на (?:кнопку|поле|блок) \"([^\"]*)\"$")
-    public void clickOnButton(String buttonName) {
+    public void clickOnThisButton(String buttonName) {
         alfaScenario.getCurrentPage().getElement(buttonName).click();
     }
 
@@ -147,10 +146,16 @@ public class DefaultSteps {
     @Когда("^(?:страница|блок|форма) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         alfaScenario.setCurrentPage(alfaScenario.getPage(nameOfPage));
+        alfaScenario.getCurrentPage().appeared();
     }
 
     @Когда("^установить \"([^\"]*)\" на весь тестовый suit: \"([^\"]*)\"$")
     public void setUserCus(String varName, String value) {
+        setVar(varName, value);
+    }
+
+    @И("^ установить \"([^\"]*)\" равным \"([^\"]*)\"$")
+    public void setVar(String varName, String value) {
         alfaScenario.setVar(varName, value);
     }
 
@@ -238,7 +243,7 @@ public class DefaultSteps {
         String url = getURLwithPathParamsCalculated(urlName);
         alfaScenario.write(" url = " + url);
         WebDriverRunner.getWebDriver().get(url);
-        alfaScenario.setCurrentPage(alfaScenario.getPage(pageName));
+        loadPage(pageName);
     }
 
     @Когда("^выполнено ожидание в течение (\\d+) секунд$")
@@ -291,7 +296,7 @@ public class DefaultSteps {
     public void waitUntilPageLoaded(String pageName) throws Throwable {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement("Кругляш"));
-        alfaScenario.setCurrentPage(alfaScenario.getPage(pageName));
+        loadPage(pageName);
     }
 
     @И("^верно выражение \"([^\"]*)\"$")
@@ -346,5 +351,17 @@ public class DefaultSteps {
         return date.format(
                 DateTimeFormatter.ofPattern(outputPatter)
         );
+    }
+
+    public void setValue(String varName, Object value) {
+        alfaScenario.setVar(varName, value);
+    }
+
+    public Object getValue(String varName) {
+        return alfaScenario.getVar(varName);
+    }
+
+    public void clickOnButton(String buttonName) {
+        alfaScenario.getCurrentPage().getElement(buttonName).click();
     }
 }
