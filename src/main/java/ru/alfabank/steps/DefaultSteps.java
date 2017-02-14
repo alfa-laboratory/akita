@@ -154,7 +154,7 @@ public class DefaultSteps {
         setVar(varName, value);
     }
 
-    @И("^ установить \"([^\"]*)\" равным \"([^\"]*)\"$")
+    @И("^установить \"([^\"]*)\" равным \"([^\"]*)\"$")
     public void setVar(String varName, String value) {
         alfaScenario.setVar(varName, value);
     }
