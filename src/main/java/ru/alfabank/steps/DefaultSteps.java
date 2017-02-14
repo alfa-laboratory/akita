@@ -193,7 +193,7 @@ public class DefaultSteps {
                         JsonElement json = gson.fromJson(new FileReader(path), JsonElement.class);
                         body = gson.toJson(json);
                     } catch (FileNotFoundException e) {
-                        fail("Файл с телом запроса не найден по пути: " + path);
+                        body = path;
                     }
                     break;
                 default:
