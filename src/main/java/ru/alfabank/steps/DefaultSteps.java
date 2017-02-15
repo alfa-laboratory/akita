@@ -193,7 +193,7 @@ public class DefaultSteps {
                         JsonElement json = gson.fromJson(new FileReader(path), JsonElement.class);
                         body = gson.toJson(json);
                     } catch (FileNotFoundException e) {
-                        body = path;
+                        body = requestParam.getValue();
                     }
                     break;
                 default:
@@ -224,7 +224,7 @@ public class DefaultSteps {
             alfaScenario.setVar(variableName, response.getBody().asString());
             alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {
-            fail("Некорректный ответ на запрос " + response.getBody().asString());
+            fail("Некорректный ответ на запрос: " + response.getBody().asString());
         }
     }
 
