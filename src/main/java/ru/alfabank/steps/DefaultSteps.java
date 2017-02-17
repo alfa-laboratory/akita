@@ -167,7 +167,16 @@ public class DefaultSteps {
         BigInteger bigInt2 = new BigInteger(
                 alfaScenario.getVar(secondValue).toString()
         );
+        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
+                secondValue + " = " + bigInt2);
         assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
+    }
+
+    @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
+    public void compageTwoVars(String varName1, String varName2) {
+        String s1 = getVar(varName1).toString();
+        String s2 = getVar(varName2).toString();
+        assertThat("строки совпадают", s1, equalTo(s2));
     }
 
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")

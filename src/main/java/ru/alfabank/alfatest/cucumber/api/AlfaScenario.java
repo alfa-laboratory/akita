@@ -1,19 +1,11 @@
 package ru.alfabank.alfatest.cucumber.api;
 
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 /**
  * Created by ruslanmikhalev on 27/01/17.
@@ -73,7 +65,9 @@ final public class AlfaScenario {
     }
 
     public Object getVar(String name) {
-        return this.getEnvironment().getVar(name);
+        Object obj = this.getEnvironment().getVar(name);
+        if (obj == null) log.error("Переменная " + name + " не найдена");
+        return obj;
     }
 
     public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
