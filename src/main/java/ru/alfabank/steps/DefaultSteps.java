@@ -37,9 +37,7 @@ import java.io.FileReader;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,9 +50,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -343,6 +339,27 @@ public class DefaultSteps {
             newString = urlName;
         }
         return newString;
+    }
+
+    @Тогда("^в списке \"([^\"]*)\" содержатся элементы$")
+    public void checkTypesOfPay(String nameOfList, List<String> listOfType) {
+        List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
+        int numberOfTypes = listOfTypeFromPage.size();
+        assertThat("Количество элементов в списке не соответсвует ожиданию",numberOfTypes, Matchers.is(listOfType.size()));
+        List<String> listOfRealNames = new ArrayList<>();
+        listOfTypeFromPage.forEach(type -> listOfRealNames.add(type.innerText()));
+        assertTrue("Списки не совпадают", listOfRealNames.containsAll(listOfType));
+    }
+
+    @Тогда("^в списке \"([^\"]*)\" выбран элемент со значением \"([^\"]*)\"$")
+    public void checkTypesOfPay(String nameOfList, String nameOfValue) {
+        List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
+        Optional<SelenideElement> itemFound = listOfTypeFromPage.stream().filter(type -> type.innerText().equals(nameOfValue)).findFirst();
+        if (itemFound.isPresent()) {
+            itemFound.get().click();
+        } else {
+            throw new IllegalStateException("Элемент не найден в списке");
+        }
     }
 
     public static String convertDateFromTo(String dateToConvert, String inputPattern, String outputPatter) {
