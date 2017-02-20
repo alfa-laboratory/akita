@@ -370,24 +370,4 @@ public class DefaultSteps {
             throw new IllegalStateException("Элемент не найден в списке");
         }
     }
-
-    public static String convertDateFromTo(String dateToConvert, String inputPattern, String outputPatter) {
-        LocalDate date = LocalDate.parse(dateToConvert,
-                DateTimeFormatter.ofPattern(inputPattern));
-        return date.format(
-                DateTimeFormatter.ofPattern(outputPatter)
-        );
-    }
-
-    public void setValue(String varName, Object value) {
-        alfaScenario.setVar(varName, value);
-    }
-
-    public Object getValue(String varName) {
-        return alfaScenario.getVar(varName);
-    }
-
-    public void clickOnButton(String buttonName) {
-        alfaScenario.getCurrentPage().getElement(buttonName).click();
-    }
 }
