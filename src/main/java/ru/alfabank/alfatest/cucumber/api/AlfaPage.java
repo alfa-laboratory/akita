@@ -96,6 +96,15 @@ abstract public class AlfaPage extends ElementsContainer {
         Spectators.waitElementsUntil(condition, timeout, elements);
     }
 
+    public static SelenideElement getButtonFromListByName(List<SelenideElement> listButtons, String nameOfButton) {
+        List<String> names = new ArrayList<>();
+        for (SelenideElement button : listButtons) {
+            names.add(button.getText());
+        }
+        return listButtons.get(names.indexOf(nameOfButton));
+    }
+
+
     private static SelenideElement castToSelenideElement(Object o) {
         if (o instanceof SelenideElement) {
             return (SelenideElement) o;
