@@ -258,7 +258,7 @@ public class DefaultSteps {
 
     @Тогда("^блок \"([^\"]*)\" исчез$")
     public void blockIsDisappears(String nameOfPage) {
-        alfaScenario.getPage(nameOfPage).disappeared();
+        alfaScenario.getCurrentPage().initialize().disappeared();
     }
 
     @Когда("^установлено значение \"([^\"]*)\" в поле \"([^\"]*)\"$")
