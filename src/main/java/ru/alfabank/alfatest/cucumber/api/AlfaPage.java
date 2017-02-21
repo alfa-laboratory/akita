@@ -2,7 +2,6 @@ package ru.alfabank.alfatest.cucumber.api;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsContainer;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
@@ -16,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.codeborne.selenide.Condition.not;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 @Slf4j
@@ -82,10 +80,7 @@ abstract public class AlfaPage extends ElementsContainer {
     }
 
     protected void isDisappeared() {
-        Selenide.sleep(3000);
-        getPrimaryElements().forEach(elem -> elem.shouldBe(not(Condition.exist)));
-
-        //Spectators.waitElementsUntil(Condition.disappears, 5000, getPrimaryElements());
+        Spectators.waitElementsUntil(Condition.disappears, 5000, getPrimaryElements());
     }
 
     public void waitElementsUntil(Condition condition, int timeout, SelenideElement ... elements) {
@@ -97,6 +92,7 @@ abstract public class AlfaPage extends ElementsContainer {
                 .map(name -> namedElements.get(name))
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
                 .map(AlfaPage::castToSelenideElement)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         Spectators.waitElementsUntil(condition, timeout, elements);
     }
@@ -114,7 +110,7 @@ abstract public class AlfaPage extends ElementsContainer {
         if (o instanceof SelenideElement) {
             return (SelenideElement) o;
         }
-        throw new IllegalStateException("Invalid field type " + o.getClass());
+        return null;
     }
 
     private Map<String, Object> namedElements;
@@ -155,6 +151,7 @@ abstract public class AlfaPage extends ElementsContainer {
                 .map(this::extractFieldValueViaReflection)
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
                 .map(AlfaPage::castToSelenideElement)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
