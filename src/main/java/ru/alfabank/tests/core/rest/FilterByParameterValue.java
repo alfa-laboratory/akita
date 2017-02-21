@@ -3,12 +3,12 @@ package ru.alfabank.tests.core.rest;
 /**
  * Created by U_M0UKA on 18.01.2017.
  */
-public class AccountsFilter {
+public class FilterByParameterValue {
     private String name;
     private String value;
     private OperationType type;
 
-    public AccountsFilter(String name, String value, String type) throws Exception {
+    public FilterByParameterValue(String name, String value, String type) throws Exception {
             this.name = name;
             this.value = value;
             setEqualType(type);
