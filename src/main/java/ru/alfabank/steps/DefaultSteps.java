@@ -22,21 +22,19 @@ import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import org.hamcrest.Matchers;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,6 +101,7 @@ public class DefaultSteps {
     public void goTo(String address) {
         String url = replaceVariables(address);
         getWebDriver().get(url);
+        loadPage(url);
         alfaScenario.write("Url = " + url);
     }
 

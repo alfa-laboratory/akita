@@ -57,7 +57,9 @@ final public class AlfaScenario {
     }
 
     public AlfaPage getPage(String name) {
-        return this.getEnvironment().getPage(name);
+        AlfaPage page = this.getEnvironment().getPage(name);
+        if (page == null) write("Страница " + name + " не найдена. Проверь аннотацию @Name");
+        return page;
     }
 
     public void write(Object o) {
