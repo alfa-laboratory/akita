@@ -37,10 +37,15 @@ final public class AlfaScenario {
     }
 
     public AlfaPage getCurrentPage() {
-        return environment.getPages().getCurrentPage();
+        AlfaPage currentPage = environment.getPages().getCurrentPage();
+        if (currentPage == null) throw new AssertionError("Current Page пустой! " +
+                "Проверь аннотации @Name у используемых страниц");
+        return currentPage;
     }
 
     public void setCurrentPage(AlfaPage page) {
+        if (page == null) throw new AssertionError("Ты пытаешься установить null в качестве current page." +
+                "Проверь аннотации @Name у используемых страниц");
         environment.getPages().setCurrentPage(page);
     }
 
@@ -57,9 +62,7 @@ final public class AlfaScenario {
     }
 
     public AlfaPage getPage(String name) {
-        AlfaPage page = this.getEnvironment().getPage(name);
-        if (page == null) write("Страница " + name + " не найдена. Проверь аннотацию @Name");
-        return page;
+        return this.getEnvironment().getPage(name);
     }
 
     public void write(Object o) {
