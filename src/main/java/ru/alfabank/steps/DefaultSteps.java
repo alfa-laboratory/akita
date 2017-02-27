@@ -221,19 +221,19 @@ public class DefaultSteps {
     }
 
     @Когда("^установлено значение \"([^\"]*)\" в поле \"([^\"]*)\"$")
-    public void setSummToField(String amount, String nameOfField) {
-        SelenideElement summInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        summInput.setValue(String.valueOf(amount));
-        summInput.should(not(Condition.empty));
+    public void setValueToField(String amount, String nameOfField) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.setValue(String.valueOf(amount));
+        valueInput.should(not(Condition.empty));
         alfaScenario.write("Поле непустое");
     }
 
     @Когда("^очищено поле \"([^\"]*)\"$")
-    public void setSummToField(String nameOfField) {
-        SelenideElement summInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        summInput.clear();
-        summInput.setValue("");
-        summInput.doubleClick().sendKeys(Keys.DELETE);
+    public void setValueToField(String nameOfField) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.clear();
+        valueInput.setValue("");
+        valueInput.doubleClick().sendKeys(Keys.DELETE);
     }
 
     @Тогда("^input-поле \"([^\"]*)\" пусто$")
