@@ -1,15 +1,10 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
 import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
@@ -25,9 +20,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
@@ -41,7 +33,6 @@ import java.util.regex.Pattern;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.not;
-import static com.codeborne.selenide.Configuration.remote;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
@@ -57,38 +48,6 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 @Slf4j
 public class DefaultSteps {
 
-    @Before(order = 1)
-    public static void clearCashAndDeleteCookies() throws Exception {
-        if (!Strings.isNullOrEmpty(System.getProperty("remoteHub"))) {
-            remote = System.getProperty("remoteHub");
-            log.info("Тесты запущены на удаленной машине");
-        } else
-            log.info("Тесты будут запущены локально");
-
-        Configuration.pageLoadStrategy = "none";
-    }
-
-    @Before(order = 2)
-    public void setScenario(Scenario scenario) throws Exception {
-        alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
-    }
-
-    @After
-    public void takeScreenshot(Scenario scenario) {
-        if (scenario.isFailed()) {
-            AlfaScenario.sleep(1);
-            final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
-            scenario.embed(screenshot, "image/png");
-        }
-    }
-
-    @After
-    public void closeWebdriver() {
-        if (getWebDriver() != null) {
-            WebDriverRunner.closeWebDriver();
-        }
-    }
-
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
@@ -101,7 +60,6 @@ public class DefaultSteps {
     public void goTo(String address) {
         String url = replaceVariables(address);
         getWebDriver().get(url);
-        loadPage(url);
         alfaScenario.write("Url = " + url);
     }
 
