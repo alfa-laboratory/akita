@@ -134,8 +134,10 @@ public class DefaultSteps {
 
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
     public void waitUntilDisapper(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
+        if (alfaScenario.getCurrentPage().getElement(elemName) != null) {
+            alfaScenario.getCurrentPage().waitElementsUntil(
+                    Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
+        }
     }
 
     @Когда("^(?:страница|блок|форма) \"([^\"]*)\" (?:загрузилась|загрузился)$")
