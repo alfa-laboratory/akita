@@ -229,7 +229,7 @@ public class DefaultSteps {
     }
 
     @Когда("^очищено поле \"([^\"]*)\"$")
-    public void setValueToField(String nameOfField) {
+    public void cleanField(String nameOfField) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
         valueInput.clear();
         valueInput.setValue("");
