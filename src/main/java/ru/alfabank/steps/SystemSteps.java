@@ -14,19 +14,16 @@ public class SystemSteps {
     private static final String PDF_PREFIX = "%PDF";
 
     public static boolean isFilePdf(String filePath) throws FileNotFoundException {
-        File file = new File(filePath);
-        return isFilePdf(file);
+        return isFilePdf(new File(filePath));
     }
 
     public static boolean isFilePdf(File file) throws FileNotFoundException {
-        if (! file.exists()) throw new AssertionError("File not found by path: "
-                + file.getAbsolutePath());
-        Scanner scanner = new Scanner(file);
-        if (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            return line.startsWith(PDF_PREFIX);
+        if(!file.exists()) {
+            throw new AssertionError("File not found by path: " + file.getAbsolutePath());
         }
-        return false;
+        try(Scanner scanner = new Scanner(file)) {
+            return scanner.hasNextLine() && scanner.nextLine().startsWith(PDF_PREFIX);
+        }
     }
 
     public static <E extends Enum<E>> E enumElementLookup(Class<E> e, String id) {

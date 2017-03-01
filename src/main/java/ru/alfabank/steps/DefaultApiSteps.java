@@ -38,8 +38,7 @@ public class DefaultApiSteps {
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         Map<String, String> headers = new HashMap<>();
         Map<String, String> parameters = new HashMap<>();
-        String body = "";
-        String path = "";
+        String body = null;
         Gson gson = new Gson();
         urlName = getURLwithPathParamsCalculated(urlName);
         for (RequestParam requestParam : table) {
@@ -51,10 +50,9 @@ public class DefaultApiSteps {
                     headers.put(requestParam.getName(), requestParam.getValue());
                     break;
                 case BODY:
-                    try {
-                        path = String.join(File.separator, new String[]
-                                {"src", "main", "java", "restBodies", requestParam.getValue()});
-                        JsonElement json = gson.fromJson(new FileReader(path), JsonElement.class);
+                    String path = String.join(File.separator, "src", "main", "java", "restBodies", requestParam.getValue());
+                    try(FileReader fileReader = new FileReader(path)) {
+                        JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
                     } catch (FileNotFoundException e) {
                         body = requestParam.getValue();
@@ -65,7 +63,7 @@ public class DefaultApiSteps {
             }
         }
         RequestSender request;
-        if (!body.isEmpty()) {
+        if (body != null) {
             alfaScenario.write("Тело запроса:\n" + body);
             request = given()
                     .contentType(ContentType.JSON)
