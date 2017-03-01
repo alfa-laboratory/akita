@@ -1,51 +1,32 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
 import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
-import io.restassured.http.ContentType;
-import io.restassured.http.Method;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSender;
-import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.tests.core.rest.RequestParam;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.not;
-import static com.codeborne.selenide.Configuration.remote;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
@@ -56,38 +37,6 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
  */
 @Slf4j
 public class DefaultSteps {
-
-    @Before(order = 1)
-    public static void clearCashAndDeleteCookies() throws Exception {
-        if (!Strings.isNullOrEmpty(System.getProperty("remoteHub"))) {
-            remote = System.getProperty("remoteHub");
-            log.info("Тесты запущены на удаленной машине");
-        } else
-            log.info("Тесты будут запущены локально");
-
-        Configuration.pageLoadStrategy = "none";
-    }
-
-    @Before(order = 2)
-    public void setScenario(Scenario scenario) throws Exception {
-        alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
-    }
-
-    @After
-    public void takeScreenshot(Scenario scenario) {
-        if (scenario.isFailed()) {
-            AlfaScenario.sleep(1);
-            final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
-            scenario.embed(screenshot, "image/png");
-        }
-    }
-
-    @After
-    public void closeWebdriver() {
-        if (getWebDriver() != null) {
-            WebDriverRunner.closeWebDriver();
-        }
-    }
 
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
@@ -101,7 +50,6 @@ public class DefaultSteps {
     public void goTo(String address) {
         String url = replaceVariables(address);
         getWebDriver().get(url);
-        loadPage(url);
         alfaScenario.write("Url = " + url);
     }
 
@@ -134,8 +82,10 @@ public class DefaultSteps {
 
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
     public void waitUntilDisapper(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
+        if (alfaScenario.getCurrentPage().getElement(elemName) != null) {
+            alfaScenario.getCurrentPage().waitElementsUntil(
+                    Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
+        }
     }
 
     @Когда("^(?:страница|блок|форма) \"([^\"]*)\" (?:загрузилась|загрузился)$")
@@ -174,74 +124,6 @@ public class DefaultSteps {
         assertThat("строки совпадают", s1, equalTo(s2));
     }
 
-    @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        Map<String, String> parameters = new HashMap<>();
-        String body = "";
-        String path = "";
-        Gson gson = new Gson();
-        urlName = getURLwithPathParamsCalculated(urlName);
-        for (RequestParam requestParam : table) {
-            switch (requestParam.getType()) {
-                case PARAMETER:
-                    parameters.put(requestParam.getName(), requestParam.getValue());
-                    break;
-                case HEADER:
-                    headers.put(requestParam.getName(), requestParam.getValue());
-                    break;
-                case BODY:
-                    try {
-                        path = String.join(File.separator, new String[]
-                                {"src", "main", "java", "restBodies", requestParam.getValue()});
-                        JsonElement json = gson.fromJson(new FileReader(path), JsonElement.class);
-                        body = gson.toJson(json);
-                    } catch (FileNotFoundException e) {
-                        body = requestParam.getValue();
-                    }
-                    break;
-                default:
-                    throw new RuntimeException("Некорректно задан элемент таблицы : " + requestParam.getType());
-            }
-        }
-        RequestSender request;
-        if (!body.isEmpty()) {
-            alfaScenario.write("Тело запроса:\n" + body);
-            request = given()
-                    .contentType(ContentType.JSON)
-                    .headers(headers)
-                    .params(parameters)
-                    .body(body)
-                    .when();
-        } else {
-            request = given()
-                    .headers(headers)
-                    .params(parameters)
-                    .when();
-        }
-        getResponseAndSaveToVariable(request, variableName, urlName, typeOfRequest);
-    }
-
-    private void getResponseAndSaveToVariable(RequestSender request, String variableName, String url, String typeOfRequest) {
-        Response response = request.request(Method.valueOf(typeOfRequest), url);
-        if (response.statusCode() == 200) {
-            alfaScenario.setVar(variableName, response.getBody().asString());
-            alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
-        } else {
-            fail("Некорректный ответ на запрос: " + response.getBody().asString());
-        }
-    }
-
-    private Response makePostRequestWithBody(Map<String, String> headers, String jsonBody, Method methodType, String apiUrl) {
-        RequestSpecification requestSender = given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when();
-
-        if (headers != null) requestSender = requestSender.headers(headers);
-        return requestSender.request(methodType, apiUrl);
-    }
-
     @И("^совершен переход на страницу \"([^\"]*)\" по прямой ссылке = \"([^\"]*)\"$")
     public void goToSelectedPageByLink(String pageName, String urlName) {
         String url = getURLwithPathParamsCalculated(urlName);
@@ -260,20 +142,26 @@ public class DefaultSteps {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
 
+    @И("^нажать на клавиатуре \"([^\"]*)\"$")
+    public void pressButtonOnKeyboard(String buttonName) {
+        Keys key = Keys.valueOf(buttonName.toUpperCase());
+        alfaScenario.getCurrentPage().getPrimaryElements().get(0).sendKeys(key);
+    }
+
     @Когда("^установлено значение \"([^\"]*)\" в поле \"([^\"]*)\"$")
-    public void setSummToField(String amount, String nameOfField) {
-        SelenideElement summInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        summInput.setValue(String.valueOf(amount));
-        summInput.should(not(Condition.empty));
+    public void setValueToField(String amount, String nameOfField) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.setValue(String.valueOf(amount));
+        valueInput.should(not(Condition.empty));
         alfaScenario.write("Поле непустое");
     }
 
     @Когда("^очищено поле \"([^\"]*)\"$")
-    public void setSummToField(String nameOfField) {
-        SelenideElement summInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        summInput.clear();
-        summInput.setValue("");
-        summInput.doubleClick().sendKeys(Keys.DELETE);
+    public void cleanField(String nameOfField) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.clear();
+        valueInput.setValue("");
+        valueInput.doubleClick().sendKeys(Keys.DELETE);
     }
 
     @Тогда("^input-поле \"([^\"]*)\" пусто$")
@@ -333,7 +221,7 @@ public class DefaultSteps {
         WebDriverRunner.getWebDriver().manage().window().maximize();
     }
 
-    private static String getURLwithPathParamsCalculated(String urlName) {
+    static String getURLwithPathParamsCalculated(String urlName) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(urlName);
         String newString = "";
