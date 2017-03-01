@@ -34,11 +34,6 @@ public class PropertyLoader {
         return value;
     }
 
-    public static String getCus(String username){
-        String acus = loadProperty(username+".cus");
-        return acus;
-    }
-
     @SneakyThrows(IOException.class)
     private static Properties getPropertiesInstance() {
         Properties instance = new Properties();
