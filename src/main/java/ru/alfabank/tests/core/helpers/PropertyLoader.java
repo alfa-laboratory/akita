@@ -1,36 +1,18 @@
 package ru.alfabank.tests.core.helpers;
 
 import com.google.common.base.Strings;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
 public class PropertyLoader {
     private static final String PROPERTIES_FILE = "/application.properties";
-    private static final Properties properties = new Properties();
-    private static final Properties profileProperties = new Properties();
-
-    static {
-        try {
-            properties.load(new InputStreamReader(
-                    PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE),
-                    Charset.forName("UTF-8")
-            ));
-
-            String profile = System.getProperty("profile", "");
-
-            if (!Strings.isNullOrEmpty(profile)) {
-                profileProperties.load(new InputStreamReader(
-                        PropertyLoader.class.getResourceAsStream("/" + profile +PROPERTIES_FILE),
-                        Charset.forName("UTF-8")
-                ));
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
+    private static final Properties properties = getPropertiesInstance();
+    private static final Properties profileProperties = getProfilePropertiesInstance();
 
     private PropertyLoader() {
 
@@ -52,9 +34,31 @@ public class PropertyLoader {
         return value;
     }
 
-    public static String getCus(String username){
-        String acus = loadProperty(username+".cus");
-        return acus;
+    @SneakyThrows(IOException.class)
+    private static Properties getPropertiesInstance() {
+        Properties instance = new Properties();
+        try(
+                InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
+                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+        ) {
+            instance.load(inputStream);
+        }
+        return instance;
+    }
+
+    @SneakyThrows(IOException.class)
+    private static Properties getProfilePropertiesInstance() {
+        Properties instance = new Properties();
+        String profile = System.getProperty("profile", "");
+        if (!Strings.isNullOrEmpty(profile)) {
+            try(
+                    InputStream resourceStream = PropertyLoader.class.getResourceAsStream("/" + profile + PROPERTIES_FILE);
+                    InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+            ) {
+                instance.load(inputStream);
+            }
+        }
+        return instance;
     }
 }
 

@@ -35,33 +35,31 @@ public class DefaultStepsTest {
 
     @Test
     public void saveValueToVariable() {
-        String varName = "testVar";
-        String varValue = loadProperty(varName);
-
+        String varName = "testVar", varValue = loadProperty(varName);
         ds.saveValueToVariable(varName, varName);
-        assertThat("вытащилось правильной  значение глобальной переменной",
-                alfaScenario.getVar(varName), equalTo(varValue));
+
+        assertThat(alfaScenario.getVar(varName), equalTo(varValue));
     }
 
     @Test(expected = AssertionError.class)
     public void compareTwoDigitVarsNegative() {
-        String number1Name = "number1";
-        String number2Name = "number2";
-        String number1Value = "1234567890";
-        String number2Value = "1234567894";
+        String number1Name = "number1", number1Value = "1234567890";
         alfaScenario.setVar(number1Name, number1Value);
+
+        String number2Name = "number2", number2Value = "1234567894";
         alfaScenario.setVar(number2Name, number2Value);
+
         ds.compareTwoDigitVars(number1Name, number2Name);
     }
 
     @Test
     public void compareTwoDigitVars() {
-        String number1Name = "number1";
-        String number2Name = "number2";
-        String number1Value = "1234567890";
-        String number2Value = "1234567890";
+        String number1Name = "number1", number1Value = "1234567890";
         alfaScenario.setVar(number1Name, number1Value);
+
+        String number2Name = "number2", number2Value = "1234567890";
         alfaScenario.setVar(number2Name, number2Value);
+
         ds.compareTwoDigitVars(number1Name, number2Name);
     }
 
