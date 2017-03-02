@@ -21,12 +21,13 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
-import static ru.alfabank.steps.DefaultSteps.getURLwithPathParamsCalculated;
 
 @Slf4j
 public class DefaultApiSteps {
@@ -36,12 +37,37 @@ public class DefaultApiSteps {
 
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
+        urlName = getURLwithPathParamsCalculated(urlName);
+        RequestSender request = createRequestByParamsTable(table);
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        getResponseAndSaveToVariable(request, variableName, response);
+    }
+
+    @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
+    public void checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        urlName = getURLwithPathParamsCalculated(urlName);
+        RequestSender request = createRequestByParamsTable(table);
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        assertThat("статус код совпал с ожидаемым", expectedStatusCode, equalTo(response.getStatusCode()));
+    }
+
+
+    @Тогда("^поле \"([^\"]*)\" ответа \"([^\"]*)\" совпадает с$")
+    public void checkExpectedFieldApi(String field, String apiResponse, String expectedFieldValue) throws Throwable {
+        JsonParser parser = new JsonParser();
+        String jsonResponse = getVar(apiResponse).toString();
+        String realFieldValue = parser.parse(jsonResponse).getAsJsonObject().get(field).toString();
+        assertThat("Значение поля API совпадает с ожидаемым",
+                realFieldValue,
+                equalTo(expectedFieldValue));
+    }
+
+    private RequestSender createRequestByParamsTable(List<RequestParam> table) {
         Map<String, String> headers = new HashMap<>();
         Map<String, String> parameters = new HashMap<>();
         String body = "";
         String path = "";
         Gson gson = new Gson();
-        urlName = getURLwithPathParamsCalculated(urlName);
         for (RequestParam requestParam : table) {
             switch (requestParam.getType()) {
                 case PARAMETER:
@@ -79,21 +105,10 @@ public class DefaultApiSteps {
                     .params(parameters)
                     .when();
         }
-        getResponseAndSaveToVariable(request, variableName, urlName, typeOfRequest);
+        return request;
     }
 
-    @Тогда("^поле \"([^\"]*)\" ответа \"([^\"]*)\" совпадает с$")
-    public void checkExpectedFieldApi(String field, String apiResponse, String expectedFieldValue) throws Throwable {
-        JsonParser parser = new JsonParser();
-        String jsonResponse = getVar(apiResponse).toString();
-        String realFieldValue = parser.parse(jsonResponse).getAsJsonObject().get(field).toString();
-        assertThat("Значение поля API совпадает с ожидаемым",
-                realFieldValue,
-                equalTo(expectedFieldValue));
-    }
-
-    private void getResponseAndSaveToVariable(RequestSender request, String variableName, String url, String typeOfRequest) {
-        Response response = request.request(Method.valueOf(typeOfRequest), url);
+    private void getResponseAndSaveToVariable(RequestSender request, String variableName, Response response) {
         if (response.statusCode() == 200) {
             alfaScenario.setVar(variableName, response.getBody().asString());
             alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
@@ -110,6 +125,22 @@ public class DefaultApiSteps {
 
         if (headers != null) requestSender = requestSender.headers(headers);
         return requestSender.request(methodType, apiUrl);
+    }
+
+    static String getURLwithPathParamsCalculated(String urlName) {
+        Pattern p = Pattern.compile("\\{(\\w+)\\}");
+        Matcher m = p.matcher(urlName);
+        String newString = "";
+        while (m.find()) {
+            String varName = m.group(1);
+            String value = AlfaScenario.getInstance().getVar(varName).toString();
+            newString = m.replaceFirst(value);
+            m = p.matcher(newString);
+        }
+        if (newString.isEmpty()) {
+            newString = urlName;
+        }
+        return newString;
     }
 
 }

@@ -19,8 +19,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.not;
@@ -30,6 +28,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
+import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -219,22 +218,6 @@ public class DefaultSteps {
     @Если("^развернуть окно на весь экран$")
     public void развернутьОкноНаВесьЭкран() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
-    }
-
-    static String getURLwithPathParamsCalculated(String urlName) {
-        Pattern p = Pattern.compile("\\{(\\w+)\\}");
-        Matcher m = p.matcher(urlName);
-        String newString = "";
-        while (m.find()) {
-            String varName = m.group(1);
-            String value = AlfaScenario.getInstance().getVar(varName).toString();
-            newString = m.replaceFirst(value);
-            m = p.matcher(newString);
-        }
-        if (newString.isEmpty()) {
-            newString = urlName;
-        }
-        return newString;
     }
 
     @Тогда("^в списке \"([^\"]*)\" содержатся элементы$")
