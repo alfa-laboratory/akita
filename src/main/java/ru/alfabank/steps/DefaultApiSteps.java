@@ -16,7 +16,6 @@ import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +26,7 @@ import java.util.regex.Pattern;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Slf4j
@@ -44,13 +44,9 @@ public class DefaultApiSteps {
     }
 
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
-    public void checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
-        RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        assertThat("статус код совпал с ожидаемым", expectedStatusCode, equalTo(response.getStatusCode()));
+    public void checkStatusCodeWithAssertion(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
-
 
     @Тогда("^поле \"([^\"]*)\" ответа \"([^\"]*)\" совпадает с$")
     public void checkExpectedFieldApi(String field, String apiResponse, String expectedFieldValue) throws Throwable {
@@ -80,7 +76,7 @@ public class DefaultApiSteps {
                     try(FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
-                    } catch (FileNotFoundException e) {
+                    } catch (java.io.IOException e) {
                         body = requestParam.getValue();
                     }
                     break;
@@ -139,6 +135,17 @@ public class DefaultApiSteps {
             newString = urlName;
         }
         return newString;
+    }
+
+    public boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        urlName = getURLwithPathParamsCalculated(urlName);
+        RequestSender request = createRequestByParamsTable(table);
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        int statusCode = response.getStatusCode();
+        if (statusCode != expectedStatusCode) {
+            write("Ожидали статус код: " + expectedStatusCode + ". Получили: " + statusCode);
+        }
+        return statusCode == expectedStatusCode;
     }
 
 }
