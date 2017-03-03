@@ -108,7 +108,7 @@ public class InitialSetupSteps {
                         "\nResonseCode: " + connection.getResponseCode();
             }
         } catch (IOException e) {
-            return e.getMessage();
+            return "Couldn't resolve host: " + link + "\n" + e.getMessage();
         }
         return "";
     }
