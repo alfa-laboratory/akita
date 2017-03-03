@@ -19,6 +19,14 @@ public class PropertyLoader {
     }
 
     public static String loadProperty(String name) {
+        String value = loadPropertySafe(name);
+        if (null == value) {
+            throw new IllegalArgumentException("Properties file does not contain property with key: " + name);
+        }
+        return value;
+    }
+
+    public static String loadPropertySafe(String name) {
         String value = null;
         if (!Strings.isNullOrEmpty(name)) {
             value = profileProperties.getProperty(name);
@@ -26,10 +34,6 @@ public class PropertyLoader {
             if (null == value) {
                 value = properties.getProperty(name);
             }
-        }
-
-        if (null == value) {
-            throw new IllegalArgumentException("Properties file does not contain property with key: " + name);
         }
         return value;
     }

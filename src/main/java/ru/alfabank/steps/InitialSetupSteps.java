@@ -13,16 +13,59 @@ import org.openqa.selenium.TakesScreenshot;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 import static com.codeborne.selenide.Configuration.remote;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertySafe;
 
 @Slf4j
 public class InitialSetupSteps {
+    private static Boolean isEnvironmentAlive = null;
+    private final static String HEALTH_CHECK = "healthCheck.list";
+    private static String healthCheckErrorDescriptions = "";
 
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
-    @Before(order = 1)
+    @Before(order = 5)
+    public void healthCheck() throws FileNotFoundException {
+
+        if (isEnvironmentAlive == null) {
+            synchronized (InitialSetupSteps.class) {
+                if (isEnvironmentAlive == null) {
+                    isEnvironmentAlive = true;
+
+                    String enableHealthCheck = loadPropertySafe("enableEnvHealthCheck");
+                    if (null == enableHealthCheck || ! enableHealthCheck.toLowerCase().equals("yes")) {
+                        return;
+                    }
+                    List<String> urls = loadListFromFile(HEALTH_CHECK);
+
+                    for (String url: urls) {
+                        String urlAliveError = checkUrlForAlive(url);
+                        if (! urlAliveError.equals("")) {
+                            isEnvironmentAlive = false;
+                            healthCheckErrorDescriptions += urlAliveError + "\n\n";
+                        }
+                    }
+                }
+            }
+        }
+
+        if (! isEnvironmentAlive) {
+            throw new RuntimeException("ENVIRONMENT IS DEAD!!!:\n\n" + healthCheckErrorDescriptions);
+        }
+    }
+
+    @Before(order = 10)
     public static void clearCashAndDeleteCookies() throws Exception {
         if (!Strings.isNullOrEmpty(System.getProperty("remoteHub"))) {
             remote = System.getProperty("remoteHub");
@@ -33,7 +76,7 @@ public class InitialSetupSteps {
         Configuration.pageLoadStrategy = "none";
     }
 
-    @Before(order = 2)
+    @Before(order = 20)
     public void setScenario(Scenario scenario) throws Exception {
         alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
     }
@@ -52,5 +95,39 @@ public class InitialSetupSteps {
         if (getWebDriver() != null) {
             WebDriverRunner.closeWebDriver();
         }
+    }
+
+    private String checkUrlForAlive(String link) {
+        try {
+            URL url = new URL(link);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+            if (connection.getResponseCode() != 200) {
+
+                return "URL: " + link + "\nResponse Message: " + connection.getResponseMessage() +
+                        "\nResonseCode: " + connection.getResponseCode();
+            }
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+        return "";
+    }
+
+    private List<String> loadListFromFile(String filename) throws FileNotFoundException {
+        ClassLoader loader = getClass().getClassLoader();
+        List<String> strings = new ArrayList<>();
+        Scanner scanner;
+
+        try {
+            File file = new File(loader.getResource(HEALTH_CHECK).getFile());
+            scanner = new Scanner(file);
+        } catch (FileNotFoundException|NullPointerException e) {
+            write("Файл " + filename + " не найден. Проверь его наличие в папке resources");
+            throw new FileNotFoundException(filename);
+        }
+        while(scanner.hasNextLine()) {
+            strings.add(scanner.nextLine());
+        }
+        return strings;
     }
 }
