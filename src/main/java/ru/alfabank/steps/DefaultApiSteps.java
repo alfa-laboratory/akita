@@ -105,7 +105,7 @@ public class DefaultApiSteps {
     private void getResponseAndSaveToVariable(RequestSender request, String variableName, Response response) {
         if (response.statusCode() == 200) {
             alfaScenario.setVar(variableName, response.getBody().asString());
-            alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
+            if (log.isDebugEnabled()) alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {
             fail("Некорректный ответ на запрос: " + response.getBody().asString());
         }
