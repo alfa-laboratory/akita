@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
  */
 public class ScopedVariables {
 
-    private Map<String, Object> variables = Maps.newHashMap();
+    private ThreadLocal<Map<String, Object>> variablesContainer = new ThreadLocal<>();//Maps.newHashMap();
 
     public Object evaluate(String expression) {
         GroovyShell shell = new GroovyShell();
-        variables.entrySet().forEach(e -> {
+        getVariables().entrySet().forEach(e -> {
             try {
                 shell.setVariable(e.getKey(), new BigDecimal(e.getValue().toString()));
             } catch (NumberFormatException exp) {
@@ -27,11 +27,6 @@ public class ScopedVariables {
         return shell.evaluate(expression);
     }
 
-    /**
-     *
-     * @param urlName
-     * @return
-     */
     public String replaceVariables(String urlName) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(urlName);
@@ -46,19 +41,26 @@ public class ScopedVariables {
     }
 
     public void put(String name, Object value) {
-        variables.put(name, value);
+        getVariables().put(name, value);
     }
 
     public Object get(String name) {
-        return variables.get(name);
+        return getVariables().get(name);
     }
 
     public void clear() {
-        variables.clear();
+        getVariables().clear();
     }
 
     public Object remove(String key) {
-        return variables.remove(key);
+        return getVariables().remove(key);
+    }
+
+    private Map<String, Object> getVariables() {
+        if (variablesContainer.get() == null) {
+            variablesContainer.set(Maps.newHashMap());
+        }
+        return variablesContainer.get();
     }
 
 }
