@@ -26,7 +26,7 @@ http://git/projects/ALAT/repos/testiod0r-testing-template
 
 Переходим по ссылке, разрезолвливая переменные из хранилища alfaScenario
 
-#####`@Тогда("^текущий URL равен \"([^\"]*)\"$") public void checkCurrentURL(String url)`
+##### `@Тогда("^текущий URL равен \"([^\"]*)\"$") public void checkCurrentURL(String url)`
 
 Проверка, что текущий URL совпадает с ожидаемым
 
