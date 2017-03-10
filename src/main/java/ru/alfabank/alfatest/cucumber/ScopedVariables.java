@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
  */
 public class ScopedVariables {
 
-    private ThreadLocal<Map<String, Object>> variablesContainer = new ThreadLocal<>();//Maps.newHashMap();
+    private Map<String, Object> variables = Maps.newHashMap();
 
     public Object evaluate(String expression) {
         GroovyShell shell = new GroovyShell();
-        getVariables().entrySet().forEach(e -> {
+        variables.entrySet().forEach(e -> {
             try {
                 shell.setVariable(e.getKey(), new BigDecimal(e.getValue().toString()));
             } catch (NumberFormatException exp) {
@@ -41,26 +41,19 @@ public class ScopedVariables {
     }
 
     public void put(String name, Object value) {
-        getVariables().put(name, value);
+        variables.put(name, value);
     }
 
     public Object get(String name) {
-        return getVariables().get(name);
+        return variables.get(name);
     }
 
     public void clear() {
-        getVariables().clear();
+        variables.clear();
     }
 
     public Object remove(String key) {
-        return getVariables().remove(key);
-    }
-
-    private Map<String, Object> getVariables() {
-        if (variablesContainer.get() == null) {
-            variablesContainer.set(Maps.newHashMap());
-        }
-        return variablesContainer.get();
+        return variables.remove(key);
     }
 
 }

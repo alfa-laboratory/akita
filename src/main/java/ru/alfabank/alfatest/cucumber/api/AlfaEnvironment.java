@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
 
 /**
  * Created by ruslanmikhalev on 27/01/17.
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
 public class AlfaEnvironment {
 
     private final Scenario scenario;
-    private ScopedVariables variables = new ScopedVariables();
+    private ThreadLocal<ScopedVariables> variables = new ThreadLocal<>();
     private Pages pages = new Pages();
 
     public AlfaEnvironment(Scenario scenario) {
@@ -47,15 +46,15 @@ public class AlfaEnvironment {
     }
 
     public ScopedVariables getVars() {
-        return variables;
+        return getVariables();
     }
 
     public Object getVar(String name) {
-        return variables.get(name);
+        return getVariables().get(name);
     }
 
     public void setVar(String name, Object object) {
-        variables.put(name, object);
+        getVariables().put(name, object);
     }
 
     public Pages getPages() {
@@ -71,6 +70,13 @@ public class AlfaEnvironment {
     }
 
     public String replaceVariables(String address) {
-        return variables.replaceVariables(address);
+        return getVariables().replaceVariables(address);
+    }
+
+    private ScopedVariables getVariables() {
+        if (variables.get() == null) {
+            variables.set(new ScopedVariables());
+        }
+        return variables.get();
     }
 }

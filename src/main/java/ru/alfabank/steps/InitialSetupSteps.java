@@ -18,6 +18,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 @Slf4j
 public class InitialSetupSteps {
+
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 

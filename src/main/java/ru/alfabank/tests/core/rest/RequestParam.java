@@ -1,11 +1,13 @@
 package ru.alfabank.tests.core.rest;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * Created by U_M0UKA on 16.01.2017.
  */
 @Data
+@Builder
 public class RequestParam {
 
     private RequestParamType type;
