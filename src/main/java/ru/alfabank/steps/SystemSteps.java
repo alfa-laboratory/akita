@@ -13,6 +13,9 @@ import java.util.Scanner;
 public class SystemSteps {
     private static final String PDF_PREFIX = "%PDF";
 
+    /**
+     * Проверка, что переданный файл имеет тип PDF
+     */
     public static boolean isFilePdf(String filePath) throws FileNotFoundException {
         return isFilePdf(new File(filePath));
     }
@@ -26,6 +29,9 @@ public class SystemSteps {
         }
     }
 
+    /**
+     * В переданном Enum'e ищется элемент, переданный строкой
+     */
     public static <E extends Enum<E>> E enumElementLookup(Class<E> e, String id) {
         try {
             return Enum.valueOf(e, id);

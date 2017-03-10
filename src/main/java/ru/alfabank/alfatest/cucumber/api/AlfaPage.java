@@ -87,6 +87,10 @@ abstract public class AlfaPage extends ElementsContainer {
         Spectators.waitElementsUntil(condition, timeout, elements);
     }
 
+    public void waitElementsUntil(Condition condition, int timeout, List<SelenideElement> elements) {
+        Spectators.waitElementsUntil(condition, timeout, elements);
+    }
+
     public void waitElementsUntil(Condition condition, int timeout, String ... elementNames) {
         List<SelenideElement> elements = Arrays.stream(elementNames)
                 .map(name -> namedElements.get(name))

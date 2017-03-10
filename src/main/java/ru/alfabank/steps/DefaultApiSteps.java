@@ -35,6 +35,9 @@ public class DefaultApiSteps {
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
+    /**
+     * Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Результат сохраняется в заданную переменную
+     */
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         urlName = getURLwithPathParamsCalculated(urlName);
@@ -43,11 +46,18 @@ public class DefaultApiSteps {
         getResponseAndSaveToVariable(request, variableName, response);
     }
 
+    /**
+     * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
+     * соответствует ожиданиям.
+     */
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkStatusCodeWithAssertion(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
 
+    /**
+     * Проверка. Из большого JSON'a вытаскивается часть по названию и проверяется, что она совпадает с переданнам значением.
+     */
     @Тогда("^поле \"([^\"]*)\" ответа \"([^\"]*)\" совпадает с$")
     public void checkExpectedFieldApi(String field, String apiResponse, String expectedFieldValue) throws Throwable {
         JsonParser parser = new JsonParser();
