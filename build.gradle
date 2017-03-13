@@ -60,13 +60,13 @@ dependencies {
     compile group: 'info.cukes', name: 'cucumber-html', version: '0.2.3'
     compile group: 'info.cukes', name: 'cucumber-jvm-deps', version: '1.0.3'
     compile group: 'info.cukes', name: 'cucumber-core', version: '1.2.4'
-    compile group: 'info.cukes', name: 'cucumber-picocontainer', version: '1.2.4'
 
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     compile group: 'org.json', name: 'json', version: '20160810'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.1'
-    compile group: 'ru.alfabank.tests', name: 'testiod0r-healthcheck', version: '1.0.13'
+    compile group: 'ru.alfabank.tests', name: 'testiod0r-healthcheck', version: '1.0.33'
+    compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
 }
 
 compileJava.options.encoding = 'UTF-8'
