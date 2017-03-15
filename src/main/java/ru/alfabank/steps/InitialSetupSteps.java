@@ -50,6 +50,7 @@ public class InitialSetupSteps {
     @After
     public void closeWebDriver() {
         if (getWebDriver() != null) {
+            WebDriverRunner.getWebDriver().manage().deleteAllCookies();
             WebDriverRunner.closeWebDriver();
         }
     }
