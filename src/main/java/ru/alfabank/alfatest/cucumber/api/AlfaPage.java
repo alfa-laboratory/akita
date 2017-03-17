@@ -2,6 +2,7 @@ package ru.alfabank.alfatest.cucumber.api;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsContainer;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
@@ -76,11 +77,16 @@ abstract public class AlfaPage extends ElementsContainer {
         } catch (IllegalArgumentException e) {
             timeout = WAITING_APPEAR_TIMEOUT;
         }
-        Spectators.waitElementsUntil(Condition.appear, Integer.valueOf(timeout), getPrimaryElements());
+        String finalTimeout = timeout;
+        getPrimaryElements().parallelStream().forEach(elem ->
+        elem.waitUntil(Condition.appear,Integer.valueOf(finalTimeout)));
     }
 
     protected void isDisappeared() {
-        Spectators.waitElementsUntil(Condition.disappears, 5000, getPrimaryElements());
+        Selenide.sleep(4000);
+        getPrimaryElements().parallelStream().forEach(
+                elem -> elem.shouldBe(Condition.not(Condition.exist))
+        );
     }
 
     public void waitElementsUntil(Condition condition, int timeout, SelenideElement ... elements) {
