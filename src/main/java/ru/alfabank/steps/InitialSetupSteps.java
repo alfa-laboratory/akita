@@ -1,6 +1,5 @@
 package ru.alfabank.steps;
 
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.common.base.Strings;
 import cucumber.api.Scenario;
@@ -13,7 +12,6 @@ import org.openqa.selenium.TakesScreenshot;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
-import static com.codeborne.selenide.Configuration.remote;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 @Slf4j
@@ -29,13 +27,10 @@ public class InitialSetupSteps {
 
     @Before(order = 20)
     public static void clearCashAndDeleteCookies() throws Exception {
-        if (!Strings.isNullOrEmpty(System.getProperty("remoteHub"))) {
-            remote = System.getProperty("remoteHub");
-            log.info("Тесты запущены на удаленной машине");
+        if (!Strings.isNullOrEmpty(System.getProperty("remote"))) {
+            log.info("Тесты запущены на удаленной машине: " + System.getProperty("remote"));
         } else
             log.info("Тесты будут запущены локально");
-
-        Configuration.pageLoadStrategy = "none";
     }
 
     @After
