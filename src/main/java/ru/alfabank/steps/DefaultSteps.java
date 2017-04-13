@@ -115,7 +115,7 @@ public class DefaultSteps {
     /**
      * В течение заданного количества секунд ожидается появление списка на странице
      */
-    @И("^список \"([^\"]*)\" отображается на странице$")
+    @И("^список \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
     public void listIsPresentedOnPageInTime(String elemName, int seconds) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElementsList(elemName)
