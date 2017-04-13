@@ -83,7 +83,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что в течении 10 секунд ожидается появления элемента(не списка) на странице
+     * Проверка, что в течении 10 секунд ожидается появление элемента(не списка) на странице
      */
     @И("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elemName) {
@@ -93,12 +93,32 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что в течении 10 секунд ожидается появления списка на странице
+     * В течение заданного количества секунд ожидается появление элемента(не списка) на странице
+     */
+    @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
+    public void elemIsPresentedOnPage(String elemName, int seconds) {
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElement(elemName)
+        );
+    }
+
+    /**
+     * Проверка, что в течении 10 секунд ожидается появление списка на странице
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, 10000, alfaScenario.getCurrentPage().getElementsList(elemName)
+        );
+    }
+
+    /**
+     * В течение заданного количества секунд ожидается появление списка на странице
+     */
+    @И("^список \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
+    public void listIsPresentedOnPage(String elemName, int seconds) {
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
     }
 
