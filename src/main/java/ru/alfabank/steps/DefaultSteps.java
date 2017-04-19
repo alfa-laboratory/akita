@@ -11,13 +11,13 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Optional;
 
@@ -197,31 +197,33 @@ public class DefaultSteps {
     }
 
     /**
-     *  Значение из поля сохраняется в заданную переменную.
+     * Значение из поля сохраняется в заданную переменную.
      */
     @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void saveFieldValueToVariable(String fieldName, String variableName) {
-        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getElement(fieldName).innerText());
+        String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        if (!value.isEmpty()) alfaScenario.setVar(variableName, value);
+        else throw new IllegalStateException("Поле " + fieldName + " пусто!");
     }
 
     /**
-     *  Значение из поля совпадает со значением заданной переменной из хранилища.
+     * Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
      */
     @Тогда("^значение в поле \"([^\"]*)\" совпадает со значением переменной \"([^\"]*)\"$")
     public void compareFieldAndVariableValues(String fieldName, String variableName) {
         String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
         String expectedValue = alfaScenario.getVar(variableName).toString();
-        Assert.assertEquals("Значения не совпадают", expectedValue, actualValue);
+        assertEquals("Значения не совпадают", expectedValue, actualValue);
     }
 
     /**
-     *  Из хранилища достаём список по заданному ключу. Проверяем, что значение из поля есть в списке.
+     * Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
      */
     @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной\"([^\"]*)\"$")
     public void checkListcontainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
-        Assert.assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
+        assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
     }
 
     /**
@@ -343,7 +345,7 @@ public class DefaultSteps {
     public void checkTypesOfPay(String nameOfList, List<String> listOfType) {
         List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
         int numberOfTypes = listOfTypeFromPage.size();
-        assertThat("Количество элементов в списке не соответсвует ожиданию",numberOfTypes, Matchers.is(listOfType.size()));
+        assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(listOfType.size()));
         List<String> listOfRealNames = new ArrayList<>();
         listOfTypeFromPage.forEach(type -> listOfRealNames.add(type.innerText()));
         assertTrue("Списки не совпадают", listOfRealNames.containsAll(listOfType));
