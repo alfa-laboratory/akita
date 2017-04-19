@@ -11,6 +11,7 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
@@ -193,6 +194,34 @@ public class DefaultSteps {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки совпадают", s1, equalTo(s2));
+    }
+
+    /**
+     *  Значение из поля сохраняется в заданную переменную.
+     */
+    @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
+    public void saveFieldValueToVariable(String fieldName, String variableName) {
+        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getElement(fieldName).innerText());
+    }
+
+    /**
+     *  Значение из поля совпадает со значением заданной переменной из хранилища.
+     */
+    @Тогда("^значение в поле \"([^\"]*)\" совпадает со значением переменной \"([^\"]*)\"$")
+    public void compareFieldAndVariableValues(String fieldName, String variableName) {
+        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        String expectedValue = alfaScenario.getVar(variableName).toString();
+        Assert.assertEquals("Значения не совпадают", expectedValue, actualValue);
+    }
+
+    /**
+     *  Из хранилища достаём список по заданному ключу. Проверяем, что значение из поля есть в списке.
+     */
+    @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной\"([^\"]*)\"$")
+    public void checkListcontainsValueFromField(String fieldName, String variableListName) {
+        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
+        Assert.assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
     }
 
     /**
