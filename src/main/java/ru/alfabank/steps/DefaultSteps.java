@@ -17,7 +17,6 @@ import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Optional;
 
@@ -202,8 +201,8 @@ public class DefaultSteps {
     @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void saveFieldValueToVariable(String fieldName, String variableName) {
         String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
-        if (!value.isEmpty()) alfaScenario.setVar(variableName, value);
-        else throw new IllegalStateException("Поле " + fieldName + " пусто!");
+        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
+        alfaScenario.setVar(variableName, value);
     }
 
     /**
