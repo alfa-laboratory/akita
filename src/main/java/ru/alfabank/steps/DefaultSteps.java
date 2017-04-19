@@ -196,6 +196,36 @@ public class DefaultSteps {
     }
 
     /**
+     * Значение из поля сохраняется в заданную переменную.
+     */
+    @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
+    public void saveFieldValueToVariable(String fieldName, String variableName) {
+        String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
+        alfaScenario.setVar(variableName, value);
+    }
+
+    /**
+     * Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
+     */
+    @Тогда("^значение в поле \"([^\"]*)\" совпадает со значением переменной \"([^\"]*)\"$")
+    public void compareFieldAndVariableValues(String fieldName, String variableName) {
+        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        String expectedValue = alfaScenario.getVar(variableName).toString();
+        assertEquals("Значения не совпадают", expectedValue, actualValue);
+    }
+
+    /**
+     * Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
+     */
+    @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной\"([^\"]*)\"$")
+    public void checkListcontainsValueFromField(String fieldName, String variableListName) {
+        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
+        assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
+    }
+
+    /**
      * Проверка. Совершается переход по заданной ссылке и ждется, пока заданная страница полностью загрузится (встренная проверка,
      * что загружается та страница, которая ожидается)
      */
@@ -314,7 +344,7 @@ public class DefaultSteps {
     public void checkTypesOfPay(String nameOfList, List<String> listOfType) {
         List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
         int numberOfTypes = listOfTypeFromPage.size();
-        assertThat("Количество элементов в списке не соответсвует ожиданию",numberOfTypes, Matchers.is(listOfType.size()));
+        assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(listOfType.size()));
         List<String> listOfRealNames = new ArrayList<>();
         listOfTypeFromPage.forEach(type -> listOfRealNames.add(type.innerText()));
         assertTrue("Списки не совпадают", listOfRealNames.containsAll(listOfType));
