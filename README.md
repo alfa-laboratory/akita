@@ -38,9 +38,17 @@ http://git/projects/ALAT/repos/testiod0r-testing-template
 
 Проверка, что в течении 10 секунд ожидается появления элемента(не списка) на странице
 
+##### `@И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$") public void elemIsPresentedOnPage(String elemName, int seconds)`
+
+Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
+
 ##### `@И("^список \"([^\"]*)\" отображается на странице$") public void listIsPresentedOnPage(String elemName)`
 
 Проверка, что в течении 10 секунд ожидается появления списка на странице
+
+##### `@И("^список \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$") public void listIsPresentedOnPage(String elemName, int seconds)`
+
+Проверка. В течение заданного количества секунд ожидается появление списка на странице
 
 ##### `@И("^элемент \"([^\"]*)\" не найден на странице$") public void elemIsNotPresentedOnPage(String elemName)`
 
@@ -69,6 +77,22 @@ http://git/projects/ALAT/repos/testiod0r-testing-template
 ##### `@Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$") public void compageTwoVars(String varName1, String varName2)`
 
 Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
+
+##### `@И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$") public void saveFieldValueToVariable(String fieldName, String variableName)`
+
+Значение из поля сохраняется в заданную переменную.
+
+##### `@И("^значение input-поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$") public void saveInputValueToVariable(String fieldName, String variableName)`
+
+Значение из input-поля сохраняется в заданную переменную (сохраняется значение из атрибута value).
+
+##### `@Тогда("^значение в поле \"([^\"]*)\" совпадает со значением переменной \"([^\"]*)\"$") public void compareFieldAndVariableValues(String fieldName, String variableName)`
+
+Проверка. Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
+
+##### `@Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной\"([^\"]*)\"$") public void checkListContainsValueFromField(String fieldName, String variableListName)`
+
+Проверка. Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
 
 ##### `@И("^совершен переход на страницу \"([^\"]*)\" по прямой ссылке = \"([^\"]*)\"$") public void goToSelectedPageByLink(String pageName, String urlName)`
 

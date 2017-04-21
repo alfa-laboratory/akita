@@ -93,7 +93,7 @@ public class DefaultSteps {
     }
 
     /**
-     * В течение заданного количества секунд ожидается появление элемента(не списка) на странице
+     * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
      */
     @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
     public void elemIsPresentedOnPage(String elemName, int seconds) {
@@ -113,7 +113,7 @@ public class DefaultSteps {
     }
 
     /**
-     * В течение заданного количества секунд ожидается появление списка на странице
+     * Проверка. В течение заданного количества секунд ожидается появление списка на странице
      */
     @И("^список \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
     public void listIsPresentedOnPage(String elemName, int seconds) {
@@ -206,7 +206,17 @@ public class DefaultSteps {
     }
 
     /**
-     * Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
+     * Значение из input-поля сохраняется в заданную переменную.
+     */
+    @И("^значение input-поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
+    public void saveInputValueToVariable(String fieldName, String variableName) {
+        String value = alfaScenario.getCurrentPage().getElement(fieldName).getValue();
+        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
+        alfaScenario.setVar(variableName, value);
+    }
+
+    /**
+     * Проверка. Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
      */
     @Тогда("^значение в поле \"([^\"]*)\" совпадает со значением переменной \"([^\"]*)\"$")
     public void compareFieldAndVariableValues(String fieldName, String variableName) {
@@ -216,10 +226,10 @@ public class DefaultSteps {
     }
 
     /**
-     * Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
+     * Проверка. Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
      */
     @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной\"([^\"]*)\"$")
-    public void checkListcontainsValueFromField(String fieldName, String variableListName) {
+    public void checkListContainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
         assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
