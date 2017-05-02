@@ -24,21 +24,15 @@ abstract public class AlfaPage extends ElementsContainer {
 
     public SelenideElement getElement(String name) {
         Object value = namedElements.get(name);
-        if (value == null) {
-            log.error("Элемент " + name + " на странице не найден");
-            return null;
-        }
+        if (value == null) throw new IllegalStateException("Элемент " + name + " на странице не найден");
         return (SelenideElement) value;
     }
 
     @SuppressWarnings("unchecked")
     public List<SelenideElement> getElementsList(String name) {
         Object value = namedElements.get(name);
-        if(!(value instanceof List)) {
-            log.error("Элемент-список " + name + " на странице не найден");
-            return null;
-        }
-
+        if (!(value instanceof List))
+            throw new IllegalStateException("Элемент-список " + name + " на странице не найден");
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
@@ -79,7 +73,7 @@ abstract public class AlfaPage extends ElementsContainer {
         }
         String finalTimeout = timeout;
         getPrimaryElements().parallelStream().forEach(elem ->
-        elem.waitUntil(Condition.appear,Integer.valueOf(finalTimeout)));
+                elem.waitUntil(Condition.appear, Integer.valueOf(finalTimeout)));
     }
 
     protected void isDisappeared() {
@@ -150,7 +144,7 @@ abstract public class AlfaPage extends ElementsContainer {
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .map(f -> f.getDeclaredAnnotation(Name.class).value())
                 .collect(Collectors.toList());
-        if(list.size() != new HashSet<>(list).size()) {
+        if (list.size() != new HashSet<>(list).size()) {
             throw new IllegalStateException("Found two annotation with same value in class " + this.getClass());
         }
     }
