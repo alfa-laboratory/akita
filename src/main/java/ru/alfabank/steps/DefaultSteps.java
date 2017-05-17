@@ -387,5 +387,11 @@ public class DefaultSteps {
             alfaScenario.setVar(variableName, foundElement.innerText());
     }
 
-
+    /**
+     *  Проверка выражения на истинность
+     * */
+    @Тогда("^верно, что \"([^\"]*)\"$")
+    public void expressionExpression(String expression) {
+        alfaScenario.getVars().evaluate("assert(" + expression + ")");
+    }
 }
