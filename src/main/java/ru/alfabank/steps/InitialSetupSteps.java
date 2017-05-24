@@ -1,5 +1,6 @@
 package ru.alfabank.steps;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.common.base.Strings;
 import cucumber.api.Scenario;

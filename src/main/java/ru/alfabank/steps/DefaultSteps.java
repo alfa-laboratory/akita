@@ -381,8 +381,8 @@ public class DefaultSteps {
     public void saveElementToVariable(String element, String variableName)
     {
         SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
-        if (foundElement.toWebElement().getTagName().equals("input"))
-            alfaScenario.setVar(variableName, foundElement.val());
+        if (foundElement.getTagName().equals("input"))
+            alfaScenario.setVar(variableName, foundElement.getValue());
         else
             alfaScenario.setVar(variableName, foundElement.innerText());
     }
