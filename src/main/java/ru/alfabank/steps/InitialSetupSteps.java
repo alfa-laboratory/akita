@@ -33,7 +33,7 @@ public class InitialSetupSteps {
             log.info("Тесты будут запущены локально");
     }
 
-    @After(order = 10)
+    @After(order = 20)
     public void takeScreenshot(Scenario scenario) {
         if (scenario.isFailed()) {
             AlfaScenario.sleep(1);
@@ -42,7 +42,7 @@ public class InitialSetupSteps {
         }
     }
 
-    @After(order = 20)
+    @After(order = 10)
     public void closeWebDriver() {
         if (getWebDriver() != null) {
             WebDriverRunner.getWebDriver().manage().deleteAllCookies();
