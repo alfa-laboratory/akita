@@ -373,4 +373,25 @@ public class DefaultSteps {
             throw new IllegalStateException("Элемент не найден в списке");
         }
     }
+
+    /**
+     *  Сохранение значения элемента в переменную
+     * */
+    @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
+    public void saveElementToVariable(String element, String variableName)
+    {
+        SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
+        if (foundElement.getTagName().equals("input"))
+            alfaScenario.setVar(variableName, foundElement.getValue());
+        else
+            alfaScenario.setVar(variableName, foundElement.innerText());
+    }
+
+    /**
+     *  Проверка выражения на истинность
+     * */
+    @Тогда("^верно, что \"([^\"]*)\"$")
+    public void expressionExpression(String expression) {
+        alfaScenario.getVars().evaluate("assert(" + expression + ")");
+    }
 }

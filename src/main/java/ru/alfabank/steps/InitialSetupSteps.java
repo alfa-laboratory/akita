@@ -1,5 +1,6 @@
 package ru.alfabank.steps;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.common.base.Strings;
 import cucumber.api.Scenario;
@@ -33,7 +34,7 @@ public class InitialSetupSteps {
             log.info("Тесты будут запущены локально");
     }
 
-    @After
+    @After(order = 20)
     public void takeScreenshot(Scenario scenario) {
         if (scenario.isFailed()) {
             AlfaScenario.sleep(1);
@@ -42,7 +43,7 @@ public class InitialSetupSteps {
         }
     }
 
-    @After
+    @After(order = 10)
     public void closeWebDriver() {
         if (getWebDriver() != null) {
             WebDriverRunner.getWebDriver().manage().deleteAllCookies();
