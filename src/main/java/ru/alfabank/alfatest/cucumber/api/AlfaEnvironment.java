@@ -12,12 +12,16 @@ import java.util.Arrays;
 @Slf4j
 public class AlfaEnvironment {
 
-    private final Scenario scenario;
+    private Scenario scenario;
     private ThreadLocal<ScopedVariables> variables = new ThreadLocal<>();
     private Pages pages = new Pages();
 
     public AlfaEnvironment(Scenario scenario) {
         this.scenario = scenario;
+        initPages();
+    }
+
+    public AlfaEnvironment() {
         initPages();
     }
 

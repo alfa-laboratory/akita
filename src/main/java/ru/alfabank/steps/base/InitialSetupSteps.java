@@ -1,4 +1,4 @@
-package ru.alfabank.steps;
+package ru.alfabank.steps.base;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
@@ -27,7 +27,7 @@ public class InitialSetupSteps {
     }
 
     @Before(order = 20)
-    public static void clearCashAndDeleteCookies() throws Exception {
+    public static void setEnvironmentToTest() throws Exception {
         if (!Strings.isNullOrEmpty(System.getProperty("remote"))) {
             log.info("Тесты запущены на удаленной машине: " + System.getProperty("remote"));
         } else

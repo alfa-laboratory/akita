@@ -1,12 +1,9 @@
-package ru.alfabank.steps;
+package ru.alfabank.steps.base;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.java.ru.Если;
-import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Когда;
-import cucumber.api.java.ru.Тогда;
+import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
@@ -27,7 +24,7 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
-import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
+import static ru.alfabank.steps.base.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -393,5 +390,31 @@ public class DefaultSteps {
     @Тогда("^верно, что \"([^\"]*)\"$")
     public void expressionExpression(String expression) {
         alfaScenario.getVars().evaluate("assert(" + expression + ")");
+    }
+
+    /**
+     *  Стандартная авторизация через логин/пароль
+     * */
+    @Пусть("^[базовый] пользователь \"([^\"]*)\" авторизован в приложении и находится на странице \"([^\"]*)\"$")
+    public void loginByUserData(String userCode, String nameUrl) {
+        String login = loadProperty(userCode+".login");
+        String password = loadProperty(userCode+".password");
+        cleanField("Логин");
+        alfaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
+        cleanField("Пароль");
+        alfaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
+        alfaScenario.getCurrentPage().getElement("Войти").click();
+        loadPage(nameUrl);
+    }
+
+    /**
+     *  Авторизация по прямой ссылке в приложении с указанием конечной страницы
+     * */
+    @Пусть("^[базовый] авторизация по прямой ссылке \"([^\"]*)\" выполнена с переходом на страницу \"([^\"]*)\"$")
+    public void loginByCurrentLink(String urlExpression, String nameUrl) {
+        String url = getURLwithPathParamsCalculated(urlExpression);
+        alfaScenario.write(" url = " + url);
+        getWebDriver().get(url);
+        loadPage(nameUrl);
     }
 }

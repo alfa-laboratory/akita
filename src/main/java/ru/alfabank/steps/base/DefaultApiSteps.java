@@ -1,4 +1,4 @@
-package ru.alfabank.steps;
+package ru.alfabank.steps.base;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -13,6 +13,7 @@ import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
@@ -28,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 @Slf4j
 public class DefaultApiSteps {
@@ -131,14 +133,18 @@ public class DefaultApiSteps {
         return requestSender.request(methodType, apiUrl);
     }
 
-    static String getURLwithPathParamsCalculated(String urlName) {
+    public static String getURLwithPathParamsCalculated(String urlName) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(urlName);
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            String value = AlfaScenario.getInstance().getVar(varName).toString();
-            newString = m.replaceFirst(value);
+            try{
+                newString = m.replaceFirst(loadProperty(varName));
+            } catch(IllegalArgumentException exp) {
+                String value = AlfaScenario.getInstance().getVar(varName).toString();
+                newString = m.replaceFirst(value);
+            }
             m = p.matcher(newString);
         }
         if (newString.isEmpty()) {
