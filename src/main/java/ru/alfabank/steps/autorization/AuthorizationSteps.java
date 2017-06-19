@@ -35,7 +35,7 @@ public class AuthorizationSteps {
     /**
      *  Стандартная авторизация через логин/пароль
      * */
-    @Пусть("^пользователь  \"([^\"]*)\" авторизован в приложении и находится на странице \"([^\"]*)\"$")
+    @Пусть("^пользователь \"([^\"]*)\" авторизован в приложении и находится на странице \"([^\"]*)\"$")
     public void loginByUserData(String userCode, String nameUrl) {
         String login = loadProperty(userCode+".login");
         String password = loadProperty(userCode+".password");
