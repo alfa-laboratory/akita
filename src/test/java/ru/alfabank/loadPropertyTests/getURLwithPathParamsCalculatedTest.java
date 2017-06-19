@@ -11,7 +11,7 @@ import static ru.alfabank.steps.base.DefaultApiSteps.getURLwithPathParamsCalcula
 /**
  * Created by rum0tbl on 02.06.17.
  */
-public class LoadPropertyTest {
+public class getURLwithPathParamsCalculatedTest {
     private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
     @Test
