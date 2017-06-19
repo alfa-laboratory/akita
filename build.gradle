@@ -62,7 +62,7 @@ dependencies {
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
 
-    compile group: 'ru.alfabank.tests', name: 'testiod0r-healthcheck', version: '1.0.33'
+    compile group: 'ru.alfabank.tests', name: 'testiod0r-healthcheck', version: '1.0.35'
 }
 
 compileJava.options.encoding = 'UTF-8'
