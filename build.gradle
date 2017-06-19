@@ -7,8 +7,8 @@ buildscript {
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
         classpath 'ru.alfalab.gradle:cucumber-reporting-gradle-plugin:0.1.0'
-        classpath "ru.alfalab.documentation:documentation-gradle-plugin:0.6.0"
-        classpath "ru.alfalab.documentation:documentation-publishing-gradle-plugin:0.7.0"
+        //classpath "ru.alfalab.documentation:documentation-gradle-plugin:0.6.0"
+       // classpath "ru.alfalab.documentation:documentation-publishing-gradle-plugin:0.7.0"
         classpath 'ru.alfalab.gradle:cucumber-parallel-test-gradle-plugin:0.1.3'
     }
 }
