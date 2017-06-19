@@ -395,7 +395,7 @@ public class DefaultSteps {
     /**
      *  Стандартная авторизация через логин/пароль
      * */
-    @Пусть("^[базовый] пользователь \"([^\"]*)\" авторизован в приложении и находится на странице \"([^\"]*)\"$")
+    @Пусть("^#базовый# пользователь \"([^\"]*)\" авторизован в приложении и находится на странице \"([^\"]*)\"$")
     public void loginByUserData(String userCode, String nameUrl) {
         String login = loadProperty(userCode+".login");
         String password = loadProperty(userCode+".password");
@@ -410,7 +410,7 @@ public class DefaultSteps {
     /**
      *  Авторизация по прямой ссылке в приложении с указанием конечной страницы
      * */
-    @Пусть("^[базовый] авторизация по прямой ссылке \"([^\"]*)\" выполнена с переходом на страницу \"([^\"]*)\"$")
+    @Пусть("^#базовый# авторизация по прямой ссылке \"([^\"]*)\" выполнена с переходом на страницу \"([^\"]*)\"$")
     public void loginByCurrentLink(String urlExpression, String nameUrl) {
         String url = getURLwithPathParamsCalculated(urlExpression);
         alfaScenario.write(" url = " + url);
