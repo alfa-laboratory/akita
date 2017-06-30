@@ -13,7 +13,6 @@ buildscript {
         classpath "ru.alfalab.documentation:documentation-publishing-gradle-plugin:0.7.0"
         classpath 'ru.alfalab.gradle:cucumber-parallel-test-gradle-plugin:0.1.3'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
-
     }
 }
 
