@@ -83,8 +83,6 @@ sonarqube {
         property 'sonar.projectName', rootProject.name
         property 'sonar.projectDescription', "Testiod0r autotest framework"
         property 'sonar.sourceEncoding', 'UTF-8'
-        property 'sonar.projectKey', 'ansjkdhiueo2390pjwe'
-        property 'sonar.host.url',  'http://dotools2/sonarqube/'
     }
 }
 
