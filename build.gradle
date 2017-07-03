@@ -102,3 +102,27 @@ artifactory {
 artifactoryPublish {
     dependsOn jar
 }
+
+task createReleaseNotes {
+    dependsOn tasks.final
+    def getVersionName = { ->
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags'
+            standardOutput = stdout
+        }
+        String tagAndSHA = stdout.toString().trim()
+        String tag = tagAndSHA.substring(0, tagAndSHA.indexOf("-"))
+        return tag
+    }
+    doLast {
+        String tag = getVersionName()
+        String filePath = "ReleaseNotes/" + tag
+        new File(filePath).mkdir()
+        String file = filePath + "/ReleaseNotes-" + tag + ".md"
+        def releaseNotes = new File(file)
+        releaseNotes << new File("ReleaseNotes/template").text
+        ant.replace(file: releaseNotes, token: "\$(tag)", value: tag)
+    }
+
+}
