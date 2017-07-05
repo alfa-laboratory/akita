@@ -1,7 +1,0 @@
-artifactory_contextUrl=http\://mvn/artifactory/
-artifactory_user=login
-artifactory_password=pass
-remoteHub=
-profile=
-browser=chrome
-systemProp.sonar.host.url=http\://dotools2/sonarqube/
