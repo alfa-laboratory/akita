@@ -59,6 +59,7 @@ public class DefaultApiSteps {
     }
 
     /**
+     *
      * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
      * соответствует ожиданиям.
      */
@@ -75,7 +76,7 @@ public class DefaultApiSteps {
         JsonParser parser = new JsonParser();
         String jsonResponse = getVar(apiResponse).toString();
         String realFieldValue = parser.parse(jsonResponse).getAsJsonObject().get(field).toString();
-        assertThat("Значение поля API совпадает с ожидаемым",
+        assertThat("Значение поля API не совпадает с ожидаемым",
                 realFieldValue,
                 equalTo(expectedFieldValue));
     }

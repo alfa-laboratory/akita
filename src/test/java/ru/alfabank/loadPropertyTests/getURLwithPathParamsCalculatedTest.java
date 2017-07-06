@@ -19,8 +19,9 @@ public class getURLwithPathParamsCalculatedTest {
         alfaScenario.setEnvironment(new AlfaEnvironment());
         alfaScenario.setVar("first","pervoe");
         alfaScenario.setVar("second","ne_rabotaet");
+        String expected = "pervoe ne_rabotaet";
         String actual = getURLwithPathParamsCalculated("{first} {second}");
-        assertThat("Итоговый URL не равен 'pervoe ne_rabotaet'", actual, Matchers.equalTo("pervoe ne_rabotaet"));
+        assertThat("Итоговый URL не равен 'pervoe ne_rabotaet'", actual, Matchers.equalTo(expected));
     }
 
     @Test

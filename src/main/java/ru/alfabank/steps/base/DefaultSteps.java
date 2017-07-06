@@ -175,29 +175,13 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
-     */
-    @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
-    public void compareTwoDigitVars(String firstValue, String secondValue) {
-        BigInteger bigInt1 = new BigInteger(
-                alfaScenario.getVar(firstValue).toString()
-        );
-        BigInteger bigInt2 = new BigInteger(
-                alfaScenario.getVar(secondValue).toString()
-        );
-        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
-                secondValue + " = " + bigInt2);
-        assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
-    }
-
-    /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
      */
     @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compageTwoVars(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
-        assertThat("строки совпадают", s1, equalTo(s2));
+        assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
     /**
@@ -269,12 +253,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Эмулирует нажатие на клавиатуре клавиш. Для кейса, когда нужно промотать страицу вниз по Page Down
+     * Эмулирует нажатие на клавиатуре клавиш.
      */
     @И("^нажать на клавиатуре \"([^\"]*)\"$")
     public void pressButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
-        alfaScenario.getCurrentPage().getPrimaryElements().get(0).sendKeys(key);
+        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
     }
 
     /**
@@ -293,6 +277,7 @@ public class DefaultSteps {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.click();
         valueInput.clear();
         valueInput.setValue("");
         valueInput.doubleClick().sendKeys(Keys.DELETE);
@@ -331,13 +316,13 @@ public class DefaultSteps {
                 alfaScenario.getVars().evaluate(parts[0]).toString());
         int rightPart = Integer.valueOf(
                 alfaScenario.getVars().evaluate(parts[1]).toString());
-        MatcherAssert.assertThat("выражение верное", leftPart, equalTo(rightPart));
+        MatcherAssert.assertThat("выражение не верное", leftPart, equalTo(rightPart));
     }
 
     /**
      * Устанавливает размеры окна с браузером
      */
-    @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
+    @И("^установить разрешение \"([^\"]*)\" х \"([^\"]*)\"$")
     public void setupWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
         int height = Integer.valueOf(heightRaw);
@@ -401,9 +386,9 @@ public class DefaultSteps {
     }
 
     /**
-     *  Стандартная авторизация через логин/пароль
+     *  Ввод логин/пароля
      * */
-    @Пусть("^базовый шаг - пользователь \"([^\"]*)\" авторизован в приложении и находится на странице \"([^\"]*)\"$")
+    @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
     public void loginByUserData(String userCode, String nameUrl) {
         String login = loadProperty(userCode+".login");
         String password = loadProperty(userCode+".password");
@@ -412,17 +397,15 @@ public class DefaultSteps {
         cleanField("Пароль");
         alfaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
         alfaScenario.getCurrentPage().getElement("Войти").click();
-        loadPage(nameUrl);
     }
 
     /**
      *  Авторизация по прямой ссылке в приложении с указанием конечной страницы
      * */
-    @Пусть("^базовый шаг - авторизация по прямой ссылке \"([^\"]*)\" выполнена с переходом на страницу \"([^\"]*)\"$")
+    @Пусть("^авторизация по прямой ссылке \"([^\"]*)\"$")
     public void loginByCurrentLink(String urlExpression, String nameUrl) {
         String url = getURLwithPathParamsCalculated(urlExpression);
         alfaScenario.write(" url = " + url);
         getWebDriver().get(url);
-        loadPage(nameUrl);
     }
 }
