@@ -40,9 +40,9 @@ public class DefaultApiSteps {
      */
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
+        String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        Response response = request.request(Method.valueOf(typeOfRequest), url);
         getResponseAndSaveToVariable(request, variableName, response);
     }
 
@@ -121,6 +121,7 @@ public class DefaultApiSteps {
         }
     }
 
+    // FIXME: Not used. Remove?
     private Response makePostRequestWithBody(Map<String, String> headers, String jsonBody, Method methodType, String apiUrl) {
         RequestSpecification requestSender = given()
                 .contentType(ContentType.JSON)
@@ -148,9 +149,9 @@ public class DefaultApiSteps {
     }
 
     public boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
+        String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        Response response = request.request(Method.valueOf(typeOfRequest), url);
         int statusCode = response.getStatusCode();
         if (statusCode != expectedStatusCode) {
             write("Ожидали статус код: " + expectedStatusCode + ". Получили: " + statusCode);
