@@ -1,58 +1,45 @@
-
-
 buildscript {
     repositories {
-        maven { url "http://mvn/artifactory/public" }
-        maven { url 'http://mvn/artifactory/gradleplugins' }
+        jcenter()
+        mavenCentral()
     }
 
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
-        classpath 'ru.alfalab.gradle:cucumber-reporting-gradle-plugin:0.1.0'
-        classpath "ru.alfalab.documentation:documentation-gradle-plugin:0.6.0"
-        classpath "ru.alfalab.documentation:documentation-publishing-gradle-plugin:0.7.0"
-        classpath 'ru.alfalab.gradle:cucumber-parallel-test-gradle-plugin:0.1.3'
+        classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
     }
 }
 
-
 repositories {
-    maven { url "http://mvn/artifactory/public" }
-    maven { url "http://mvn/artifactory/thirdparty" }
-    maven { url "http://mvn/artifactory/Autotests" }
+    jcenter()
+    mavenCentral()
 }
-
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'ru.alfalab.cucumber-reporting'
-apply plugin: 'ru.alfalab.cucumber-parallel-test'
-//apply plugin: 'ru.alfalab.documentation'
-//apply plugin: 'ru.alfalab.documentation.publishing'
 apply plugin: 'maven-publish'
+apply plugin: 'nebula.nebula-release'
 apply plugin: 'org.sonarqube'
 
 
-
+tasks.release.dependsOn tasks.artifactoryPublish
 
 group = 'ru.alfabank.tests'
 
-if (project.hasProperty('artifactBuildNumber')) {
-    project.version = '1.0.' + project.artifactBuildNumber
-} else {
-    project.version = '1.0.0'
-}
-
-
 description = """light testing framework Testiod0r"""
-generateRunner.glue = "ru/alfabank/tests/steps";
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+Properties artifactoryProps = new Properties()
+artifactoryProps.load(new FileInputStream("artifactory.properties"))
+artifactoryProps.each { prop ->
+    project.ext.set(prop.key, prop.value)
+}
 
 project.ext {
     cucumberVersion = '1.2.5'
@@ -70,8 +57,6 @@ dependencies {
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
-
-    compile group: 'ru.alfabank.tests', name: 'testiod0r-healthcheck', version: '1.0.33'
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -103,7 +88,6 @@ task sourceJar(type: Jar) {
 }
 
 artifactory {
-
     contextUrl = "${artifactory_contextUrl}"
     publish {
         repository {
@@ -116,19 +100,8 @@ artifactory {
             publications ('maven')
         }
     }
-
 }
 
 artifactoryPublish {
     dependsOn jar
-}
-
-task buildnumberplusone {
-    Properties props = new Properties()
-    File propsFile = new File('gradle.properties')
-    props.load(propsFile.newDataInputStream())
-    Integer nextbuildnum = ( ((props.getProperty('artifactBuildNumber')) as BigDecimal) + 1 )
-    props.setProperty('artifactBuildNumber', nextbuildnum.toString())
-    props.store(propsFile.newWriter(), null)
-    props.load(propsFile.newDataInputStream())
 }
