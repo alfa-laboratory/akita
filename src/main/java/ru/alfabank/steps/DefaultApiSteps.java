@@ -137,7 +137,7 @@ public class DefaultApiSteps {
         return newString;
     }
 
-    public boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+    private boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
         String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
         Response response = request.request(Method.valueOf(typeOfRequest), url);
