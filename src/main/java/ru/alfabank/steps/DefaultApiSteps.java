@@ -43,7 +43,7 @@ public class DefaultApiSteps {
         String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
         Response response = request.request(Method.valueOf(typeOfRequest), url);
-        getResponseAndSaveToVariable(request, variableName, response);
+        getResponseAndSaveToVariable(variableName, response);
     }
 
     /**
@@ -112,24 +112,13 @@ public class DefaultApiSteps {
         return request;
     }
 
-    private void getResponseAndSaveToVariable(RequestSender request, String variableName, Response response) {
+    private void getResponseAndSaveToVariable(String variableName, Response response) {
         if (response.statusCode() == 200) {
             alfaScenario.setVar(variableName, response.getBody().asString());
             if (log.isDebugEnabled()) alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {
             fail("Некорректный ответ на запрос: " + response.getBody().asString());
         }
-    }
-
-    // FIXME: Not used. Remove?
-    private Response makePostRequestWithBody(Map<String, String> headers, String jsonBody, Method methodType, String apiUrl) {
-        RequestSpecification requestSender = given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when();
-
-        if (headers != null) requestSender = requestSender.headers(headers);
-        return requestSender.request(methodType, apiUrl);
     }
 
     static String getURLwithPathParamsCalculated(String urlName) {
