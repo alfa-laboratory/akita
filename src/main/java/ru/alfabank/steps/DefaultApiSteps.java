@@ -83,7 +83,7 @@ public class DefaultApiSteps {
                     break;
                 case BODY:
                     String path = String.join(File.separator, "src", "main", "java", "restBodies", requestParam.getValue());
-                    try(FileReader fileReader = new FileReader(path)) {
+                    try (FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
                     } catch (java.io.IOException e) {
