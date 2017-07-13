@@ -13,6 +13,10 @@ import java.util.Scanner;
 public class SystemSteps {
     private static final String PDF_PREFIX = "%PDF";
 
+
+    private SystemSteps() {
+    }
+
     /**
      * Проверка, что переданный файл имеет тип PDF
      */
@@ -21,10 +25,10 @@ public class SystemSteps {
     }
 
     public static boolean isFilePdf(File file) throws FileNotFoundException {
-        if(!file.exists()) {
+        if (!file.exists()) {
             throw new AssertionError("File not found by path: " + file.getAbsolutePath());
         }
-        try(Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner = new Scanner(file)) {
             return scanner.hasNextLine() && scanner.nextLine().startsWith(PDF_PREFIX);
         }
     }

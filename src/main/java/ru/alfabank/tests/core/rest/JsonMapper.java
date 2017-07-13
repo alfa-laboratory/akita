@@ -9,6 +9,9 @@ import java.math.BigDecimal;
  */
 public class JsonMapper {
 
+    private JsonMapper() {
+    }
+
     public static String getString(JsonElement element, String fieldName){
         if (!(element.getAsJsonObject().get(fieldName) instanceof JsonNull)) {
             return element.getAsJsonObject().get(fieldName).getAsString();

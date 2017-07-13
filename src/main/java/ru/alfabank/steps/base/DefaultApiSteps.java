@@ -1,4 +1,4 @@
-package ru.alfabank.steps.base;
+package ru.alfabank.steps;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -13,7 +13,6 @@ import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.tests.core.helpers.PropertyLoader;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
@@ -29,7 +28,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 @Slf4j
 public class DefaultApiSteps {
@@ -42,10 +40,10 @@ public class DefaultApiSteps {
      */
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
+        String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        getResponseAndSaveToVariable(request, variableName, response);
+        Response response = request.request(Method.valueOf(typeOfRequest), url);
+        getResponseAndSaveToVariable(variableName, response);
     }
 
     /**
@@ -85,7 +83,7 @@ public class DefaultApiSteps {
                     break;
                 case BODY:
                     String path = String.join(File.separator, "src", "main", "java", "restBodies", requestParam.getValue());
-                    try(FileReader fileReader = new FileReader(path)) {
+                    try (FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
                     } catch (java.io.IOException e) {
@@ -114,7 +112,7 @@ public class DefaultApiSteps {
         return request;
     }
 
-    private void getResponseAndSaveToVariable(RequestSender request, String variableName, Response response) {
+    private void getResponseAndSaveToVariable(String variableName, Response response) {
         if (response.statusCode() == 200) {
             alfaScenario.setVar(variableName, response.getBody().asString());
             if (log.isDebugEnabled()) alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
@@ -123,28 +121,14 @@ public class DefaultApiSteps {
         }
     }
 
-    private Response makePostRequestWithBody(Map<String, String> headers, String jsonBody, Method methodType, String apiUrl) {
-        RequestSpecification requestSender = given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when();
-
-        if (headers != null) requestSender = requestSender.headers(headers);
-        return requestSender.request(methodType, apiUrl);
-    }
-
-    public static String getURLwithPathParamsCalculated(String urlName) {
+    static String getURLwithPathParamsCalculated(String urlName) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(urlName);
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            try{
-                newString = m.replaceFirst(loadProperty(varName));
-            } catch(IllegalArgumentException exp) {
-                String value = AlfaScenario.getInstance().getVar(varName).toString();
-                newString = m.replaceFirst(value);
-            }
+            String value = AlfaScenario.getInstance().getVar(varName).toString();
+            newString = m.replaceFirst(value);
             m = p.matcher(newString);
         }
         if (newString.isEmpty()) {
@@ -153,10 +137,10 @@ public class DefaultApiSteps {
         return newString;
     }
 
-    public boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
+    private boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        Response response = request.request(Method.valueOf(typeOfRequest), url);
         int statusCode = response.getStatusCode();
         if (statusCode != expectedStatusCode) {
             write("Ожидали статус код: " + expectedStatusCode + ". Получили: " + statusCode);
