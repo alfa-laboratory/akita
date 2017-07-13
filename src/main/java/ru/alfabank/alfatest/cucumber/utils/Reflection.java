@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 /**
  * Created by ruslanmikhalev on 26/01/17.
  */
-final public class Reflection {
+public final class Reflection {
 
     private Reflection() {
 

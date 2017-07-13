@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * Created by ruslanmikhalev on 26/01/17.
  */
-final public class Spectators {
+public final class Spectators {
 
     private Spectators() {
 

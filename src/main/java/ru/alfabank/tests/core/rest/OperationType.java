@@ -3,7 +3,6 @@ package ru.alfabank.tests.core.rest;
 import lombok.NonNull;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 
 /**
  * Created by U_M0UKA on 26.01.2017.
