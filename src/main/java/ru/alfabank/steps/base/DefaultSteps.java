@@ -240,7 +240,7 @@ public class DefaultSteps {
      * Ожидание заданное количество секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) секунд$")
-    public void waitDuring(int seconds) {
+    public void waitDuring(long seconds) {
         sleep(1000 * seconds);
     }
 
@@ -333,7 +333,7 @@ public class DefaultSteps {
      * Разворачивает окно с браузером на весь экран
      */
     @Если("^развернуть окно на весь экран$")
-    public void развернутьОкноНаВесьЭкран() {
+    public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
     }
 
