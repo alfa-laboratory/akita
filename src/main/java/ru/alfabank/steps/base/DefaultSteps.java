@@ -397,14 +397,4 @@ public class DefaultSteps {
         alfaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
         alfaScenario.getCurrentPage().getElement("Войти").click();
     }
-
-    /**
-     *  Авторизация по прямой ссылке в приложении с указанием конечной страницы
-     * */
-    @Пусть("^авторизация по прямой ссылке \"([^\"]*)\"$")
-    public void loginByCurrentLink(String urlExpression, String nameUrl) {
-        String url = getURLwithPathParamsCalculated(urlExpression);
-        alfaScenario.write(" url = " + url);
-        getWebDriver().get(url);
-    }
 }
