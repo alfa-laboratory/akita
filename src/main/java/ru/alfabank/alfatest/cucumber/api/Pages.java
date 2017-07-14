@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /**
  * Created by ruslanmikhalev on 27/01/17.
  */
-final public class Pages {
+public final class Pages {
     private Map<String, AlfaPage> pages;
     private AlfaPage currentPage;
 

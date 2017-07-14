@@ -40,10 +40,10 @@ public class DefaultApiSteps {
      */
     @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
+        String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        getResponseAndSaveToVariable(request, variableName, response);
+        Response response = request.request(Method.valueOf(typeOfRequest), url);
+        getResponseAndSaveToVariable(variableName, response);
     }
 
     /**
@@ -83,7 +83,7 @@ public class DefaultApiSteps {
                     break;
                 case BODY:
                     String path = String.join(File.separator, "src", "main", "java", "restBodies", requestParam.getValue());
-                    try(FileReader fileReader = new FileReader(path)) {
+                    try (FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
                     } catch (java.io.IOException e) {
@@ -112,23 +112,13 @@ public class DefaultApiSteps {
         return request;
     }
 
-    private void getResponseAndSaveToVariable(RequestSender request, String variableName, Response response) {
+    private void getResponseAndSaveToVariable(String variableName, Response response) {
         if (response.statusCode() == 200) {
             alfaScenario.setVar(variableName, response.getBody().asString());
             if (log.isDebugEnabled()) alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {
             fail("Некорректный ответ на запрос: " + response.getBody().asString());
         }
-    }
-
-    private Response makePostRequestWithBody(Map<String, String> headers, String jsonBody, Method methodType, String apiUrl) {
-        RequestSpecification requestSender = given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when();
-
-        if (headers != null) requestSender = requestSender.headers(headers);
-        return requestSender.request(methodType, apiUrl);
     }
 
     static String getURLwithPathParamsCalculated(String urlName) {
@@ -147,10 +137,10 @@ public class DefaultApiSteps {
         return newString;
     }
 
-    public boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
+    private boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        String url = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        Response response = request.request(Method.valueOf(typeOfRequest), url);
         int statusCode = response.getStatusCode();
         if (statusCode != expectedStatusCode) {
             write("Ожидали статус код: " + expectedStatusCode + ". Получили: " + statusCode);
