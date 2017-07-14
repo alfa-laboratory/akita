@@ -12,7 +12,6 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
