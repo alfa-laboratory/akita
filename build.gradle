@@ -88,6 +88,7 @@ task sourceJar(type: Jar) {
 }
 
 artifactory {
+
     contextUrl = "${artifactory_contextUrl}"
     publish {
         repository {

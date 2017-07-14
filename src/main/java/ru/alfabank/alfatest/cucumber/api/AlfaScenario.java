@@ -71,7 +71,7 @@ public final class AlfaScenario {
 
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
-        if (obj == null) log.error("Переменная " + name + " не найдена");
+        if (obj == null) throw new NullPointerException("Переменная " + name + " не найдена");
         return obj;
     }
 

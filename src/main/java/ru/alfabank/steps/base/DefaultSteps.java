@@ -1,12 +1,9 @@
-package ru.alfabank.steps;
+package ru.alfabank.steps.base;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.java.ru.Если;
-import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Когда;
-import cucumber.api.java.ru.Тогда;
+import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
@@ -15,7 +12,6 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +23,7 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
-import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
+import static ru.alfabank.steps.base.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -50,6 +46,14 @@ public class DefaultSteps {
     @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
     public void saveValueToVariable(String globalVarName, String varName) {
         setVar(varName, loadProperty(globalVarName));
+    }
+
+    /**
+     * Обновляем страницу страницы
+     */
+    @И("^выполнено обновление текущей страницы$")
+    public void refreshPage() {
+        getWebDriver().navigate().refresh();
     }
 
     /**
@@ -170,29 +174,13 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
-     */
-    @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
-    public void compareTwoDigitVars(String firstValue, String secondValue) {
-        BigInteger bigInt1 = new BigInteger(
-                alfaScenario.getVar(firstValue).toString()
-        );
-        BigInteger bigInt2 = new BigInteger(
-                alfaScenario.getVar(secondValue).toString()
-        );
-        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
-                secondValue + " = " + bigInt2);
-        assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
-    }
-
-    /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
      */
     @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compageTwoVars(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
-        assertThat("строки совпадают", s1, equalTo(s2));
+        assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
     /**
@@ -264,12 +252,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Эмулирует нажатие на клавиатуре клавиш. Для кейса, когда нужно промотать страицу вниз по Page Down
+     * Эмулирует нажатие на клавиатуре клавиш.
      */
     @И("^нажать на клавиатуре \"([^\"]*)\"$")
     public void pressButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
-        alfaScenario.getCurrentPage().getPrimaryElements().get(0).sendKeys(key);
+        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
     }
 
     /**
@@ -288,6 +276,7 @@ public class DefaultSteps {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.click();
         valueInput.clear();
         valueInput.setValue("");
         valueInput.doubleClick().sendKeys(Keys.DELETE);
@@ -326,13 +315,13 @@ public class DefaultSteps {
                 alfaScenario.getVars().evaluate(parts[0]).toString());
         int rightPart = Integer.valueOf(
                 alfaScenario.getVars().evaluate(parts[1]).toString());
-        MatcherAssert.assertThat("выражение верное", leftPart, equalTo(rightPart));
+        MatcherAssert.assertThat("выражение не верное", leftPart, equalTo(rightPart));
     }
 
     /**
      * Устанавливает размеры окна с браузером
      */
-    @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
+    @И("^установить разрешение \"([^\"]*)\" х \"([^\"]*)\"$")
     public void setupWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
         int height = Integer.valueOf(heightRaw);
@@ -393,5 +382,19 @@ public class DefaultSteps {
     @Тогда("^верно, что \"([^\"]*)\"$")
     public void expressionExpression(String expression) {
         alfaScenario.getVars().evaluate("assert(" + expression + ")");
+    }
+
+    /**
+     *  Ввод логин/пароля
+     * */
+    @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
+    public void loginByUserData(String userCode, String nameUrl) {
+        String login = loadProperty(userCode+".login");
+        String password = loadProperty(userCode+".password");
+        cleanField("Логин");
+        alfaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
+        cleanField("Пароль");
+        alfaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
+        alfaScenario.getCurrentPage().getElement("Войти").click();
     }
 }
