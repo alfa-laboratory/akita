@@ -12,6 +12,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -321,7 +322,7 @@ public class DefaultSteps {
     /**
      * Устанавливает размеры окна с браузером
      */
-    @И("^установить разрешение \"([^\"]*)\" х \"([^\"]*)\"$")
+    @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
     public void setupWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
         int height = Integer.valueOf(heightRaw);
@@ -388,7 +389,7 @@ public class DefaultSteps {
      *  Ввод логин/пароля
      * */
     @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
-    public void loginByUserData(String userCode, String nameUrl) {
+    public void loginByUserData(String userCode) {
         String login = loadProperty(userCode+".login");
         String password = loadProperty(userCode+".password");
         cleanField("Логин");
@@ -396,5 +397,21 @@ public class DefaultSteps {
         cleanField("Пароль");
         alfaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
         alfaScenario.getCurrentPage().getElement("Войти").click();
+    }
+
+    /**
+     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
+     */
+    @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
+    public void compareTwoDigitVars(String firstValue, String secondValue) {
+        BigInteger bigInt1 = new BigInteger(
+                alfaScenario.getVar(firstValue).toString()
+        );
+        BigInteger bigInt2 = new BigInteger(
+                alfaScenario.getVar(secondValue).toString()
+        );
+        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
+                secondValue + " = " + bigInt2);
+        assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
     }
 }
