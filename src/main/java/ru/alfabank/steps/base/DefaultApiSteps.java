@@ -12,6 +12,7 @@ import io.restassured.specification.RequestSender;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
@@ -47,6 +48,16 @@ public class DefaultApiSteps {
         getResponseAndSaveToVariable(variableName, response);
     }
 
+    @И("^отправлен \"([^\"]*)\" на URL из property \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendDepositRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
+        try {
+            urlName = PropertyLoader.loadProperty(urlName);
+        } catch (IllegalArgumentException ex) {
+            urlName = getURLwithPathParamsCalculated(urlName);
+        }
+        sendRequest(typeOfRequest, urlName, variableName, table);
+    }
+
     /**
      * Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Результат сохраняется в заданную переменную
      */
@@ -59,7 +70,6 @@ public class DefaultApiSteps {
     }
 
     /**
-     *
      * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
      * соответствует ожиданиям.
      */

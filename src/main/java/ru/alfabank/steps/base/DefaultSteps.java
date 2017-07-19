@@ -11,11 +11,12 @@ import org.hamcrest.Matchers;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
+import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.not;
@@ -237,6 +238,22 @@ public class DefaultSteps {
     }
 
     /**
+     * Совершается переход по заданной ссылке.
+     * Сыллка может передаваться как строка, как и как ключь из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по (прямой ссылке|из property файла) = \"([^\"]*)\" $")
+    public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
+        try {
+            urlName = PropertyLoader.loadProperty(urlName);
+        } catch (IllegalArgumentException ex) {
+            urlName = getURLwithPathParamsCalculated(urlName);
+        }
+        alfaScenario.write(" url = " + urlName);
+        WebDriverRunner.getWebDriver().get(urlName);
+        loadPage(pageName);
+    }
+
+    /**
      * Ожидание заданное количество секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) секунд$")
@@ -413,5 +430,35 @@ public class DefaultSteps {
         alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
                 secondValue + " = " + bigInt2);
         assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
+    }
+
+    @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
+    public void saveToVariable(String fieldname) {
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
+        field.hover();
+    }
+
+    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" (?:скрыто|скрыт|скрыта)$")
+    public void elementIsNotVisible(String field) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
+        assertFalse(String.format("элемент [%s] не должен отображаться на странице", field), element.isDisplayed());
+    }
+
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит текущий месяц$")
+    public void currentMonthChecker(String field) {
+        String month = getMonthNameFromDate(Calendar.getInstance().getTime());
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
+        assertEquals(month, element.getText());
+    }
+
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
+    public void clickableField(String field) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
+        assertTrue(element.isEnabled());
+    }
+
+    private String getMonthNameFromDate(Date dateValue) {
+        SimpleDateFormat monthFormat = new SimpleDateFormat("LLLL", new Locale("ru"));
+        return monthFormat.format(dateValue);
     }
 }
