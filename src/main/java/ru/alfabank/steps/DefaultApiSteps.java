@@ -1,4 +1,4 @@
-package ru.alfabank.steps.base;
+package ru.alfabank.steps;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -48,14 +48,21 @@ public class DefaultApiSteps {
         getResponseAndSaveToVariable(variableName, response);
     }
 
-    @И("^отправлен \"([^\"]*)\" на URL из property \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendDepositRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
+    /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
+     * Результат сохраняется в заданную переменную
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
         try {
             urlName = PropertyLoader.loadProperty(urlName);
         } catch (IllegalArgumentException ex) {
             urlName = getURLwithPathParamsCalculated(urlName);
         }
-        sendRequest(typeOfRequest, urlName, variableName, table);
+        RequestSender request = createRequestByParamsTable();
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        getResponseAndSaveToVariable(variableName, response);
     }
 
     /**
@@ -70,11 +77,43 @@ public class DefaultApiSteps {
     }
 
     /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Результат сохраняется в заданную переменную
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
+        try {
+            urlName = PropertyLoader.loadProperty(urlName);
+        } catch (IllegalArgumentException ex) {
+            urlName = getURLwithPathParamsCalculated(urlName);
+        }
+        RequestSender request = createRequestByParamsTable(table);
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        getResponseAndSaveToVariable(variableName, response);
+    }
+
+    /**
      * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
      * соответствует ожиданиям.
      */
     @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkStatusCodeWithAssertion(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
+    }
+
+    /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Проверяется, что код ответа соответствует ожиданиям.
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
+    public void checkResponseStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        try {
+            urlName = PropertyLoader.loadProperty(urlName);
+        } catch (IllegalArgumentException ex) {
+            urlName = getURLwithPathParamsCalculated(urlName);
+        }
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
 

@@ -7,7 +7,6 @@ import org.junit.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.steps.base.DefaultSteps;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

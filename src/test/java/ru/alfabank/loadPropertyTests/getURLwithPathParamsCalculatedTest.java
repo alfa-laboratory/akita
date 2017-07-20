@@ -6,7 +6,7 @@ import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
 import static org.junit.Assert.assertThat;
-import static ru.alfabank.steps.base.DefaultApiSteps.getURLwithPathParamsCalculated;
+import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 
 /**
  * Created by rum0tbl on 02.06.17.

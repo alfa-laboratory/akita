@@ -1,4 +1,4 @@
-package ru.alfabank.steps.base;
+package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.common.base.Strings;
