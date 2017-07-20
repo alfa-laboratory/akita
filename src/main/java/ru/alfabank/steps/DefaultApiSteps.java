@@ -40,6 +40,7 @@ public class DefaultApiSteps {
     /**
      * Посылается http GET/POST/... запрос по заданному урлу без параметров и BODY. Результат сохраняется в заданную переменную
      */
+    @Deprecated
     @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
         urlName = getURLwithPathParamsCalculated(urlName);
@@ -68,6 +69,7 @@ public class DefaultApiSteps {
     /**
      * Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Результат сохраняется в заданную переменную
      */
+    @Deprecated
     @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         urlName = getURLwithPathParamsCalculated(urlName);
@@ -97,6 +99,7 @@ public class DefaultApiSteps {
      * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
      * соответствует ожиданиям.
      */
+    @Deprecated
     @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkStatusCodeWithAssertion(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
