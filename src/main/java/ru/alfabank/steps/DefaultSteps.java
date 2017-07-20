@@ -22,6 +22,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
@@ -457,5 +458,15 @@ public class DefaultSteps {
     public void clickableField(String field) {
         SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
         assertTrue(String.format("элемент [%s] не кликабелен", field), element.isEnabled());
+    }
+
+    /**
+     * Проверка, что у эелемента есть атрибут с ожидаемым значением
+     */
+    @Тогда("^элемент \"([^\"]*)\" содежит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
+    public void checkElemContainsAtrWithValue(String elemName, String atrName, String expectedAtrValue) {
+        SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
+        String currentAtrValue = currentElement.attr(atrName);
+        assertThat("значения не совпали", currentAtrValue, equalToIgnoringCase(expectedAtrValue));
     }
 }
