@@ -230,15 +230,12 @@ public class DefaultSteps {
 
     /**
      * Совершается переход по заданной ссылке.
-     * Сыллка может передаваться как строка, как и как ключь из application.properties
+     * Ссылка может передаваться как строка, так и как ключь из application.properties
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
-        try {
-            urlName = PropertyLoader.loadProperty(urlName);
-        } catch (IllegalArgumentException ex) {
-            urlName = getURLwithPathParamsCalculated(urlName);
-        }
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
         alfaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
         loadPage(pageName);

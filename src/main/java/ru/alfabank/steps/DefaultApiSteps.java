@@ -18,6 +18,7 @@ import ru.alfabank.tests.core.rest.RequestParam;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,14 +57,9 @@ public class DefaultApiSteps {
      */
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
-        try {
-            urlName = PropertyLoader.loadProperty(urlName);
-        } catch (IllegalArgumentException ex) {
-            urlName = getURLwithPathParamsCalculated(urlName);
-        }
-        RequestSender request = createRequestByParamsTable();
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        getResponseAndSaveToVariable(variableName, response);
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());
     }
 
     /**
@@ -85,11 +81,8 @@ public class DefaultApiSteps {
      */
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        try {
-            urlName = PropertyLoader.loadProperty(urlName);
-        } catch (IllegalArgumentException ex) {
-            urlName = getURLwithPathParamsCalculated(urlName);
-        }
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
         RequestSender request = createRequestByParamsTable(table);
         Response response = request.request(Method.valueOf(typeOfRequest), urlName);
         getResponseAndSaveToVariable(variableName, response);
@@ -112,11 +105,8 @@ public class DefaultApiSteps {
      */
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkResponseStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        try {
-            urlName = PropertyLoader.loadProperty(urlName);
-        } catch (IllegalArgumentException ex) {
-            urlName = getURLwithPathParamsCalculated(urlName);
-        }
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
 
