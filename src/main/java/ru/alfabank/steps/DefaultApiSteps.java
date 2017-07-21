@@ -1,4 +1,4 @@
-package ru.alfabank.steps.base;
+package ru.alfabank.steps;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -12,11 +12,13 @@ import io.restassured.specification.RequestSender;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,7 @@ public class DefaultApiSteps {
     /**
      * Посылается http GET/POST/... запрос по заданному урлу без параметров и BODY. Результат сохраняется в заданную переменную
      */
+    @Deprecated
     @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
         urlName = getURLwithPathParamsCalculated(urlName);
@@ -48,8 +51,21 @@ public class DefaultApiSteps {
     }
 
     /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
+     * Результат сохраняется в заданную переменную
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());
+    }
+
+    /**
      * Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Результат сохраняется в заданную переменную
      */
+    @Deprecated
     @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         urlName = getURLwithPathParamsCalculated(urlName);
@@ -59,12 +75,38 @@ public class DefaultApiSteps {
     }
 
     /**
-     *
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Результат сохраняется в заданную переменную
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        RequestSender request = createRequestByParamsTable(table);
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        getResponseAndSaveToVariable(variableName, response);
+    }
+
+    /**
      * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
      * соответствует ожиданиям.
      */
+    @Deprecated
     @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkStatusCodeWithAssertion(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
+    }
+
+    /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Проверяется, что код ответа соответствует ожиданиям.
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
+    public void checkResponseStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
 

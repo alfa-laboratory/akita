@@ -1,4 +1,4 @@
-package ru.alfabank.steps.base;
+package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
@@ -11,20 +11,20 @@ import org.hamcrest.Matchers;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.junit.Assert.*;
-import static ru.alfabank.steps.base.DefaultApiSteps.getURLwithPathParamsCalculated;
+import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -128,15 +128,6 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что элемента нет на странице. (перед этим ждем 3 секунды, зачем - не знаю)
-     */
-    @И("^элемент \"([^\"]*)\" не найден на странице$")
-    public void elemIsNotPresentedOnPage(String elemName) {
-        sleep(3000);
-        alfaScenario.getCurrentPage().getElement(elemName).shouldBe(not(exist));
-    }
-
-    /**
      * Проверка. В течении 10 секунд ожидаем пока элемент исчезнет (станет невидимым)
      */
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
@@ -228,11 +219,25 @@ public class DefaultSteps {
      * Проверка. Совершается переход по заданной ссылке и ждется, пока заданная страница полностью загрузится (встренная проверка,
      * что загружается та страница, которая ожидается)
      */
+    @Deprecated
     @И("^совершен переход на страницу \"([^\"]*)\" по прямой ссылке = \"([^\"]*)\"$")
     public void goToSelectedPageByLink(String pageName, String urlName) {
         String url = getURLwithPathParamsCalculated(urlName);
         alfaScenario.write(" url = " + url);
         WebDriverRunner.getWebDriver().get(url);
+        loadPage(pageName);
+    }
+
+    /**
+     * Совершается переход по заданной ссылке.
+     * Ссылка может передаваться как строка, так и как ключь из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
+    public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        alfaScenario.write(" url = " + urlName);
+        WebDriverRunner.getWebDriver().get(urlName);
         loadPage(pageName);
     }
 
@@ -413,5 +418,52 @@ public class DefaultSteps {
         alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
                 secondValue + " = " + bigInt2);
         assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
+    }
+
+    /**
+     * Выполнено наведение курсора на элемент
+     */
+    @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
+    public void saveToVariable(String fieldname) {
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
+        field.hover();
+    }
+
+    /**
+     * Проверка, что элемента нет на странице. (перед этим ждем 3 секунды, зачем - не знаю)
+     */
+    @Deprecated
+    @И("^элемент \"([^\"]*)\" не найден на странице$")
+    public void elemIsNotPresentedOnPage(String elemName) {
+        sleep(3000);
+        alfaScenario.getCurrentPage().getElement(elemName).shouldBe(not(exist));
+    }
+
+    /**
+     * Проверка, что эелемнт не отображается на странице
+     */
+    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
+    public void elementIsNotVisible(String field) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
+        element.shouldBe(hidden);
+    }
+
+    /**
+     * Проверка, что эелемнт на странице кликабелен
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
+    public void clickableField(String field) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
+        assertTrue(String.format("элемент [%s] не кликабелен", field), element.isEnabled());
+    }
+
+    /**
+     * Проверка, что у эелемента есть атрибут с ожидаемым значением
+     */
+    @Тогда("^элемент \"([^\"]*)\" содежит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
+    public void checkElemContainsAtrWithValue(String elemName, String atrName, String expectedAtrValue) {
+        SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
+        String currentAtrValue = currentElement.attr(atrName);
+        assertThat("значения не совпали", currentAtrValue, equalToIgnoringCase(expectedAtrValue));
     }
 }
