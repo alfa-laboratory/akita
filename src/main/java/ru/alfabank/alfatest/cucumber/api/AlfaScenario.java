@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Created by ruslanmikhalev on 27/01/17.
  */
 @Slf4j
-final public class AlfaScenario {
+public final class AlfaScenario {
 
     private static AlfaScenario instance = new AlfaScenario();
 
@@ -71,7 +71,7 @@ final public class AlfaScenario {
 
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
-        if (obj == null) log.error("Переменная " + name + " не найдена");
+        if (obj == null) throw new NullPointerException("Переменная " + name + " не найдена");
         return obj;
     }
 

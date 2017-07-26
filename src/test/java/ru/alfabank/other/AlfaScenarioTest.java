@@ -6,8 +6,6 @@ import org.junit.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.steps.DefaultSteps;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -15,6 +13,7 @@ import static org.hamcrest.Matchers.nullValue;
 /**
  * Created by onotole on 08.02.17.
  */
+
 public class AlfaScenarioTest {
     private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
@@ -24,7 +23,7 @@ public class AlfaScenarioTest {
         alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
     }
 
-    @Test()
+    @Test(expected = NullPointerException.class)
     public void testGetSetVarNegative1() {
         assertThat(alfaScenario.getVar("randomName"), nullValue());
     }

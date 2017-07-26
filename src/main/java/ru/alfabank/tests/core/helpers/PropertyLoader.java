@@ -26,6 +26,11 @@ public class PropertyLoader {
         return value;
     }
 
+    public static String loadProperty(String name, String defaultValue) {
+        String value = loadPropertySafe(name);
+        return value != null ? value: defaultValue;
+    }
+
     public static String loadPropertySafe(String name) {
         String value = null;
         if (!Strings.isNullOrEmpty(name)) {
