@@ -13,9 +13,6 @@ public enum OperationType {
     EQUAL("=="),
     MORE_O_EQUAL(">="),
     LESS_O_EQUAL("<=");
-//    END_WITH,
-//    CONTAINS,
-//    START_WITH
 
     final String literal;
     OperationType(@NonNull String literal) {

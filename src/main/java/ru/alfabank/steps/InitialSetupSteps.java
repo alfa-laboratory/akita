@@ -1,6 +1,5 @@
-package ru.alfabank.steps.base;
+package ru.alfabank.steps;
 
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.common.base.Strings;
 import cucumber.api.Scenario;
@@ -32,6 +31,11 @@ public class InitialSetupSteps {
             log.info("Тесты запущены на удаленной машине: " + System.getProperty("remote"));
         } else
             log.info("Тесты будут запущены локально");
+    }
+
+    @Before(order = 21)
+    public static void clearCash() throws Exception {
+        getWebDriver().manage().deleteAllCookies();
     }
 
     @After(order = 20)
