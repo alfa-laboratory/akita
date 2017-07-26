@@ -394,4 +394,11 @@ public class DefaultSteps {
     public void expressionExpression(String expression) {
         alfaScenario.getVars().evaluate("assert(" + expression + ")");
     }
+
+    @И("^выполнен переход на страницу \"([^\"]*)\" после нажатия на (?:ссылку|кнопку) \"([^\"]*)\"$")
+    public void urlClickAndCheckRedirection(String pageName, String elementName) {
+        alfaScenario.getCurrentPage().getElement(elementName).click();
+        loadPage(pageName);
+        alfaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
+    }
 }
