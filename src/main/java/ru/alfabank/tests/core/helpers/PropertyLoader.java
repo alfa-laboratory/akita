@@ -18,7 +18,7 @@ public class PropertyLoader {
 
     }
 
-    public static String loadSystemPropertyOrSetDefaultValue(String propertyName, String defaultValue) {
+    public static String loadSystemPropertyOrDefault(String propertyName, String defaultValue) {
         String propValue = System.getProperty(propertyName);
         return propValue != null ? propValue : defaultValue;
     }
