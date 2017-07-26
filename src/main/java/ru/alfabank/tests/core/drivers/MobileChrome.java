@@ -10,14 +10,15 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOrSetDefaultValue;
+
 @Slf4j
 public class MobileChrome implements WebDriverProvider {
 
     @Override
     public WebDriver createDriver(DesiredCapabilities capabilities) {
         log.info("---------------run CustomMobileDriver---------------------");
-        String deviceEnv = System.getProperty("device");
-        String mobileDeviceName = deviceEnv != null ? deviceEnv : "Google Nexus 5";
+        String mobileDeviceName = loadSystemPropertyOrSetDefaultValue("device", "Google Nexus 5");
         Map<String, String> mobileEmulation = new HashMap<>();
         mobileEmulation.put("deviceName", mobileDeviceName);
 
@@ -29,4 +30,6 @@ public class MobileChrome implements WebDriverProvider {
         desiredCapabilities.setBrowserName(desiredCapabilities.chrome().getBrowserName());
         return new ChromeDriver(desiredCapabilities);
     }
+
+
 }
