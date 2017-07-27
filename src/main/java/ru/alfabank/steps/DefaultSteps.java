@@ -10,6 +10,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
@@ -430,13 +431,13 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что элемента нет на странице. (перед этим ждем 3 секунды, зачем - не знаю)
+     * Проверка, что элемента нет на странице
      */
-    @Deprecated
     @И("^элемент \"([^\"]*)\" не найден на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
-        sleep(3000);
-        alfaScenario.getCurrentPage().getElement(elemName).shouldBe(not(exist));
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                not(Condition.appear), 10000, alfaScenario.getCurrentPage().getElement(elemName)
+        );
     }
 
     /**
@@ -465,5 +466,12 @@ public class DefaultSteps {
         SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
         String currentAtrValue = currentElement.attr(atrName);
         assertThat("значения не совпали", currentAtrValue, equalToIgnoringCase(expectedAtrValue));
+    }
+
+    @И("^совершен переход в конец страницы$")
+    public void scrollDown() {
+        Actions actions = new Actions(getWebDriver());
+        actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
+        actions.keyUp(Keys.CONTROL).build().perform();
     }
 }
