@@ -113,6 +113,7 @@ public class DefaultApiSteps {
     /**
      * Проверка. Из большого JSON'a вытаскивается часть по названию и проверяется, что она совпадает с переданнам значением.
      */
+    @Deprecated
     @Тогда("^поле \"([^\"]*)\" ответа \"([^\"]*)\" совпадает с$")
     public void checkExpectedFieldApi(String field, String apiResponse, String expectedFieldValue) throws Throwable {
         JsonParser parser = new JsonParser();

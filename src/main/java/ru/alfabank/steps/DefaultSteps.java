@@ -121,6 +121,7 @@ public class DefaultSteps {
     /**
      * Проверка. В течение заданного количества секунд ожидается появление списка на странице
      */
+    @Deprecated
     @И("^список \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
     public void listIsPresentedOnPage(String elemName, int seconds) {
         alfaScenario.getCurrentPage().waitElementsUntil(
@@ -179,6 +180,7 @@ public class DefaultSteps {
     /**
      * Значение из поля сохраняется в заданную переменную.
      */
+    @Deprecated
     @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void saveFieldValueToVariable(String fieldName, String variableName) {
         String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
@@ -189,6 +191,7 @@ public class DefaultSteps {
     /**
      * Значение из input-поля сохраняется в заданную переменную.
      */
+    @Deprecated
     @И("^значение input-поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void saveInputValueToVariable(String fieldName, String variableName) {
         String value = alfaScenario.getCurrentPage().getElement(fieldName).getValue();
@@ -303,6 +306,7 @@ public class DefaultSteps {
      * Проверка, что появляется уведомление с заданным текстом.
      * Редкий случай, когда css селектор используется в степах
      */
+    @Deprecated
     @Тогда("^ожидается появление уведомления с текстом \"([^\"]*)\"$")
     public void notificationAppearsWithText(String text) throws Throwable {
         SelenideElement el = $(".notification");
@@ -313,6 +317,7 @@ public class DefaultSteps {
     /**
      * Проверка, что переданное выражение верно. Должно содержать '='. Переменные разрезолвливаются из хранилища
      */
+    @Deprecated
     @И("^верно выражение \"([^\"]*)\"$")
     public void evaluate(String expression) {
         alfaScenario.write("Начал обрабатывать выражение: " + expression);
