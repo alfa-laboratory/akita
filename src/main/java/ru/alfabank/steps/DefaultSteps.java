@@ -499,7 +499,7 @@ public class DefaultSteps {
     /**
      * Вставка значения в поле с помощью CTRL+V
      */
-    @Когда("^вставлено скопированное значение \"([^\"]*)\" в элемент \"([^\"]*)\"$")
+    @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
     public void pasteValue (String value, String nameOfField) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
         valueInput.clear();
@@ -509,7 +509,7 @@ public class DefaultSteps {
     /**
      * Нажатие на элемент по его тексту
      */
-    @И("^нажатие на элемент с текстом \"([^\"]*)\"$")
+    @И("^выполнено нажатие на элемент с текстом \"([^\"]*)\"$")
     public void findElement(String textName) {
         $(By.xpath("//*[text()='" + textName + "']")).click();
     }
