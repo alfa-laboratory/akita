@@ -472,6 +472,6 @@ public class DefaultSteps {
     public void scrollDown() {
         Actions actions = new Actions(getWebDriver());
         actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
-        actions.keyUp(Keys.CONTROL).build().perform();
+        actions.keyUp(Keys.CONTROL).perform();
     }
 }
