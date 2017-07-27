@@ -133,10 +133,8 @@ public class DefaultSteps {
      */
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
     public void waitUntilDisapper(String elemName) {
-        if (alfaScenario.getCurrentPage().getElement(elemName) != null) {
-            alfaScenario.getCurrentPage().waitElementsUntil(
-                    Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
-        }
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
     }
 
     /**
@@ -209,7 +207,8 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
      */
-    @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной\"([^\"]*)\"$")
+    @SuppressWarnings("unchecked")
+    @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной \"([^\"]*)\"$")
     public void checkListContainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));

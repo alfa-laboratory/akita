@@ -24,21 +24,17 @@ public abstract class AlfaPage extends ElementsContainer {
 
     public SelenideElement getElement(String name) {
         Object value = namedElements.get(name);
-        if (value == null) {
-            log.error("Элемент " + name + " на странице не найден");
-            return null;
-        }
+        if (value == null) throw new IllegalStateException("Элемент " + name + " на странице не найден.\n" +
+                "Проверьте поля в описании страницы");
         return (SelenideElement) value;
     }
 
     @SuppressWarnings("unchecked")
     public List<SelenideElement> getElementsList(String name) {
         Object value = namedElements.get(name);
-        if (!(value instanceof List)) {
-            log.error("Элемент-список " + name + " на странице не найден");
-            return Collections.emptyList();
-        }
-
+        if (!(value instanceof List))
+            throw new IllegalStateException("Элемент-список " + name + " на странице не найден.\n" +
+                    "Проверьте поля в описании страницы.");
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
