@@ -6,15 +6,23 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Condition.not;
@@ -370,11 +378,10 @@ public class DefaultSteps {
     }
 
     /**
-     *  Сохранение значения элемента в переменную
-     * */
+     * Сохранение значения элемента в переменную
+     */
     @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
-    public void saveElementToVariable(String element, String variableName)
-    {
+    public void saveElementToVariable(String element, String variableName) {
         SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
         if (foundElement.getTagName().equals("input"))
             alfaScenario.setVar(variableName, foundElement.getValue());
@@ -383,20 +390,20 @@ public class DefaultSteps {
     }
 
     /**
-     *  Проверка выражения на истинность
-     * */
+     * Проверка выражения на истинность
+     */
     @Тогда("^верно, что \"([^\"]*)\"$")
     public void expressionExpression(String expression) {
         alfaScenario.getVars().evaluate("assert(" + expression + ")");
     }
 
     /**
-     *  Ввод логин/пароля
-     * */
+     * Ввод логин/пароля
+     */
     @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
     public void loginByUserData(String userCode) {
-        String login = loadProperty(userCode+".login");
-        String password = loadProperty(userCode+".password");
+        String login = loadProperty(userCode + ".login");
+        String password = loadProperty(userCode + ".password");
         cleanField("Логин");
         alfaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
         cleanField("Пароль");
@@ -465,5 +472,81 @@ public class DefaultSteps {
         SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
         String currentAtrValue = currentElement.attr(atrName);
         assertThat("значения не совпали", currentAtrValue, equalToIgnoringCase(expectedAtrValue));
+    }
+
+    /**
+     * Добавление строки в поле к уже заполненой строке
+     */
+    @Когда("^в элемент \"([^\"]*)\" дописывается значение \"([^\"]*)\"$")
+    public void addValue(String fieldName, String value) {
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
+        String oldValue = field.getValue();
+        if (oldValue.isEmpty()) {
+            oldValue = field.getText();
+        }
+        field.setValue("");
+        field.setValue(oldValue + value);
+    }
+
+    /**
+     * Вставка значения в поле с помощью CTRL+V
+     */
+    @Когда("^вставлено скопированное значение \"([^\"]*)\" в элемент \"([^\"]*)\"$")
+    public void pasteValue (String value, String nameOfField) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.clear();
+        paste(value, nameOfField);
+    }
+
+    /**
+     * Нажатие на элемент по его тексту
+     */
+    @И("^нажатие на элемент с текстом \"([^\"]*)\"$")
+    public void findElement(String textName) {
+        $(By.xpath("//*[text()='" + textName + "']")).click();
+    }
+
+    /**
+     * Заполнение элемента текущей датой в формате dd.mm.yyyy
+     */
+    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой&")
+    public void currentDate(String fieldName) {
+        long date = System.currentTimeMillis();
+        String curStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
+        valueInput.setValue("");
+        valueInput.setValue(curStringDate);
+    }
+
+    /**
+     * Ввод в поле текущую дату в заданном формате
+     */
+    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
+    public void currentDate(String fieldName, String formatDate) {
+        long date = System.currentTimeMillis();
+        String currentStringDate;
+        try {
+            currentStringDate = new SimpleDateFormat(formatDate).format(date);
+        } catch (IllegalArgumentException ex) {
+            currentStringDate = new SimpleDateFormat("dd.mm.yyyy").format(date);
+            log.info("Неверный формат. Дата будет использована в формате dd.mm.yyyy");
+        }
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
+        valueInput.setValue("");
+        valueInput.setValue(currentStringDate);
+    }
+
+    private void paste(String text, String nameOfElement) {
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
+        };
+        StringSelection value = new StringSelection(text);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(value, clipboardOwner);
+
+        if (System.getProperty("os.name").contains("Mac")) {
+            AlfaScenario.getInstance().getCurrentPage().getElement(nameOfElement).sendKeys(Keys.COMMAND + "v");
+        } else {
+            AlfaScenario.getInstance().getCurrentPage().getElement(nameOfElement).sendKeys(Keys.CONTROL + "v");
+        }
     }
 }
