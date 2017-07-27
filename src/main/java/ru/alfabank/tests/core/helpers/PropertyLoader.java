@@ -18,6 +18,11 @@ public class PropertyLoader {
 
     }
 
+    public static String loadSystemPropertyOrDefault(String propertyName, String defaultValue) {
+        String propValue = System.getProperty(propertyName);
+        return propValue != null ? propValue : defaultValue;
+    }
+
     public static String loadProperty(String name) {
         String value = loadPropertySafe(name);
         if (null == value) {
