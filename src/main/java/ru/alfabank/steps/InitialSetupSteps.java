@@ -26,14 +26,19 @@ public class InitialSetupSteps {
     }
 
     @Before(order = 20)
-    public static void clearCashAndDeleteCookies() throws Exception {
+    public static void setEnvironmentToTest() throws Exception {
         if (!Strings.isNullOrEmpty(System.getProperty("remote"))) {
             log.info("Тесты запущены на удаленной машине: " + System.getProperty("remote"));
         } else
             log.info("Тесты будут запущены локально");
     }
 
-    @After
+    @Before(order = 21)
+    public static void clearCash() throws Exception {
+        getWebDriver().manage().deleteAllCookies();
+    }
+
+    @After(order = 20)
     public void takeScreenshot(Scenario scenario) {
         if (scenario.isFailed()) {
             AlfaScenario.sleep(1);
@@ -42,7 +47,7 @@ public class InitialSetupSteps {
         }
     }
 
-    @After
+    @After(order = 10)
     public void closeWebDriver() {
         if (getWebDriver() != null) {
             WebDriverRunner.getWebDriver().manage().deleteAllCookies();

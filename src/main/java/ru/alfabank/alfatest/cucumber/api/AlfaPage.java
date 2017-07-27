@@ -19,12 +19,13 @@ import java.util.stream.Stream;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 @Slf4j
-abstract public class AlfaPage extends ElementsContainer {
+public abstract class AlfaPage extends ElementsContainer {
     private static final String WAITING_APPEAR_TIMEOUT = "8000";
 
     public SelenideElement getElement(String name) {
         Object value = namedElements.get(name);
-        if (value == null) throw new IllegalStateException("Элемент " + name + " на странице не найден");
+        if (value == null) throw new IllegalStateException("Элемент " + name + " на странице не найден.\n" +
+                "Проверьте поля в описании страницы");
         return (SelenideElement) value;
     }
 
@@ -32,7 +33,8 @@ abstract public class AlfaPage extends ElementsContainer {
     public List<SelenideElement> getElementsList(String name) {
         Object value = namedElements.get(name);
         if (!(value instanceof List))
-            throw new IllegalStateException("Элемент-список " + name + " на странице не найден");
+            throw new IllegalStateException("Элемент-список " + name + " на странице не найден.\n" +
+                    "Проверьте поля в описании страницы.");
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
@@ -53,12 +55,12 @@ abstract public class AlfaPage extends ElementsContainer {
         return new ArrayList<>(primaryElements);
     }
 
-    final public AlfaPage appeared() {
+    public final AlfaPage appeared() {
         isAppeared();
         return this;
     }
 
-    final public AlfaPage disappeared() {
+    public final AlfaPage disappeared() {
         isDisappeared();
         return this;
     }
@@ -83,7 +85,7 @@ abstract public class AlfaPage extends ElementsContainer {
         );
     }
 
-    public void waitElementsUntil(Condition condition, int timeout, SelenideElement ... elements) {
+    public void waitElementsUntil(Condition condition, int timeout, SelenideElement... elements) {
         Spectators.waitElementsUntil(condition, timeout, elements);
     }
 
@@ -91,7 +93,7 @@ abstract public class AlfaPage extends ElementsContainer {
         Spectators.waitElementsUntil(condition, timeout, elements);
     }
 
-    public void waitElementsUntil(Condition condition, int timeout, String ... elementNames) {
+    public void waitElementsUntil(Condition condition, int timeout, String... elementNames) {
         List<SelenideElement> elements = Arrays.stream(elementNames)
                 .map(name -> namedElements.get(name))
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))

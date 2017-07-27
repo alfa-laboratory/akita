@@ -3,29 +3,27 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.java.ru.Если;
-import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Когда;
-import cucumber.api.java.ru.Тогда;
+import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
@@ -50,6 +48,14 @@ public class DefaultSteps {
     @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
     public void saveValueToVariable(String globalVarName, String varName) {
         setVar(varName, loadProperty(globalVarName));
+    }
+
+    /**
+     * Обновляем страницу страницы
+     */
+    @И("^выполнено обновление текущей страницы$")
+    public void refreshPage() {
+        getWebDriver().navigate().refresh();
     }
 
     /**
@@ -123,15 +129,6 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что элемента нет на странице. (перед этим ждем 3 секунды, зачем - не знаю)
-     */
-    @И("^элемент \"([^\"]*)\" не найден на странице$")
-    public void elemIsNotPresentedOnPage(String elemName) {
-        sleep(3000);
-        alfaScenario.getCurrentPage().getElement(elemName).shouldBe(not(exist));
-    }
-
-    /**
      * Проверка. В течении 10 секунд ожидаем пока элемент исчезнет (станет невидимым)
      */
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
@@ -168,29 +165,13 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
-     */
-    @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
-    public void compareTwoDigitVars(String firstValue, String secondValue) {
-        BigInteger bigInt1 = new BigInteger(
-                alfaScenario.getVar(firstValue).toString()
-        );
-        BigInteger bigInt2 = new BigInteger(
-                alfaScenario.getVar(secondValue).toString()
-        );
-        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
-                secondValue + " = " + bigInt2);
-        assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
-    }
-
-    /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
      */
     @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compageTwoVars(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
-        assertThat("строки совпадают", s1, equalTo(s2));
+        assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
     /**
@@ -238,6 +219,7 @@ public class DefaultSteps {
      * Проверка. Совершается переход по заданной ссылке и ждется, пока заданная страница полностью загрузится (встренная проверка,
      * что загружается та страница, которая ожидается)
      */
+    @Deprecated
     @И("^совершен переход на страницу \"([^\"]*)\" по прямой ссылке = \"([^\"]*)\"$")
     public void goToSelectedPageByLink(String pageName, String urlName) {
         String url = getURLwithPathParamsCalculated(urlName);
@@ -247,10 +229,23 @@ public class DefaultSteps {
     }
 
     /**
+     * Совершается переход по заданной ссылке.
+     * Ссылка может передаваться как строка, так и как ключь из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
+    public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        alfaScenario.write(" url = " + urlName);
+        WebDriverRunner.getWebDriver().get(urlName);
+        loadPage(pageName);
+    }
+
+    /**
      * Ожидание заданное количество секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) секунд$")
-    public void waitDuring(int seconds) {
+    public void waitDuring(long seconds) {
         sleep(1000 * seconds);
     }
 
@@ -263,12 +258,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Эмулирует нажатие на клавиатуре клавиш. Для кейса, когда нужно промотать страицу вниз по Page Down
+     * Эмулирует нажатие на клавиатуре клавиш.
      */
     @И("^нажать на клавиатуре \"([^\"]*)\"$")
     public void pressButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
-        alfaScenario.getCurrentPage().getPrimaryElements().get(0).sendKeys(key);
+        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
     }
 
     /**
@@ -287,6 +282,7 @@ public class DefaultSteps {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.click();
         valueInput.clear();
         valueInput.setValue("");
         valueInput.doubleClick().sendKeys(Keys.DELETE);
@@ -325,7 +321,7 @@ public class DefaultSteps {
                 alfaScenario.getVars().evaluate(parts[0]).toString());
         int rightPart = Integer.valueOf(
                 alfaScenario.getVars().evaluate(parts[1]).toString());
-        MatcherAssert.assertThat("выражение верное", leftPart, equalTo(rightPart));
+        MatcherAssert.assertThat("выражение не верное", leftPart, equalTo(rightPart));
     }
 
     /**
@@ -342,7 +338,7 @@ public class DefaultSteps {
      * Разворачивает окно с браузером на весь экран
      */
     @Если("^развернуть окно на весь экран$")
-    public void развернутьОкноНаВесьЭкран() {
+    public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
     }
 
@@ -371,5 +367,110 @@ public class DefaultSteps {
         } else {
             throw new IllegalStateException("Элемент не найден в списке");
         }
+    }
+
+    /**
+     *  Сохранение значения элемента в переменную
+     * */
+    @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
+    public void saveElementToVariable(String element, String variableName)
+    {
+        SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
+        if (foundElement.getTagName().equals("input"))
+            alfaScenario.setVar(variableName, foundElement.getValue());
+        else
+            alfaScenario.setVar(variableName, foundElement.innerText());
+    }
+
+    /**
+     *  Проверка выражения на истинность
+     * */
+    @Тогда("^верно, что \"([^\"]*)\"$")
+    public void expressionExpression(String expression) {
+        alfaScenario.getVars().evaluate("assert(" + expression + ")");
+    }
+
+    /**
+     *  Ввод логин/пароля
+     * */
+    @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
+    public void loginByUserData(String userCode) {
+        String login = loadProperty(userCode+".login");
+        String password = loadProperty(userCode+".password");
+        cleanField("Логин");
+        alfaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
+        cleanField("Пароль");
+        alfaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
+        alfaScenario.getCurrentPage().getElement("Войти").click();
+    }
+
+    /**
+     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
+     */
+    @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
+    public void compareTwoDigitVars(String firstValue, String secondValue) {
+        BigInteger bigInt1 = new BigInteger(
+                alfaScenario.getVar(firstValue).toString()
+        );
+        BigInteger bigInt2 = new BigInteger(
+                alfaScenario.getVar(secondValue).toString()
+        );
+        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
+                secondValue + " = " + bigInt2);
+        assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
+    }
+
+    /**
+     * Выполнено наведение курсора на элемент
+     */
+    @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
+    public void saveToVariable(String fieldname) {
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
+        field.hover();
+    }
+
+    /**
+     * Проверка, что элемента нет на странице
+     */
+    @И("^элемент \"([^\"]*)\" не найден на странице$")
+    public void elemIsNotPresentedOnPage(String elemName) {
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                not(Condition.appear), 10000, alfaScenario.getCurrentPage().getElement(elemName)
+        );
+    }
+
+    /**
+     * Проверка, что эелемнт не отображается на странице
+     */
+    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
+    public void elementIsNotVisible(String field) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
+        element.shouldBe(hidden);
+    }
+
+    /**
+     * Проверка, что эелемнт на странице кликабелен
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
+    public void clickableField(String field) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
+        assertTrue(String.format("элемент [%s] не кликабелен", field), element.isEnabled());
+    }
+
+    /**
+     * Проверка, что у эелемента есть атрибут с ожидаемым значением
+     */
+    @Тогда("^элемент \"([^\"]*)\" содежит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
+    public void checkElemContainsAtrWithValue(String elemName, String atrName, String expectedAtrValue) {
+        SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
+        String currentAtrValue = currentElement.attr(atrName);
+        assertThat("значения не совпали", currentAtrValue, equalToIgnoringCase(expectedAtrValue));
+    }
+
+    @И("^совершен переход в конец страницы$")
+    public void scrollDown() {
+        Actions actions = new Actions(getWebDriver());
+        actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
+        actions.keyUp(Keys.CONTROL).perform();
     }
 }

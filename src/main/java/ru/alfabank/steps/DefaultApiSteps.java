@@ -9,14 +9,16 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
-import io.restassured.specification.RequestSpecification;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 @Slf4j
 public class DefaultApiSteps {
@@ -36,22 +39,74 @@ public class DefaultApiSteps {
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
     /**
+     * Посылается http GET/POST/... запрос по заданному урлу без параметров и BODY. Результат сохраняется в заданную переменную
+     */
+    @Deprecated
+    @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
+        urlName = getURLwithPathParamsCalculated(urlName);
+        RequestSender request = createRequestByParamsTable();
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        getResponseAndSaveToVariable(variableName, response);
+    }
+
+    /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
+     * Результат сохраняется в заданную переменную
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());
+    }
+
+    /**
      * Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Результат сохраняется в заданную переменную
      */
-    @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    @Deprecated
+    @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         urlName = getURLwithPathParamsCalculated(urlName);
         RequestSender request = createRequestByParamsTable(table);
         Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        getResponseAndSaveToVariable(request, variableName, response);
+        getResponseAndSaveToVariable(variableName, response);
+    }
+
+    /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Результат сохраняется в заданную переменную
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        RequestSender request = createRequestByParamsTable(table);
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        getResponseAndSaveToVariable(variableName, response);
     }
 
     /**
      * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
      * соответствует ожиданиям.
      */
-    @И("^вызван \"([^\"]*)\" c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
+    @Deprecated
+    @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkStatusCodeWithAssertion(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
+    }
+
+    /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Проверяется, что код ответа соответствует ожиданиям.
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
+    public void checkResponseStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
 
@@ -63,9 +118,13 @@ public class DefaultApiSteps {
         JsonParser parser = new JsonParser();
         String jsonResponse = getVar(apiResponse).toString();
         String realFieldValue = parser.parse(jsonResponse).getAsJsonObject().get(field).toString();
-        assertThat("Значение поля API совпадает с ожидаемым",
+        assertThat("Значение поля API не совпадает с ожидаемым",
                 realFieldValue,
                 equalTo(expectedFieldValue));
+    }
+
+    private RequestSender createRequestByParamsTable() {
+        return given().when();
     }
 
     private RequestSender createRequestByParamsTable(List<RequestParam> table) {
@@ -82,11 +141,17 @@ public class DefaultApiSteps {
                     headers.put(requestParam.getName(), requestParam.getValue());
                     break;
                 case BODY:
-                    String path = String.join(File.separator, "src", "main", "java", "restBodies", requestParam.getValue());
-                    try(FileReader fileReader = new FileReader(path)) {
+                    String folderNameForRequestBodies;
+                    try {
+                        folderNameForRequestBodies = loadProperty("jsonBody");
+                    } catch (Exception exp) {
+                        folderNameForRequestBodies = "restBodies";
+                    }
+                    String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, requestParam.getValue());
+                    try (FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
-                    } catch (java.io.IOException e) {
+                    } catch (IOException e) {
                         body = requestParam.getValue();
                     }
                     break;
@@ -112,7 +177,7 @@ public class DefaultApiSteps {
         return request;
     }
 
-    private void getResponseAndSaveToVariable(RequestSender request, String variableName, Response response) {
+    private void getResponseAndSaveToVariable(String variableName, Response response) {
         if (response.statusCode() == 200) {
             alfaScenario.setVar(variableName, response.getBody().asString());
             if (log.isDebugEnabled()) alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
@@ -121,24 +186,18 @@ public class DefaultApiSteps {
         }
     }
 
-    private Response makePostRequestWithBody(Map<String, String> headers, String jsonBody, Method methodType, String apiUrl) {
-        RequestSpecification requestSender = given()
-                .contentType(ContentType.JSON)
-                .body(jsonBody)
-                .when();
-
-        if (headers != null) requestSender = requestSender.headers(headers);
-        return requestSender.request(methodType, apiUrl);
-    }
-
-    static String getURLwithPathParamsCalculated(String urlName) {
+    public static String getURLwithPathParamsCalculated(String urlName) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(urlName);
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            String value = AlfaScenario.getInstance().getVar(varName).toString();
-            newString = m.replaceFirst(value);
+            try {
+                newString = m.replaceFirst(loadProperty(varName));
+            } catch (IllegalArgumentException exp) {
+                String value = AlfaScenario.getInstance().getVar(varName).toString();
+                newString = m.replaceFirst(value);
+            }
             m = p.matcher(newString);
         }
         if (newString.isEmpty()) {
