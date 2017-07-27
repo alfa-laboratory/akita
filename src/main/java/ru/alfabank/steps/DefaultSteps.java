@@ -211,7 +211,7 @@ public class DefaultSteps {
      * Проверка. Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
      */
     @SuppressWarnings("unchecked")
-    @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной\"([^\"]*)\"$")
+    @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной \"([^\"]*)\"$")
     public void checkListContainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
@@ -460,7 +460,7 @@ public class DefaultSteps {
     /**
      * Проверка, что у элемента есть атрибут с ожидаемым значением
      */
-    @Тогда("^элемент \"([^\"]*)\" содежит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
+    @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
     public void checkElemContainsAtrWithValue(String elemName, String atrName, String expectedAtrValue) {
         SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
         String currentAtrValue = currentElement.attr(atrName);
