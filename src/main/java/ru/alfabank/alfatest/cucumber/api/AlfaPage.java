@@ -43,6 +43,21 @@ public abstract class AlfaPage extends ElementsContainer {
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
 
+    public String getAnyElementText(String name) {
+        SelenideElement element = getElement(name);
+        if (element.getTagName().equals("input")) return element.getValue();
+        else return element.innerText();
+    }
+
+    public List<String> getAnyElementsListTexts(String name) {
+        List<SelenideElement> elementsList = getElementsList(name);
+        return elementsList.stream()
+                .map(element -> element.getTagName().equals("input") ? element.getValue()
+                        : element.innerText()
+                )
+                .collect(Collectors.toList());
+    }
+
     @Target({ElementType.FIELD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Name {
