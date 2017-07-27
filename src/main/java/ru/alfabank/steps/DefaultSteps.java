@@ -153,6 +153,7 @@ public class DefaultSteps {
     /**
      * Задать значение переменной в хранилище переменных. Один из кейсов: установка userCus для степов, использующих его.
      */
+    @Deprecated
     @Когда("^установить \"([^\"]*)\" на весь тестовый suit: \"([^\"]*)\"$")
     public void setUserCus(String varName, String value) {
         setVar(varName, value);
