@@ -1,11 +1,16 @@
 package ru.alfabank.other;
 
 import cucumber.api.Scenario;
+import groovy.util.logging.Slf4j;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -22,9 +27,14 @@ public class AlfaScenarioTest {
         alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
     }
 
-    @Test()
+    @Rule
+    public ExpectedException expectedEx;
+
+    @Test(expected = NullPointerException.class)
     public void testGetSetVarNegative1() {
-        assertThat(alfaScenario.getVar("randomName"), nullValue());
+        String notExistingVar = "randomName";
+        expectedEx.expectMessage("Переменная " + notExistingVar + " не найдена");
+        assertThat(alfaScenario.getVar(notExistingVar), nullValue());
     }
 
     @Test
