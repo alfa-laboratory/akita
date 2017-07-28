@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 @Slf4j
@@ -37,6 +38,25 @@ public abstract class AlfaPage extends ElementsContainer {
                     "Проверьте поля в описании страницы.");
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
+    }
+
+    public String getAnyElementText(String name) {
+        SelenideElement element = getElement(name);
+        if (element.getTagName().equals("input")) {
+            return element.getValue();
+        }
+        else {
+            return element.innerText();
+        }
+    }
+
+    public List<String> getAnyElementsListTexts(String name) {
+        List<SelenideElement> elementsList = getElementsList(name);
+        return elementsList.stream()
+                .map(element -> element.getTagName().equals("input") ? element.getValue()
+                        : element.innerText()
+                )
+                .collect(Collectors.toList());
     }
 
     @Target({ElementType.FIELD, ElementType.TYPE})
@@ -138,6 +158,12 @@ public abstract class AlfaPage extends ElementsContainer {
         checkNamedAnnotations();
         return Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
+                .peek(f -> {
+                    if(!SelenideElement.class.isAssignableFrom(f.getType()) && !List.class.isAssignableFrom(f.getType()))
+                        throw new IllegalStateException(
+                                format("Field with @Name annotation must be SelenideElement or List<SelenideElement>, but %s found", f.getType())
+                        );
+                })
                 .collect(Collectors.toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
     }
 

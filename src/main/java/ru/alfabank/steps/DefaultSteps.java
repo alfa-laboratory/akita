@@ -16,10 +16,12 @@ import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.equalTo;
@@ -419,12 +421,10 @@ public class DefaultSteps {
     @Deprecated
     @Тогда("^в списке \"([^\"]*)\" содержатся элементы$")
     public void checkTypesOfPay(String nameOfList, List<String> listOfType) {
-        List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
-        int numberOfTypes = listOfTypeFromPage.size();
+        List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(nameOfList);
+        int numberOfTypes = actualValues.size();
         assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(listOfType.size()));
-        List<String> listOfRealNames = new ArrayList<>();
-        listOfTypeFromPage.forEach(type -> listOfRealNames.add(type.innerText()));
-        assertTrue("Списки не совпадают", listOfRealNames.containsAll(listOfType));
+        assertTrue("Списки не совпадают", actualValues.containsAll(listOfType));
     }
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
     public void checkIfListConsistsOfTableElements(String nameOfList, List<String> listOfType) {
@@ -506,12 +506,12 @@ public class DefaultSteps {
     }
 
     /**
-     *  Ввод логин/пароля
-     * */
+     * Ввод логин/пароля
+     */
     @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
     public void loginByUserData(String userCode) {
-        String login = loadProperty(userCode+".login");
-        String password = loadProperty(userCode+".password");
+        String login = loadProperty(userCode + ".login");
+        String password = loadProperty(userCode + ".password");
         cleanField("Логин");
         alfaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
         cleanField("Пароль");
@@ -547,7 +547,6 @@ public class DefaultSteps {
     /**
      * Проверка, что элемента нет на странице
      */
-    @Deprecated
     @И("^элемент \"([^\"]*)\" не найден на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
@@ -556,7 +555,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что эелемнт не отображается на странице
+     * Проверка, что элемент не отображается на странице
      */
     @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elemName) {
@@ -566,7 +565,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что эелемнт на странице кликабелен
+     * Проверка, что элемент на странице кликабелен
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
     public void clickableField(String field) {
@@ -575,9 +574,9 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что у эелемента есть атрибут с ожидаемым значением
+     * Проверка, что у элемента есть атрибут с ожидаемым значением
      */
-    @Тогда("^элемент \"([^\"]*)\" содежит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
+    @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
     public void checkElemContainsAtrWithValue(String elemName, String atrName, String expectedAtrValue) {
         SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
         String currentAtrValue = currentElement.attr(atrName);
@@ -589,5 +588,63 @@ public class DefaultSteps {
         Actions actions = new Actions(getWebDriver());
         actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
         actions.keyUp(Keys.CONTROL).perform();
+    }
+
+    /**
+     * Проверка, что значение в поле равно значению, указанному в шаге
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
+    public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
+        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
+        assertEquals("Значения не совпадают", expectedValue, actualValue);
+    }
+
+    /**
+     * Проверка, что кнопка/ссылка недоступна для нажатия
+     */
+    @Тогда("^(?:ссылка|кнопка) \"([^\"]*)\" недоступна для нажатия$")
+    public void buttonIsNotActive(String fieldName) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(fieldName);
+        assertTrue("Элемент доступен для нажатия", element.is(Condition.disabled));
+    }
+
+    /**
+     * Проверка, что поле нередактируемо
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен) для редактирования$")
+    public void fieldIsDisable(String fieldName) {
+        SelenideElement element = alfaScenario.getCurrentPage().getElement(fieldName);
+        assertTrue("Элемент доступен для редактирования", element.is(Condition.disabled));
+    }
+
+    /**
+     * Проверка, что список со страницы совпадает со списком из переменной
+     * без учёта порядка элементов
+     */
+    @SuppressWarnings("unchecked")
+    @Тогда("^список \"([^\"]*)\" со страницы совпадает со списком \"([^\"]*)\"$")
+    public void compareListFromUIAndFromVariable(String listName, String variableName) {
+        HashSet<String> expectedList = new HashSet<>((List<String>) alfaScenario.getVar(variableName));
+        HashSet<String> actualList = new HashSet<>(alfaScenario.getCurrentPage().getAnyElementsListTexts(listName));
+        assertEquals("Списки не совпадают", expectedList, actualList);
+    }
+
+    /**
+     * Проверка, что на странице не отображаются редактируемые элементы, такие как:
+     * -input
+     * -textarea
+     */
+    @Тогда("^открыта read-only форма$")
+    public void openReadOnlyForm() {
+        int inputsCount = getDisplayedElementsByCss("input").size();
+        assertTrue("Форма не read-only. Количество input-полей: " + inputsCount, inputsCount == 0);
+        int textareasCount = getDisplayedElementsByCss("textarea").size();
+        assertTrue("Форма не read-only. Количество элементов textarea: " + textareasCount, textareasCount == 0);
+    }
+
+    private List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {
+        return $$(cssSelector).stream()
+                .filter(SelenideElement::isDisplayed)
+                .collect(Collectors.toList());
     }
 }
