@@ -553,7 +553,7 @@ public class DefaultSteps {
             currentStringDate = new SimpleDateFormat(formatDate).format(date);
         } catch (IllegalArgumentException ex) {
             currentStringDate = new SimpleDateFormat("dd.mm.yyyy").format(date);
-            log.info("Неверный формат. Дата будет использована в формате dd.mm.yyyy");
+            log.error("Неверный формат. Дата будет использована в формате dd.mm.yyyy");
         }
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
