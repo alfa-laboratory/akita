@@ -528,6 +528,7 @@ public class DefaultSteps {
 
     /**
      * Ввод в поле текущую дату в заданном формате
+     * При неверном формате, используется dd.mm.yyyy
      */
     @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
     public void currentDate(String fieldName, String formatDate) {
@@ -552,9 +553,9 @@ public class DefaultSteps {
         clipboard.setContents(value, clipboardOwner);
 
         if (System.getProperty("os.name").contains("Mac")) {
-            AlfaScenario.getInstance().getCurrentPage().getElement(nameOfElement).sendKeys(Keys.COMMAND + "v");
+            alfaScenario.getCurrentPage().getElement(nameOfElement).sendKeys(Keys.COMMAND + "v");
         } else {
-            AlfaScenario.getInstance().getCurrentPage().getElement(nameOfElement).sendKeys(Keys.CONTROL + "v");
+            alfaScenario.getCurrentPage().getElement(nameOfElement).sendKeys(Keys.CONTROL + "v");
         }
     }
 }
