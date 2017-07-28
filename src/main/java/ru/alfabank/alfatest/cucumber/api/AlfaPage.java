@@ -45,8 +45,12 @@ public abstract class AlfaPage extends ElementsContainer {
 
     public String getAnyElementText(String name) {
         SelenideElement element = getElement(name);
-        if (element.getTagName().equals("input")) return element.getValue();
-        else return element.innerText();
+        if (element.getTagName().equals("input")) {
+            return element.getValue();
+        }
+        else {
+            return element.innerText();
+        }
     }
 
     public List<String> getAnyElementsListTexts(String name) {

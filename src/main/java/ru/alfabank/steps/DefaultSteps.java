@@ -490,11 +490,7 @@ public class DefaultSteps {
     @Тогда("^(?:ссылка|кнопка) \"([^\"]*)\" недоступна для нажатия$")
     public void buttonIsNotActive(String fieldName) {
         SelenideElement element = alfaScenario.getCurrentPage().getElement(fieldName);
-        if (element.getTagName().equals("a")) {
-            String expectedUrl = WebDriverRunner.getWebDriver().getCurrentUrl();
-            element.click();
-            assertEquals("Ссылка доступна для нажатия", expectedUrl, WebDriverRunner.getWebDriver().getCurrentUrl());
-        } else assertTrue("Элемент доступен для нажатия", element.is(Condition.disabled));
+        assertTrue("Элемент доступен для нажатия", element.is(Condition.disabled));
     }
 
     /**
@@ -531,7 +527,7 @@ public class DefaultSteps {
         assertTrue("Форма не read-only. Количество элементов textarea: " + textareasCount, textareasCount == 0);
     }
 
-    static List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {
+    private List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {
         return $$(cssSelector).stream()
                 .filter(SelenideElement::isDisplayed)
                 .collect(Collectors.toList());
