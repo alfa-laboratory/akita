@@ -683,16 +683,6 @@ public class DefaultSteps {
     }
 
     /**
-     * Вставка значения в поле с помощью CTRL+V
-     */
-    @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
-    public void pasteValue(String value, String nameOfField) {
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        valueInput.clear();
-        paste(value, nameOfField);
-    }
-
-    /**
      * Нажатие на элемент по его тексту
      */
     @И("^выполнено нажатие на элемент с текстом \"([^\"]*)\"$")
@@ -729,19 +719,5 @@ public class DefaultSteps {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
         valueInput.setValue(currentStringDate);
-    }
-
-    private void paste(String text, String nameOfElement) {
-        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
-        };
-        StringSelection value = new StringSelection(text);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(value, clipboardOwner);
-
-        if (System.getProperty("os.name").contains("Mac")) {
-            alfaScenario.getCurrentPage().getElement(nameOfElement).sendKeys(Keys.COMMAND + "v");
-        } else {
-            alfaScenario.getCurrentPage().getElement(nameOfElement).sendKeys(Keys.CONTROL + "v");
-        }
     }
 }
