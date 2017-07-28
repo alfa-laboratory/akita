@@ -397,6 +397,16 @@ public class DefaultSteps {
     }
 
     /**
+     *  Переход на страницу по клику и проверка, что страница загружена
+     * */
+    @И("^выполнен переход на страницу \"([^\"]*)\" после нажатия на (?:ссылку|кнопку) \"([^\"]*)\"$")
+    public void urlClickAndCheckRedirection(String pageName, String elementName) {
+        alfaScenario.getCurrentPage().getElement(elementName).click();
+        loadPage(pageName);
+        alfaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
+    }
+
+    /**
      *  Ввод логин/пароля
      * */
     @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
