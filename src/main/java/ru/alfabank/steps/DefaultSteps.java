@@ -483,8 +483,9 @@ public class DefaultSteps {
     }
 
     /**
-     * Сохранение значения элемента в переменную
-     */
+     *  Сохранение значения элемента в переменную
+     * */
+    @Deprecated
     @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
     public void saveElementToVariable(String element, String variableName) {
         SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
