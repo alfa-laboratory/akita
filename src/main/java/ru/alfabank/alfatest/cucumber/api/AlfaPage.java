@@ -144,9 +144,9 @@ public abstract class AlfaPage extends ElementsContainer {
         return Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .peek(f -> {
-                    if(!SelenideElement.class.isAssignableFrom(f.getType()))
+                    if(!SelenideElement.class.isAssignableFrom(f.getType()) && !List.class.isAssignableFrom(f.getType()))
                         throw new IllegalStateException(
-                                format("Field with @Name annotation must be SelenideElement, but %s found", f.getType())
+                                format("Field with @Name annotation must be SelenideElement or List<SelenideElement>, but %s found", f.getType())
                         );
                 })
                 .collect(Collectors.toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
