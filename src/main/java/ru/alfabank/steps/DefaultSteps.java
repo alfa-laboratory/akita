@@ -139,12 +139,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Время задается в application.properties как "timeForElements" или 10 секунд
+     * Время задается в application.properties как "timeForElements" или по дефолту 10 секунд
      * Проверка, что в течении нескольких секунд ожидается появление списка на странице
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
-        int time = Integer.parseInt(PropertyLoader.loadProperty("timeForElement", "10000"));
+        int time = Integer.parseInt(PropertyLoader.loadProperty("waitingCustomElementsTimeout", "10000"));
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, time, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
