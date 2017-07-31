@@ -139,7 +139,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Время задается в application.properties как "timeForElements" или по дефолту 10 секунд
+     * Время задается в application.properties как "waitingCustomElementsTimeout" или по дефолту 10 секунд
      * Проверка, что в течении нескольких секунд ожидается появление списка на странице
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
