@@ -207,7 +207,7 @@ public class DefaultSteps {
         alfaScenario.setVar(varName, value);
     }
 
-    @И("^установлено значение переменной \"([^\"]*)\" равным \"([^\"]*)\"$")
+    @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
     public void setVariable(String varName, String value) {
         alfaScenario.setVar(varName, value);
     }
@@ -242,7 +242,7 @@ public class DefaultSteps {
 
     @И("^значение из (?:поля|элемента) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void storeFieldValueInVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        String value = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
         alfaScenario.setVar(variableName, value);
     }
@@ -272,7 +272,7 @@ public class DefaultSteps {
 
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" совпадает со значением из переменной \"([^\"]*)\"$")
     public void compareFieldAndVariable(String fieldName, String variableName) {
-        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         String expectedValue = alfaScenario.getVar(variableName).toString();
         assertEquals("Значения не совпадают", expectedValue, actualValue);
     }
@@ -289,9 +289,10 @@ public class DefaultSteps {
         assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
     }
 
+    @SuppressWarnings("unchecked")
     @Тогда("^список из переменной \"([^\"]*)\" содердит значение (?:поля|элемента) \"([^\"]*)\" $")
     public void checkIfListContainsValueFromField(String fieldName, String variableListName) {
-        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
+        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
         assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
     }
@@ -373,6 +374,10 @@ public class DefaultSteps {
     public void setFieldValue(String elementName, String value) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
         valueInput.setValue(String.valueOf(value));
+    @Когда("^установлено значение \"(.*)\" в поле \"([^\"]*)\"$")
+    public void setValueToField(String amount, String nameOfField) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.setValue(String.valueOf(amount));
         valueInput.should(not(Condition.empty));
     }
 
@@ -440,7 +445,6 @@ public class DefaultSteps {
     /**
      * Разворачивает окно с браузером на весь экран
      */
-    @Deprecated
     @Если("^развернуть окно на весь экран$")
     public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
@@ -465,19 +469,17 @@ public class DefaultSteps {
 
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
     public void checkIfListConsistsOfTableElements(String nameOfList, List<String> listOfType) {
-        List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
-        int numberOfTypes = listOfTypeFromPage.size();
+        List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(nameOfList);
+        int numberOfTypes = actualValues.size();
         assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(listOfType.size()));
-        List<String> listOfRealNames = new ArrayList<>();
-        listOfTypeFromPage.forEach(type -> listOfRealNames.add(type.innerText()));
-        assertTrue("Списки не совпадают", listOfRealNames.containsAll(listOfType));
+        assertTrue("Списки не совпадают", actualValues.containsAll(listOfType));
     }
 
     /**
      * В списке со страницу кликаем по элементу, содержащим заданное значение
      */
     @Deprecated
-    @Тогда("^в списке \"([^\"]*)\" выбран элемент со значением \"([^\"]*)\"$")
+    @Тогда("^в списке \"([^\"]*)\" выбран элемент со значением \"(.*)\"$")
     public void checkTypesOfPay(String nameOfList, String nameOfValue) {
         List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
         Optional<SelenideElement> itemFound = listOfTypeFromPage.stream().filter(type -> type.innerText().equals(nameOfValue)).findFirst();
@@ -488,7 +490,7 @@ public class DefaultSteps {
         }
     }
 
-    @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"([^\"]*)\"$")
+    @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String nameOfList, String nameOfValue) {
         List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
         Optional<SelenideElement> itemFound = listOfTypeFromPage.stream().filter(type -> type.innerText().equals(nameOfValue)).findFirst();
@@ -606,7 +608,7 @@ public class DefaultSteps {
     /**
      * Проверка, что у элемента есть атрибут с ожидаемым значением
      */
-    @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"([^\"]*)\"$")
+    @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"(.*)\"$")
     public void checkElemContainsAtrWithValue(String elemName, String atrName, String expectedAtrValue) {
         SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
         String currentAtrValue = currentElement.attr(atrName);
@@ -681,7 +683,7 @@ public class DefaultSteps {
     /**
      * Добавление строки в поле к уже заполненой строке
      */
-    @Когда("^в элемент \"([^\"]*)\" дописывается значение \"([^\"]*)\"$")
+    @Когда("^в элемент \"([^\"]*)\" дописывается значение \"(.*)\"$")
     public void addValue(String fieldName, String value) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
         String oldValue = field.getValue();
@@ -695,7 +697,7 @@ public class DefaultSteps {
     /**
      * Нажатие на элемент по его тексту
      */
-    @И("^выполнено нажатие на элемент с текстом \"([^\"]*)\"$")
+    @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
     public void findElement(String textName) {
         $(By.xpath("//*[text()='" + textName + "']")).click();
     }
