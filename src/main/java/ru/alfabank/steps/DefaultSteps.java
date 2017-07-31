@@ -691,18 +691,6 @@ public class DefaultSteps {
     }
 
     /**
-     * Заполнение элемента текущей датой в формате dd.mm.yyyy
-     */
-    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой&")
-    public void currentDate(String fieldName) {
-        long date = System.currentTimeMillis();
-        String curStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
-        valueInput.setValue("");
-        valueInput.setValue(curStringDate);
-    }
-
-    /**
      * Ввод в поле текущую дату в заданном формате
      * При неверном формате, используется dd.mm.yyyy
      */
