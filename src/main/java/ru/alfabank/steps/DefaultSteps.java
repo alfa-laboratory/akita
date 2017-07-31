@@ -51,13 +51,19 @@ public class DefaultSteps {
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
+    @Deprecated
+    @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
+    public void saveValueToVariable(String globalVarName, String varName) {
+        setVar(varName, loadProperty(globalVarName));
+    }
+
     /**
      * Читаем значение переменной из application.properties и сохраняем в переменную в alfaScenario,
      * для дальнейшего переиспользования
      */
-    @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
-    public void saveValueToVariable(String globalVarName, String varName) {
-        setVar(varName, loadProperty(globalVarName));
+    @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
+    public void saveValueToVar(String globalVarName, String varName) {
+        alfaScenario.setVar(varName, loadProperty(globalVarName));
     }
 
     /**
@@ -133,12 +139,14 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что в течении 10 секунд ожидается появление списка на странице
+     * Время задается в application.properties как "waitingCustomElementsTimeout" или по дефолту 10 секунд
+     * Проверка, что в течении нескольких секунд ожидается появление списка на странице
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
+        int time = Integer.parseInt(PropertyLoader.loadProperty("waitingCustomElementsTimeout", "10000"));
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, 10000, alfaScenario.getCurrentPage().getElementsList(elemName)
+                Condition.appear, time, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
     }
 
