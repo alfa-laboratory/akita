@@ -15,17 +15,16 @@ import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Condition.not;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.Selenide.sleep;
+import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
@@ -591,12 +590,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что значение в поле равно значению, указанному в шаге
+     * Проверка, что значение в поле содержит значению, указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
-    public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
+    public void testActualValueContainsSubstring(String fieldName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
+        assertThat("В поле нет ожидаемой подстроки", actualValue, containsString(expectedValue));
     }
 
     /**
