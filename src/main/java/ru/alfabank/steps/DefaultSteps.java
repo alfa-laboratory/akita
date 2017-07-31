@@ -16,6 +16,7 @@ import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
+import java.math.BigDecimal;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -51,13 +52,19 @@ public class DefaultSteps {
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
+    @Deprecated
+    @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
+    public void saveValueToVariable(String globalVarName, String varName) {
+        setVar(varName, loadProperty(globalVarName));
+    }
+
     /**
      * Читаем значение переменной из application.properties и сохраняем в переменную в alfaScenario,
      * для дальнейшего переиспользования
      */
-    @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
-    public void saveValueToVariable(String globalVarName, String varName) {
-        setVar(varName, loadProperty(globalVarName));
+    @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
+    public void saveValueToVar(String globalVarName, String varName) {
+        alfaScenario.setVar(varName, loadProperty(globalVarName));
     }
 
     /**
@@ -133,12 +140,14 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что в течении 10 секунд ожидается появление списка на странице
+     * Время задается в application.properties как "waitingCustomElementsTimeout" или по дефолту 10 секунд
+     * Проверка, что в течении нескольких секунд ожидается появление списка на странице
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
+        int time = Integer.parseInt(PropertyLoader.loadProperty("waitingCustomElementsTimeout", "10000"));
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, 10000, alfaScenario.getCurrentPage().getElementsList(elemName)
+                Condition.appear, time, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
     }
 
@@ -345,8 +354,7 @@ public class DefaultSteps {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
         WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
     }
-
-    @И("^выполнено нажатие на кнопку \"([^\"]*)\" на клавиатуре$")
+    @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
         WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
@@ -355,6 +363,17 @@ public class DefaultSteps {
     /**
      * Ищется указанное текстовое поле и устанавливается в него заданное значение. Перед использованием поле нужно очистить
      */
+    @Deprecated
+    @Когда("^установлено значение \"([^\"]*)\" в поле \"([^\"]*)\"$")
+    public void setValueToField(String value, String elementName) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
+        valueInput.setValue(String.valueOf(value));
+        valueInput.should(not(Condition.empty));
+    }
+    @Когда("^в поле \"([^\"]*)\" введено значение \"([^\"]*)\"$")
+    public void setFieldValue(String elementName, String value) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
+        valueInput.setValue(String.valueOf(value));
     @Когда("^установлено значение \"(.*)\" в поле \"([^\"]*)\"$")
     public void setValueToField(String amount, String nameOfField) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
@@ -378,10 +397,11 @@ public class DefaultSteps {
      * Проверка, что поле для ввода пустое
      */
     @Тогда("^поле \"([^\"]*)\" пусто$")
-    public void fieldInputIsEmpty(String nameOfField) {
-        SelenideElement fieldInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        assertThat("Поле '" + nameOfField + "' содержит значение", fieldInput.val(), Matchers.isEmptyOrNullString());
-        assertThat("Поле '" + nameOfField + "' содержит значение", fieldInput.innerText(), Matchers.isEmptyOrNullString());
+    public void fieldInputIsEmpty(String fieldName) {
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
+        assertThat("Поле '" + fieldName + "' содержит значение",
+                alfaScenario.getCurrentPage().getAnyElementText(fieldName),
+                Matchers.isEmptyOrNullString());
     }
 
     /**
@@ -487,20 +507,12 @@ public class DefaultSteps {
     @Deprecated
     @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
     public void saveElementToVariable(String element, String variableName) {
-        SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
-        if (foundElement.getTagName().equals("input"))
-            alfaScenario.setVar(variableName, foundElement.getValue());
-        else
-            alfaScenario.setVar(variableName, foundElement.innerText());
+        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(element));
     }
 
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
     public void storeElementValueInVariable(String element, String variableName) {
-        SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
-        if (foundElement.getTagName().equals("input"))
-            alfaScenario.setVar(variableName, foundElement.getValue());
-        else
-            alfaScenario.setVar(variableName, foundElement.innerText());
+        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(element));
     }
 
     /**
@@ -541,17 +553,18 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
      */
+    @Deprecated
     @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
     public void compareTwoDigitVars(String firstValue, String secondValue) {
-        BigInteger bigInt1 = new BigInteger(
+        BigDecimal bigReal1 = new BigDecimal(
                 alfaScenario.getVar(firstValue).toString()
         );
-        BigInteger bigInt2 = new BigInteger(
+        BigDecimal bigReal2 = new BigDecimal(
                 alfaScenario.getVar(secondValue).toString()
         );
-        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
-                secondValue + " = " + bigInt2);
-        assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
+        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigReal1 + " и " +
+                secondValue + " = " + bigReal2);
+        assertThat("значения переменных совпали", bigReal1, equalTo(bigReal2));
     }
 
     /**
