@@ -6,20 +6,29 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.List;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
@@ -69,6 +78,7 @@ public class DefaultSteps {
         getWebDriver().get(url);
         alfaScenario.write("Url = " + url);
     }
+
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
         String url = replaceVariables(address);
@@ -96,6 +106,7 @@ public class DefaultSteps {
     public void clickOnThisButton(String buttonName) {
         alfaScenario.getCurrentPage().getElement(buttonName).click();
     }
+
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
     public void clickOnElement(String elementName) {
         alfaScenario.getCurrentPage().getElement(elementName).click();
@@ -151,6 +162,7 @@ public class DefaultSteps {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
     }
+
     @И("^ожидается исчезновение элемента \"([^\"]*)\"")
     public void elemDisappered(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
@@ -185,6 +197,7 @@ public class DefaultSteps {
     public void setVar(String varName, String value) {
         alfaScenario.setVar(varName, value);
     }
+
     @И("^установлено значение переменной \"([^\"]*)\" равным \"([^\"]*)\"$")
     public void setVariable(String varName, String value) {
         alfaScenario.setVar(varName, value);
@@ -199,6 +212,7 @@ public class DefaultSteps {
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
     }
+
     @Когда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compageTwoVariables(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
@@ -216,6 +230,7 @@ public class DefaultSteps {
         if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
         alfaScenario.setVar(variableName, value);
     }
+
     @И("^значение из (?:поля|элемента) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void storeFieldValueInVariable(String fieldName, String variableName) {
         String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
@@ -245,6 +260,7 @@ public class DefaultSteps {
         String expectedValue = alfaScenario.getVar(variableName).toString();
         assertEquals("Значения не совпадают", expectedValue, actualValue);
     }
+
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" совпадает со значением из переменной \"([^\"]*)\"$")
     public void compareFieldAndVariable(String fieldName, String variableName) {
         String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
@@ -263,6 +279,7 @@ public class DefaultSteps {
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
         assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
     }
+
     @Тогда("^список из переменной \"([^\"]*)\" содердит значение (?:поля|элемента) \"([^\"]*)\" $")
     public void checkIfListContainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
@@ -312,6 +329,7 @@ public class DefaultSteps {
     public void blockIsDisappears(String nameOfPage) {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
+
     @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" (?:скрыто|скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
         alfaScenario.getPage(nameOfPage).disappeared();
@@ -326,6 +344,7 @@ public class DefaultSteps {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
         WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
     }
+
     @И("^выполнено нажатие на кнопку \"([^\"]*)\" на клавиатуре$")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
@@ -409,6 +428,7 @@ public class DefaultSteps {
     public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
     }
+
     @Если("^окно развернуто на весь экран$")
     public void expandWindowToFullScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
@@ -425,6 +445,7 @@ public class DefaultSteps {
         assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(listOfType.size()));
         assertTrue("Списки не совпадают", actualValues.containsAll(listOfType));
     }
+
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
     public void checkIfListConsistsOfTableElements(String nameOfList, List<String> listOfType) {
         List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
@@ -449,6 +470,7 @@ public class DefaultSteps {
             throw new IllegalStateException("Элемент не найден в списке");
         }
     }
+
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"([^\"]*)\"$")
     public void checkIfSelectedListElementMatchesValue(String nameOfList, String nameOfValue) {
         List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
@@ -465,17 +487,16 @@ public class DefaultSteps {
      * */
     @Deprecated
     @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
-    public void saveElementToVariable(String element, String variableName)
-    {
+    public void saveElementToVariable(String element, String variableName) {
         SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
         if (foundElement.getTagName().equals("input"))
             alfaScenario.setVar(variableName, foundElement.getValue());
         else
             alfaScenario.setVar(variableName, foundElement.innerText());
     }
+
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
-    public void storeElementValueInVariable(String element, String variableName)
-    {
+    public void storeElementValueInVariable(String element, String variableName) {
         SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
         if (foundElement.getTagName().equals("input"))
             alfaScenario.setVar(variableName, foundElement.getValue());
@@ -484,19 +505,19 @@ public class DefaultSteps {
     }
 
     /**
-     *  Проверка выражения на истинность
-     *  Например, string1.equals(string2)
-     *  OR string.equals("string")
-     *  Любое Java-выражение, возвращающие boolean
-     * */
+     * Проверка выражения на истинность
+     * Например, string1.equals(string2)
+     * OR string.equals("string")
+     * Любое Java-выражение, возвращающие boolean
+     */
     @Тогда("^верно, что \"([^\"]*)\"$")
     public void expressionExpression(String expression) {
         alfaScenario.getVars().evaluate("assert(" + expression + ")");
     }
 
     /**
-     *  Переход на страницу по клику и проверка, что страница загружена
-     * */
+     * Переход на страницу по клику и проверка, что страница загружена
+     */
     @И("^выполнен переход на страницу \"([^\"]*)\" после нажатия на (?:ссылку|кнопку) \"([^\"]*)\"$")
     public void urlClickAndCheckRedirection(String pageName, String elementName) {
         alfaScenario.getCurrentPage().getElement(elementName).click();
@@ -645,5 +666,46 @@ public class DefaultSteps {
         return $$(cssSelector).stream()
                 .filter(SelenideElement::isDisplayed)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Добавление строки в поле к уже заполненой строке
+     */
+    @Когда("^в элемент \"([^\"]*)\" дописывается значение \"([^\"]*)\"$")
+    public void addValue(String fieldName, String value) {
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
+        String oldValue = field.getValue();
+        if (oldValue.isEmpty()) {
+            oldValue = field.getText();
+        }
+        field.setValue("");
+        field.setValue(oldValue + value);
+    }
+
+    /**
+     * Нажатие на элемент по его тексту
+     */
+    @И("^выполнено нажатие на элемент с текстом \"([^\"]*)\"$")
+    public void findElement(String textName) {
+        $(By.xpath("//*[text()='" + textName + "']")).click();
+    }
+
+    /**
+     * Ввод в поле текущую дату в заданном формате
+     * При неверном формате, используется dd.mm.yyyy
+     */
+    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
+    public void currentDate(String fieldName, String formatDate) {
+        long date = System.currentTimeMillis();
+        String currentStringDate;
+        try {
+            currentStringDate = new SimpleDateFormat(formatDate).format(date);
+        } catch (IllegalArgumentException ex) {
+            currentStringDate = new SimpleDateFormat("dd.mm.yyyy").format(date);
+            log.error("Неверный формат. Дата будет использована в формате dd.mm.yyyy");
+        }
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
+        valueInput.setValue("");
+        valueInput.setValue(currentStringDate);
     }
 }
