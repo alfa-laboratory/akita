@@ -384,12 +384,11 @@ public class DefaultSteps {
      * Проверка, что поле для ввода пустое
      */
     @Тогда("^поле \"([^\"]*)\" пусто$")
-    public void fieldInputIsEmpty(String nameOfField) {
-        SelenideElement field = alfaScenario.getCurrentPage().getElement(nameOfField);
-        if (field.getTagName().equals("input"))
-            assertThat("Поле '" + nameOfField + "' содержит значение", field.getValue(), Matchers.isEmptyOrNullString());
-        else
-            assertThat("Поле '" + nameOfField + "' содержит значение", field.innerText(), Matchers.isEmptyOrNullString());
+    public void fieldInputIsEmpty(String fieldName) {
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
+        assertThat("Поле '" + fieldName + "' содержит значение",
+                alfaScenario.getCurrentPage().getAnyElementText(fieldName),
+                Matchers.isEmptyOrNullString());
     }
 
     /**
@@ -498,20 +497,12 @@ public class DefaultSteps {
     @Deprecated
     @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
     public void saveElementToVariable(String element, String variableName) {
-        SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
-        if (foundElement.getTagName().equals("input"))
-            alfaScenario.setVar(variableName, foundElement.getValue());
-        else
-            alfaScenario.setVar(variableName, foundElement.innerText());
+        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(element));
     }
 
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
     public void storeElementValueInVariable(String element, String variableName) {
-        SelenideElement foundElement = alfaScenario.getCurrentPage().getElement(element);
-        if (foundElement.getTagName().equals("input"))
-            alfaScenario.setVar(variableName, foundElement.getValue());
-        else
-            alfaScenario.setVar(variableName, foundElement.innerText());
+        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(element));
     }
 
     /**
