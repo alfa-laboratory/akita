@@ -51,10 +51,10 @@ public class DefaultStepsTest {
 
     @Test
     public void compareTwoDigitVars() {
-        String number1Name = "number1", number1Value = "1234567890";
+        String number1Name = "number1", number1Value = "1234567890.97531";
         alfaScenario.setVar(number1Name, number1Value);
 
-        String number2Name = "number2", number2Value = "1234567890";
+        String number2Name = "number2", number2Value = "1234567890.97531";
         alfaScenario.setVar(number2Name, number2Value);
 
         ds.compareTwoDigitVars(number1Name, number2Name);

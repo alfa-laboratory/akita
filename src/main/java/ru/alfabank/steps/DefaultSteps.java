@@ -14,6 +14,7 @@ import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -325,7 +326,7 @@ public class DefaultSteps {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
         WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
     }
-    @И("^выполнено нажатие на кнопку \"([^\"]*)\" на клавиатуре$")
+    @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
         WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
@@ -334,10 +335,17 @@ public class DefaultSteps {
     /**
      * Ищется указанное текстовое поле и устанавливается в него заданное значение. Перед использованием поле нужно очистить
      */
+    @Deprecated
     @Когда("^установлено значение \"([^\"]*)\" в поле \"([^\"]*)\"$")
-    public void setValueToField(String amount, String nameOfField) {
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        valueInput.setValue(String.valueOf(amount));
+    public void setValueToField(String value, String elementName) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
+        valueInput.setValue(String.valueOf(value));
+        valueInput.should(not(Condition.empty));
+    }
+    @Когда("^в поле \"([^\"]*)\" введено значение \"([^\"]*)\"$")
+    public void setFieldValue(String elementName, String value) {
+        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
+        valueInput.setValue(String.valueOf(value));
         valueInput.should(not(Condition.empty));
     }
 
@@ -358,9 +366,11 @@ public class DefaultSteps {
      */
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String nameOfField) {
-        SelenideElement fieldInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        assertThat("Поле '" + nameOfField + "' содержит значение", fieldInput.val(), Matchers.isEmptyOrNullString());
-        assertThat("Поле '" + nameOfField + "' содержит значение", fieldInput.innerText(), Matchers.isEmptyOrNullString());
+        SelenideElement field = alfaScenario.getCurrentPage().getElement(nameOfField);
+        if (field.getTagName().equals("input"))
+            assertThat("Поле '" + nameOfField + "' содержит значение", field.getValue(), Matchers.isEmptyOrNullString());
+        else
+            assertThat("Поле '" + nameOfField + "' содержит значение", field.innerText(), Matchers.isEmptyOrNullString());
     }
 
     /**
@@ -404,6 +414,7 @@ public class DefaultSteps {
     /**
      * Разворачивает окно с браузером на весь экран
      */
+    @Deprecated
     @Если("^развернуть окно на весь экран$")
     public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
@@ -522,17 +533,18 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
      */
+    @Deprecated
     @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
     public void compareTwoDigitVars(String firstValue, String secondValue) {
-        BigInteger bigInt1 = new BigInteger(
+        BigDecimal bigReal1 = new BigDecimal(
                 alfaScenario.getVar(firstValue).toString()
         );
-        BigInteger bigInt2 = new BigInteger(
+        BigDecimal bigReal2 = new BigDecimal(
                 alfaScenario.getVar(secondValue).toString()
         );
-        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigInt1 + " и " +
-                secondValue + " = " + bigInt2);
-        assertThat("значения переменных совпали", bigInt1, equalTo(bigInt2));
+        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigReal1 + " и " +
+                secondValue + " = " + bigReal2);
+        assertThat("значения переменных совпали", bigReal1, equalTo(bigReal2));
     }
 
     /**
