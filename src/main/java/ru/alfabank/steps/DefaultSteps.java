@@ -364,21 +364,16 @@ public class DefaultSteps {
      * Ищется указанное текстовое поле и устанавливается в него заданное значение. Перед использованием поле нужно очистить
      */
     @Deprecated
-    @Когда("^установлено значение \"([^\"]*)\" в поле \"([^\"]*)\"$")
+    @Когда("^установлено значение \"(.*)\" в поле \"([^\"]*)\"$")
     public void setValueToField(String value, String elementName) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
         valueInput.setValue(String.valueOf(value));
         valueInput.should(not(Condition.empty));
     }
-    @Когда("^в поле \"([^\"]*)\" введено значение \"([^\"]*)\"$")
+    @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
         valueInput.setValue(String.valueOf(value));
-    @Когда("^установлено значение \"(.*)\" в поле \"([^\"]*)\"$")
-    public void setValueToField(String amount, String nameOfField) {
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
-        valueInput.setValue(String.valueOf(amount));
-        valueInput.should(not(Condition.empty));
     }
 
     /**
