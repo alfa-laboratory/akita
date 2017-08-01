@@ -199,15 +199,16 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
      */
+    @Deprecated
     @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compageTwoVars(String varName1, String varName2) {
+    public void compareTwoVars(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
     @Когда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compageTwoVariables(String varName1, String varName2) {
+    public void compareTwoVariables(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
@@ -417,6 +418,7 @@ public class DefaultSteps {
     /**
      * Разворачивает окно с браузером на весь экран
      */
+    @Deprecated
     @Если("^развернуть окно на весь экран$")
     public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
