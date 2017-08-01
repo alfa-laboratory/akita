@@ -6,7 +6,6 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
@@ -16,19 +15,13 @@ import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.List;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
@@ -707,5 +700,19 @@ public class DefaultSteps {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
         valueInput.setValue(currentStringDate);
+    }
+
+    /**
+     * Сохранение количества элементов списка
+     */
+    @И("^количество элементов списка \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
+    public void saveNumberOfElementsListToVar(String nameOfList, String varNAme) {
+        long numberOfElementsList = alfaScenario.getCurrentPage().getElementsList(nameOfList).size();
+        if (numberOfElementsList != 0) {
+            setVar(varNAme, numberOfElementsList);
+        } else {
+            throw new IllegalStateException("Список пуст");
+        }
+        write("Количество элементов списка " + nameOfList + " : " + numberOfElementsList);
     }
 }
