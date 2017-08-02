@@ -88,7 +88,7 @@ public class DefaultApiSteps {
         Response response = request.request(Method.valueOf(typeOfRequest), urlName);
         getResponseAndSaveToVariable(variableName, response);
     }
-    @И("^выполнен (?:GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequestSaveResponse(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
         urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
@@ -119,7 +119,7 @@ public class DefaultApiSteps {
         urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
-    @И("^выполнен (?:GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
+    @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkResponseCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
         urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
