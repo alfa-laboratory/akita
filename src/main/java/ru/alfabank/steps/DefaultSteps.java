@@ -132,8 +132,19 @@ public class DefaultSteps {
     /**
      * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
      */
-    @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
+    @Deprecated
+    @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
     public void elemAppeared(String elemName, int seconds) {
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElement(elemName)
+        );
+    }
+
+    /**
+     * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
+     */
+    @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
+    public void testElementAppeared(String elemName, int seconds) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElement(elemName)
         );
@@ -215,15 +226,16 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
      */
+    @Deprecated
     @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compageTwoVars(String varName1, String varName2) {
+    public void compareTwoVars(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
     @Когда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compageTwoVariables(String varName1, String varName2) {
+    public void compareTwoVariables(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
@@ -323,11 +335,21 @@ public class DefaultSteps {
         loadPage(pageName);
     }
 
+
+    /**
+     * Ожидание заданное количество секунд
+     */
+    @Deprecated
+    @Когда("^выполнено ожидание в течение (\\d+) секунд$")
+    public void waitDuring(long seconds) {
+        sleep(1000 * seconds);
+    }
+
     /**
      * Ожидание заданное количество секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) (?:секунд|секунды)")
-    public void waitDuring(long seconds) {
+    public void waitForSeconds(long seconds) {
         sleep(1000 * seconds);
     }
 
@@ -430,8 +452,19 @@ public class DefaultSteps {
     /**
      * Устанавливает размеры окна с браузером
      */
-    @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
+    @Deprecated
+    @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
     public void setupWindowSize(String widthRaw, String heightRaw) {
+        int width = Integer.valueOf(widthRaw);
+        int height = Integer.valueOf(heightRaw);
+        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
+    }
+
+    /**
+     * Устанавливает размеры окна с браузером
+     */
+    @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
+    public void setWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
         int height = Integer.valueOf(heightRaw);
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
@@ -574,6 +607,7 @@ public class DefaultSteps {
     /**
      * Проверка, что элемента нет на странице
      */
+    @Deprecated
     @И("^элемент \"([^\"]*)\" не найден на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
