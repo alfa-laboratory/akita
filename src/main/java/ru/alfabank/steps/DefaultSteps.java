@@ -473,6 +473,7 @@ public class DefaultSteps {
     /**
      * Разворачивает окно с браузером на весь экран
      */
+    @Deprecated
     @Если("^развернуть окно на весь экран$")
     public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
