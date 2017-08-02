@@ -193,7 +193,7 @@ public class DefaultSteps {
      * Проверяем, что все элементы, которые описаны в классе страницы с аннотацией @Name, но без аннотации @Optional,
      * видны на странице. При необходимости ждем.
      */
-    @Когда("^(?:страница|блок|форма) \"([^\"]*)\" (?:загрузилась|загрузился)$")
+    @Когда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         alfaScenario.setCurrentPage(alfaScenario.getPage(nameOfPage));
         alfaScenario.getCurrentPage().appeared();
