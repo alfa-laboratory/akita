@@ -734,7 +734,7 @@ public class DefaultSteps {
 
     /**
      * Ввод в поле текущую дату в заданном формате
-     * При неверном формате, используется dd.mm.yyyy
+     * При неверном формате, используется dd.MM.yyyy
      */
     @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
     public void currentDate(String fieldName, String formatDate) {
@@ -743,8 +743,8 @@ public class DefaultSteps {
         try {
             currentStringDate = new SimpleDateFormat(formatDate).format(date);
         } catch (IllegalArgumentException ex) {
-            currentStringDate = new SimpleDateFormat("dd.mm.yyyy").format(date);
-            log.error("Неверный формат. Дата будет использована в формате dd.mm.yyyy");
+            currentStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
+            log.error("Неверный формат. Дата будет использована в формате dd.MM.yyyy");
         }
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
