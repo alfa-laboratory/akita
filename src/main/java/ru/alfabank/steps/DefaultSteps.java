@@ -16,6 +16,7 @@ import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -168,12 +169,6 @@ public class DefaultSteps {
     @Deprecated
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
     public void waitUntilDisapper(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
-    }
-
-    @И("^ожидается исчезновение элемента \"([^\"]*)\"")
-    public void elemDisappered(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
     }
@@ -340,7 +335,7 @@ public class DefaultSteps {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
 
-    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" (?:скрыто|скрыт|скрыта)")
+    @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
@@ -566,7 +561,7 @@ public class DefaultSteps {
      * Выполнено наведение курсора на элемент
      */
     @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
-    public void saveToVariable(String fieldname) {
+    public void elementHover(String fieldname) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
         field.hover();
     }
@@ -574,6 +569,7 @@ public class DefaultSteps {
     /**
      * Проверка, что элемента нет на странице
      */
+    @Deprecated
     @И("^элемент \"([^\"]*)\" не найден на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
