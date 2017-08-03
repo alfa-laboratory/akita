@@ -132,17 +132,6 @@ public class DefaultSteps {
     /**
      * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
      */
-    @Deprecated
-    @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
-    public void elemAppeared(String elemName, int seconds) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElement(elemName)
-        );
-    }
-
-    /**
-     * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
-     */
     @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
     public void testElementAppeared(String elemName, int seconds) {
         alfaScenario.getCurrentPage().waitElementsUntil(
@@ -333,16 +322,6 @@ public class DefaultSteps {
         alfaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
         loadPage(pageName);
-    }
-
-
-    /**
-     * Ожидание заданное количество секунд
-     */
-    @Deprecated
-    @Когда("^выполнено ожидание в течение (\\d+) секунд$")
-    public void waitDuring(long seconds) {
-        sleep(1000 * seconds);
     }
 
     /**
