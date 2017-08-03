@@ -35,12 +35,6 @@ description = """light testing framework Testiodor"""
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-//Properties artifactoryProps = new Properties()
-//artifactoryProps.load(new FileInputStream("artifactory.properties"))
-//artifactoryProps.each { prop ->
-//    project.ext.set(prop.key, prop.value)
-//}
-
 project.ext {
     cucumberVersion = '1.2.5'
 }
