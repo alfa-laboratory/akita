@@ -18,7 +18,7 @@ public class MobileChrome implements WebDriverProvider {
     @Override
     public WebDriver createDriver(DesiredCapabilities capabilities) {
         log.info("---------------run CustomMobileDriver---------------------");
-        String mobileDeviceName = loadSystemPropertyOrDefault("device", "Google Nexus 5");
+        String mobileDeviceName = loadSystemPropertyOrDefault("device", "Nexus 5");
         Map<String, String> mobileEmulation = new HashMap<>();
         mobileEmulation.put("deviceName", mobileDeviceName);
 
