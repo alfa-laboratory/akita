@@ -618,12 +618,21 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что значение в поле содержит значению, указанное в шаге
+     * Проверка, что значение в поле содержит значение, указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
     public void testActualValueContainsSubstring(String fieldName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         assertThat("В поле нет ожидаемой подстроки", actualValue, containsString(expectedValue));
+    }
+
+    /**
+     * Проверка, что значение в поле равно значению, указанному в шаге
+     */
+    @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
+    public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
+        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
+        assertEquals("Значения не совпадают", expectedValue, actualValue);
     }
 
     /**
