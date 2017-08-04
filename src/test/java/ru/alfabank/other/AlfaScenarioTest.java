@@ -55,7 +55,7 @@ public class AlfaScenarioTest {
         assertThat(alfaScenario.getPage("Title"), is(not(nullValue())) );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void putGetPagesNegative() {
         AlfaPageMock alfaPageMock = null;
         alfaScenario.getPages().put("Mock", alfaPageMock);

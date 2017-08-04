@@ -16,7 +16,6 @@ import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
-import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -134,7 +133,7 @@ public class DefaultSteps {
      * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
      */
     @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
-    public void elemAppeared(String elemName, int seconds) {
+    public void testElementAppeared(String elemName, int seconds) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElement(elemName)
         );
@@ -177,7 +176,7 @@ public class DefaultSteps {
      * Проверяем, что все элементы, которые описаны в классе страницы с аннотацией @Name, но без аннотации @Optional,
      * видны на странице. При необходимости ждем.
      */
-    @Когда("^(?:страница|блок|форма) \"([^\"]*)\" (?:загрузилась|загрузился)$")
+    @Когда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         alfaScenario.setCurrentPage(alfaScenario.getPage(nameOfPage));
         alfaScenario.getCurrentPage().appeared();
@@ -210,36 +209,19 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
      */
+    @Deprecated
     @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compageTwoVars(String varName1, String varName2) {
+    public void compareTwoVars(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
     @Когда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compageTwoVariables(String varName1, String varName2) {
+    public void compareTwoVariables(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
-    }
-
-    /**
-     * Значение из поля сохраняется в заданную переменную.
-     */
-    @Deprecated
-    @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
-    public void saveFieldValueToVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
-        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
-        alfaScenario.setVar(variableName, value);
-    }
-
-    @И("^значение из (?:поля|элемента) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
-    public void storeFieldValueInVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
-        alfaScenario.setVar(variableName, value);
     }
 
 
@@ -322,7 +304,7 @@ public class DefaultSteps {
      * Ожидание заданное количество секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) (?:секунд|секунды)")
-    public void waitDuring(long seconds) {
+    public void waitForSeconds(long seconds) {
         sleep(1000 * seconds);
     }
 
@@ -425,8 +407,19 @@ public class DefaultSteps {
     /**
      * Устанавливает размеры окна с браузером
      */
-    @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
+    @Deprecated
+    @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
     public void setupWindowSize(String widthRaw, String heightRaw) {
+        int width = Integer.valueOf(widthRaw);
+        int height = Integer.valueOf(heightRaw);
+        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
+    }
+
+    /**
+     * Устанавливает размеры окна с браузером
+     */
+    @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
+    public void setWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
         int height = Integer.valueOf(heightRaw);
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
@@ -435,6 +428,7 @@ public class DefaultSteps {
     /**
      * Разворачивает окно с браузером на весь экран
      */
+    @Deprecated
     @Если("^развернуть окно на весь экран$")
     public void expandWindowToAllScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
@@ -614,12 +608,21 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что значение в поле содержит значению, указанное в шаге
+     * Проверка, что значение в поле содержит значение, указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
     public void testActualValueContainsSubstring(String fieldName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         assertThat("В поле нет ожидаемой подстроки", actualValue, containsString(expectedValue));
+    }
+
+    /**
+     * Проверка, что значение в поле равно значению, указанному в шаге
+     */
+    @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
+    public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
+        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
+        assertEquals("Значения не совпадают", expectedValue, actualValue);
     }
 
     /**
@@ -695,7 +698,7 @@ public class DefaultSteps {
 
     /**
      * Ввод в поле текущую дату в заданном формате
-     * При неверном формате, используется dd.mm.yyyy
+     * При неверном формате, используется dd.MM.yyyy
      */
     @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
     public void currentDate(String fieldName, String formatDate) {
@@ -704,8 +707,8 @@ public class DefaultSteps {
         try {
             currentStringDate = new SimpleDateFormat(formatDate).format(date);
         } catch (IllegalArgumentException ex) {
-            currentStringDate = new SimpleDateFormat("dd.mm.yyyy").format(date);
-            log.error("Неверный формат. Дата будет использована в формате dd.mm.yyyy");
+            currentStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
+            log.error("Неверный формат. Дата будет использована в формате dd.MM.yyyy");
         }
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");

@@ -34,7 +34,7 @@ public class PagesTest {
         assertThat(pages.get("Test"), equalTo(alfaPageMock));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void putNegative() {
         AlfaPage nullPage = null;
         pages.put("Test", nullPage);

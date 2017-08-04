@@ -29,7 +29,7 @@ public class AlfaPageTest {
     private static AlfaPageMock alfaPageMock = new AlfaPageMock();
     private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
     private static AlfaPage page;
-    private static DefaultSteps ds = new DefaultSteps();;
+    private static DefaultSteps ds = new DefaultSteps();
 
     @BeforeClass
     public static void setup() {

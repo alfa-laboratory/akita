@@ -22,7 +22,7 @@ public class AlfaEnvironmentTest {
 
     @Test
     public void initPagesTest() {
-        assertThat(env.getPage("AlfaPageMock"), is(not(nullValue())));
+        assertThat(env.getPage("AlfaPageMock"), is(notNullValue()));
     }
 
     @Test

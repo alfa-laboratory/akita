@@ -74,7 +74,7 @@ public class DefaultStepsTest {
     @Test
     public void storeFieldValueInVariablePositive() {
         String varName = "mockId";
-        ds.storeFieldValueInVariable(varName, varName);
+        ds.storeElementValueInVariable(varName, varName);
         assertThat(alfaScenario.getVar(varName), equalTo("Serious testing page"));
     }
 
@@ -86,7 +86,7 @@ public class DefaultStepsTest {
         String number2Name = "number2", number2Value = "1234567894";
         alfaScenario.setVar(number2Name, number2Value);
 
-        ds.compageTwoVariables(number1Name, number2Name);
+        ds.compareTwoVariables(number1Name, number2Name);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class DefaultStepsTest {
         String number2Name = "number2", number2Value = "1234567890.97531";
         alfaScenario.setVar(number2Name, number2Value);
 
-        ds.compageTwoVariables(number1Name, number2Name);
+        ds.compareTwoVariables(number1Name, number2Name);
     }
 
     @Test
@@ -116,11 +116,6 @@ public class DefaultStepsTest {
     @Test
     public void elemIsPresentedOnPagePositive() {
         ds.elemIsPresentedOnPage("mockTagName");
-    }
-
-    @Test
-    public void elemAppearedPositive() {
-        ds.elemAppeared("mockTagName", 1);
     }
 
     @Ignore

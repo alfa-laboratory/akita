@@ -29,16 +29,10 @@ tasks.release.dependsOn tasks.artifactoryPublish
 
 group = 'ru.alfabank.tests'
 
-description = """light testing framework Testiod0r"""
+description = """light testing framework Testiodor"""
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-Properties artifactoryProps = new Properties()
-artifactoryProps.load(new FileInputStream("artifactory.properties"))
-artifactoryProps.each { prop ->
-    project.ext.set(prop.key, prop.value)
-}
 
 project.ext {
     cucumberVersion = '1.2.5'
@@ -68,7 +62,7 @@ compileTestJava.options.encoding = 'UTF-8'
 sonarqube {
     properties {
         property 'sonar.projectName', rootProject.name
-        property 'sonar.projectDescription', "Testiod0r autotest framework"
+        property 'sonar.projectDescription', "Testiodor autotest framework"
         property 'sonar.sourceEncoding', 'UTF-8'
     }
 }
@@ -89,7 +83,7 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-artifactory {
+/*artifactory {
 
     contextUrl = "${artifactory_contextUrl}"
     publish {
@@ -103,7 +97,7 @@ artifactory {
             publications ('maven')
         }
     }
-}
+}*/
 
 artifactoryPublish {
     dependsOn jar
