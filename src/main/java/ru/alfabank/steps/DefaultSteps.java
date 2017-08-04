@@ -230,24 +230,6 @@ public class DefaultSteps {
         assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
-    /**
-     * Значение из поля сохраняется в заданную переменную.
-     */
-    @Deprecated
-    @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
-    public void saveFieldValueToVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
-        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
-        alfaScenario.setVar(variableName, value);
-    }
-
-    @И("^значение из (?:поля|элемента) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
-    public void storeFieldValueInVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
-        alfaScenario.setVar(variableName, value);
-    }
-
 
     /**
      * Значение из input-поля сохраняется в заданную переменную.
