@@ -44,13 +44,13 @@ public class AlfaScenarioTest {
         String varName = "varName";
         String varValue = "1234567891011";
         alfaScenario.setVar(varName, varValue);
-        assertThat("Вернулось правильное значение сохраненной переменной", alfaScenario.getVar(varName).toString(),
-                equalTo(varValue));
+        assertThat("Вернулось правильное значение сохраненной переменной",
+                alfaScenario.getVar(varName).toString(), equalTo(varValue));
     }
 
     @Test
     public void putGetPagesPositive() {
-        assertThat(alfaScenario.getPage("Title"), is(notNullValue()) );
+        assertThat(alfaScenario.getPage("Title"), is(notNullValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -61,7 +61,7 @@ public class AlfaScenarioTest {
 
     @Test
     public void getEnvironmentPositive() {
-        assertThat(alfaScenario.getEnvironment(), is(notNullValue()) );
+        assertThat(alfaScenario.getEnvironment(), is(notNullValue()));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class AlfaScenarioTest {
     @Test
     public void getCurrentPagePositive() {
         alfaScenario.setCurrentPage(alfaScenario.getPage("Title"));
-        assertThat(alfaScenario.getCurrentPage(), is(notNullValue()) );
+        assertThat(alfaScenario.getCurrentPage(), is(notNullValue()));
     }
 
     @Test(expected = AssertionError.class)

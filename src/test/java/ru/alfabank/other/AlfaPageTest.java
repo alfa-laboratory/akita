@@ -88,28 +88,24 @@ public class AlfaPageTest {
 
     @Test
     public void getElementPositive() {
-        assertThat(page.getElement("GoodButton"),
-                is(notNullValue()) );
+        assertThat(page.getElement("GoodButton"), is(notNullValue()));
     }
 
     @Ignore
     @Test
     public void getElementsListPositive() {
-        assertThat(page.getElementsList("mockList"),
-                is(notNullValue()) );
+        assertThat(page.getElementsList("mockList"), is(notNullValue()));
     }
 
     @Test
     public void getAnyElementTextPositive() {
-        assertThat(page.getAnyElementText("TextField"),
-                equalTo("text"));
+        assertThat(page.getAnyElementText("TextField"), equalTo("text"));
     }
 
     @Ignore
     @Test
     public void getAnyElementsListTextsPositive() {
-        assertThat(page.getAnyElementsListTexts("mockList"),
-                equalTo("2"));
+        assertThat(page.getAnyElementsListTexts("mockList"), equalTo("2"));
     }
 
     @Test
@@ -123,7 +119,6 @@ public class AlfaPageTest {
         SelenideElement selenideElement = alfaPageMock.getGoodButton();
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElement);
-        assertThat(getButtonFromListByName(list, "GoodButton"),
-                is(notNullValue()) );
+        assertThat(getButtonFromListByName(list, "GoodButton"), is(notNullValue()));
     }
 }

@@ -33,7 +33,7 @@ public class AlfaEnvironmentTest {
 
     @Test
     public void getVarsTest() {
-        assertThat(env.getVars(), is(notNullValue()) );
+        assertThat(env.getVars(), is(notNullValue()));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class AlfaEnvironmentTest {
 
     @Test
     public void getPagesTest() {
-        assertThat(env.getPages(), is(notNullValue()) );
+        assertThat(env.getPages(), is(notNullValue()));
     }
 
     @Test

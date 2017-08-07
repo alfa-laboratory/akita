@@ -1,5 +1,6 @@
 package ru.alfabank.other;
 
+import lombok.Getter;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -14,15 +15,12 @@ import static ru.alfabank.alfatest.cucumber.utils.Reflection.extractFieldValue;
  */
 public class ReflectionTest {
 
+    @Getter
     public class MockClass {
         public String mockField;
 
         MockClass() {
             mockField = "123";
-        }
-
-        public String getMockField() {
-            return mockField;
         }
     }
 
