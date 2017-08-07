@@ -38,7 +38,7 @@ public class AlfaScenarioTest {
     public void testGetSetVarNegative1() {
         String notExistingVar = "randomName";
         expectedEx.expectMessage("Переменная " + notExistingVar + " не найдена");
-        assertThat(alfaScenario.getVar(notExistingVar), nullValue());
+        alfaScenario.getVar(notExistingVar);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class AlfaScenarioTest {
 
     @Test
     public void putGetPagesPositive() {
-        assertThat(alfaScenario.getPage("Title"), is(not(nullValue())) );
+        assertThat(alfaScenario.getPage("Title"), is(notNullValue()) );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -63,7 +63,7 @@ public class AlfaScenarioTest {
 
     @Test
     public void getEnvironmentPositive() {
-        assertThat(alfaScenario.getEnvironment(), is(not(nullValue())) );
+        assertThat(alfaScenario.getEnvironment(), is(notNullValue()) );
     }
 
     @Test
@@ -75,7 +75,7 @@ public class AlfaScenarioTest {
     @Test
     public void getCurrentPagePositive() {
         alfaScenario.setCurrentPage(alfaScenario.getPage("Title"));
-        assertThat(alfaScenario.getCurrentPage(), is(not(nullValue())) );
+        assertThat(alfaScenario.getCurrentPage(), is(notNullValue()) );
     }
 
     @Test(expected = AssertionError.class)

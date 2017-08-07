@@ -44,22 +44,22 @@ public class AlfaPageTest {
 
     @Test(expected = NullPointerException.class)
     public void getElementNegative() {
-        assertThat(alfaPageMock.getElement("test"), equalTo(nullValue()));
+        alfaPageMock.getElement("test");
     }
 
     @Test(expected = NullPointerException.class)
     public void getElementsListNegative() {
-        assertThat(alfaPageMock.getElementsList("test"), equalTo(nullValue()));
+        alfaPageMock.getElementsList("test");
     }
 
     @Test(expected = NullPointerException.class)
     public void getAnyElementTextNegative() {
-        assertThat(alfaPageMock.getAnyElementText("test"), equalTo(nullValue()));
+        alfaPageMock.getAnyElementText("test");
     }
 
     @Test(expected = NullPointerException.class)
     public void getAnyElementsListTextsNegative() {
-        assertThat(alfaPageMock.getAnyElementsListTexts("test"), equalTo(nullValue()));
+        alfaPageMock.getAnyElementsListTexts("test");
     }
 
     @Test
@@ -82,12 +82,8 @@ public class AlfaPageTest {
         SelenideElement selenideElementMock = alfaPageMock.mockCss;
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElementMock);
-        assertThat(getButtonFromListByName(list, "test"),
-                equalTo(nullValue()));
+        getButtonFromListByName(list, "test");
     }
-
-
-
 
     @Test
     public void getElementPositive() {

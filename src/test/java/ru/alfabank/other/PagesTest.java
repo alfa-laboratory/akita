@@ -25,7 +25,7 @@ public class PagesTest {
     @Test(expected = AssertionError.class)
     public void setCurrentPageNegative() {
         pages.setCurrentPage(null);
-        assertThat(pages.getCurrentPage(), equalTo(nullValue()) );
+        pages.getCurrentPage();
     }
 
     @Test
@@ -38,7 +38,7 @@ public class PagesTest {
     public void putNegative() {
         AlfaPage nullPage = null;
         pages.put("Test", nullPage);
-        assertThat(pages.get("Test"), equalTo(nullValue()));
+        pages.get("Test");
     }
 
     @Test
