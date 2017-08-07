@@ -1,5 +1,6 @@
 package ru.alfabank.other;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 
@@ -10,7 +11,12 @@ import static org.hamcrest.Matchers.*;
  * Created by alexander on 02.08.17.
  */
 public class ScopedVariablesTest {
-    private static ScopedVariables variables = new ScopedVariables();
+    private static ScopedVariables variables;
+
+    @BeforeClass
+    public static void init() {
+        variables = new ScopedVariables();
+    }
 
     @Test
     public void evaluatePositive() {

@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.AlfaPageMock;
 import ru.alfabank.alfatest.cucumber.api.AlfaPage;
+import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.alfatest.cucumber.api.Pages;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -13,8 +14,14 @@ import static org.hamcrest.Matchers.*;
  * Created by alexander on 02.08.17.
  */
 public class PagesTest {
-    private static Pages pages = new Pages();
-    private static AlfaPageMock alfaPageMock = new AlfaPageMock();
+    private static Pages pages;
+    private static AlfaPageMock alfaPageMock;
+
+    @BeforeClass
+    public static void init() {
+        pages = new Pages();
+        alfaPageMock = new AlfaPageMock();
+    }
 
     @Test
     public void getSetCurrentPagePositive() {

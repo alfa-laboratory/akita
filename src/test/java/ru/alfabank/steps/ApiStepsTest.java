@@ -22,13 +22,13 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public class ApiStepsTest {
 
     private static DefaultApiSteps api;
-    private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
+    private static AlfaScenario alfaScenario;
 
     @BeforeClass
     public static void setup() {
+        alfaScenario = AlfaScenario.getInstance();
         api = new DefaultApiSteps();
         alfaScenario.setEnvironment(new AlfaEnvironment());
-
     }
 
     @Rule

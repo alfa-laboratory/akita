@@ -19,15 +19,15 @@ import java.util.LinkedList;
  * Created by alexander on 02.08.17.
  */
 public class SpectatorsTest {
-    private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
-    private static DefaultSteps ds;
+    private static AlfaScenario alfaScenario;
     private static AlfaPageMock page;
 
     @BeforeClass
     public static void setup() {
+        alfaScenario = AlfaScenario.getInstance();
         Scenario scenario = new StubScenario();
         alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
-        ds = new DefaultSteps();
+        DefaultSteps ds = new DefaultSteps();
         page = (AlfaPageMock)alfaScenario.getPage("AlfaPageMock");
         String inputFilePath = "src/test/resources/AlfaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();

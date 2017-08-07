@@ -26,13 +26,14 @@ import static ru.alfabank.alfatest.cucumber.api.AlfaPage.getButtonFromListByName
  * Created by alexander on 02.08.17.
  */
 public class AlfaPageTest {
-    private static AlfaPageMock alfaPageMock = new AlfaPageMock();
-    private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
+    private static AlfaPageMock alfaPageMock;
     private static AlfaPage page;
-    private static DefaultSteps ds = new DefaultSteps();
 
     @BeforeClass
     public static void setup() {
+        alfaPageMock = new AlfaPageMock();
+        AlfaScenario alfaScenario = AlfaScenario.getInstance();
+        DefaultSteps ds = new DefaultSteps();
         Scenario scenario = new StubScenario();
         alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AlfaPageMock.html";
@@ -79,7 +80,7 @@ public class AlfaPageTest {
 
     @Test(expected = NullPointerException.class)
     public void getButtonFromListByNameNegative() {
-        SelenideElement selenideElementMock = alfaPageMock.mockCss;
+        SelenideElement selenideElementMock = alfaPageMock.getMockCss();
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElementMock);
         getButtonFromListByName(list, "test");
@@ -88,14 +89,14 @@ public class AlfaPageTest {
     @Test
     public void getElementPositive() {
         assertThat(page.getElement("GoodButton"),
-                not(equalTo(nullValue())) );
+                is(notNullValue()) );
     }
 
     @Ignore
     @Test
     public void getElementsListPositive() {
         assertThat(page.getElementsList("mockList"),
-                not(equalTo(nullValue())) );
+                is(notNullValue()) );
     }
 
     @Test
@@ -119,10 +120,10 @@ public class AlfaPageTest {
     @Ignore
     @Test
     public void getButtonFromListByNamePositive() {
-        SelenideElement selenideElement = alfaPageMock.goodButton;
+        SelenideElement selenideElement = alfaPageMock.getGoodButton();
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElement);
         assertThat(getButtonFromListByName(list, "GoodButton"),
-                equalTo(nullValue()));
+                is(notNullValue()) );
     }
 }

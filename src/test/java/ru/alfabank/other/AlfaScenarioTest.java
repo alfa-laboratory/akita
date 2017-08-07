@@ -2,10 +2,7 @@ package ru.alfabank.other;
 
 import cucumber.api.Scenario;
 import groovy.util.logging.Slf4j;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import ru.alfabank.AlfaPageMock;
 import ru.alfabank.StubScenario;
@@ -21,7 +18,12 @@ import static org.mockito.Mockito.*;
  * Created by onotole on 08.02.17.
  */
 public class AlfaScenarioTest {
-    private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
+    private static AlfaScenario alfaScenario;
+
+    @BeforeClass
+    public static void init() {
+        alfaScenario = AlfaScenario.getInstance();
+    }
 
     @Before
     public void prepare() {
@@ -31,13 +33,9 @@ public class AlfaScenarioTest {
         alfaScenario.getPages().put("Title", alfaPageMock);
     }
 
-    @Rule
-    public ExpectedException expectedEx;
-
     @Test(expected = NullPointerException.class)
     public void testGetSetVarNegative1() {
         String notExistingVar = "randomName";
-        expectedEx.expectMessage("Переменная " + notExistingVar + " не найдена");
         alfaScenario.getVar(notExistingVar);
     }
 

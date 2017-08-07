@@ -24,10 +24,11 @@ import static org.mockito.Mockito.*;
  */
 public class DefaultStepsTest {
     private static DefaultSteps ds;
-    private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
+    private static AlfaScenario alfaScenario;
 
     @BeforeClass
     public static void setup() {
+        alfaScenario = AlfaScenario.getInstance();
         Scenario scenario = new StubScenario();
         alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
         ds = new DefaultSteps();

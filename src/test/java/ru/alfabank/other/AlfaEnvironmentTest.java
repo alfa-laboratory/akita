@@ -2,6 +2,7 @@ package ru.alfabank.other;
 
 import cucumber.api.Scenario;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.AlfaPageMock;
 import ru.alfabank.StubScenario;
@@ -18,7 +19,12 @@ import static org.mockito.Mockito.*;
  * Created by alexander on 02.08.17.
  */
 public class AlfaEnvironmentTest {
-    private static AlfaEnvironment env = new AlfaEnvironment();
+    private static AlfaEnvironment env;
+
+    @BeforeClass
+    public static void prepare() {
+        env = new AlfaEnvironment();
+    }
 
     @Test
     public void initPagesTest() {
