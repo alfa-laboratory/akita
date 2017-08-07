@@ -720,4 +720,14 @@ public class DefaultSteps {
         valueInput.setValue("");
         valueInput.setValue(currentStringDate);
     }
+
+    @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
+    public void pasteValue(String value, String fieldName)  {
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
+        };
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(value);
+        clipboard.setContents(stringSelection, clipboardOwner);
+        alfaScenario.getCurrentPage().getElement(fieldName).sendKeys(Keys.chord(Keys.SHIFT, Keys.INSERT));
+    }
 }
