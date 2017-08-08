@@ -4,8 +4,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by alexander on 02.08.17.
@@ -20,12 +22,12 @@ public class ScopedVariablesTest {
 
     @Test
     public void evaluatePositive() {
-        assertThat(variables.evaluate("\"test\".equals(\"test\")"), equalTo(true));
+        assertTrue(variables.evaluate("\"test\".equals(\"test\")").equals(true));
     }
 
     @Test
     public void evaluateNegative() {
-        assertThat(variables.evaluate("\"test1\".equals(\"test\")"), equalTo(false));
+        assertFalse(variables.evaluate("\"test1\".equals(\"test\")").equals(true));
     }
 
     @Test
