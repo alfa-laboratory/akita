@@ -50,6 +50,6 @@ public class PagesTest {
 
     @Test
     public void getNegative() {
-        assertThat(pages.get("WRONG_KEY"), equalTo(null));
+        assertThat(pages.get("WRONG_KEY"), is(nullValue()));
     }
 }
