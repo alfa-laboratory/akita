@@ -45,7 +45,6 @@ public class PagesTest {
     public void putNegative() {
         AlfaPage nullPage = null;
         pages.put("Test", nullPage);
-        pages.get("Test");
     }
 
     @Test
