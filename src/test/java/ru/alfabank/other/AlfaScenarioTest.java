@@ -76,7 +76,7 @@ public class AlfaScenarioTest {
         assertThat(alfaScenario.getCurrentPage(), is(notNullValue()));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = IllegalArgumentException.class)
     public void setCurrentPageNegative() {
         alfaScenario.setCurrentPage(null);
     }
