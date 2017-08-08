@@ -22,12 +22,12 @@ public class ScopedVariablesTest {
 
     @Test
     public void evaluatePositive() {
-        assertTrue(variables.evaluate("\"test\".equals(\"test\")").equals(true));
+        assertThat(variables.evaluate("\"test\".equals(\"test\")"), equalTo(true));
     }
 
     @Test
     public void evaluateNegative() {
-        assertFalse(variables.evaluate("\"test1\".equals(\"test\")").equals(true));
+        assertThat(variables.evaluate("\"test1\".equals(\"test\")"), equalTo(false));
     }
 
     @Test
