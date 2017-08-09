@@ -152,10 +152,10 @@ public class DefaultApiSteps {
         for (RequestParam requestParam : table) {
             switch (requestParam.getType()) {
                 case PARAMETER:
-                    parameters.put(requestParam.getName(), requestParam.getValue());
+                    parameters.put(requestParam.getName(), loadProperty(requestParam.getValue(), requestParam.getValue()));
                     break;
                 case HEADER:
-                    headers.put(requestParam.getName(), requestParam.getValue());
+                    headers.put(requestParam.getName(), loadProperty(requestParam.getValue(), requestParam.getValue()));
                     break;
                 case BODY:
                     String folderNameForRequestBodies;
@@ -164,12 +164,12 @@ public class DefaultApiSteps {
                     } catch (Exception exp) {
                         folderNameForRequestBodies = "restBodies";
                     }
-                    String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, requestParam.getValue());
+                    String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, loadProperty(requestParam.getValue(), requestParam.getValue()));
                     try (FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
                     } catch (IOException e) {
-                        body = requestParam.getValue();
+                        body = loadProperty(requestParam.getValue(), requestParam.getValue());
                     }
                     break;
                 default:
