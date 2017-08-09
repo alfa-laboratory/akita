@@ -165,7 +165,7 @@ public class DefaultApiSteps {
                     } catch (Exception exp) {
                         folderNameForRequestBodies = "restBodies";
                     }
-                    String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, loadProperty(requestParam.getValue(), requestParam.getValue()));
+                    String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, getPropertyOrValue(requestParam.getValue()));
                     try (FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
