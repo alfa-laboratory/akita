@@ -25,7 +25,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'nebula.nebula-release'
 apply plugin: 'org.sonarqube'
 
-
 tasks.release.dependsOn tasks.artifactoryPublish
 
 group = 'ru.alfabank.tests'
@@ -51,6 +50,9 @@ dependencies {
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+
+    testCompile "org.mockito:mockito-core:2.+"
+    testCompile "com.github.tomakehurst:wiremock:2.+"
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -99,4 +101,23 @@ artifactory {
 
 artifactoryPublish {
     dependsOn jar
+}
+
+test {
+    maxParallelForks = 1
+    ignoreFailures = true
+
+    jvmArgs += "-Dfile.encoding=UTF-8"
+    jvmArgs += "-Dbrowser=${browser}"
+    jvmArgs += "-Dprofile=${profile}"
+    jvmArgs += "-Dselenide.pageLoadStrategy=none"
+
+    if (remoteHub) {
+        jvmArgs += "-Dremote=${remoteHub}"
+    }
+
+    reports {
+        html.enabled = false
+        junitXml.enabled = false
+    }
 }

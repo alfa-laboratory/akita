@@ -44,7 +44,7 @@ public final class AlfaScenario {
     }
 
     public void setCurrentPage(AlfaPage page) {
-        if (page == null) throw new AssertionError("Ты пытаешься установить null в качестве current page." +
+        if (page == null) throw new IllegalArgumentException("Ты пытаешься установить null в качестве current page." +
                 "Проверь аннотации @Name у используемых страниц");
         environment.getPages().setCurrentPage(page);
     }

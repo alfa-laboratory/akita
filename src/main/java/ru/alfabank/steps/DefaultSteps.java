@@ -172,12 +172,6 @@ public class DefaultSteps {
                 Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
     }
 
-    @И("^ожидается исчезновение элемента \"([^\"]*)\"")
-    public void elemDisappered(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
-    }
-
     /**
      * Проверяем, что все элементы, которые описаны в классе страницы с аннотацией @Name, но без аннотации @Optional,
      * видны на странице. При необходимости ждем.
@@ -323,7 +317,7 @@ public class DefaultSteps {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
 
-    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" (?:скрыто|скрыт|скрыта)")
+    @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
@@ -561,7 +555,7 @@ public class DefaultSteps {
      * Выполнено наведение курсора на элемент
      */
     @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
-    public void saveToVariable(String fieldname) {
+    public void elementHover(String fieldname) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
         field.hover();
     }
