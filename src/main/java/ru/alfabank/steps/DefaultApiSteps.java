@@ -30,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 @Slf4j
@@ -152,10 +153,10 @@ public class DefaultApiSteps {
         for (RequestParam requestParam : table) {
             switch (requestParam.getType()) {
                 case PARAMETER:
-                    parameters.put(requestParam.getName(), loadProperty(requestParam.getValue(), requestParam.getValue()));
+                    parameters.put(requestParam.getName(), getPropertyOrValue(requestParam.getValue()));
                     break;
                 case HEADER:
-                    headers.put(requestParam.getName(), loadProperty(requestParam.getValue(), requestParam.getValue()));
+                    headers.put(requestParam.getName(), getPropertyOrValue(requestParam.getValue()));
                     break;
                 case BODY:
                     String folderNameForRequestBodies;
@@ -169,7 +170,7 @@ public class DefaultApiSteps {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
                         body = gson.toJson(json);
                     } catch (IOException e) {
-                        body = loadProperty(requestParam.getValue(), requestParam.getValue());
+                        body = getPropertyOrValue(requestParam.getValue());
                     }
                     break;
                 default:
@@ -233,5 +234,4 @@ public class DefaultApiSteps {
         }
         return statusCode == expectedStatusCode;
     }
-
 }
