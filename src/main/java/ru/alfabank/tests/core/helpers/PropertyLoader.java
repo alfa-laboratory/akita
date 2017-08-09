@@ -31,6 +31,10 @@ public class PropertyLoader {
         return value;
     }
 
+    public static String getPropertyOrValue(String value) {
+        return loadProperty(value, value);
+    }
+
     public static String loadProperty(String name, String defaultValue) {
         String value = loadPropertySafe(name);
         return value != null ? value: defaultValue;
