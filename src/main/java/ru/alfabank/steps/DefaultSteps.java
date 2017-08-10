@@ -52,6 +52,8 @@ public class DefaultSteps {
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
+    private static final int DEFAULT_TIMEOUT = 10000;
+
     @Deprecated
     @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
     public void saveValueToVariable(String globalVarName, String varName) {
@@ -125,7 +127,7 @@ public class DefaultSteps {
     @И("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, 10000, alfaScenario.getCurrentPage().getElement(elemName)
+                Condition.appear, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
         );
     }
 
@@ -145,7 +147,7 @@ public class DefaultSteps {
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
-        int time = Integer.parseInt(PropertyLoader.loadProperty("waitingCustomElementsTimeout", "10000"));
+        int time = Integer.parseInt(PropertyLoader.loadProperty("waitingCustomElementsTimeout", "" + DEFAULT_TIMEOUT ));
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, time, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
@@ -169,7 +171,13 @@ public class DefaultSteps {
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
     public void waitUntilDisapper(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
+                Condition.disappears, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName));
+    }
+
+    @И("^ожидается исчезновение элемента \"([^\"]*)\"")
+    public void elemDisappered(String elemName) {
+        alfaScenario.getCurrentPage().waitElementsUntil(
+                Condition.disappears, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName));
     }
 
     /**
@@ -293,8 +301,7 @@ public class DefaultSteps {
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
         alfaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
         loadPage(pageName);
@@ -567,7 +574,7 @@ public class DefaultSteps {
     @И("^элемент \"([^\"]*)\" не найден на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                not(Condition.appear), 10000, alfaScenario.getCurrentPage().getElement(elemName)
+                not(Condition.appear), DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
         );
     }
 
@@ -577,7 +584,7 @@ public class DefaultSteps {
     @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                not(Condition.appear), 10000, alfaScenario.getCurrentPage().getElement(elemName)
+                not(Condition.appear), DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
         );
     }
 
