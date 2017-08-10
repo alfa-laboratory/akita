@@ -147,7 +147,7 @@ public class DefaultSteps {
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
-        int time = Integer.parseInt(PropertyLoader.loadProperty("waitingCustomElementsTimeout", "" + DEFAULT_TIMEOUT ));
+        int time = Integer.parseInt(loadProperty("waitingCustomElementsTimeout", "" + DEFAULT_TIMEOUT ));
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, time, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
