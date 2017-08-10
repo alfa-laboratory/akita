@@ -38,6 +38,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
  * В alfaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
@@ -147,7 +148,7 @@ public class DefaultSteps {
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
-        int time = Integer.parseInt(loadProperty("waitingCustomElementsTimeout", "" + DEFAULT_TIMEOUT ));
+        int time = loadPropertyInt("waitingCustomElementsTimeout", DEFAULT_TIMEOUT);
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, time, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
