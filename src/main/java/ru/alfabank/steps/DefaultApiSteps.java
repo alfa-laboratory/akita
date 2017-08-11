@@ -59,7 +59,7 @@ public class DefaultApiSteps {
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
         sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());
     }
 
@@ -84,7 +84,7 @@ public class DefaultApiSteps {
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
         RequestSender request = createRequestByParamsTable(table);
         Response response = request.request(Method.valueOf(typeOfRequest), urlName);
         getResponseAndSaveToVariable(variableName, response);
@@ -92,7 +92,7 @@ public class DefaultApiSteps {
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequestSaveResponse(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
         RequestSender request = createRequestByParamsTable(table);
         Response response = request.request(Method.valueOf(typeOfRequest), urlName);
         getResponseAndSaveToVariable(variableName, response);
@@ -117,13 +117,13 @@ public class DefaultApiSteps {
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkResponseStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkResponseCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
     }
 
@@ -159,12 +159,7 @@ public class DefaultApiSteps {
                     headers.put(requestParam.getName(), getPropertyOrValue(requestParam.getValue()));
                     break;
                 case BODY:
-                    String folderNameForRequestBodies;
-                    try {
-                        folderNameForRequestBodies = loadProperty("jsonBody");
-                    } catch (Exception exp) {
-                        folderNameForRequestBodies = "restBodies";
-                    }
+                    String folderNameForRequestBodies = loadProperty("jsonBody", "restBodies");
                     String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, getPropertyOrValue(requestParam.getValue()));
                     try (FileReader fileReader = new FileReader(path)) {
                         JsonElement json = gson.fromJson(fileReader, JsonElement.class);
@@ -210,12 +205,8 @@ public class DefaultApiSteps {
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            try {
-                newString = m.replaceFirst(loadProperty(varName));
-            } catch (IllegalArgumentException exp) {
-                String value = AlfaScenario.getInstance().getVar(varName).toString();
-                newString = m.replaceFirst(value);
-            }
+            String value = loadProperty(varName, AlfaScenario.getInstance().getVar(varName).toString());
+            newString = m.replaceFirst(value);
             m = p.matcher(newString);
         }
         if (newString.isEmpty()) {
