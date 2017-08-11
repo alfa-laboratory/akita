@@ -53,7 +53,7 @@ public class DefaultSteps {
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
-    private static final int DEFAULT_TIMEOUT = 10000;
+    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     @Deprecated
     @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
