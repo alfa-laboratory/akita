@@ -8,6 +8,7 @@ buildscript {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
         classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.6.3'
     }
 }
 
@@ -24,6 +25,8 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'nebula.nebula-release'
 apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 tasks.release.dependsOn tasks.artifactoryPublish
 
@@ -119,5 +122,13 @@ test {
     reports {
         html.enabled = false
         junitXml.enabled = false
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.destination "${buildDir}/jacocoHtml"
     }
 }
