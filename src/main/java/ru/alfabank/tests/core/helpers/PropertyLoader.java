@@ -31,9 +31,23 @@ public class PropertyLoader {
         return value;
     }
 
+    public static String getPropertyOrValue(String value) {
+        return loadProperty(value, value);
+    }
+
     public static String loadProperty(String name, String defaultValue) {
         String value = loadPropertySafe(name);
         return value != null ? value: defaultValue;
+    }
+
+    public static Integer loadPropertyInt(String varName) {
+        String value = loadPropertySafe(varName);
+        return Integer.parseInt(value);
+    }
+
+    public static Integer loadPropertyInt(String varName, Integer defaultValue) {
+        String value = loadPropertySafe(varName);
+        return value != null ? Integer.parseInt(value) : defaultValue;
     }
 
     public static String loadPropertySafe(String name) {

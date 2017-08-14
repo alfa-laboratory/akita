@@ -48,7 +48,9 @@ public final class Pages {
         return pages;
     }
 
-    public <T extends AlfaPage> void put(String pageName, T page) {
+    public <T extends AlfaPage> void put(String pageName, T page) throws IllegalArgumentException {
+        if (page == null)
+            throw new IllegalArgumentException("Была передана пустая страница");
         pages.put(pageName, page);
     }
 

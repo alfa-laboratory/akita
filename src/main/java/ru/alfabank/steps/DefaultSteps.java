@@ -38,6 +38,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
  * В alfaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
@@ -51,6 +52,8 @@ public class DefaultSteps {
 
     @Delegate
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
+
+    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     @Deprecated
     @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
@@ -125,7 +128,7 @@ public class DefaultSteps {
     @И("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, 10000, alfaScenario.getCurrentPage().getElement(elemName)
+                Condition.appear, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
         );
     }
 
@@ -145,9 +148,8 @@ public class DefaultSteps {
      */
     @И("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elemName) {
-        int time = Integer.parseInt(PropertyLoader.loadProperty("waitingCustomElementsTimeout", "10000"));
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, time, alfaScenario.getCurrentPage().getElementsList(elemName)
+                Condition.appear, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElementsList(elemName)
         );
     }
 
@@ -169,13 +171,13 @@ public class DefaultSteps {
     @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
     public void waitUntilDisapper(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
+                Condition.disappears, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName));
     }
 
     @И("^ожидается исчезновение элемента \"([^\"]*)\"")
     public void elemDisappered(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, 10000, alfaScenario.getCurrentPage().getElement(elemName));
+                Condition.disappears, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName));
     }
 
     /**
@@ -228,24 +230,6 @@ public class DefaultSteps {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
         assertThat("строки не совпадают", s1, equalTo(s2));
-    }
-
-    /**
-     * Значение из поля сохраняется в заданную переменную.
-     */
-    @Deprecated
-    @И("^значение поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
-    public void saveFieldValueToVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
-        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
-        alfaScenario.setVar(variableName, value);
-    }
-
-    @И("^значение из (?:поля|элемента) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
-    public void storeFieldValueInVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
-        alfaScenario.setVar(variableName, value);
     }
 
 
@@ -317,8 +301,7 @@ public class DefaultSteps {
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = PropertyLoader.loadProperty(urlName, valueIfNotFoundInProperties);
+        urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
         alfaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
         loadPage(pageName);
@@ -341,7 +324,7 @@ public class DefaultSteps {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
 
-    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" (?:скрыто|скрыт|скрыта)")
+    @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
         alfaScenario.getPage(nameOfPage).disappeared();
     }
@@ -579,7 +562,7 @@ public class DefaultSteps {
      * Выполнено наведение курсора на элемент
      */
     @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
-    public void saveToVariable(String fieldname) {
+    public void elementHover(String fieldname) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
         field.hover();
     }
@@ -591,7 +574,7 @@ public class DefaultSteps {
     @И("^элемент \"([^\"]*)\" не найден на странице$")
     public void elemIsNotPresentedOnPage(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                not(Condition.appear), 10000, alfaScenario.getCurrentPage().getElement(elemName)
+                not(Condition.appear), DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
         );
     }
 
@@ -601,7 +584,7 @@ public class DefaultSteps {
     @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
-                not(Condition.appear), 10000, alfaScenario.getCurrentPage().getElement(elemName)
+                not(Condition.appear), DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
         );
     }
 
@@ -632,12 +615,21 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что значение в поле содержит значению, указанное в шаге
+     * Проверка, что значение в поле содержит значение, указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
     public void testActualValueContainsSubstring(String fieldName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         assertThat("В поле нет ожидаемой подстроки", actualValue, containsString(expectedValue));
+    }
+
+    /**
+     * Проверка, что значение в поле равно значению, указанному в шаге
+     */
+    @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
+    public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
+        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
+        assertEquals("Значения не совпадают", expectedValue, actualValue);
     }
 
     /**
@@ -728,5 +720,15 @@ public class DefaultSteps {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
         valueInput.setValue(currentStringDate);
+    }
+
+    @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
+    public void pasteValue(String value, String fieldName)  {
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
+        };
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(value);
+        clipboard.setContents(stringSelection, clipboardOwner);
+        alfaScenario.getCurrentPage().getElement(fieldName).sendKeys(Keys.chord(Keys.SHIFT, Keys.INSERT));
     }
 }

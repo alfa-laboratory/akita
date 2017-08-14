@@ -86,23 +86,15 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     protected void isAppeared() {
-        String timeout;
-        try {
-            Object property = loadProperty("waitingAppearTimeout");
-            timeout = property.toString();
-        } catch (IllegalArgumentException e) {
-            timeout = WAITING_APPEAR_TIMEOUT;
-        }
-        String finalTimeout = timeout;
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
         getPrimaryElements().parallelStream().forEach(elem ->
-                elem.waitUntil(Condition.appear, Integer.valueOf(finalTimeout)));
+            elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
     }
 
     protected void isDisappeared() {
-        Selenide.sleep(4000);
-        getPrimaryElements().parallelStream().forEach(
-                elem -> elem.shouldBe(Condition.not(Condition.exist))
-        );
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
+        getPrimaryElements().parallelStream().forEach(elem ->
+            elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
     }
 
     public void waitElementsUntil(Condition condition, int timeout, SelenideElement... elements) {
