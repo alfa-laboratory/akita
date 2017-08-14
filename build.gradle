@@ -35,11 +35,6 @@ description = """light testing framework Testiodor"""
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-//Properties artifactoryProps = new Properties()
-//artifactoryProps.load(new FileInputStream("artifactory.properties"))
-//artifactoryProps.each { prop ->
-//    project.ext.set(prop.key, prop.value)
-//}
 
 project.ext {
     cucumberVersion = '1.2.5'
@@ -50,7 +45,7 @@ dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
     compile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'com.codeborne', name: 'selenide', version: '4.4'
+    compile group: 'com.codeborne', name: 'selenide', version: '4.5'
     compile group: 'info.cukes', name: 'cucumber-java', version: cucumberVersion
     compile group: 'info.cukes', name: 'cucumber-core', version: cucumberVersion
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
