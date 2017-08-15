@@ -24,7 +24,7 @@ public class PropertyLoader {
     }
 
     public static String loadProperty(String name) {
-        String value = loadPropertySafe(name);
+        String value = tryLoadProperty(name);
         if (null == value) {
             throw new IllegalArgumentException("Properties file does not contain property with key: " + name);
         }
@@ -36,21 +36,21 @@ public class PropertyLoader {
     }
 
     public static String loadProperty(String name, String defaultValue) {
-        String value = loadPropertySafe(name);
+        String value = tryLoadProperty(name);
         return value != null ? value: defaultValue;
     }
 
     public static Integer loadPropertyInt(String varName) {
-        String value = loadPropertySafe(varName);
+        String value = tryLoadProperty(varName);
         return Integer.parseInt(value);
     }
 
     public static Integer loadPropertyInt(String varName, Integer defaultValue) {
-        String value = loadPropertySafe(varName);
+        String value = tryLoadProperty(varName);
         return value != null ? Integer.parseInt(value) : defaultValue;
     }
 
-    public static String loadPropertySafe(String name) {
+    public static String tryLoadProperty(String name) {
         String value = null;
         if (!Strings.isNullOrEmpty(name)) {
             value = profileProperties.getProperty(name);
