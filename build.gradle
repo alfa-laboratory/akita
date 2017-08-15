@@ -8,7 +8,7 @@ buildscript {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
         classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.6.3'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
 }
 
@@ -86,7 +86,7 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-/*artifactory {
+artifactory {
 
     contextUrl = "${artifactory_contextUrl}"
     publish {
@@ -100,7 +100,7 @@ task sourceJar(type: Jar) {
             publications ('maven')
         }
     }
-}*/
+}
 
 artifactoryPublish {
     dependsOn jar
