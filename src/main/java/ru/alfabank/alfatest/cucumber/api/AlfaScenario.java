@@ -75,6 +75,10 @@ public final class AlfaScenario {
         return obj;
     }
 
+    public Object tryGetVar(String name) {
+        return this.getEnvironment().getVar(name);
+    }
+
     public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
         return Pages.getPage(clazz, checkIsAppeared);
     }
