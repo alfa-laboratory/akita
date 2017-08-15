@@ -55,12 +55,6 @@ public class DefaultSteps {
 
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
-    @Deprecated
-    @И("^сохранено значение из глобальной перменной \"([^\"]*)\" в переменную \"([^\"]*)\"$")
-    public void saveValueToVariable(String globalVarName, String varName) {
-        setVar(varName, loadProperty(globalVarName));
-    }
-
     /**
      * Читаем значение переменной из application.properties и сохраняем в переменную в alfaScenario,
      * для дальнейшего переиспользования
@@ -81,14 +75,6 @@ public class DefaultSteps {
     /**
      * Переходим по ссылке, разрезолвливая переменные из хранилища alfaScenario
      */
-    @Deprecated
-    @Когда("^я перешел по ссылке \"([^\"]*)\"$")
-    public void goTo(String address) {
-        String url = replaceVariables(address);
-        getWebDriver().get(url);
-        alfaScenario.write("Url = " + url);
-    }
-
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
         String url = replaceVariables(address);
@@ -111,12 +97,6 @@ public class DefaultSteps {
     /**
      * На странице ищется элемент и по нему кликается
      */
-    @Deprecated
-    @И("^нажал на (?:кнопку|поле|блок) \"([^\"]*)\"$")
-    public void clickOnThisButton(String buttonName) {
-        alfaScenario.getCurrentPage().getElement(buttonName).click();
-    }
-
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
     public void clickOnElement(String elementName) {
         alfaScenario.getCurrentPage().getElement(elementName).click();
@@ -154,26 +134,8 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. В течение заданного количества секунд ожидается появление списка на странице
-     */
-    @Deprecated
-    @И("^список \"([^\"]*)\" отобразился на странице в течение (\\d+) секунд$")
-    public void listIsPresentedOnPage(String elemName, int seconds) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElementsList(elemName)
-        );
-    }
-
-    /**
      * Проверка. В течении 10 секунд ожидаем пока элемент исчезнет (станет невидимым)
      */
-    @Deprecated
-    @И("^ждем пока элемент \"([^\"]*)\" исчезнет")
-    public void waitUntilDisapper(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName));
-    }
-
     @И("^ожидается исчезновение элемента \"([^\"]*)\"")
     public void elemDisappered(String elemName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
@@ -192,23 +154,8 @@ public class DefaultSteps {
 
     /**
      * Задать значение переменной в хранилище переменных. Один из кейсов: установка userCus для степов, использующих его.
-     */
-    @Deprecated
-    @Когда("^установить \"([^\"]*)\" на весь тестовый suit: \"([^\"]*)\"$")
-    public void setUserCus(String varName, String value) {
-        setVar(varName, value);
-    }
-
-    /**
-     * Задать значение переменной в хранилище переменных. Один из кейсов: установка userCus для степов, использующих его.
      * Полная копия предыдущего.
      */
-    @Deprecated
-    @И("^установить \"([^\"]*)\" равным \"([^\"]*)\"$")
-    public void setVar(String varName, String value) {
-        alfaScenario.setVar(varName, value);
-    }
-
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
     public void setVariable(String varName, String value) {
         alfaScenario.setVar(varName, value);
@@ -217,14 +164,6 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
      */
-    @Deprecated
-    @Когда("^текстовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compareTwoVars(String varName1, String varName2) {
-        String s1 = getVar(varName1).toString();
-        String s2 = getVar(varName2).toString();
-        assertThat("строки не совпадают", s1, equalTo(s2));
-    }
-
     @Когда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compareTwoVariables(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
@@ -232,29 +171,9 @@ public class DefaultSteps {
         assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
-
-    /**
-     * Значение из input-поля сохраняется в заданную переменную.
-     */
-    @Deprecated
-    @И("^значение input-поля \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
-    public void saveInputValueToVariable(String fieldName, String variableName) {
-        String value = alfaScenario.getCurrentPage().getElement(fieldName).getValue();
-        if (value.isEmpty()) throw new IllegalStateException("Поле " + fieldName + " пусто!");
-        alfaScenario.setVar(variableName, value);
-    }
-
-    /**
+     /**
      * Проверка. Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
      */
-    @Deprecated
-    @Тогда("^значение в поле \"([^\"]*)\" совпадает со значением переменной \"([^\"]*)\"$")
-    public void compareFieldAndVariableValues(String fieldName, String variableName) {
-        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
-        String expectedValue = alfaScenario.getVar(variableName).toString();
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
-    }
-
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" совпадает со значением из переменной \"([^\"]*)\"$")
     public void compareFieldAndVariable(String fieldName, String variableName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
@@ -265,34 +184,12 @@ public class DefaultSteps {
     /**
      * Проверка. Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
      */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    @Тогда("^значение в поле \"([^\"]*)\" есть в списке из переменной \"([^\"]*)\"$")
-    public void checkListContainsValueFromField(String fieldName, String variableListName) {
-        String actualValue = alfaScenario.getCurrentPage().getElement(fieldName).innerText();
-        List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
-        assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
-    }
-
     @SuppressWarnings("unchecked")
     @Тогда("^список из переменной \"([^\"]*)\" содердит значение (?:поля|элемента) \"([^\"]*)\" $")
     public void checkIfListContainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
         assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
-    }
-
-    /**
-     * Проверка. Совершается переход по заданной ссылке и ждется, пока заданная страница полностью загрузится (встренная проверка,
-     * что загружается та страница, которая ожидается)
-     */
-    @Deprecated
-    @И("^совершен переход на страницу \"([^\"]*)\" по прямой ссылке = \"([^\"]*)\"$")
-    public void goToSelectedPageByLink(String pageName, String urlName) {
-        String url = getURLwithPathParamsCalculated(urlName);
-        alfaScenario.write(" url = " + url);
-        WebDriverRunner.getWebDriver().get(url);
-        loadPage(pageName);
     }
 
     /**
@@ -318,12 +215,6 @@ public class DefaultSteps {
     /**
      * проверка, что блок исчез/стал невидимым
      */
-    @Deprecated
-    @Тогда("^блок \"([^\"]*)\" исчез$")
-    public void blockIsDisappears(String nameOfPage) {
-        alfaScenario.getPage(nameOfPage).disappeared();
-    }
-
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
         alfaScenario.getPage(nameOfPage).disappeared();
@@ -332,12 +223,6 @@ public class DefaultSteps {
     /**
      * Эмулирует нажатие на клавиатуре клавиш.
      */
-    @Deprecated
-    @И("^нажать на клавиатуре \"([^\"]*)\"$")
-    public void pressButtonOnKeyboard(String buttonName) {
-        Keys key = Keys.valueOf(buttonName.toUpperCase());
-        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
-    }
     @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
@@ -347,13 +232,6 @@ public class DefaultSteps {
     /**
      * Ищется указанное текстовое поле и устанавливается в него заданное значение. Перед использованием поле нужно очистить
      */
-    @Deprecated
-    @Когда("^установлено значение \"(.*)\" в поле \"([^\"]*)\"$")
-    public void setValueToField(String value, String elementName) {
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
-        valueInput.setValue(String.valueOf(value));
-        valueInput.should(not(Condition.empty));
-    }
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
@@ -384,37 +262,8 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что появляется уведомление с заданным текстом.
-     * Редкий случай, когда css селектор используется в степах
-     */
-    @Deprecated
-    @Тогда("^ожидается появление уведомления с текстом \"([^\"]*)\"$")
-    public void notificationAppearsWithText(String text) throws Throwable {
-        SelenideElement el = $(".notification");
-        el.waitUntil(Condition.appear, 5000);
-        assertEquals(text, el.innerText());
-    }
-
-    /**
-     * Проверка, что переданное выражение верно. Должно содержать '='. Переменные разрезолвливаются из хранилища
-     */
-    @Deprecated
-    @И("^верно выражение \"([^\"]*)\"$")
-    public void evaluate(String expression) {
-        alfaScenario.write("Начал обрабатывать выражение: " + expression);
-        String[] parts = expression.split("=");
-        if (parts.length != 2) throw new AssertionError("выражение не выглядит как равенство: " + expression);
-        int leftPart = Integer.valueOf(
-                alfaScenario.getVars().evaluate(parts[0]).toString());
-        int rightPart = Integer.valueOf(
-                alfaScenario.getVars().evaluate(parts[1]).toString());
-        MatcherAssert.assertThat("выражение не верное", leftPart, equalTo(rightPart));
-    }
-
-    /**
      * Устанавливает размеры окна с браузером
      */
-    @Deprecated
     @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
     public void setupWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
@@ -435,12 +284,6 @@ public class DefaultSteps {
     /**
      * Разворачивает окно с браузером на весь экран
      */
-    @Deprecated
-    @Если("^развернуть окно на весь экран$")
-    public void expandWindowToAllScreen() {
-        WebDriverRunner.getWebDriver().manage().window().maximize();
-    }
-
     @Если("^окно развернуто на весь экран$")
     public void expandWindowToFullScreen() {
         WebDriverRunner.getWebDriver().manage().window().maximize();
@@ -449,15 +292,6 @@ public class DefaultSteps {
     /**
      * Проверка, что в списке со страницы есть перечисленные в таблице элементы
      */
-    @Deprecated
-    @Тогда("^в списке \"([^\"]*)\" содержатся элементы$")
-    public void checkTypesOfPay(String nameOfList, List<String> listOfType) {
-        List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(nameOfList);
-        int numberOfTypes = actualValues.size();
-        assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(listOfType.size()));
-        assertTrue("Списки не совпадают", actualValues.containsAll(listOfType));
-    }
-
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
     public void checkIfListConsistsOfTableElements(String nameOfList, List<String> listOfType) {
         List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(nameOfList);
@@ -469,18 +303,6 @@ public class DefaultSteps {
     /**
      * В списке со страницу кликаем по элементу, содержащим заданное значение
      */
-    @Deprecated
-    @Тогда("^в списке \"([^\"]*)\" выбран элемент со значением \"(.*)\"$")
-    public void checkTypesOfPay(String nameOfList, String nameOfValue) {
-        List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
-        Optional<SelenideElement> itemFound = listOfTypeFromPage.stream().filter(type -> type.innerText().equals(nameOfValue)).findFirst();
-        if (itemFound.isPresent()) {
-            itemFound.get().click();
-        } else {
-            throw new IllegalStateException("Элемент не найден в списке");
-        }
-    }
-
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String nameOfList, String nameOfValue) {
         List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
@@ -495,12 +317,6 @@ public class DefaultSteps {
     /**
      *  Сохранение значения элемента в переменную
      * */
-    @Deprecated
-    @Когда("^я сохранил значение элемента \"([^\"]*)\" в переменную \"([^\"]*)\"")
-    public void saveElementToVariable(String element, String variableName) {
-        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(element));
-    }
-
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
     public void storeElementValueInVariable(String element, String variableName) {
         alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(element));
@@ -542,40 +358,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для числел)
-     */
-    @Deprecated
-    @Когда("^числовые значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают")
-    public void compareTwoDigitVars(String firstValue, String secondValue) {
-        BigDecimal bigReal1 = new BigDecimal(
-                alfaScenario.getVar(firstValue).toString()
-        );
-        BigDecimal bigReal2 = new BigDecimal(
-                alfaScenario.getVar(secondValue).toString()
-        );
-        alfaScenario.write("Сравниваю на равенство переменные " + firstValue + " = " + bigReal1 + " и " +
-                secondValue + " = " + bigReal2);
-        assertThat("значения переменных совпали", bigReal1, equalTo(bigReal2));
-    }
-
-    /**
      * Выполнено наведение курсора на элемент
      */
     @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
     public void elementHover(String fieldname) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
         field.hover();
-    }
-
-    /**
-     * Проверка, что элемента нет на странице
-     */
-    @Deprecated
-    @И("^элемент \"([^\"]*)\" не найден на странице$")
-    public void elemIsNotPresentedOnPage(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                not(Condition.appear), DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
-        );
     }
 
     /**

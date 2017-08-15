@@ -40,18 +40,6 @@ public class DefaultApiSteps {
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
     /**
-     * Посылается http GET/POST/... запрос по заданному урлу без параметров и BODY. Результат сохраняется в заданную переменную
-     */
-    @Deprecated
-    @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
-        RequestSender request = createRequestByParamsTable();
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        getResponseAndSaveToVariable(variableName, response);
-    }
-
-    /**
      * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
      * Результат сохраняется в заданную переменную
      * URL можно задать как напрямую в шаге, так и указав в application.properties
@@ -64,31 +52,10 @@ public class DefaultApiSteps {
     }
 
     /**
-     * Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Результат сохраняется в заданную переменную
-     */
-    @Deprecated
-    @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
-        RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        getResponseAndSaveToVariable(variableName, response);
-    }
-
-    /**
      * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
      * Результат сохраняется в заданную переменную
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
-    @Deprecated
-    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
-        RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
-        getResponseAndSaveToVariable(variableName, response);
-    }
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequestSaveResponse(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
@@ -99,46 +66,15 @@ public class DefaultApiSteps {
     }
 
     /**
-     * Проверка. Посылается http GET/POST/... запрос по заданному урлу с заданными параметрами. Проверяется, что код ответа
-     * соответствует ожиданиям.
-     */
-    @Deprecated
-    @И("^вызван \"([^\"]*)\" запрос c URL \"([^\"]*)\", headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
-    public void checkStatusCodeWithAssertion(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
-    }
-
-    /**
      * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
      * Проверяется, что код ответа соответствует ожиданиям.
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
-    @Deprecated
-    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
-    public void checkResponseStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
-        assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
-    }
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkResponseCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
         urlName = loadProperty(urlName, valueIfNotFoundInProperties);
         assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
-    }
-
-    /**
-     * Проверка. Из большого JSON'a вытаскивается часть по названию и проверяется, что она совпадает с переданнам значением.
-     */
-    @Deprecated
-    @Тогда("^поле \"([^\"]*)\" ответа \"([^\"]*)\" совпадает с$")
-    public void checkExpectedFieldApi(String field, String apiResponse, String expectedFieldValue) throws Throwable {
-        JsonParser parser = new JsonParser();
-        String jsonResponse = getVar(apiResponse).toString();
-        String realFieldValue = parser.parse(jsonResponse).getAsJsonObject().get(field).toString();
-        assertThat("Значение поля API не совпадает с ожидаемым",
-                realFieldValue,
-                equalTo(expectedFieldValue));
     }
 
     private RequestSender createRequestByParamsTable() {
@@ -224,5 +160,13 @@ public class DefaultApiSteps {
             write("Ожидали статус код: " + expectedStatusCode + ". Получили: " + statusCode);
         }
         return statusCode == expectedStatusCode;
+    }
+
+    private void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
+        RequestSender request = createRequestByParamsTable(table);
+        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+        getResponseAndSaveToVariable(variableName, response);
     }
 }
