@@ -194,7 +194,7 @@ public class DefaultSteps {
 
     /**
      * Совершается переход по заданной ссылке.
-     * Ссылка может передаваться как строка, так и как ключь из application.properties
+     * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
