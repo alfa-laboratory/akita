@@ -205,7 +205,12 @@ public class DefaultApiSteps {
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            String value = loadProperty(varName, AlfaScenario.getInstance().getVar(varName).toString());
+            String value;
+            try {
+                value = loadProperty(varName, AlfaScenario.getInstance().getVar(varName).toString());
+            } catch(NullPointerException NPE) {
+                value = loadProperty(varName);
+            }
             newString = m.replaceFirst(value);
             m = p.matcher(newString);
         }
