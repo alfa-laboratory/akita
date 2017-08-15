@@ -262,17 +262,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Устанавливает размеры окна с браузером
-     */
-    @И("^установить разрешение \"([^\"]*)\" на \"([^\"]*)\"$")
-    public void setupWindowSize(String widthRaw, String heightRaw) {
-        int width = Integer.valueOf(widthRaw);
-        int height = Integer.valueOf(heightRaw);
-        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
-    }
-
-    /**
-     * Устанавливает размеры окна с браузером
+     * Устанавливает размеры окна браузера
      */
     @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
     public void setWindowSize(String widthRaw, String heightRaw) {
