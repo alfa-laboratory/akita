@@ -59,4 +59,10 @@ public class getURLwithPathParamsCalculatedTest {
         String actual = getURLwithPathParamsCalculated("/{second}/{varFromPropertyFile1}/{first}/");
         assertThat("Итоговый URL не равен '//ru/credit/caramba/alfalab/'", actual, Matchers.equalTo("//ru/credit/caramba/alfalab/"));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNotExistingValue(){
+        alfaScenario.setEnvironment(new AlfaEnvironment());
+        getURLwithPathParamsCalculated("{RandomTestVariable3321}");
+    }
 }
