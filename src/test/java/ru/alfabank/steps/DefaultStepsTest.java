@@ -67,7 +67,7 @@ public class DefaultStepsTest {
     @Test
     public void setupWindowSizeSimple() {
         Dimension expectedDimension = new Dimension(800, 600);
-        ds.setupWindowSize("800", "600");
+        ds.setWindowSize("800", "600");
         Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
         assertThat(expectedDimension, equalTo(actualDimension));
     }

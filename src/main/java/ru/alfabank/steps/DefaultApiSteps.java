@@ -141,7 +141,11 @@ public class DefaultApiSteps {
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            String value = loadProperty(varName, String.valueOf(AlfaScenario.getInstance().tryGetVar(varName)));
+            String value = loadProperty(varName, (String)AlfaScenario.getInstance().tryGetVar(varName));
+            if (value == null)
+                throw new IllegalArgumentException(
+                        "Значение " + varName +
+                                " не было найдено ни в application.properties, ни и в environment переменной");
             newString = m.replaceFirst(value);
             m = p.matcher(newString);
         }
