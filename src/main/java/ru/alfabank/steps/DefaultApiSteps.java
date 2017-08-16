@@ -145,7 +145,7 @@ public class DefaultApiSteps {
             if (value == null)
                 throw new IllegalArgumentException(
                         "Значение " + varName +
-                                " не было найдено ни в application.properties ни и в environment переменной");
+                                " не было найдено ни в application.properties, ни и в environment переменной");
             newString = m.replaceFirst(value);
             m = p.matcher(newString);
         }
