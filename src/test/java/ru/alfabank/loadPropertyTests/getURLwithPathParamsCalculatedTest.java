@@ -1,6 +1,7 @@
 package ru.alfabank.loadPropertyTests;
 
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
@@ -14,9 +15,13 @@ import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 public class getURLwithPathParamsCalculatedTest {
     private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
+    @Before
+    public void prepare() {
+        alfaScenario.setEnvironment(new AlfaEnvironment());
+    }
+
     @Test
     public void someValuesFromMap(){
-        alfaScenario.setEnvironment(new AlfaEnvironment());
         alfaScenario.setVar("first","pervoe");
         alfaScenario.setVar("second","ne_rabotaet");
         String expected = "pervoe ne_rabotaet";
@@ -26,7 +31,6 @@ public class getURLwithPathParamsCalculatedTest {
 
     @Test
     public void getValueFromPropertyFile(){
-        alfaScenario.setEnvironment(new AlfaEnvironment());
         alfaScenario.setVar("first","alfalab");
         alfaScenario.setVar("second","/ru/credit");
         String actual = getURLwithPathParamsCalculated("{varFromPropertyFile1}");
@@ -35,7 +39,6 @@ public class getURLwithPathParamsCalculatedTest {
 
     @Test
     public void getSomeValuesFromPropertyFile(){
-        alfaScenario.setEnvironment(new AlfaEnvironment());
         alfaScenario.setVar("first","alfalab");
         alfaScenario.setVar("second","/ru/credit");
         String actual = getURLwithPathParamsCalculated("{varFromPropertyFile1}/{varFromPropertyFile2}");
@@ -44,7 +47,6 @@ public class getURLwithPathParamsCalculatedTest {
 
     @Test
     public void getSomeValuesFromPropAndMap(){
-        alfaScenario.setEnvironment(new AlfaEnvironment());
         alfaScenario.setVar("first","alfalab");
         alfaScenario.setVar("second","/ru/credit");
         String actual = getURLwithPathParamsCalculated("{varFromPropertyFile1}/{first}");
@@ -53,7 +55,6 @@ public class getURLwithPathParamsCalculatedTest {
 
     @Test
     public void getSomeValuesFromPropAndMapAndSpec(){
-        alfaScenario.setEnvironment(new AlfaEnvironment());
         alfaScenario.setVar("first","alfalab");
         alfaScenario.setVar("second","/ru/credit");
         String actual = getURLwithPathParamsCalculated("/{second}/{varFromPropertyFile1}/{first}/");
@@ -61,8 +62,7 @@ public class getURLwithPathParamsCalculatedTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getNotExistingValue(){
-        alfaScenario.setEnvironment(new AlfaEnvironment());
+    public void getNotExistingValue() {
         getURLwithPathParamsCalculated("{RandomTestVariable3321}");
     }
 }
