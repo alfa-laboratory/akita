@@ -493,6 +493,9 @@ public class DefaultSteps {
         valueInput.setValue(currentStringDate);
     }
 
+    /**
+     * Ввод в поле указанного текста используя буфер обмена и клавиши SHIFT + INSERT
+     */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
     public void pasteValue(String value, String fieldName) {
         ClipboardOwner clipboardOwner = (clipboard, contents) -> {
