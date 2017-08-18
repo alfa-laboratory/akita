@@ -73,4 +73,16 @@ public class AlfaPageMock extends AlfaPage {
     @FindBy(id = "link")
     @Name("Link")
     public SelenideElement link;
+
+    @FindBy(id = "login")
+    @Name("Логин")
+    public SelenideElement login;
+
+    @FindBy(id = "psw")
+    @Name("Пароль")
+    public SelenideElement psw;
+
+    @FindBy(id = "submit")
+    @Name("Войти")
+    public SelenideElement submit;
 }

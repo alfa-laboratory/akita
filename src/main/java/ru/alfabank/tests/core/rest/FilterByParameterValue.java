@@ -13,10 +13,9 @@ public class FilterByParameterValue {
     private OperationType type;
 
     public FilterByParameterValue(String name, String value, String type) throws Exception {
-            this.name = name;
-            this.value = value;
-            this.type = OperationType.getOperationByLiteral(type);
-
+        this.name = name;
+        this.value = value;
+        this.type = OperationType.getOperationByLiteral(type);
     }
 
     @Deprecated

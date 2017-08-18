@@ -11,7 +11,7 @@ import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 /**
  * Created by rum0tbl on 02.06.17.
  */
-public class getURLwithPathParamsCalculatedTest {
+public class PropertyLoaderTests {
     private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
     @Test
@@ -59,4 +59,6 @@ public class getURLwithPathParamsCalculatedTest {
         String actual = getURLwithPathParamsCalculated("/{second}/{varFromPropertyFile1}/{first}/");
         assertThat("Итоговый URL не равен '//ru/credit/caramba/alfalab/'", actual, Matchers.equalTo("//ru/credit/caramba/alfalab/"));
     }
+
+
 }
