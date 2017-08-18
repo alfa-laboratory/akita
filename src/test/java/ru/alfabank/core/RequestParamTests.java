@@ -27,6 +27,6 @@ public class RequestParamTests {
     @Test
     public void getNameTest() {
         requestParam.setType("hEaDer");
-        assertThat(requestParam.getType().equals(RequestParamType.HEADER), equalTo(true));
+        assertThat(requestParam.getType(), equalTo(RequestParamType.HEADER));
     }
 }

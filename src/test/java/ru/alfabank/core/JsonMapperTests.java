@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,11 +17,11 @@ import static ru.alfabank.tests.core.rest.JsonMapper.*;
  * Created by alexander on 16.08.17.
  */
 public class JsonMapperTests {
-    private static JsonObject jsonObject = new JsonObject();
+    private static JsonObject jsonObject;
 
-    @BeforeClass
-    public static void init() {
-
+    @Before
+    public void prepare() {
+        jsonObject = new JsonObject();
     }
 
     @Test
