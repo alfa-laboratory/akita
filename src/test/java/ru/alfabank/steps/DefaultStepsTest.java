@@ -3,6 +3,7 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
 import org.junit.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import ru.alfabank.AlfaPageMock;
 import ru.alfabank.StubScenario;
@@ -65,7 +66,7 @@ public class DefaultStepsTest {
 
     @Ignore
     @Test
-    public void setupWindowSizeSimple() {
+    public void setWindowSizeSimple() {
         Dimension expectedDimension = new Dimension(800, 600);
         ds.setWindowSize("800", "600");
         Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
@@ -294,4 +295,14 @@ public class DefaultStepsTest {
     public void loginByUserDataPositive() {
         ds.loginByUserData("testUser");
     }
+
+    @Test
+    public void pasteValuePositive() {
+        ds.pasteValue("testVal", "NormalField");
+        ds.waitForSeconds(1);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("normalField")).getAttribute("value"),
+                equalTo("testVal"));
+    }
+
+
 }
