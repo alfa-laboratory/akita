@@ -1,5 +1,6 @@
 package ru.alfabank.core;
 
+import com.codeborne.selenide.WebDriverRunner;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -22,4 +23,7 @@ public class MobileChromeTests {
         mobileDriver = mobileChrome.createDriver(new DesiredCapabilities());
         assertThat(mobileDriver, isA(WebDriver.class));
     }
+
+    @AfterClass
+    public static void close() { mobileDriver.close(); }
 }

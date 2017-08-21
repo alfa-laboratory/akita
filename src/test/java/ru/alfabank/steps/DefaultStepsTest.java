@@ -48,7 +48,7 @@ public class DefaultStepsTest {
     }
 
     @AfterClass
-    public static void close() { WebDriverRunner.getWebDriver().close(); }
+    public static void close() { WebDriverRunner.closeWebDriver(); }
 
     @Test
     public void navigateToUrl() {

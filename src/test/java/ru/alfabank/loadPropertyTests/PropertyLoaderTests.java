@@ -1,7 +1,10 @@
 package ru.alfabank.loadPropertyTests;
 
+import com.codeborne.selenide.WebDriverRunner;
 import org.hamcrest.Matchers;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
@@ -15,10 +18,18 @@ import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
 public class PropertyLoaderTests {
     private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
+    @BeforeClass
+    public static void init() {
+
+    }
+
     @Before
     public void prepare() {
         alfaScenario.setEnvironment(new AlfaEnvironment());
     }
+
+    @AfterClass
+    public static void close() { WebDriverRunner.closeWebDriver(); }
 
     @Test
     public void someValuesFromMap() {
