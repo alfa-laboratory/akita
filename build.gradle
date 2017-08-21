@@ -85,7 +85,7 @@ publishing {
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
-/*
+
 artifactory {
 
     contextUrl = "${artifactory_contextUrl}"
@@ -100,7 +100,7 @@ artifactory {
             publications ('maven')
         }
     }
-}*/
+}
 
 artifactoryPublish {
     dependsOn jar
