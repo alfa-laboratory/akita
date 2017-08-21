@@ -301,7 +301,7 @@ public class DefaultStepsTest {
 
     @Test
     public void pasteValuePositive() {
-        ds.pasteValue("testVal", "NormalField");
+        ds.pasteValueToTextField("testVal", "NormalField");
         assertThat(WebDriverRunner.getWebDriver().findElement(By.name("normalField")).getAttribute("value"),
                 equalTo("testVal"));
     }
