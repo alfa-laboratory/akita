@@ -501,8 +501,7 @@ public class DefaultSteps {
 
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
     public void pasteValueToTextField(String value, String fieldName)  {
-        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
-        };
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> { };
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection stringSelection = new StringSelection(value);
         clipboard.setContents(stringSelection, clipboardOwner);

@@ -37,7 +37,7 @@ public class AlfaPageMock extends AlfaPage {
     @Name("mockXpathText")
     public SelenideElement mockXpathText;
 
-    @FindBy(id = "list")
+    @FindBy(xpath = "//ul[@id=\"list\"]/li")
     @Name("List")
     public List<SelenideElement> list;
 
@@ -87,4 +87,8 @@ public class AlfaPageMock extends AlfaPage {
     @FindBy(id = "submit")
     @Name("Войти")
     public SelenideElement submit;
+
+    @FindBy(id = "ul")
+    @Name("ul")
+    public SelenideElement ul;
 }

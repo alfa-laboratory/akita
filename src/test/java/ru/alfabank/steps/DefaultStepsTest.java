@@ -8,8 +8,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import ru.alfabank.AlfaPageMock;
 import ru.alfabank.StubScenario;
+import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.Pages;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,7 +50,9 @@ public class DefaultStepsTest {
     }
 
     @AfterClass
-    public static void close() { WebDriverRunner.closeWebDriver(); }
+    public static void close() {
+        WebDriverRunner.closeWebDriver();
+    }
 
     @Test
     public void navigateToUrl() {
@@ -123,7 +127,7 @@ public class DefaultStepsTest {
 
     @Test
     public void listIsPresentedOnPageTest() {
-        ds.elemIsPresentedOnPage("List");
+        ds.listIsPresentedOnPage("List");
     }
 
     @Test
@@ -178,16 +182,18 @@ public class DefaultStepsTest {
         ds.fieldInputIsEmpty("NormalField");
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void checkIfListConsistsOfTableElementsTest() {
-        ArrayList<String> types = new ArrayList<>(3);
-        ds.checkIfListConsistsOfTableElements("list", types);
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One");
+        types.add("Two");
+        types.add("Three");
+        ds.checkIfListConsistsOfTableElements("List", types);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void checkIfSelectedListElementMatchesValueTest() {
-        alfaScenario.setVar("test", "qwerty");
-        ds.checkIfSelectedListElementMatchesValue("list", "test");
+        ds.checkIfSelectedListElementMatchesValue("List", "One");
     }
 
     @Test
@@ -306,5 +312,35 @@ public class DefaultStepsTest {
                 equalTo("testVal"));
     }
 
+    @Test
+    public void elementDisapperaredAndAppearedComplex() {
+        ds.testElementAppeared("ul", 1);
+        ds.clickOnElement("SUPERBUTTON");
+        ds.elemDisappered("ul");
+    }
 
+    @Test
+    public void goToUrl() {
+        ds.goToUrl((String) alfaScenario.getVar("RedirectionPage"));
+    }
+
+    @Test
+    public void compareValInFieldAndFromStepTest() {
+        ds.compareValInFieldAndFromStep("ul", "Serious testing page");
+    }
+
+    @Test
+    public void setVariableTest() {
+        ds.setVariable("ul", "Serious testing page");
+        assertThat(ds.getVar("ul"), equalTo("Serious testing page"));
+    }
+
+    @Test
+    public void getVarsTest() {
+        ds.setVar("1", "1");
+        ds.setVar("2", "2");
+        ScopedVariables scopedVariables = ds.getVars();
+        assertThat((String)scopedVariables.get("1") + (String)scopedVariables.get("2"),
+                equalTo("12"));
+    }
 }

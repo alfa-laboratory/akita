@@ -104,8 +104,8 @@ public class AlfaPageTest {
 
     @Test
     public void getAnyElementsListTextsPositive() {
-
-        assertThat(page.getAnyElementsListTexts("List"), equalTo("Two"));
+        assertThat(page.getAnyElementsListTexts("List").toString(),
+                equalTo("[Three, One, Two]"));
     }
 
     @Test
