@@ -515,8 +515,9 @@ public class DefaultSteps {
     public void testFileDownloaded(String fileName) {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
-        assert expectedFiles != null;
-        Assert.assertTrue("Файл не загрузился", expectedFiles.length > 0);
+        assertNotNull(expectedFiles);
+        assertFalse("Файл не загрузился", expectedFiles.length == 0);
+        assertTrue("В папке присутствует более одного фала с одинаковым назанием", expectedFiles.length == 1);
         deleteFiles(expectedFiles);
     }
 
