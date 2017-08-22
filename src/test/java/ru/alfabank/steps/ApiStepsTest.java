@@ -3,11 +3,9 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.*;
-import org.junit.runner.Result;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.tests.core.rest.OperationType;
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
