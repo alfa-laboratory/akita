@@ -25,7 +25,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'nebula.nebula-release'
 apply plugin: 'org.sonarqube'
-apply plugin: 'jacoco'
+//apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 tasks.release.dependsOn tasks.artifactoryPublish
