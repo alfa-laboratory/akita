@@ -14,6 +14,7 @@ import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.steps.DefaultSteps;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,10 +92,9 @@ public class AlfaPageTest {
         assertThat(page.getElement("GoodButton"), is(notNullValue()));
     }
 
-    @Ignore
     @Test
     public void getElementsListPositive() {
-        assertThat(page.getElementsList("mockList"), is(notNullValue()));
+        assertThat(page.getElementsList("List"), is(notNullValue()));
     }
 
     @Test
@@ -102,10 +102,10 @@ public class AlfaPageTest {
         assertThat(page.getAnyElementText("TextField"), equalTo("text"));
     }
 
-    @Ignore
     @Test
     public void getAnyElementsListTextsPositive() {
-        assertThat(page.getAnyElementsListTexts("mockList"), equalTo("2"));
+        assertThat(page.getAnyElementsListTexts("List").toString(),
+                equalTo("[Three, One, Two]"));
     }
 
     @Test

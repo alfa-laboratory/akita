@@ -497,9 +497,8 @@ public class DefaultSteps {
      * Ввод в поле указанного текста используя буфер обмена и клавиши SHIFT + INSERT
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
-    public void pasteValue(String value, String fieldName) {
-        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
-        };
+    public void pasteValueToTextField(String value, String fieldName)  {
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> { };
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection stringSelection = new StringSelection(value);
         clipboard.setContents(stringSelection, clipboardOwner);
