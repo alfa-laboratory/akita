@@ -7,10 +7,17 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Created by ruslanmikhalev on 27/01/17.
+ * Предназначен для хранения страниц, используемых при прогоне тестов
  */
 public final class Pages {
+
+    /**
+     * Страницы, на которых будет производится тестирование < Имя, Страница >
+     */
     private Map<String, AlfaPage> pages;
+    /**
+     * Страница, на которой в текущий момент производится тестирование
+     */
     private AlfaPage currentPage;
 
     public Pages() {
@@ -26,6 +33,9 @@ public final class Pages {
         this.currentPage = page;
     }
 
+    /**
+     * ???
+     */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
         T page = getPage(clazz, checkIsAppeared);
         consumer.accept(page);
@@ -35,6 +45,9 @@ public final class Pages {
         return getPageMapInstanceInternal().get(name);
     }
 
+    /**
+     * Получение страницы с определенным классом
+     */
     @SuppressWarnings("unchecked")
     public <T extends AlfaPage> T get(Class<T> clazz, String name) {
         AlfaPage page = getPageMapInstanceInternal().get(name);
