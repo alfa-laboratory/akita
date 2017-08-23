@@ -7,7 +7,7 @@ import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import java.util.Arrays;
 
 /**
- * Структура, связанная с AlfaScenario, используемая для хранения страниц и переменных внутри сценария
+ * Объект, связанный 1к1 с AlfaScenario, используется для хранения страниц и переменных внутри сценария
  */
 @Slf4j
 public class AlfaEnvironment {
@@ -17,7 +17,7 @@ public class AlfaEnvironment {
      */
     private Scenario scenario;
     /**
-     * Переменные объявленные пользователем внутри сценария
+     * Переменные, объявленные пользователем внутри сценария
      * ThreadLocal обеспечивает отсутствие коллизий при многопоточном запуске
      */
     private ThreadLocal<ScopedVariables> variables = new ThreadLocal<>();
@@ -36,7 +36,7 @@ public class AlfaEnvironment {
     }
 
     /**
-     * Метод ищет классы аннотированные "AlfaPage.Name",
+     * Метод ищет классы, аннотированные "AlfaPage.Name",
      * добавляя ссылки на эти классы в поле "pages"
      */
     @SuppressWarnings("unchecked")
