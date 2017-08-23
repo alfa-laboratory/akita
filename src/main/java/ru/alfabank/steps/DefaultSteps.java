@@ -6,30 +6,24 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.tests.core.helpers.PropertyLoader;
 
-import java.math.BigDecimal;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
-import java.math.BigInteger;
+import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.List;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
@@ -170,7 +164,7 @@ public class DefaultSteps {
         assertThat("строки не совпадают", s1, equalTo(s2));
     }
 
-     /**
+    /**
      * Проверка. Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" совпадает со значением из переменной \"([^\"]*)\"$")
@@ -304,7 +298,7 @@ public class DefaultSteps {
     }
 
     /**
-     *  Сохранение значения элемента в переменную
+     * Сохранение значения элемента в переменную
      * */
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
     public void storeElementValueInVariable(String element, String variableName) {
@@ -499,6 +493,9 @@ public class DefaultSteps {
         valueInput.setValue(currentStringDate);
     }
 
+    /**
+     * Ввод в поле указанного текста используя буфер обмена и клавиши SHIFT + INSERT
+     */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
     public void pasteValueToTextField(String value, String fieldName)  {
         ClipboardOwner clipboardOwner = (clipboard, contents) -> { };
@@ -507,4 +504,31 @@ public class DefaultSteps {
         clipboard.setContents(stringSelection, clipboardOwner);
         alfaScenario.getCurrentPage().getElement(fieldName).sendKeys(Keys.chord(Keys.SHIFT, Keys.INSERT));
     }
+
+    /**
+     * Выполняется поиск нужного файла в папке /Downloads
+     * Поиск осуществляется по содежранию ожидаемого текста в названияя файла. Можно передавать регулярки
+     * После выполнения проверки файл удаляется
+     */
+    @Тогда("^файл \"(.*)\" загрузился в паку /Downloads$")
+    public void testFileDownloaded(String fileName) {
+        File downloads = getDownloadsDir();
+        File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
+        assertNotNull("Ошибка поиска файла", expectedFiles);
+        assertFalse("Файл не загрузился", expectedFiles.length == 0);
+        assertTrue("В папке присутствуют более одного файла с одинаковым назанием", expectedFiles.length == 1);
+        deleteFiles(expectedFiles);
+    }
+
+    private File getDownloadsDir() {
+        String homeDir = System.getProperty("user.home");
+        return new File(homeDir + "/Downloads");
+    }
+
+    private void deleteFiles(File[] filesToDelete) {
+        for (File file : filesToDelete) {
+            file.delete();
+        }
+    }
+
 }
