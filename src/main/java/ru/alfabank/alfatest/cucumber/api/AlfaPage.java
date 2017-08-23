@@ -30,7 +30,7 @@ public abstract class AlfaPage extends ElementsContainer {
     private static final String WAITING_APPEAR_TIMEOUT = "8000";
 
     /**
-     * Метод для получения элемента со страницы
+     * Получение элемента со страницы по имени (аннотированного "Name")
      */
     public SelenideElement getElement(String name) {
         Object value = namedElements.get(name);
@@ -40,7 +40,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для получения элемента-списка со страницы
+     * Получение элемента-списка со страницы по имени
      */
     @SuppressWarnings("unchecked")
     public List<SelenideElement> getElementsList(String name) {
@@ -53,7 +53,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для получения текста элемента, как редактируемого поля, так и статичного элемента
+     * Получения текста элемента, как редактируемого поля, так и статичного элемента по имени
      */
     public String getAnyElementText(String name) {
         SelenideElement element = getElement(name);
@@ -67,7 +67,7 @@ public abstract class AlfaPage extends ElementsContainer {
 
     /**
      * Метод для получения текстов всех элементов, содержащихся в элементе-списке,
-     * состоящего как из редактируемых полей, так и статичных элементов
+     * состоящего как из редактируемых полей, так и статичных элементов по имени
      */
     public List<String> getAnyElementsListTexts(String name) {
         List<SelenideElement> elementsList = getElementsList(name);
@@ -97,7 +97,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для получения всех элементов страницы, не помеченных аннотацией "Optional"
+     * Получения всех элементов страницы, не помеченных аннотацией "Optional"
      */
     public List<SelenideElement> getPrimaryElements() {
         if (primaryElements == null) primaryElements = readWithWrappedElements();
@@ -118,7 +118,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод проверки появления всех элементов страницы, не помеченных аннотацией "Optional"
+     * Проверка появления всех элементов страницы, не помеченных аннотацией "Optional"
      */
     protected void isAppeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
@@ -127,7 +127,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для проверки, что все элементы страницы, не помеченных аннотацией "Optional", исчезли
+     * Проверка, что все элементы страницы, не помеченные аннотацией "Optional", исчезли
      */
     protected void isDisappeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
@@ -173,7 +173,7 @@ public abstract class AlfaPage extends ElementsContainer {
 
     /**
      * (Название метода крайне странное, так как проверки на то, что переданные элементы являются кнопками нет)
-     * Метод для поиска элемента по имени внутри списка элементов
+     * Поиск элемента по имени внутри списка элементов
      */
     public static SelenideElement getButtonFromListByName(List<SelenideElement> listButtons, String nameOfButton) {
         List<String> names = new ArrayList<>();
@@ -215,7 +215,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для поиска и инициализации элементов страницы
+     * Поиск и инициализации элементов страницы
      */
     private Map<String, Object> readNamedElements() {
         checkNamedAnnotations();
@@ -231,7 +231,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для поиска по аннотации "Name"
+     * Поиск по аннотации "Name"
      */
     private void checkNamedAnnotations() {
         List<String> list = Arrays.stream(getClass().getDeclaredFields())
@@ -243,7 +243,7 @@ public abstract class AlfaPage extends ElementsContainer {
         }
     }
     /**
-     * Метод для поиска и инициализации элементов страницы без аннотации Optional
+     * Поиск и инициализации элементов страницы без аннотации Optional
      */
     private List<SelenideElement> readWithWrappedElements() {
         return Arrays.stream(getClass().getDeclaredFields())
