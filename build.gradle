@@ -32,7 +32,7 @@ tasks.release.dependsOn tasks.artifactoryPublish
 
 group = 'ru.alfabank.tests'
 
-description = """light testing framework Testiodor"""
+description = """light testing framework Akita"""
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
