@@ -8,13 +8,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * Created by ruslanmikhalev on 27/01/17.
+ * Главный класс-синглтон ???
  */
 @Slf4j
 public final class AlfaScenario {
 
     private static AlfaScenario instance = new AlfaScenario();
 
+    /**
+     * Среда прогона тестов, хранит в себе: сценарий, переменные, объявленные в сценарии
+     * и страницы, тестирование которых будет производится
+     */
     private static AlfaEnvironment environment;
 
     private AlfaScenario() {
@@ -36,6 +40,9 @@ public final class AlfaScenario {
         Selenide.sleep(TimeUnit.MILLISECONDS.convert(seconds, TimeUnit.SECONDS));
     }
 
+    /**
+     * Получение страницы, тестирование которой производится в данный момент
+     */
     public AlfaPage getCurrentPage() {
         AlfaPage currentPage = environment.getPages().getCurrentPage();
         if (currentPage == null) throw new AssertionError("Current Page пустой! " +
@@ -43,20 +50,31 @@ public final class AlfaScenario {
         return currentPage;
     }
 
+    /**
+     * Установка страницы, тестирование которой производится в данный момент
+     */
     public void setCurrentPage(AlfaPage page) {
         if (page == null) throw new IllegalArgumentException("Ты пытаешься установить null в качестве current page." +
                 "Проверь аннотации @Name у используемых страниц");
         environment.getPages().setCurrentPage(page);
     }
 
+    /**
+     * ???
+     */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
         withPage(clazz, true, consumer);
     }
-
+    /**
+     * ???
+     */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIsAppeared, consumer);
     }
 
+    /**
+     * Получение списка страниц
+     */
     public Pages getPages() {
         return this.getEnvironment().getPages();
     }
@@ -65,16 +83,25 @@ public final class AlfaScenario {
         return this.getEnvironment().getPage(name);
     }
 
+    /**
+     * Выводит информативно-отладочный текст в отчет
+     */
     public void write(Object o) {
         this.getEnvironment().write(o);
     }
 
+    /**
+     * Получение перменной
+     */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
         if (obj == null) throw new NullPointerException("Переменная " + name + " не найдена");
         return obj;
     }
 
+    /**
+     * Получение перменной без проверки на NULL
+     */
     public Object tryGetVar(String name) {
         return this.getEnvironment().getVar(name);
     }
