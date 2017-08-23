@@ -7,7 +7,7 @@ import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import java.util.Arrays;
 
 /**
- * Объект, связанный с AlfaScenario, используется для хранения страниц и переменных внутри сценария
+ * Класс, связанный с AlfaScenario, используется для хранения страниц и переменных внутри сценария
  */
 @Slf4j
 public class AlfaEnvironment {
@@ -62,7 +62,7 @@ public class AlfaEnvironment {
     }
 
     /**
-     * Выводит текст в отчет
+     * Выводит информативно-отладочный текст в отчет
      */
     public void write(Object o) {
         scenario.write(String.valueOf(o));
