@@ -125,10 +125,10 @@ test {
     }
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        csv.enabled true
-        html.destination "${buildDir}/jacocoHtml"
-    }
-}
+//jacocoTestReport {
+//    reports {
+//        xml.enabled true
+//        csv.enabled true
+//        html.destination "${buildDir}/jacocoHtml"
+//    }
+//}
