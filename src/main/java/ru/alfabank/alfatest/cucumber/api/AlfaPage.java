@@ -53,7 +53,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Получения текста элемента, как редактируемого поля, так и статичного элемента по имени
+     * Получение текста элемента, как редактируемого поля, так и статичного элемента по имени
      */
     public String getAnyElementText(String name) {
         SelenideElement element = getElement(name);
@@ -66,7 +66,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для получения текстов всех элементов, содержащихся в элементе-списке,
+     * Получение текстов всех элементов, содержащихся в элементе-списке,
      * состоящего как из редактируемых полей, так и статичных элементов по имени
      */
     public List<String> getAnyElementsListTexts(String name) {
@@ -105,13 +105,18 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Не уверен, что понимаю предназначение следующих двух методов
+     * Обертка над AlfaPage.isAppeared
+     * Ex: AlfaPage.appeared().doSomething();
      */
     public final AlfaPage appeared() {
         isAppeared();
         return this;
     }
 
+    /**
+     * Обертка над AlfaPage.isDisappeared
+     * Ex: AlfaPage.disappeared().doSomething();
+     */
     public final AlfaPage disappeared() {
         isDisappeared();
         return this;
@@ -136,7 +141,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Надстройка над Selenide.waitUntil для произвольного количества элементов
+     * Обертка над Selenide.waitUntil для произвольного количества элементов
      *
      * @param condition Selenide.Condition
      * @param timeout максимальное время ожидания для перехода элементов в заданное состояние
@@ -147,7 +152,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Надстройка над Selenide.waitUntil для работы со списком элементов
+     * Обертка над Selenide.waitUntil для работы со списком элементов
      *
      * @param elements список selenide-элементов
      */
@@ -156,7 +161,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Метод для проверки, что все переданные элементы в течении заданного периода времени
+     * Проверка, что все переданные элементы в течении заданного периода времени
      * перешли в состояние Selenide.Condition
      *
      * @param elementNames произвольное количество строковых переменных с именами элементов
@@ -184,7 +189,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Безопасное приведение объекта к типу SelenideElement
+     *  Приведение объекта к типу SelenideElement
      */
     private static SelenideElement castToSelenideElement(Object o) {
         if (o instanceof SelenideElement) {
