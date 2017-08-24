@@ -89,7 +89,7 @@ public abstract class AlfaPage extends ElementsContainer {
 
     /**
      * Аннотация для элементов страницы,
-     * служащая для отключения проверки появления элемента после загрухки страницы
+     * служащая для отключения проверки появления элемента после загрузки страницы
      */
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
@@ -97,7 +97,7 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Получения всех элементов страницы, не помеченных аннотацией "Optional"
+     * Получение всех элементов страницы, не помеченных аннотацией "Optional"
      */
     public List<SelenideElement> getPrimaryElements() {
         if (primaryElements == null) primaryElements = readWithWrappedElements();
