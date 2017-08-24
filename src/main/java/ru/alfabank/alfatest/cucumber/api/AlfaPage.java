@@ -177,7 +177,6 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * (Название метода крайне странное, так как проверки на то, что переданные элементы являются кнопками нет)
      * Поиск элемента по имени внутри списка элементов
      */
     public static SelenideElement getButtonFromListByName(List<SelenideElement> listButtons, String nameOfButton) {
