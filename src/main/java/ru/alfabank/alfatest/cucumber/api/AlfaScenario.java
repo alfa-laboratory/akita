@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * Главный класс-синглтон ???
+ * Главный класс-синглтон TODO: что сюда писать?
  */
 @Slf4j
 public final class AlfaScenario {
@@ -60,13 +60,13 @@ public final class AlfaScenario {
     }
 
     /**
-     * ???
+     * TODO: что делает метод withPage?
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
         withPage(clazz, true, consumer);
     }
     /**
-     * ???
+     * TODO: что делает метод withPage?
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIsAppeared, consumer);
@@ -91,7 +91,7 @@ public final class AlfaScenario {
     }
 
     /**
-     * Получение перменной
+     * Получение перменной, заданной пользователем, из инстанса AlfaEnvironment по имени
      */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
