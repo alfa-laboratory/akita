@@ -17,7 +17,7 @@ public final class AlfaScenario {
 
     /**
      * Среда прогона тестов, хранит в себе: сценарий, переменные, объявленные в сценарии
-     * и страницы, тестирование которых будет производится
+     * и страницы, тестирование которых будет производиться
      */
     private static AlfaEnvironment environment;
 
@@ -91,7 +91,7 @@ public final class AlfaScenario {
     }
 
     /**
-     * Получение перменной, заданной пользователем, из инстанса AlfaEnvironment по имени
+     * Получение переменной, заданной пользователем, из инстанса AlfaEnvironment по имени
      */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
@@ -100,7 +100,7 @@ public final class AlfaScenario {
     }
 
     /**
-     * Получение перменной без проверки на NULL
+     * Получение переменной без проверки на NULL
      */
     public Object tryGetVar(String name) {
         return this.getEnvironment().getVar(name);
