@@ -34,19 +34,25 @@ public final class Pages {
     }
 
     /**
-     * ???
+     * Реализация анонимных методов со страницей в качестве аргумента
+     *
+     * @param clazz класс страницы
+     * @param checkIsAppeared проверка всех не помеченных "@Optional" элементов
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
         T page = getPage(clazz, checkIsAppeared);
         consumer.accept(page);
     }
 
+    /**
+     * Получение страницы из "pages" по имени
+     */
     public AlfaPage get(String name) {
         return getPageMapInstanceInternal().get(name);
     }
 
     /**
-     * Получение страницы с определенным классом
+     * Получение страницы по классу
      */
     @SuppressWarnings("unchecked")
     public <T extends AlfaPage> T get(Class<T> clazz, String name) {
@@ -61,12 +67,18 @@ public final class Pages {
         return pages;
     }
 
+    /**
+     * Добавление инстанциированной страницы в "pages" с проверкой на NULL
+     */
     public <T extends AlfaPage> void put(String pageName, T page) throws IllegalArgumentException {
         if (page == null)
             throw new IllegalArgumentException("Была передана пустая страница");
         pages.put(pageName, page);
     }
 
+    /**
+     * Получение страницы по классу с возможностью выполнить проверку элементов страницы
+     */
     public static <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
         T page = Selenide.page(clazz);
         if(checkIsAppeared) {
@@ -75,6 +87,9 @@ public final class Pages {
         return page;
     }
 
+    /**
+     * Добавление страницы в "pages" по классу
+     */
     public void put(String key, Class<? extends AlfaPage> clazz) {
         pages.put(key, Selenide.page(clazz).initialize());
     }
