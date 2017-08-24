@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
- * Главный класс-синглтон TODO: что сюда писать?
+ * Главный класс, отвечающий за сопровождение тестовых шагов
  */
 @Slf4j
 public final class AlfaScenario {
@@ -16,8 +16,8 @@ public final class AlfaScenario {
     private static AlfaScenario instance = new AlfaScenario();
 
     /**
-     * Среда прогона тестов, хранит в себе: сценарий, переменные, объявленные в сценарии
-     * и страницы, тестирование которых будет производиться
+     * Среда прогона тестов, хранит в себе: класс управления жизненным циклом тестов,
+     * переменные, объявленные в сценарии и страницы, тестирование которых будет производиться
      */
     private static AlfaEnvironment environment;
 
@@ -60,13 +60,21 @@ public final class AlfaScenario {
     }
 
     /**
-     * TODO: что делает метод withPage?
+     * Реализация анонимных методов со страницей в качестве аргумента,
+     * проверка всех элементов страницы выполняется всегда
+     *
+     * @param clazz класс страницы
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
         withPage(clazz, true, consumer);
     }
+
     /**
-     * TODO: что делает метод withPage?
+     * Реализация анонимных методов со страницей в качестве аргумента
+     * проверка всех элементов страницы опциональна
+     *
+     * @param clazz класс страницы
+     * @param checkIsAppeared проверка всех не помеченных "@Optional" элементов
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIsAppeared, consumer);
@@ -106,26 +114,46 @@ public final class AlfaScenario {
         return this.getEnvironment().getVar(name);
     }
 
+    /**
+     * Получение страницы по классу с возможностью выполнить проверку элементов страницы
+     */
     public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
         return Pages.getPage(clazz, checkIsAppeared);
     }
 
+    /**
+     * Получение страницы по классу (проверка не выполняется)
+     */
     public <T extends AlfaPage> T getPage(Class<T> clazz) {
         return Pages.getPage(clazz, true);
     }
 
+    /**
+     * Получение страницы по классу и имени (должно совпадать и то, и другое)
+     */
     public <T extends AlfaPage> T getPage(Class<T> clazz, String name) {
         return this.getEnvironment().getPage(clazz, name);
     }
 
-    public String replaceVariables(String address) {
-        return this.getEnvironment().replaceVariables(address);
+    /**
+     * Заменяет в строке все ключи переменных из "variables" на их значения
+     *
+     * @param stringToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
+     */
+    public String replaceVariables(String stringToReplaceIn) {
+        return this.getEnvironment().replaceVariables(stringToReplaceIn);
     }
 
+    /**
+     *  Добавление переменной
+     */
     public void setVar(String name, Object object) {
         this.getEnvironment().setVar(name, object);
     }
 
+    /**
+     *  Получение всех переменных
+     */
     public ScopedVariables getVars() {
         return this.getEnvironment().getVars();
     }
