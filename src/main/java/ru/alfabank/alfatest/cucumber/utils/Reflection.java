@@ -3,7 +3,9 @@ package ru.alfabank.alfatest.cucumber.utils;
 import java.lang.reflect.Field;
 
 /**
- * Created by ruslanmikhalev on 26/01/17.
+ * Реализация механизма рефлексии для доступа к аннотациям классов
+ * Необходимо для сбора списка страниц, на которых будет производиться тестирование
+ * и для сбора элементов с этих страниц
  */
 public final class Reflection {
 
@@ -11,6 +13,9 @@ public final class Reflection {
 
     }
 
+    /**
+     * Получение поля класса с помощью механизма рефлексии
+     */
     public static Object extractFieldValue(Field f, Object owner) {
         f.setAccessible(true);
         try {
