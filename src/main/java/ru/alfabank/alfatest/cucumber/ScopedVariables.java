@@ -27,9 +27,9 @@ public class ScopedVariables {
         return shell.evaluate(expression);
     }
 
-    public String replaceVariables(String urlName) {
+    public String replaceVariables(String textToReplaceIn) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
-        Matcher m = p.matcher(urlName);
+        Matcher m = p.matcher(textToReplaceIn);
         StringBuffer buffer = new StringBuffer();
         while(m.find()) {
             String varName = m.group(1);

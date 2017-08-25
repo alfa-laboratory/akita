@@ -23,25 +23,25 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public abstract class AlfaPage extends ElementsContainer {
     private static final String WAITING_APPEAR_TIMEOUT = "8000";
 
-    public SelenideElement getElement(String name) {
-        Object value = namedElements.get(name);
-        if (value == null) throw new IllegalStateException("Элемент " + name + " на странице не найден.\n" +
+    public SelenideElement getElement(String elementName) {
+        Object value = namedElements.get(elementName);
+        if (value == null) throw new IllegalStateException("Элемент " + elementName + " на странице не найден.\n" +
                 "Проверьте поля в описании страницы");
         return (SelenideElement) value;
     }
 
     @SuppressWarnings("unchecked")
-    public List<SelenideElement> getElementsList(String name) {
-        Object value = namedElements.get(name);
+    public List<SelenideElement> getElementsList(String listName) {
+        Object value = namedElements.get(listName);
         if (!(value instanceof List))
-            throw new IllegalStateException("Элемент-список " + name + " на странице не найден.\n" +
+            throw new IllegalStateException("Элемент-список " + listName + " на странице не найден.\n" +
                     "Проверьте поля в описании страницы.");
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
 
-    public String getAnyElementText(String name) {
-        SelenideElement element = getElement(name);
+    public String getAnyElementText(String elementName) {
+        SelenideElement element = getElement(elementName);
         if (element.getTagName().equals("input")) {
             return element.getValue();
         }
@@ -50,8 +50,8 @@ public abstract class AlfaPage extends ElementsContainer {
         }
     }
 
-    public List<String> getAnyElementsListTexts(String name) {
-        List<SelenideElement> elementsList = getElementsList(name);
+    public List<String> getAnyElementsListTexts(String listName) {
+        List<SelenideElement> elementsList = getElementsList(listName);
         return elementsList.stream()
                 .map(element -> element.getTagName().equals("input") ? element.getValue()
                         : element.innerText()
@@ -124,9 +124,9 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
 
-    private static SelenideElement castToSelenideElement(Object o) {
-        if (o instanceof SelenideElement) {
-            return (SelenideElement) o;
+    private static SelenideElement castToSelenideElement(Object object) {
+        if (object instanceof SelenideElement) {
+            return (SelenideElement) object;
         }
         return null;
     }
@@ -179,7 +179,7 @@ public abstract class AlfaPage extends ElementsContainer {
                 .collect(Collectors.toList());
     }
 
-    private Object extractFieldValueViaReflection(Field f) {
-        return Reflection.extractFieldValue(f, this);
+    private Object extractFieldValueViaReflection(Field field) {
+        return Reflection.extractFieldValue(field, this);
     }
 }

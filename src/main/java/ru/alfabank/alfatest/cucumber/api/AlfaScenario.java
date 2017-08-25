@@ -53,8 +53,8 @@ public final class AlfaScenario {
         withPage(clazz, true, consumer);
     }
 
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
-        Pages.withPage(clazz, checkIsAppeared, consumer);
+    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+        Pages.withPage(clazz, checkIfElementsAppeared, consumer);
     }
 
     public Pages getPages() {
@@ -65,8 +65,8 @@ public final class AlfaScenario {
         return this.getEnvironment().getPage(name);
     }
 
-    public void write(Object o) {
-        this.getEnvironment().write(o);
+    public void write(Object object) {
+        this.getEnvironment().write(object);
     }
 
     public Object getVar(String name) {
@@ -79,8 +79,8 @@ public final class AlfaScenario {
         return this.getEnvironment().getVar(name);
     }
 
-    public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
-        return Pages.getPage(clazz, checkIsAppeared);
+    public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
+        return Pages.getPage(clazz, checkIfElementsAppeared);
     }
 
     public <T extends AlfaPage> T getPage(Class<T> clazz) {

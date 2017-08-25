@@ -11,14 +11,14 @@ public final class Reflection {
 
     }
 
-    public static Object extractFieldValue(Field f, Object owner) {
-        f.setAccessible(true);
+    public static Object extractFieldValue(Field field, Object owner) {
+        field.setAccessible(true);
         try {
-            return f.get(owner);
+            return field.get(owner);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } finally {
-            f.setAccessible(false);
+            field.setAccessible(false);
         }
     }
 }

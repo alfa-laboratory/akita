@@ -26,13 +26,13 @@ public final class Pages {
         this.currentPage = page;
     }
 
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
-        T page = getPage(clazz, checkIsAppeared);
+    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+        T page = getPage(clazz, checkIfElementsAppeared);
         consumer.accept(page);
     }
 
-    public AlfaPage get(String name) {
-        return getPageMapInstanceInternal().get(name);
+    public AlfaPage get(String pageName) {
+        return getPageMapInstanceInternal().get(pageName);
     }
 
     @SuppressWarnings("unchecked")
@@ -54,15 +54,15 @@ public final class Pages {
         pages.put(pageName, page);
     }
 
-    public static <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
+    public static <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         T page = Selenide.page(clazz);
-        if(checkIsAppeared) {
+        if(checkIfElementsAppeared) {
             page.isAppeared();
         }
         return page;
     }
 
-    public void put(String key, Class<? extends AlfaPage> clazz) {
-        pages.put(key, Selenide.page(clazz).initialize());
+    public void put(String pageName, Class<? extends AlfaPage> clazz) {
+        pages.put(pageName, Selenide.page(clazz).initialize());
     }
 }
