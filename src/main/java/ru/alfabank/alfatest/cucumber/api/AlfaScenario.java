@@ -16,7 +16,7 @@ public final class AlfaScenario {
     private static AlfaScenario instance = new AlfaScenario();
 
     /**
-     * Среда прогона тестов, хранит в себе: класс управления жизненным циклом тестов,
+     * Среда прогона тестов, хранит в себе: Cucumber.Scenario,
      * переменные, объявленные в сценарии и страницы, тестирование которых будет производиться
      */
     private static AlfaEnvironment environment;
