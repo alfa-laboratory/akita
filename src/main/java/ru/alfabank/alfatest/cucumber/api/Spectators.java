@@ -13,9 +13,10 @@ public final class Spectators {
     }
 
     /**
-     * Обертка над  @see SelenideElement#waitUntil(Condition, long)  для произвольного числа элементов
+     * Обертка над Selenide waitUntil для произвольного числа элементов
+     * @see SelenideElement#waitUntil(Condition, long)
      * @param condition Selenide.Condition
-     * @param timeout максимальное время ожидания для перехода элементов в заданное состояние
+     * @param timeout максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
      * @param selenideElements произвольное количество selenide-элементов
      */
     public static void waitElementsUntil(Condition condition, int timeout, SelenideElement... selenideElements) {
@@ -23,9 +24,10 @@ public final class Spectators {
     }
 
     /**
-     * Обертка над @see SelenideElement#waitUntil(Condition, long) для работы с колекцией элементов
+     * Обертка над Selenide waitUntil для работы с колекцией элементов
+     * @see SelenideElement#waitUntil(Condition, long)
      * @param condition Selenide.Condition
-     * @param timeout максимальное время ожидания для перехода элементов в заданное состояние
+     * @param timeout максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
      * @param selenideElements коллекция selenide-элементов
      */
     public static void waitElementsUntil(Condition condition, int timeout, Collection<SelenideElement> selenideElements) {
