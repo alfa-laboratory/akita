@@ -44,8 +44,21 @@ public class DefaultApiSteps {
      * Результат сохраняется в заданную переменную
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
+    @Deprecated
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
+        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
+        sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());
+    }
+
+    /**
+     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
+     * Результат сохраняется в заданную переменную
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    public void sendHttpRequestWithoutParams(String typeOfRequest, String urlName, String variableName) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
         urlName = loadProperty(urlName, valueIfNotFoundInProperties);
         sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());

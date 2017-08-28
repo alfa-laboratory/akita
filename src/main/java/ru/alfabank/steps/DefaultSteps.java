@@ -189,8 +189,21 @@ public class DefaultSteps {
      * Совершается переход по заданной ссылке.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
+    @Deprecated
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
+        urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
+        alfaScenario.write(" url = " + urlName);
+        WebDriverRunner.getWebDriver().get(urlName);
+        loadPage(pageName);
+    }
+
+    /**
+     * Совершается переход по заданной ссылке.
+     * Ссылка может передаваться как строка, так и как ключ из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
+    public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlName) {
         urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
         alfaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
