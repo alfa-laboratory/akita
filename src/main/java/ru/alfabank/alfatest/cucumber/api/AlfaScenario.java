@@ -60,23 +60,23 @@ public final class AlfaScenario {
     }
 
     /**
-     * Позволяет получить доступ к методам конкретной страницы, которая передается в метод в качестве аргумента.
+     * Позволяет получить доступ к полям и методам конкретной страницы, которая передается в метод в качестве аргумента.
      * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
      * Проверка отображения всех элементов страницы выполняется всегда
      *
-     * @param clazz класс страницы
+     * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
         withPage(clazz, true, consumer);
     }
 
     /**
-     * Позволяет получить доступ к методам конкретной страницы, которая передается в метод в качестве аргумента.
+     * Позволяет получить доступ к полям и методам конкретной страницы.
      * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
      * Проверка отображения всех элементов страницы опциональна
      *
-     * @param clazz класс страницы
-     * @param checkIsAppeared проверка отображения всех элементов страницы, не помеченных "@Optional"
+     * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
+     * @param checkIsAppeared флаг, отвечающий за проверку отображения всех элементов страницы, не помеченных аннотацией @Optional
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIsAppeared, consumer);
