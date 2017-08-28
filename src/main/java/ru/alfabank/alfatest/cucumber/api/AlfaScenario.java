@@ -17,7 +17,7 @@ public final class AlfaScenario {
 
     /**
      * Среда прогона тестов, хранит в себе: Cucumber.Scenario,
-     * переменные, объявленные в сценарии и страницы, тестирование которых будет производиться
+     * переменные, объявленные пользователем в сценарии и страницы, тестирование которых будет производиться
      */
     private static AlfaEnvironment environment;
 
@@ -60,8 +60,9 @@ public final class AlfaScenario {
     }
 
     /**
-     * Реализация анонимных методов со страницей в качестве аргумента,
-     * проверка всех элементов страницы выполняется всегда
+     * Позволяет получить доступ к методам конкретной страницы, которая передается в метод в качестве аргумента.
+     * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
+     * Проверка отображения всех элементов страницы выполняется всегда
      *
      * @param clazz класс страницы
      */
@@ -70,11 +71,12 @@ public final class AlfaScenario {
     }
 
     /**
-     * Реализация анонимных методов со страницей в качестве аргумента
-     * проверка всех элементов страницы опциональна
+     * Позволяет получить доступ к методам конкретной страницы, которая передается в метод в качестве аргумента.
+     * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
+     * Проверка отображения всех элементов страницы опциональна
      *
      * @param clazz класс страницы
-     * @param checkIsAppeared проверка всех не помеченных "@Optional" элементов
+     * @param checkIsAppeared проверка отображения всех элементов страницы, не помеченных "@Optional"
      */
     public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIsAppeared, consumer);
@@ -99,7 +101,7 @@ public final class AlfaScenario {
     }
 
     /**
-     * Получение переменной, заданной пользователем, из инстанса AlfaEnvironment по имени
+     * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в AlfaEnvironment
      */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
@@ -115,28 +117,28 @@ public final class AlfaScenario {
     }
 
     /**
-     * Получение страницы по классу с возможностью выполнить проверку элементов страницы
+     * Получение страницы по классу с возможностью выполнить проверку отображения элементов страницы
      */
     public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
         return Pages.getPage(clazz, checkIsAppeared);
     }
 
     /**
-     * Получение страницы по классу (проверка не выполняется)
+     * Получение страницы по классу (проверка отображения элементов страницы не выполняется)
      */
     public <T extends AlfaPage> T getPage(Class<T> clazz) {
         return Pages.getPage(clazz, true);
     }
 
     /**
-     * Получение страницы по классу и имени (должно совпадать и то, и другое)
+     * Получение страницы по классу и имени (оба параметра должны совпадать)
      */
     public <T extends AlfaPage> T getPage(Class<T> clazz, String name) {
         return this.getEnvironment().getPage(clazz, name);
     }
 
     /**
-     * Заменяет в строке все ключи переменных из "variables" на их значения
+     * Заменяет в строке все ключи переменных из пула переменных "variables" в AlfaEnvironment на их значения
      *
      * @param stringToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
@@ -145,14 +147,14 @@ public final class AlfaScenario {
     }
 
     /**
-     *  Добавление переменной
+     *  Добавление переменной в пул "variables" в классе AlfaEnvironment
      */
     public void setVar(String name, Object object) {
         this.getEnvironment().setVar(name, object);
     }
 
     /**
-     *  Получение всех переменных
+     *  Получение всех переменных из пула "variables" в классе AlfaEnvironment
      */
     public ScopedVariables getVars() {
         return this.getEnvironment().getVars();
