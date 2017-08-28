@@ -102,6 +102,7 @@ public final class AlfaScenario {
 
     /**
      * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в AlfaEnvironment
+     * @param name - имя переменной, для которй необходимо получить ранее сохраненное значение
      */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
@@ -118,6 +119,8 @@ public final class AlfaScenario {
 
     /**
      * Получение страницы по классу с возможностью выполнить проверку отображения элементов страницы
+     * @param clazz - класс страницы, которую необходимо получить
+     * @param checkIsAppeared - флаг, определяющий проверку отображения элементов на странице
      */
     public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
         return Pages.getPage(clazz, checkIsAppeared);
@@ -125,6 +128,7 @@ public final class AlfaScenario {
 
     /**
      * Получение страницы по классу (проверка отображения элементов страницы не выполняется)
+     * @param clazz - класс страницы, которую необходимо получить
      */
     public <T extends AlfaPage> T getPage(Class<T> clazz) {
         return Pages.getPage(clazz, true);
@@ -132,13 +136,15 @@ public final class AlfaScenario {
 
     /**
      * Получение страницы по классу и имени (оба параметра должны совпадать)
+     * @param clazz - класс страницы, которую необходимо получить
+     * @param name - название страницы, заданное в аннотации @Name
      */
     public <T extends AlfaPage> T getPage(Class<T> clazz, String name) {
         return this.getEnvironment().getPage(clazz, name);
     }
 
     /**
-     * Заменяет в строке все ключи переменных из пула переменных "variables" в AlfaEnvironment на их значения
+     * Заменяет в строке все ключи переменных из пула переменных "variables" в классе AlfaEnvironment на их значения
      *
      * @param stringToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
@@ -148,6 +154,8 @@ public final class AlfaScenario {
 
     /**
      *  Добавление переменной в пул "variables" в классе AlfaEnvironment
+     *  @param name имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AlfaEnvironment
+     *  @param object значение, которое нужно сохранить в переменную
      */
     public void setVar(String name, Object object) {
         this.getEnvironment().setVar(name, object);
