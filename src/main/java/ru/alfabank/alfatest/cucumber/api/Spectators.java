@@ -13,23 +13,23 @@ public final class Spectators {
     }
 
     /**
-     * Обертка над Selenide.waitUntil для произвольного числа элементов
-     *
-     * @param ec Selenide.Condition
+     * Обертка над  @see SelenideElement#waitUntil(Condition, long)  для произвольного числа элементов
+     * @param condition Selenide.Condition
      * @param timeout максимальное время ожидания для перехода элементов в заданное состояние
-     * @param els произвольное количество selenide-элементов
+     * @param selenideElements произвольное количество selenide-элементов
      */
-    public static void waitElementsUntil(Condition ec, int timeout, SelenideElement... els) {
-        Arrays.stream(els).forEach(e -> e.waitUntil(ec, timeout));
+    public static void waitElementsUntil(Condition condition, int timeout, SelenideElement... selenideElements) {
+        Arrays.stream(selenideElements).forEach(e -> e.waitUntil(condition, timeout));
     }
 
     /**
-     * Обертка над Selenide.waitUntil для работы с колекцией элементов
-     *
-     * @param els коллекция selenide-элементов
+     * Обертка над @see SelenideElement#waitUntil(Condition, long) для работы с колекцией элементов
+     * @param condition Selenide.Condition
+     * @param timeout максимальное время ожидания для перехода элементов в заданное состояние
+     * @param selenideElements коллекция selenide-элементов
      */
-    public static void waitElementsUntil(Condition ec, int timeout, Collection<SelenideElement> els) {
-        els.forEach(e -> e.waitUntil(ec, timeout));
+    public static void waitElementsUntil(Condition condition, int timeout, Collection<SelenideElement> selenideElements) {
+        selenideElements.forEach(e -> e.waitUntil(condition, timeout));
     }
 
 }
