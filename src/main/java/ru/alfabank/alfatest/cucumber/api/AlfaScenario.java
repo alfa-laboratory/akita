@@ -51,7 +51,7 @@ public final class AlfaScenario {
     }
 
     /**
-     * Установка страницы, тестирование которой производится в данный момент
+     * Задание страницы, тестирование которой производится в данный момент
      */
     public void setCurrentPage(AlfaPage page) {
         if (page == null) throw new IllegalArgumentException("Ты пытаешься установить null в качестве current page." +
