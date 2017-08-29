@@ -2,8 +2,10 @@ package ru.alfabank.other;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.ex.ElementShould;
 import cucumber.api.Scenario;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.AlfaPageMock;
@@ -34,6 +36,9 @@ public class SpectatorsTest {
         alfaScenario.setVar("Page", "file://" + url);
         ds.goToSelectedPageByLinkFromProperty("AlfaPageMock", alfaScenario.getVar("Page").toString());
     }
+
+    @AfterClass
+    public static void close() { WebDriverRunner.closeWebDriver(); }
 
     @Test
     public void waitElementsUntilPositiveElements() {
