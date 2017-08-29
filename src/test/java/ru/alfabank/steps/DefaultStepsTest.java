@@ -1,13 +1,17 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.ex.ElementShouldNot;
 import cucumber.api.Scenario;
 import org.junit.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import ru.alfabank.AlfaPageMock;
 import ru.alfabank.StubScenario;
+import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.Pages;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +50,9 @@ public class DefaultStepsTest {
     }
 
     @AfterClass
-    public static void close() { WebDriverRunner.getWebDriver().close(); }
+    public static void close() {
+        WebDriverRunner.closeWebDriver();
+    }
 
     @Test
     public void navigateToUrl() {
@@ -65,7 +71,7 @@ public class DefaultStepsTest {
 
     @Ignore
     @Test
-    public void setupWindowSizeSimple() {
+    public void setWindowSizeSimple() {
         Dimension expectedDimension = new Dimension(800, 600);
         ds.setWindowSize("800", "600");
         Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
@@ -119,10 +125,9 @@ public class DefaultStepsTest {
         ds.elemIsPresentedOnPage("mockTagName");
     }
 
-    @Ignore
     @Test
-    public void listIsPresentedOnPageNegative() {
-        ds.elemIsPresentedOnPage("mockList");
+    public void listIsPresentedOnPageTest() {
+        ds.listIsPresentedOnPage("List");
     }
 
     @Test
@@ -144,8 +149,7 @@ public class DefaultStepsTest {
         ds.checkIfListContainsValueFromField("mockTagName", "list");
     }
 
-    @Ignore
-    @Test
+    @Test(expected = ElementShouldNot.class)
     public void blockDisappearedSimple() {
         ds.blockDisappeared("AlfaPageMock");
     }
@@ -178,16 +182,18 @@ public class DefaultStepsTest {
         ds.fieldInputIsEmpty("NormalField");
     }
 
-    @Ignore
     @Test
-    public void checkIfListConsistsOfTableElementsPositive() {
-
+    public void checkIfListConsistsOfTableElementsTest() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One");
+        types.add("Two");
+        types.add("Three");
+        ds.checkIfListConsistsOfTableElements("List", types);
     }
 
-    @Ignore
     @Test
-    public void checkIfSelectedListElementMatchesValuePositive() {
-
+    public void checkIfSelectedListElementMatchesValueTest() {
+        ds.checkIfSelectedListElementMatchesValue("List", "One");
     }
 
     @Test
@@ -225,10 +231,14 @@ public class DefaultStepsTest {
         ds.fieldIsDisable("DisabledField");
     }
 
-    @Ignore
     @Test
-    public void compareListFromUIAndFromVariablePositive() {
-
+    public void compareListFromUIAndFromVariableTest() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One");
+        arrayList.add("Two");
+        arrayList.add("Three");
+        alfaScenario.setVar("qwerty", arrayList);
+        ds.compareListFromUIAndFromVariable("List", "qwerty");
     }
 
     @Test
@@ -288,5 +298,49 @@ public class DefaultStepsTest {
     @Test
     public void scrollDownSimple() {
         ds.scrollDown();
+    }
+
+    @Test
+    public void loginByUserDataPositive() {
+        ds.loginByUserData("testUser");
+    }
+
+    @Test
+    public void pasteValuePositive() {
+        ds.pasteValueToTextField("testVal", "NormalField");
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("normalField")).getAttribute("value"),
+                equalTo("testVal"));
+    }
+
+    @Test
+    public void elementDisapperaredAndAppearedComplex() {
+        ds.testElementAppeared("ul", 1);
+        ds.clickOnElement("SUPERBUTTON");
+        ds.elemDisappered("ul");
+    }
+
+    @Test
+    public void goToUrl() {
+        ds.goToUrl((String) alfaScenario.getVar("RedirectionPage"));
+    }
+
+    @Test
+    public void compareValInFieldAndFromStepTest() {
+        ds.compareValInFieldAndFromStep("ul", "Serious testing page");
+    }
+
+    @Test
+    public void setVariableTest() {
+        ds.setVariable("ul", "Serious testing page");
+        assertThat(ds.getVar("ul"), equalTo("Serious testing page"));
+    }
+
+    @Test
+    public void getVarsTest() {
+        ds.setVar("1", "1");
+        ds.setVar("2", "2");
+        ScopedVariables scopedVariables = ds.getVars();
+        assertThat((String)scopedVariables.get("1") + (String)scopedVariables.get("2"),
+                equalTo("12"));
     }
 }

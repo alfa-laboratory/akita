@@ -6,7 +6,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 /**
- * Created by ruslanmikhalev on 03/02/17.
+ * Для поиска классов с заданной аннотацией среди всех классов в проекте на основе механизма рефлексии
  */
 public class AnnotationScanner {
 
