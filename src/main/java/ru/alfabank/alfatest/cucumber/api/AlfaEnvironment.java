@@ -22,7 +22,7 @@ public class AlfaEnvironment {
      */
     private ThreadLocal<ScopedVariables> variables = new ThreadLocal<>();
     /**
-     * Список веб-страниц заданных пользователем, использующихся в сценарии
+     * Список веб-страниц, заданных пользователем, доступных для использования в сценариях
      */
     private Pages pages = new Pages();
 
@@ -51,8 +51,12 @@ public class AlfaEnvironment {
                 })
                 .forEach(clazz -> pages.put(getClassAnnotationValue(clazz), clazz));
     }
+
     /**
-     * Вспомогательный метод поиска классов по аннотации
+     * Вспомогательный метод, получает значение аннотации @AlfaPage.Name для класса
+     *
+     * @param c класс, который должен быть аннотирован @AlfaPage.Name
+     * @return значение аннотации @AlfaPage.Name для класса
      */
     private String getClassAnnotationValue(Class<?> c) {
         return Arrays.stream(c.getAnnotationsByType(AlfaPage.Name.class))
@@ -62,7 +66,7 @@ public class AlfaEnvironment {
     }
 
     /**
-     * Выводит информативно-отладочный текст в отчет
+     * Выводит дополнительный информационный текст в отчет (уровень логирования INFO)
      */
     public void write(Object o) {
         scenario.write(String.valueOf(o));
