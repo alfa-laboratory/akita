@@ -53,7 +53,7 @@ public class DefaultApiSteps {
     }
 
     /**
-     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
+     * Посылается http GET/POST запрос по заданному урлу без параметров и BODY.
      * Результат сохраняется в заданную переменную
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
@@ -65,7 +65,7 @@ public class DefaultApiSteps {
     }
 
     /**
-     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Посылается http GET/POST запрос по заданному урлу с заданными параметрами.
      * Результат сохраняется в заданную переменную
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
@@ -79,7 +79,7 @@ public class DefaultApiSteps {
     }
 
     /**
-     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу с заданными параметрами.
+     * Посылается http GET/POST запрос по заданному урлу с заданными параметрами.
      * Проверяется, что код ответа соответствует ожиданиям.
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
