@@ -53,10 +53,10 @@ public class AlfaEnvironment {
     }
 
     /**
-     * Вспомогательный метод, получает значение аннотации @AlfaPage.Name для класса
+     * Вспомогательный метод, получает значение аннотации "AlfaPage.Name" для класса
      *
-     * @param c класс, который должен быть аннотирован @AlfaPage.Name
-     * @return значение аннотации @AlfaPage.Name для класса
+     * @param c класс, который должен быть аннотирован "AlfaPage.Name"
+     * @return значение аннотации "AlfaPage.Name" для класса
      */
     private String getClassAnnotationValue(Class<?> c) {
         return Arrays.stream(c.getAnnotationsByType(AlfaPage.Name.class))
