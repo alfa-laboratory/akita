@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
 import ru.alfabank.alfatest.cucumber.api.AlfaPage;
 
+import java.util.List;
+
 /**
  * Created by alexander on 01.08.17.
  */
@@ -35,9 +37,9 @@ public class AlfaPageMock extends AlfaPage {
     @Name("mockXpathText")
     public SelenideElement mockXpathText;
 
-    @FindBy(id = "list")
-    @Name("mockList")
-    public SelenideElement mockList;
+    @FindBy(xpath = "//ul[@id=\"list\"]/li")
+    @Name("List")
+    public List<SelenideElement> list;
 
     @FindBy(name = "goodButton")
     @Name("GoodButton")
@@ -73,4 +75,20 @@ public class AlfaPageMock extends AlfaPage {
     @FindBy(id = "link")
     @Name("Link")
     public SelenideElement link;
+
+    @FindBy(id = "login")
+    @Name("Логин")
+    public SelenideElement login;
+
+    @FindBy(id = "psw")
+    @Name("Пароль")
+    public SelenideElement psw;
+
+    @FindBy(id = "submit")
+    @Name("Войти")
+    public SelenideElement submit;
+
+    @FindBy(id = "ul")
+    @Name("ul")
+    public SelenideElement ul;
 }

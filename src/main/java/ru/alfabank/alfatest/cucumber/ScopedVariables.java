@@ -9,12 +9,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by ruslanmikhalev on 27/01/17.
+ * Реализация хранилища переменных, заданных пользователем, внутри тестовых сценариев
  */
 public class ScopedVariables {
 
+
     private Map<String, Object> variables = Maps.newHashMap();
 
+    /**
+     * Компилирует и выполняет в рантайме переданный на вход java/groovy-код.
+     * Предварительно загружает в память все переменные,
+     * т.е. на вход в строковом аргументе могут быть переданы переменные из "variables"
+     *
+     * @param expression java/groovy-код, который будет выполнен
+     */
     public Object evaluate(String expression) {
         GroovyShell shell = new GroovyShell();
         variables.entrySet().forEach(e -> {
@@ -27,9 +35,14 @@ public class ScopedVariables {
         return shell.evaluate(expression);
     }
 
-    public String replaceVariables(String urlName) {
+    /**
+     * Заменяет в строке все ключи переменных из "variables" на их значения
+     *
+     * @param stringToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
+     */
+    public String replaceVariables(String stringToReplaceIn) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
-        Matcher m = p.matcher(urlName);
+        Matcher m = p.matcher(stringToReplaceIn);
         StringBuffer buffer = new StringBuffer();
         while(m.find()) {
             String varName = m.group(1);

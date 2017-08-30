@@ -11,6 +11,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 import ru.alfabank.tests.core.rest.RequestParam;
@@ -140,7 +141,7 @@ public class DefaultApiSteps {
     }
 
     private void getResponseAndSaveToVariable(String variableName, Response response) {
-        if (response.statusCode() == 200) {
+        if (200 <= response.statusCode() && response.statusCode() < 300) {
             alfaScenario.setVar(variableName, response.getBody().asString());
             if (log.isDebugEnabled()) alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {

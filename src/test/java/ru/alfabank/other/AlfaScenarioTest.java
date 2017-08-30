@@ -1,5 +1,6 @@
 package ru.alfabank.other;
 
+import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
 import groovy.util.logging.Slf4j;
 import org.junit.*;
@@ -24,6 +25,9 @@ public class AlfaScenarioTest {
     public static void init() {
         alfaScenario = AlfaScenario.getInstance();
     }
+
+    @AfterClass
+    public static void close() { WebDriverRunner.closeWebDriver(); }
 
     @Before
     public void prepare() {
