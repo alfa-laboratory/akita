@@ -31,7 +31,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'nebula.nebula-release'
 apply plugin: 'org.sonarqube'
-//apply plugin: 'jacoco'
+apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 tasks.release.dependsOn tasks.artifactoryPublish
@@ -114,7 +114,7 @@ artifactoryPublish {
 
 test {
     maxParallelForks = 1
-    ignoreFailures = true
+    ignoreFailures = false
 
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=${browser}"
@@ -131,10 +131,10 @@ test {
     }
 }
 
-//jacocoTestReport {
-//    reports {
-//        xml.enabled true
-//        csv.enabled true
-//        html.destination "${buildDir}/jacocoHtml"
-//    }
-//}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
