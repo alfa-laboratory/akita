@@ -2,18 +2,14 @@ package ru.alfabank.steps;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Тогда;
 import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.tests.core.helpers.PropertyLoader;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
@@ -27,9 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.restassured.RestAssured.given;
-import static java.lang.String.format;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
@@ -120,7 +113,7 @@ public class DefaultApiSteps {
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException(format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), requestParam.getName()));
+                    throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), requestParam.getName()));
             }
         }
         RequestSender request;

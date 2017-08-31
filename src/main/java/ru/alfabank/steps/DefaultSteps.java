@@ -7,7 +7,6 @@ import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -497,7 +496,7 @@ public class DefaultSteps {
             currentStringDate = new SimpleDateFormat(formatDate).format(date);
         } catch (IllegalArgumentException ex) {
             currentStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-            log.error("Неверный формат даты. Бутет использоваться значание по умолчанию в формате dd.MM.yyyy");
+            log.error("Неверный формат даты. Будет использоваться значание по умолчанию в формате dd.MM.yyyy");
         }
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
