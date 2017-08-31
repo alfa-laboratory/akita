@@ -161,7 +161,7 @@ public class DefaultSteps {
     public void compareTwoVariables(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
-        assertThat("строки не совпадают", s1, equalTo(s2));
+        assertThat("Значения в переменных не совпадают", s1, equalTo(s2));
     }
 
     /**
@@ -171,7 +171,7 @@ public class DefaultSteps {
     public void compareFieldAndVariable(String fieldName, String variableName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         String expectedValue = alfaScenario.getVar(variableName).toString();
-        assertThat("Значения не совпадают", expectedValue, equalTo(actualValue));
+        assertThat("Значение поля не совпадает со значением из переменной", expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -182,7 +182,7 @@ public class DefaultSteps {
     public void checkIfListContainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
-        assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
+        assertTrue("Список не содержит значение поля", listFromVariable.contains(actualValue));
     }
 
     /**
@@ -262,7 +262,7 @@ public class DefaultSteps {
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String fieldName) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
-        assertThat("Поле '" + fieldName + "' содержит значение",
+        assertThat("Поле '" + fieldName + "' не пусто",
                 alfaScenario.getCurrentPage().getAnyElementText(fieldName),
                 Matchers.isEmptyOrNullString());
     }
@@ -413,7 +413,7 @@ public class DefaultSteps {
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        assertThat("Значения не совпадают", expectedValue, equalTo(actualValue));
+        assertThat("Значения поля не совпадает с ожидаемым значением", expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -443,7 +443,7 @@ public class DefaultSteps {
     public void compareListFromUIAndFromVariable(String listName, String variableName) {
         HashSet<String> expectedList = new HashSet<>((List<String>) alfaScenario.getVar(variableName));
         HashSet<String> actualList = new HashSet<>(alfaScenario.getCurrentPage().getAnyElementsListTexts(listName));
-      assertThat("Списки не совпадают", expectedList, equalTo(actualList));
+      assertThat("Список со страницы не совпадает с ожидаемым списком", expectedList, equalTo(actualList));
     }
 
     /**
