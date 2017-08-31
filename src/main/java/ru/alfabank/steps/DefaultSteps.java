@@ -83,8 +83,6 @@ public class DefaultSteps {
     public void checkCurrentURL(String url) {
         String currentUrl = getWebDriver().getCurrentUrl();
         String expectedUrl = replaceVariables(url);
-        alfaScenario.write("current URL = " + currentUrl + "\n" +
-                "expected URL = " + expectedUrl);
         assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, Matchers.is(expectedUrl));
     }
 
@@ -306,7 +304,7 @@ public class DefaultSteps {
         if (itemFound.isPresent()) {
             itemFound.get().click();
         } else {
-            throw new IllegalStateException("Элемент не найден в списке");
+            throw new IllegalArgumentException(String.format("Элемент %s не найден в списке %s ", nameOfValue, nameOfList));
         }
     }
 
@@ -499,7 +497,7 @@ public class DefaultSteps {
             currentStringDate = new SimpleDateFormat(formatDate).format(date);
         } catch (IllegalArgumentException ex) {
             currentStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-            log.error("Неверный формат. Дата будет использована в формате dd.MM.yyyy");
+            log.error("Неверный формат даты. Бутет использоваться значание по умолчанию в формате dd.MM.yyyy");
         }
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");

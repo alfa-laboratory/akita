@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static io.restassured.RestAssured.given;
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
@@ -119,7 +120,7 @@ public class DefaultApiSteps {
                     }
                     break;
                 default:
-                    throw new RuntimeException("Некорректно задан элемент таблицы : " + requestParam.getType());
+                    throw new IllegalArgumentException(format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), requestParam.getName()));
             }
         }
         RequestSender request;
@@ -175,7 +176,7 @@ public class DefaultApiSteps {
         Response response = request.request(Method.valueOf(typeOfRequest), urlName);
         int statusCode = response.getStatusCode();
         if (statusCode != expectedStatusCode) {
-            write("Ожидали статус код: " + expectedStatusCode + ". Получили: " + statusCode);
+            write("Получен неверный статус код ответа " + statusCode + ". Ожидаемый статус код " + expectedStatusCode);
         }
         return statusCode == expectedStatusCode;
     }
