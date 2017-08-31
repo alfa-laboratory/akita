@@ -15,6 +15,7 @@ public final class Pages {
      * Страницы, на которых будет производится тестирование < Имя, Страница >
      */
     private Map<String, AlfaPage> pages;
+
     /**
      * Страница, на которой в текущий момент производится тестирование
      */
@@ -24,11 +25,18 @@ public final class Pages {
         pages = Maps.newHashMap();
     }
 
+
+    /**
+     *  Возвращает текущую страницу, на которой в текущий момент производится тестирование
+     */
     public AlfaPage getCurrentPage() {
         if (currentPage == null) throw new AssertionError("Current Page empty!");
         return currentPage;
     }
 
+    /**
+     *  Задает текущую страницу по ее имени
+     */
     public void setCurrentPage(AlfaPage page) {
         this.currentPage = page;
     }
