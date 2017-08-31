@@ -171,7 +171,7 @@ public class DefaultSteps {
     public void compareFieldAndVariable(String fieldName, String variableName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         String expectedValue = alfaScenario.getVar(variableName).toString();
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
+        assertThat("Значения не совпадают", expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -413,7 +413,7 @@ public class DefaultSteps {
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
+        assertThat("Значения не совпадают", expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -443,7 +443,7 @@ public class DefaultSteps {
     public void compareListFromUIAndFromVariable(String listName, String variableName) {
         HashSet<String> expectedList = new HashSet<>((List<String>) alfaScenario.getVar(variableName));
         HashSet<String> actualList = new HashSet<>(alfaScenario.getCurrentPage().getAnyElementsListTexts(listName));
-        assertEquals("Списки не совпадают", expectedList, actualList);
+      assertThat("Списки не совпадают", expectedList, equalTo(actualList));
     }
 
     /**
