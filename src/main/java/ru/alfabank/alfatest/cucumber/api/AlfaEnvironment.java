@@ -7,13 +7,23 @@ import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import java.util.Arrays;
 
 /**
- * Created by ruslanmikhalev on 27/01/17.
+ * Класс, связанный с AlfaScenario, используется для хранения страниц и переменных внутри сценария
  */
 @Slf4j
 public class AlfaEnvironment {
 
+    /**
+     * Сценарий (Cucumber.api), с которым связана среда
+     */
     private Scenario scenario;
+    /**
+     * Переменные, объявленные пользователем внутри сценария
+     * ThreadLocal обеспечивает отсутствие коллизий при многопоточном запуске
+     */
     private ThreadLocal<ScopedVariables> variables = new ThreadLocal<>();
+    /**
+     * Список веб-страниц, заданных пользователем, доступных для использования в сценариях
+     */
     private Pages pages = new Pages();
 
     public AlfaEnvironment(Scenario scenario) {
@@ -25,6 +35,10 @@ public class AlfaEnvironment {
         initPages();
     }
 
+    /**
+     * Метод ищет классы, аннотированные "AlfaPage.Name",
+     * добавляя ссылки на эти классы в поле "pages"
+     */
     @SuppressWarnings("unchecked")
     private void initPages() {
         new AnnotationScanner().getClassesAnnotatedWith(AlfaPage.Name.class)
@@ -38,6 +52,12 @@ public class AlfaEnvironment {
                 .forEach(clazz -> pages.put(getClassAnnotationValue(clazz), clazz));
     }
 
+    /**
+     * Вспомогательный метод, получает значение аннотации "AlfaPage.Name" для класса
+     *
+     * @param c класс, который должен быть аннотирован "AlfaPage.Name"
+     * @return значение аннотации "AlfaPage.Name" для класса
+     */
     private String getClassAnnotationValue(Class<?> c) {
         return Arrays.stream(c.getAnnotationsByType(AlfaPage.Name.class))
                 .findAny()
@@ -45,6 +65,9 @@ public class AlfaEnvironment {
                 .value();
     }
 
+    /**
+     * Выводит дополнительный информационный текст в отчет (уровень логирования INFO)
+     */
     public void write(Object object) {
         scenario.write(String.valueOf(object));
     }

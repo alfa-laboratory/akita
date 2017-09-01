@@ -7,7 +7,6 @@ import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -83,8 +82,6 @@ public class DefaultSteps {
     public void checkCurrentURL(String url) {
         String currentUrl = getWebDriver().getCurrentUrl();
         String expectedUrl = replaceVariables(url);
-        alfaScenario.write("current URL = " + currentUrl + "\n" +
-                "expected URL = " + expectedUrl);
         assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, Matchers.is(expectedUrl));
     }
 
@@ -161,7 +158,7 @@ public class DefaultSteps {
     public void compareTwoVariables(String varName1, String varName2) {
         String s1 = getVar(varName1).toString();
         String s2 = getVar(varName2).toString();
-        assertThat("строки не совпадают", s1, equalTo(s2));
+        assertThat("Значения в переменных не совпадают", s1, equalTo(s2));
     }
 
     /**
@@ -171,7 +168,7 @@ public class DefaultSteps {
     public void compareFieldAndVariable(String fieldName, String variableName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         String expectedValue = alfaScenario.getVar(variableName).toString();
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
+        assertThat("Значение поля не совпадает со значением из переменной", expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -182,15 +179,28 @@ public class DefaultSteps {
     public void checkIfListContainsValueFromField(String fieldName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
-        assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
+        assertTrue("Список не содержит значение поля", listFromVariable.contains(actualValue));
     }
 
     /**
      * Совершается переход по заданной ссылке.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
+    @Deprecated
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
+        urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
+        alfaScenario.write(" url = " + urlName);
+        WebDriverRunner.getWebDriver().get(urlName);
+        loadPage(pageName);
+    }
+
+    /**
+     * Совершается переход по заданной ссылке.
+     * Ссылка может передаваться как строка, так и как ключ из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
+    public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlName) {
         urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
         alfaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
@@ -249,7 +259,7 @@ public class DefaultSteps {
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String fieldName) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
-        assertThat("Поле '" + fieldName + "' содержит значение",
+        assertThat("Поле '" + fieldName + "' не пусто",
                 alfaScenario.getCurrentPage().getAnyElementText(fieldName),
                 Matchers.isEmptyOrNullString());
     }
@@ -293,7 +303,7 @@ public class DefaultSteps {
         if (itemFound.isPresent()) {
             itemFound.get().click();
         } else {
-            throw new IllegalStateException("Элемент не найден в списке");
+            throw new IllegalArgumentException(String.format("Элемент %s не найден в списке %s ", nameOfValue, nameOfList));
         }
     }
 
@@ -400,7 +410,7 @@ public class DefaultSteps {
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
+        assertThat("Значения поля не совпадает с ожидаемым значением", expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -430,7 +440,7 @@ public class DefaultSteps {
     public void compareListFromUIAndFromVariable(String listName, String variableName) {
         HashSet<String> expectedList = new HashSet<>((List<String>) alfaScenario.getVar(variableName));
         HashSet<String> actualList = new HashSet<>(alfaScenario.getCurrentPage().getAnyElementsListTexts(listName));
-        assertEquals("Списки не совпадают", expectedList, actualList);
+      assertThat("Список со страницы не совпадает с ожидаемым списком", expectedList, equalTo(actualList));
     }
 
     /**
@@ -486,7 +496,7 @@ public class DefaultSteps {
             currentStringDate = new SimpleDateFormat(formatDate).format(date);
         } catch (IllegalArgumentException ex) {
             currentStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-            log.error("Неверный формат. Дата будет использована в формате dd.MM.yyyy");
+            log.error("Неверный формат даты. Будет использоваться значание по умолчанию в формате dd.MM.yyyy");
         }
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
