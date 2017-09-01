@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import static java.lang.String.format;
+
 /**
  * Created by onotole on 09.02.17.
  */
@@ -29,7 +31,7 @@ public class SystemSteps {
     @Deprecated
     public static boolean isFilePdf(File file) throws FileNotFoundException {
         if (!file.exists()) {
-            throw new AssertionError("File not found by path: " + file.getAbsolutePath());
+            throw new FileNotFoundException("Файл не найден по указанному пути: " + file.getAbsolutePath());
         }
         try (Scanner scanner = new Scanner(file)) {
             return scanner.hasNextLine() && scanner.nextLine().startsWith(PDF_PREFIX);
@@ -44,9 +46,7 @@ public class SystemSteps {
         try {
             return Enum.valueOf(e, id);
         } catch (IllegalArgumentException ex) {
-            log.error("В enum не найден запрошенный элемент: " + id);
-            throw new RuntimeException(
-                    "Invalid value for enum " + e.getSimpleName() + ": " + id);
+            throw new IllegalArgumentException(format("В enum %s не найден запрошенный элемент: %s", e.getClass(), id));
         }
     }
 }
