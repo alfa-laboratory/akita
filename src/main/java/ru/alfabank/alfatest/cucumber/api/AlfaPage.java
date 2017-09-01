@@ -34,8 +34,8 @@ public abstract class AlfaPage extends ElementsContainer {
      */
     public SelenideElement getElement(String elementName) {
         Object value = namedElements.get(elementName);
-        if (value == null) throw new IllegalStateException("Элемент " + elementName + " на странице не найден.\n" +
-                "Проверьте поля в описании страницы");
+        if (value == null)
+            throw new IllegalArgumentException("Элемент " + elementName + " не описан на странице " + this.getClass().getName());
         return (SelenideElement) value;
     }
 
@@ -46,8 +46,7 @@ public abstract class AlfaPage extends ElementsContainer {
     public List<SelenideElement> getElementsList(String listName) {
         Object value = namedElements.get(listName);
         if (!(value instanceof List))
-            throw new IllegalStateException("Элемент-список " + listName + " на странице не найден.\n" +
-                    "Проверьте поля в описании страницы.");
+            throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
@@ -59,8 +58,7 @@ public abstract class AlfaPage extends ElementsContainer {
         SelenideElement element = getElement(elementName);
         if (element.getTagName().equals("input")) {
             return element.getValue();
-        }
-        else {
+        } else {
             return element.innerText();
         }
     }
@@ -128,7 +126,7 @@ public abstract class AlfaPage extends ElementsContainer {
     protected void isAppeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
         getPrimaryElements().parallelStream().forEach(elem ->
-            elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+                elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
     }
 
     /**
@@ -137,7 +135,7 @@ public abstract class AlfaPage extends ElementsContainer {
     protected void isDisappeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
         getPrimaryElements().parallelStream().forEach(elem ->
-            elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
+                elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
     }
 
     /**
@@ -226,10 +224,9 @@ public abstract class AlfaPage extends ElementsContainer {
         return Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .peek(f -> {
-                    if(!SelenideElement.class.isAssignableFrom(f.getType()) && !List.class.isAssignableFrom(f.getType()))
+                    if (!SelenideElement.class.isAssignableFrom(f.getType()) && !List.class.isAssignableFrom(f.getType()))
                         throw new IllegalStateException(
-                                format("Field with @Name annotation must be SelenideElement or List<SelenideElement>, but %s found", f.getType())
-                        );
+                                format("Поле с аннотацией @Name должно иметь тип SelenideElement или List<SelenideElement>, но найдено поле с типом %s", f.getType()));
                 })
                 .collect(Collectors.toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
     }
@@ -243,7 +240,7 @@ public abstract class AlfaPage extends ElementsContainer {
                 .map(f -> f.getDeclaredAnnotation(Name.class).value())
                 .collect(Collectors.toList());
         if (list.size() != new HashSet<>(list).size()) {
-            throw new IllegalStateException("Found two annotation with same value in class " + this.getClass());
+            throw new IllegalStateException("Найдено несколько аннотаций @Name с одинаковым значением в классе " + this.getClass().getName());
         }
     }
     /**
