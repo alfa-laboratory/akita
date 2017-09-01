@@ -26,7 +26,7 @@ public abstract class AlfaPage extends ElementsContainer {
     public SelenideElement getElement(String name) {
         Object value = namedElements.get(name);
         if (value == null)
-            throw new IllegalArgumentException("Элемент " + name + " не описан на странице " + this.getClass());
+            throw new IllegalArgumentException("Элемент " + name + " не описан на странице " + this.getClass().getName());
         return (SelenideElement) value;
     }
 
@@ -34,7 +34,7 @@ public abstract class AlfaPage extends ElementsContainer {
     public List<SelenideElement> getElementsList(String name) {
         Object value = namedElements.get(name);
         if (!(value instanceof List))
-            throw new IllegalArgumentException("Список " + name + " не описан на странице " + this.getClass());
+            throw new IllegalArgumentException("Список " + name + " не описан на странице " + this.getClass().getName());
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
@@ -162,7 +162,7 @@ public abstract class AlfaPage extends ElementsContainer {
                 .map(f -> f.getDeclaredAnnotation(Name.class).value())
                 .collect(Collectors.toList());
         if (list.size() != new HashSet<>(list).size()) {
-            throw new IllegalStateException("Найдено несколько аннотаций @Name с одинаковым значением в классе " + this.getClass());
+            throw new IllegalStateException("Найдено несколько аннотаций @Name с одинаковым значением в классе " + this.getClass().getName());
         }
     }
 
