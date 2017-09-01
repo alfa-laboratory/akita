@@ -26,7 +26,7 @@ public class PropertyLoader {
     public static String loadProperty(String name) {
         String value = tryLoadProperty(name);
         if (null == value) {
-            throw new IllegalArgumentException("Properties file does not contain property with key: " + name);
+            throw new IllegalArgumentException("В файле application.properties не найдено значение по ключу: " + name);
         }
         return value;
     }

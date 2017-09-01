@@ -47,7 +47,7 @@ public class AlfaEnvironment {
                     if(AlfaPage.class.isAssignableFrom(it)){
                         return (Class<? extends AlfaPage>)it;
                     }
-                    else throw new IllegalStateException("Class " + it.getName() + " must be a subclass of AlfaPage");
+                    else throw new IllegalStateException("Класс " + it.getName() + " должен наследоваться от AlfaPage");
                 })
                 .forEach(clazz -> pages.put(getClassAnnotationValue(clazz), clazz));
     }

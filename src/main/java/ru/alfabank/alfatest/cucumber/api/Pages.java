@@ -18,7 +18,7 @@ public final class Pages {
     }
 
     public AlfaPage getCurrentPage() {
-        if (currentPage == null) throw new AssertionError("Current Page empty!");
+        if (currentPage == null) throw new IllegalStateException("Текущая страница не задана");
         return currentPage;
     }
 
