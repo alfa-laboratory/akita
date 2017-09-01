@@ -22,8 +22,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
 public class MobileChrome implements WebDriverProvider {
 
     /**
-     * Создание instance google chrome эмулирующего работу на мобильном устройстве, по умолчанию nexus 5
-     * Мобильное устройство может быть задан через системные переменные
+     * Создание instance google chrome эмулирующего работу на мобильном устройстве (по умолчанию nexus 5)
+     * Мобильное устройство может быть задано через системные переменные
      * @param capabilities настройки Chrome браузера
      * @return возвращает новый instance Chrome драйера
      */
