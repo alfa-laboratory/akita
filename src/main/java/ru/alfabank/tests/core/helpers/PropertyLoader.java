@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 import java.util.Properties;
 
 /**
- * Класс для загрузки свойств
+ * Класс для получения свойств
  */
 public class PropertyLoader {
     private static final String PROPERTIES_FILE = "/application.properties";
@@ -22,12 +22,13 @@ public class PropertyLoader {
     }
 
     /**
-     * Загрузка системного свойства по ключу,
+     * Возвращает значение системного свойства
+     * (из доступных для данной виртуальной машины) по его названию,
      * в случае, если оно не найдено, вернется значение по умолчанию
      *
-     * @param propertyName название параметра
+     * @param propertyName название свойства
      * @param defaultValue значение по умолчанию
-     * @return значение параметра системы по названию или значение по умолчанию
+     * @return значение свойства по названию или значение по умолчанию
      */
     public static String loadSystemPropertyOrDefault(String propertyName, String defaultValue) {
         String propValue = System.getProperty(propertyName);
@@ -35,10 +36,10 @@ public class PropertyLoader {
     }
 
     /**
-     * Возвращает свойство по ключу из property-файла
+     * Возвращает свойство по его названию из property-файла
      *
-     * @param name ключ
-     * @return значение параметра, в случае, если значение не найдено,
+     * @param name название свойства
+     * @return значение свойства, в случае, если значение не найдено,
      * будет выброшено исключение
      */
     public static String loadProperty(String name) {
@@ -50,10 +51,10 @@ public class PropertyLoader {
     }
 
     /**
-     * Возвращает свойство из property-файла по ключу,
+     * Возвращает значение свойства из property-файла по его названию,
      * если значение не найдено, возвращает это же значение в качестве значения по умолчанию
      *
-     * @param value ключ или значение по умолчанию
+     * @param value название свойства/значение по умолчанию
      * @return значение по ключу value, если значение не найдено,
      * вернется value
      */
@@ -62,7 +63,7 @@ public class PropertyLoader {
     }
 
     /**
-     * Загружет значение из файла property-файла по ключу,
+     * Возвращает значение свойства из property-файла по его названию,
      * Если ничего не найдено, возвращает значение по умолчанию
      *
      * @param name название свойства
@@ -75,9 +76,7 @@ public class PropertyLoader {
     }
 
     /**
-     * Загружет значение типа Integer из property-файла по ключу,
-     * Сначала идёт попытка поиска, если указано системное свойство "profile"
-     * Если ничего не найдено, поиск в файле /application.properties
+     * Возвращает значение свойства типа Integer из property-файла по названию
      *
      * @param varName название свойста
      * @return значение свойства типа Integer
@@ -88,7 +87,7 @@ public class PropertyLoader {
     }
 
     /**
-     * Загружет значение типа Integer из файла property-файла по ключу,
+     * Возвращает значение свойства типа Integer из property-файла по названию,
      * если ничего не найдено, возвращает значение по умолчанию
      *
      * @param varName название свойства
@@ -101,9 +100,9 @@ public class PropertyLoader {
     }
 
     /**
-     * Вспомогательный метод загрузки свойства по имени.
-     * Сначала идёт попытка поиска, если указано системное свойство "profile"
-     * Если ничего не найдено, поиск в файле /application.properties
+     * Вспомогательный метод, возвращает значение свойства по имени.
+     * Сначала поиск в property-файле, если указано системное свойство "profile"
+     * Если ничего не найдено, поиск в /application.properties
      *
      * @param name название свойства
      * @return значение свойства
@@ -121,9 +120,9 @@ public class PropertyLoader {
     }
 
     /**
-     * Вспомогательный метод чтения свойств из файла /application.properties
+     * Вспомогательный метод, возвращает свойства из файла /application.properties
      *
-     * @return прочитанные свойства
+     * @return свойства из файла /application.properties
      */
     @SneakyThrows(IOException.class)
     private static Properties getPropertiesInstance() {
@@ -138,7 +137,7 @@ public class PropertyLoader {
     }
 
     /**
-     * Вспомогательный метод чтения кастомного application.properties по пути
+     * Вспомогательный метод, возвращает свойства из кастомного application.properties по пути
      * из системного свойства "profile"
      *
      * @return прочитанные свойства из кастомного файла application.properties,
