@@ -188,7 +188,7 @@ public class DefaultApiSteps {
     }
 
     /**
-     * Отправка зарпоса и сравнение кода http ответа
+     * Отправка запроса и сравнение кода http ответа
      *
      * @param typeOfRequest      тип http запроса
      * @param address            url хоста на который будет отправлен запрос
