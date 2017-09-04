@@ -38,14 +38,14 @@ public class PropertyLoader {
     /**
      * Возвращает свойство по его названию из property-файла
      *
-     * @param name название свойства
+     * @param propertyName название свойства
      * @return значение свойства, в случае, если значение не найдено,
      * будет выброшено исключение
      */
-    public static String loadProperty(String name) {
-        String value = tryLoadProperty(name);
+    public static String loadProperty(String propertyName) {
+        String value = tryLoadProperty(propertyName);
         if (null == value) {
-            throw new IllegalArgumentException("В файле application.properties не найдено значение по ключу: " + name);
+            throw new IllegalArgumentException("В файле application.properties не найдено значение по ключу: " + propertyName);
         }
         return value;
     }
@@ -54,35 +54,35 @@ public class PropertyLoader {
      * Возвращает значение свойства из property-файла по его названию,
      * если значение не найдено, возвращает это же значение в качестве значения по умолчанию
      *
-     * @param value название свойства/значение по умолчанию
+     * @param propertyNameOrValue название свойства/значение по умолчанию
      * @return значение по ключу value, если значение не найдено,
      * вернется value
      */
-    public static String getPropertyOrValue(String value) {
-        return loadProperty(value, value);
+    public static String getPropertyOrValue(String propertyNameOrValue) {
+        return loadProperty(propertyNameOrValue, propertyNameOrValue);
     }
 
     /**
      * Возвращает значение свойства из property-файла по его названию,
      * Если ничего не найдено, возвращает значение по умолчанию
      *
-     * @param name название свойства
+     * @param propertyName название свойства
      * @param defaultValue значение по умолчанию
      * @return значение свойства
      */
-    public static String loadProperty(String name, String defaultValue) {
-        String value = tryLoadProperty(name);
+    public static String loadProperty(String propertyName, String defaultValue) {
+        String value = tryLoadProperty(propertyName);
         return value != null ? value: defaultValue;
     }
 
     /**
      * Возвращает значение свойства типа Integer из property-файла по названию
      *
-     * @param varName название свойста
+     * @param propertyName название свойста
      * @return значение свойства типа Integer
      */
-    public static Integer loadPropertyInt(String varName) {
-        String value = tryLoadProperty(varName);
+    public static Integer loadPropertyInt(String propertyName) {
+        String value = tryLoadProperty(propertyName);
         return Integer.parseInt(value);
     }
 
@@ -90,12 +90,12 @@ public class PropertyLoader {
      * Возвращает значение свойства типа Integer из property-файла по названию,
      * если ничего не найдено, возвращает значение по умолчанию
      *
-     * @param varName название свойства
+     * @param propertyName название свойства
      * @param defaultValue значение по умолчанию
      * @return значение свойства типа Integer или значение по умолчанию
      */
-    public static Integer loadPropertyInt(String varName, Integer defaultValue) {
-        String value = tryLoadProperty(varName);
+    public static Integer loadPropertyInt(String propertyName, Integer defaultValue) {
+        String value = tryLoadProperty(propertyName);
         return value != null ? Integer.parseInt(value) : defaultValue;
     }
 
@@ -104,16 +104,16 @@ public class PropertyLoader {
      * Сначала поиск в property-файле, если указано системное свойство "profile"
      * Если ничего не найдено, поиск в /application.properties
      *
-     * @param name название свойства
+     * @param propertyName название свойства
      * @return значение свойства
      */
-    public static String tryLoadProperty(String name) {
+    public static String tryLoadProperty(String propertyName) {
         String value = null;
-        if (!Strings.isNullOrEmpty(name)) {
-            value = PROFILE_PROPERTIES.getProperty(name);
+        if (!Strings.isNullOrEmpty(propertyName)) {
+            value = PROFILE_PROPERTIES.getProperty(propertyName);
 
             if (null == value) {
-                value = PROPERTIES.getProperty(name);
+                value = PROPERTIES.getProperty(propertyName);
             }
         }
         return value;
