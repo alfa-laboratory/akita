@@ -21,7 +21,7 @@ public class InitialSetupSteps {
     AlfaScenario alfaScenario = AlfaScenario.getInstance();
 
     /**
-     * Создает переменные для сценария
+     * Создает окружение(среду) для запуска сценария
      * @param scenario сценарий
      * @throws Exception
      */
@@ -31,7 +31,7 @@ public class InitialSetupSteps {
     }
 
     /**
-     * Проверка среды, уведомление о месте запуска тестов
+     * Уведомление о месте запуска тестов
      * @throws Exception
      */
     @Before(order = 20)
@@ -43,7 +43,7 @@ public class InitialSetupSteps {
     }
 
     /**
-     * Перед запуском тестов удаляет все cookies
+     * Удаляет все cookies
      * @throws Exception
      */
     @Before(order = 21)
@@ -52,7 +52,8 @@ public class InitialSetupSteps {
     }
 
     /**
-     * Если сценарий завершился со статусом "fail" будет создан скриншот и сохранен скриншот ошибки
+     * Если сценарий завершился со статусом "fail" будет создан скриншот и сохранен в директорию
+     * <project>/build/reports/tests
      * @param scenario текущий сценарий
      */
     @After(order = 20)
@@ -71,7 +72,7 @@ public class InitialSetupSteps {
     @After(order = 10)
     public void closeWebDriver() {
         if (getWebDriver() != null) {
-            WebDriverRunner.getWebDriver().manage().deleteAllCookies();
+            getWebDriver().manage().deleteAllCookies();
             WebDriverRunner.closeWebDriver();
         }
     }

@@ -29,7 +29,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
- * Шаги для тестирования API доступные по умолчанию в каждом новом проекте
+ * Шаги для тестирования API, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j
@@ -147,7 +147,7 @@ public class DefaultApiSteps {
     /**
      * Сохраняет ответ от http запроса и сохраняет в переменную
      *
-     * @param variableName имя перенеменной, в которую будет сохранен ответ
+     * @param variableName имя переменной, в которую будет сохранен ответ
      * @param response     ответ от http запроса
      */
     private void getResponseAndSaveToVariable(String variableName, Response response) {
