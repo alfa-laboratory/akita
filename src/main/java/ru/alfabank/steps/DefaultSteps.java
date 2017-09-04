@@ -309,7 +309,7 @@ public class DefaultSteps {
 
     /**
      * Сохранение значения элемента в переменную
-     * */
+     */
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
     public void storeElementValueInVariable(String elementName, String variableName) {
         alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(elementName));
@@ -507,8 +507,9 @@ public class DefaultSteps {
      * Ввод в поле указанного текста используя буфер обмена и клавиши SHIFT + INSERT
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
-    public void pasteValueToTextField(String value, String fieldName)  {
-        ClipboardOwner clipboardOwner = (clipboard, contents) -> { };
+    public void pasteValueToTextField(String value, String fieldName) {
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
+        };
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection stringSelection = new StringSelection(value);
         clipboard.setContents(stringSelection, clipboardOwner);
@@ -530,11 +531,22 @@ public class DefaultSteps {
         deleteFiles(expectedFiles);
     }
 
+
+    /**
+     * Возвращает каталог "Downloads" в домашней директории
+     *
+     * @return
+     */
     private File getDownloadsDir() {
         String homeDir = System.getProperty("user.home");
         return new File(homeDir + "/Downloads");
     }
 
+    /**
+     * Удаляет файлы, переданные в метод
+     *
+     * @param filesToDelete массив файлов
+     */
     private void deleteFiles(File[] filesToDelete) {
         for (File file : filesToDelete) {
             file.delete();

@@ -28,6 +28,10 @@ import static org.junit.Assert.fail;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
+/**
+ * Шаги для тестирования API, доступные по умолчанию в каждом новом проекте
+ */
+
 @Slf4j
 public class DefaultApiSteps {
 
@@ -89,6 +93,12 @@ public class DefaultApiSteps {
         return given().when();
     }
 
+    /**
+     * Создание запроса
+     *
+     * @param paramsTable массив с параметрами
+     * @return сформированный запрос
+     */
     private RequestSender createRequestByParamsTable(List<RequestParam> paramsTable) {
         Map<String, String> headers = new HashMap<>();
         Map<String, String> parameters = new HashMap<>();
@@ -134,6 +144,12 @@ public class DefaultApiSteps {
         return request;
     }
 
+    /**
+     * Получает ответ на http запрос и сохраняет в переменную
+     *
+     * @param variableName имя переменной, в которую будет сохранен ответ
+     * @param response     ответ от http запроса
+     */
     private void getResponseAndSaveToVariable(String variableName, Response response) {
         if (200 <= response.statusCode() && response.statusCode() < 300) {
             alfaScenario.setVar(variableName, response.getBody().asString());
@@ -143,17 +159,24 @@ public class DefaultApiSteps {
         }
     }
 
+    /**
+     * Производит поиск в заданом url на наличие совпадений параметров.
+     * В случае нахождения параметра в url заменяет его значение на значение из properties
+     *
+     * @param address заданный url
+     * @return новый url
+     */
     public static String getURLwithPathParamsCalculated(String address) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(address);
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            String value = loadProperty(varName, (String)AlfaScenario.getInstance().tryGetVar(varName));
+            String value = loadProperty(varName, (String) AlfaScenario.getInstance().tryGetVar(varName));
             if (value == null)
                 throw new IllegalArgumentException(
                         "Значение " + varName +
-                                " не было найдено ни в application.properties, ни и в environment переменной");
+                                " не было найдено ни в application.properties, ни в environment переменной");
             newString = m.replaceFirst(value);
             m = p.matcher(newString);
         }
@@ -163,6 +186,16 @@ public class DefaultApiSteps {
         return newString;
     }
 
+    /**
+     * Отправка запроса и сравнение кода http ответа
+     *
+     * @param typeOfRequest      тип http запроса
+     * @param address            url хоста на который будет отправлен запрос
+     * @param expectedStatusCode ожидаемый http статус код
+     * @param paramsTable        список параметров для http запроса
+     * @return возвращает true или false в зависимости от ожидаемого и полученного http кодов
+     * @throws Exception
+     */
     public boolean checkStatusCode(String typeOfRequest, String address, int expectedStatusCode, List<RequestParam> paramsTable) throws Exception {
         address = getURLwithPathParamsCalculated(address);
         RequestSender request = createRequestByParamsTable(paramsTable);
@@ -174,7 +207,16 @@ public class DefaultApiSteps {
         return statusCode == expectedStatusCode;
     }
 
-    private void sendHttpRequest(String typeOfRequest, String address, String variableName, List<RequestParam> paramsTable) throws Exception {
+
+    /**
+     * @param typeOfRequest тип http запроса
+     * @param address       url хоста на который будет направлен запрос
+     * @param variableName  имя переменной в которую сохраняется http ответ
+     * @param paramsTable   список параметров для http запроса
+     * @throws Exception
+     */
+    private void sendHttpRequest(String typeOfRequest, String address, String
+            variableName, List<RequestParam> paramsTable) throws Exception {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(address);
         address = loadProperty(address, valueIfNotFoundInProperties);
         RequestSender request = createRequestByParamsTable(paramsTable);
