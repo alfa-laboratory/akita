@@ -49,7 +49,6 @@ public class DefaultApiSteps {
         String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(address);
         address = loadProperty(address, valueIfNotFoundInProperties);
         sendHttpRequest(typeOfRequest, address, variableName, new ArrayList<>());
-
     }
 
     /**
