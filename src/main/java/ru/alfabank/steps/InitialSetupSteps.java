@@ -22,6 +22,7 @@ public class InitialSetupSteps {
 
     /**
      * Создает окружение(среду) для запуска сценария
+     *
      * @param scenario сценарий
      * @throws Exception
      */
@@ -32,6 +33,7 @@ public class InitialSetupSteps {
 
     /**
      * Уведомление о месте запуска тестов
+     *
      * @throws Exception
      */
     @Before(order = 20)
@@ -44,6 +46,7 @@ public class InitialSetupSteps {
 
     /**
      * Удаляет все cookies
+     *
      * @throws Exception
      */
     @Before(order = 21)
@@ -54,6 +57,7 @@ public class InitialSetupSteps {
     /**
      * Если сценарий завершился со статусом "fail" будет создан скриншот и сохранен в директорию
      * <project>/build/reports/tests
+     *
      * @param scenario текущий сценарий
      */
     @After(order = 20)
