@@ -68,8 +68,8 @@ public class AlfaEnvironment {
     /**
      * Выводит дополнительный информационный текст в отчет (уровень логирования INFO)
      */
-    public void write(Object o) {
-        scenario.write(String.valueOf(o));
+    public void write(Object object) {
+        scenario.write(String.valueOf(object));
     }
 
     public ScopedVariables getVars() {
@@ -96,8 +96,8 @@ public class AlfaEnvironment {
         return pages.get(clazz, name);
     }
 
-    public String replaceVariables(String address) {
-        return getVariables().replaceVariables(address);
+    public String replaceVariables(String textToReplaceIn) {
+        return getVariables().replaceVariables(textToReplaceIn);
     }
 
     private ScopedVariables getVariables() {

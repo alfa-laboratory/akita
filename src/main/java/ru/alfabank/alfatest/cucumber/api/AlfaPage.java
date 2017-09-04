@@ -32,10 +32,10 @@ public abstract class AlfaPage extends ElementsContainer {
     /**
      * Получение элемента со страницы по имени (аннотированного "Name")
      */
-    public SelenideElement getElement(String name) {
-        Object value = namedElements.get(name);
+    public SelenideElement getElement(String elementName) {
+        Object value = namedElements.get(elementName);
         if (value == null)
-            throw new IllegalArgumentException("Элемент " + name + " не описан на странице " + this.getClass().getName());
+            throw new IllegalArgumentException("Элемент " + elementName + " не описан на странице " + this.getClass().getName());
         return (SelenideElement) value;
     }
 
@@ -43,10 +43,10 @@ public abstract class AlfaPage extends ElementsContainer {
      * Получение элемента-списка со страницы по имени
      */
     @SuppressWarnings("unchecked")
-    public List<SelenideElement> getElementsList(String name) {
-        Object value = namedElements.get(name);
+    public List<SelenideElement> getElementsList(String listName) {
+        Object value = namedElements.get(listName);
         if (!(value instanceof List))
-            throw new IllegalArgumentException("Список " + name + " не описан на странице " + this.getClass().getName());
+            throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
         Stream<Object> s = ((List) value).stream();
         return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
     }
@@ -54,8 +54,8 @@ public abstract class AlfaPage extends ElementsContainer {
     /**
      * Получение текста элемента, как редактируемого поля, так и статичного элемента по имени
      */
-    public String getAnyElementText(String name) {
-        SelenideElement element = getElement(name);
+    public String getAnyElementText(String elementName) {
+        SelenideElement element = getElement(elementName);
         if (element.getTagName().equals("input")) {
             return element.getValue();
         } else {
@@ -67,8 +67,8 @@ public abstract class AlfaPage extends ElementsContainer {
      * Получение текстов всех элементов, содержащихся в элементе-списке,
      * состоящего как из редактируемых полей, так и статичных элементов по имени
      */
-    public List<String> getAnyElementsListTexts(String name) {
-        List<SelenideElement> elementsList = getElementsList(name);
+    public List<String> getAnyElementsListTexts(String listName) {
+        List<SelenideElement> elementsList = getElementsList(listName);
         return elementsList.stream()
                 .map(element -> element.getTagName().equals("input") ? element.getValue()
                         : element.innerText()
@@ -188,9 +188,9 @@ public abstract class AlfaPage extends ElementsContainer {
     /**
      *  Приведение объекта к типу SelenideElement
      */
-    private static SelenideElement castToSelenideElement(Object o) {
-        if (o instanceof SelenideElement) {
-            return (SelenideElement) o;
+    private static SelenideElement castToSelenideElement(Object object) {
+        if (object instanceof SelenideElement) {
+            return (SelenideElement) object;
         }
         return null;
     }
@@ -256,7 +256,7 @@ public abstract class AlfaPage extends ElementsContainer {
                 .collect(Collectors.toList());
     }
 
-    private Object extractFieldValueViaReflection(Field f) {
-        return Reflection.extractFieldValue(f, this);
+    private Object extractFieldValueViaReflection(Field field) {
+        return Reflection.extractFieldValue(field, this);
     }
 }

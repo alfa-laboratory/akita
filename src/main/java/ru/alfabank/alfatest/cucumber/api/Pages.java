@@ -45,18 +45,18 @@ public final class Pages {
      * Реализация анонимных методов со страницей в качестве аргумента
      *
      * @param clazz класс страницы
-     * @param checkIsAppeared проверка всех не помеченных "@Optional" элементов
+     * @param checkIfElementsAppeared проверка всех не помеченных "@Optional" элементов
      */
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
-        T page = getPage(clazz, checkIsAppeared);
+    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+        T page = getPage(clazz, checkIfElementsAppeared);
         consumer.accept(page);
     }
 
     /**
      * Получение страницы из "pages" по имени
      */
-    public AlfaPage get(String name) {
-        return getPageMapInstanceInternal().get(name);
+    public AlfaPage get(String pageName) {
+        return getPageMapInstanceInternal().get(pageName);
     }
 
     /**
@@ -87,9 +87,9 @@ public final class Pages {
     /**
      * Получение страницы по классу с возможностью выполнить проверку элементов страницы
      */
-    public static <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
+    public static <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         T page = Selenide.page(clazz);
-        if(checkIsAppeared) {
+        if(checkIfElementsAppeared) {
             page.isAppeared();
         }
         return page;
@@ -98,7 +98,7 @@ public final class Pages {
     /**
      * Добавление страницы в "pages" по классу
      */
-    public void put(String key, Class<? extends AlfaPage> clazz) {
-        pages.put(key, Selenide.page(clazz).initialize());
+    public void put(String pageName, Class<? extends AlfaPage> clazz) {
+        pages.put(pageName, Selenide.page(clazz).initialize());
     }
 }
