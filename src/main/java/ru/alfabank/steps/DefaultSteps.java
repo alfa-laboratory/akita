@@ -158,7 +158,8 @@ public class DefaultSteps {
     public void compareTwoVariables(String firstVariableName, String secondVariableName) {
         String firstValueToCompare = getVar(firstVariableName).toString();
         String secondValueToCompare = getVar(secondVariableName).toString();
-        assertThat("Значения в переменных не совпадают", firstValueToCompare, equalTo(secondValueToCompare));
+        assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
+                firstValueToCompare, equalTo(secondValueToCompare));
     }
 
     /**
@@ -168,7 +169,8 @@ public class DefaultSteps {
     public void compareFieldAndVariable(String elementName, String variableName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(elementName);
         String expectedValue = alfaScenario.getVar(variableName).toString();
-        assertThat("Значение поля не совпадает со значением из переменной", expectedValue, equalTo(actualValue));
+        assertThat(String.format("Значение поля [%s] не совпадает со значением из переменной [%s]", elementName, variableName),
+                expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -179,7 +181,8 @@ public class DefaultSteps {
     public void checkIfListContainsValueFromField(String elementName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
-        assertTrue("Список не содержит значение поля", listFromVariable.contains(actualValue));
+        assertTrue(String.format("Список из переменной [%s] не содержит значение поля [%s]", elementName, variableListName),
+                listFromVariable.contains(actualValue));
     }
 
     /**
@@ -259,7 +262,7 @@ public class DefaultSteps {
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String fieldName) {
         SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
-        assertThat("Поле '" + fieldName + "' не пусто",
+        assertThat(String.format("Поле [%s] не пусто", fieldName),
                 alfaScenario.getCurrentPage().getAnyElementText(fieldName),
                 Matchers.isEmptyOrNullString());
     }
@@ -289,8 +292,8 @@ public class DefaultSteps {
     public void checkIfListConsistsOfTableElements(String listName, List<String> textTable) {
         List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(listName);
         int numberOfTypes = actualValues.size();
-        assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(textTable.size()));
-        assertTrue("Списки не совпадают", actualValues.containsAll(textTable));
+        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), numberOfTypes, Matchers.is(textTable.size()));
+        assertTrue(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), actualValues.containsAll(textTable));
     }
 
     /**
@@ -303,13 +306,13 @@ public class DefaultSteps {
         if (itemFound.isPresent()) {
             itemFound.get().click();
         } else {
-            throw new IllegalArgumentException(String.format("Элемент %s не найден в списке %s ", value, listName));
+            throw new IllegalArgumentException(String.format("Элемент [%s] не найден в списке [%s] ", value, listName));
         }
     }
 
     /**
      * Сохранение значения элемента в переменную
-     * */
+     */
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
     public void storeElementValueInVariable(String elementName, String variableName) {
         alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(elementName));
@@ -375,7 +378,7 @@ public class DefaultSteps {
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
     public void clickableField(String elementName) {
         SelenideElement element = alfaScenario.getCurrentPage().getElement(elementName);
-        assertTrue(String.format("элемент [%s] не кликабелен", elementName), element.isEnabled());
+        assertTrue(String.format("Элемент [%s] не кликабелен", elementName), element.isEnabled());
     }
 
     /**
@@ -385,7 +388,8 @@ public class DefaultSteps {
     public void checkElemContainsAtrWithValue(String elementName, String attribute, String expectedAttributeValue) {
         SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elementName);
         String currentAtrValue = currentElement.attr(attribute);
-        assertThat("значения не совпали", currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
+        assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
+                , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
     }
 
     @И("^совершен переход в конец страницы$")
@@ -401,7 +405,7 @@ public class DefaultSteps {
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
     public void testActualValueContainsSubstring(String elementName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(elementName);
-        assertThat("В поле нет ожидаемой подстроки", actualValue, containsString(expectedValue));
+        assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
     }
 
     /**
@@ -410,7 +414,7 @@ public class DefaultSteps {
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String elementName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(elementName);
-        assertThat("Значения поля не совпадает с ожидаемым значением", expectedValue, equalTo(actualValue));
+        assertThat(String.format("Значения поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -419,7 +423,7 @@ public class DefaultSteps {
     @Тогда("^(?:ссылка|кнопка) \"([^\"]*)\" недоступна для нажатия$")
     public void buttonIsNotActive(String elementName) {
         SelenideElement element = alfaScenario.getCurrentPage().getElement(elementName);
-        assertTrue("Элемент доступен для нажатия", element.is(Condition.disabled));
+        assertTrue(String.format("Элемент [%s] кликабелен", elementName), element.is(Condition.disabled));
     }
 
     /**
@@ -428,7 +432,7 @@ public class DefaultSteps {
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен) для редактирования$")
     public void fieldIsDisable(String elementName) {
         SelenideElement element = alfaScenario.getCurrentPage().getElement(elementName);
-        assertTrue("Элемент доступен для редактирования", element.is(Condition.disabled));
+        assertTrue(String.format("Элемент [%s] доступен для редактирования", elementName), element.is(Condition.disabled));
     }
 
     /**
@@ -440,7 +444,7 @@ public class DefaultSteps {
     public void compareListFromUIAndFromVariable(String listName, String listVariable) {
         HashSet<String> expectedList = new HashSet<>((List<String>) alfaScenario.getVar(listVariable));
         HashSet<String> actualList = new HashSet<>(alfaScenario.getCurrentPage().getAnyElementsListTexts(listName));
-      assertThat("Список со страницы не совпадает с ожидаемым списком", expectedList, equalTo(actualList));
+        assertThat(String.format("Список со страницы [%s] не совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), expectedList, equalTo(actualList));
     }
 
     /**
@@ -507,8 +511,9 @@ public class DefaultSteps {
      * Ввод в поле указанного текста используя буфер обмена и клавиши SHIFT + INSERT
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
-    public void pasteValueToTextField(String value, String fieldName)  {
-        ClipboardOwner clipboardOwner = (clipboard, contents) -> { };
+    public void pasteValueToTextField(String value, String fieldName) {
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
+        };
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection stringSelection = new StringSelection(value);
         clipboard.setContents(stringSelection, clipboardOwner);
@@ -526,7 +531,8 @@ public class DefaultSteps {
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull("Ошибка поиска файла", expectedFiles);
         assertFalse("Файл не загрузился", expectedFiles.length == 0);
-        assertTrue("В папке присутствуют более одного файла с одинаковым назанием", expectedFiles.length == 1);
+        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым назанием содержащим текст [%s]", fileName),
+                expectedFiles.length == 1);
         deleteFiles(expectedFiles);
     }
 
