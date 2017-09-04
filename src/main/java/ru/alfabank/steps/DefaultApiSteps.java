@@ -45,10 +45,11 @@ public class DefaultApiSteps {
      */
     @Deprecated
     @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendHttpRequest(String typeOfRequest, String urlName, String variableName) throws Exception {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
-        sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());
+    public void sendHttpRequest(String typeOfRequest, String address, String variableName) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(address);
+        address = loadProperty(address, valueIfNotFoundInProperties);
+        sendHttpRequest(typeOfRequest, address, variableName, new ArrayList<>());
+
     }
 
     /**
@@ -57,10 +58,10 @@ public class DefaultApiSteps {
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendHttpRequestWithoutParams(String typeOfRequest, String urlName, String variableName) throws Exception {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
-        sendHttpRequest(typeOfRequest, urlName, variableName, new ArrayList<>());
+    public void sendHttpRequestWithoutParams(String typeOfRequest, String address, String variableName) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(address);
+        address = loadProperty(address, valueIfNotFoundInProperties);
+        sendHttpRequest(typeOfRequest, address, variableName, new ArrayList<>());
     }
 
     /**
@@ -69,11 +70,11 @@ public class DefaultApiSteps {
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendHttpRequestSaveResponse(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
-        RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+    public void sendHttpRequestSaveResponse(String typeOfRequest, String address, String variableName, List<RequestParam> paramsTable) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(address);
+        address = loadProperty(address, valueIfNotFoundInProperties);
+        RequestSender request = createRequestByParamsTable(paramsTable);
+        Response response = request.request(Method.valueOf(typeOfRequest), address);
         getResponseAndSaveToVariable(variableName, response);
     }
 
@@ -83,10 +84,10 @@ public class DefaultApiSteps {
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
-    public void checkResponseCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
-        assertTrue(checkStatusCode(typeOfRequest, urlName, expectedStatusCode, table));
+    public void checkResponseCode(String typeOfRequest, String address, int expectedStatusCode, List<RequestParam> paramsTable) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(address);
+        address = loadProperty(address, valueIfNotFoundInProperties);
+        assertTrue(checkStatusCode(typeOfRequest, address, expectedStatusCode, paramsTable));
     }
 
     private RequestSender createRequestByParamsTable() {
@@ -96,15 +97,15 @@ public class DefaultApiSteps {
     /**
      * Создание запроса
      *
-     * @param table массив с параметрами
+     * @param paramsTable массив с параметрами
      * @return сформированный запрос
      */
-    private RequestSender createRequestByParamsTable(List<RequestParam> table) {
+    private RequestSender createRequestByParamsTable(List<RequestParam> paramsTable) {
         Map<String, String> headers = new HashMap<>();
         Map<String, String> parameters = new HashMap<>();
         String body = null;
         Gson gson = new Gson();
-        for (RequestParam requestParam : table) {
+        for (RequestParam requestParam : paramsTable) {
             switch (requestParam.getType()) {
                 case PARAMETER:
                     parameters.put(requestParam.getName(), getPropertyOrValue(requestParam.getValue()));
@@ -163,12 +164,12 @@ public class DefaultApiSteps {
      * Производит поиск в заданом url на наличие совпадений параметров.
      * В случае нахождения параметра в url заменяет его значение на значение из properties
      *
-     * @param urlName заданный url
+     * @param address заданный url
      * @return новый url
      */
-    public static String getURLwithPathParamsCalculated(String urlName) {
+    public static String getURLwithPathParamsCalculated(String address) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
-        Matcher m = p.matcher(urlName);
+        Matcher m = p.matcher(address);
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
@@ -181,7 +182,7 @@ public class DefaultApiSteps {
             m = p.matcher(newString);
         }
         if (newString.isEmpty()) {
-            newString = urlName;
+            newString = address;
         }
         return newString;
     }
@@ -190,16 +191,16 @@ public class DefaultApiSteps {
      * Отправка зарпоса и сравнение кода http ответа
      *
      * @param typeOfRequest      тип http запроса
-     * @param urlName            url хоста на который будет отправлен запрос
+     * @param address            url хоста на который будет отправлен запрос
      * @param expectedStatusCode ожидаемый http статус код
-     * @param table              список параметров для http запроса
+     * @param paramsTable              список параметров для http запроса
      * @return возвращает true или false в зависимости от ожидаемого и полученного http кодов
      * @throws Exception
      */
-    public boolean checkStatusCode(String typeOfRequest, String urlName, int expectedStatusCode, List<RequestParam> table) throws Exception {
-        urlName = getURLwithPathParamsCalculated(urlName);
-        RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+    public boolean checkStatusCode(String typeOfRequest, String address, int expectedStatusCode, List<RequestParam> paramsTable) throws Exception {
+        address = getURLwithPathParamsCalculated(address);
+        RequestSender request = createRequestByParamsTable(paramsTable);
+        Response response = request.request(Method.valueOf(typeOfRequest), address);
         int statusCode = response.getStatusCode();
         if (statusCode != expectedStatusCode) {
             write("Получен неверный статус код ответа " + statusCode + ". Ожидаемый статус код " + expectedStatusCode);
@@ -207,18 +208,20 @@ public class DefaultApiSteps {
         return statusCode == expectedStatusCode;
     }
 
+
     /**
      * @param typeOfRequest тип http запроса
-     * @param urlName       url хоста на который будет направлен запрос
+     * @param address       url хоста на который будет направлен запрос
      * @param variableName  имя переменной в которую сохраняется http ответ
-     * @param table         список параметров для http запроса
+     * @param paramsTable   список параметров для http запроса
      * @throws Exception
      */
-    private void sendHttpRequest(String typeOfRequest, String urlName, String variableName, List<RequestParam> table) throws Exception {
-        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(urlName);
-        urlName = loadProperty(urlName, valueIfNotFoundInProperties);
-        RequestSender request = createRequestByParamsTable(table);
-        Response response = request.request(Method.valueOf(typeOfRequest), urlName);
+    private void sendHttpRequest(String typeOfRequest, String address, String
+            variableName, List<RequestParam> paramsTable) throws Exception {
+        String valueIfNotFoundInProperties = getURLwithPathParamsCalculated(address);
+        address = loadProperty(address, valueIfNotFoundInProperties);
+        RequestSender request = createRequestByParamsTable(paramsTable);
+        Response response = request.request(Method.valueOf(typeOfRequest), address);
         getResponseAndSaveToVariable(variableName, response);
     }
 }

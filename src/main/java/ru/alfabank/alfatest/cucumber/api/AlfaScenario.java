@@ -44,17 +44,14 @@ public final class AlfaScenario {
      * Получение страницы, тестирование которой производится в данный момент
      */
     public AlfaPage getCurrentPage() {
-        AlfaPage currentPage = environment.getPages().getCurrentPage();
-        if (currentPage == null) throw new AssertionError("Current Page пустой! " +
-                "Проверь аннотации @Name у используемых страниц");
-        return currentPage;
+        return environment.getPages().getCurrentPage();
     }
 
     /**
      * Задание страницы, тестирование которой производится в данный момент
      */
     public void setCurrentPage(AlfaPage page) {
-        if (page == null) throw new IllegalArgumentException("Ты пытаешься установить null в качестве current page." +
+        if (page == null) throw new IllegalArgumentException("Происходит переход на несуществующую страницу. " +
                 "Проверь аннотации @Name у используемых страниц");
         environment.getPages().setCurrentPage(page);
     }
@@ -76,10 +73,10 @@ public final class AlfaScenario {
      * Проверка отображения всех элементов страницы опциональна
      *
      * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
-     * @param checkIsAppeared флаг, отвечающий за проверку отображения всех элементов страницы, не помеченных аннотацией @Optional
+     * @param checkIfElementsAppeared флаг, отвечающий за проверку отображения всех элементов страницы, не помеченных аннотацией @Optional
      */
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
-        Pages.withPage(clazz, checkIsAppeared, consumer);
+    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+        Pages.withPage(clazz, checkIfElementsAppeared, consumer);
     }
 
     /**
@@ -94,10 +91,10 @@ public final class AlfaScenario {
     }
 
     /**
-     * Выводит информативно-отладочный текст в отчет
+     * Выводит дополнительный информационный текст в отчет (уровень логирования INFO)
      */
-    public void write(Object o) {
-        this.getEnvironment().write(o);
+    public void write(Object object) {
+        this.getEnvironment().write(object);
     }
 
     /**
@@ -106,7 +103,7 @@ public final class AlfaScenario {
      */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
-        if (obj == null) throw new NullPointerException("Переменная " + name + " не найдена");
+        if (obj == null) throw new IllegalArgumentException("Переменная " + name + " не найдена");
         return obj;
     }
 
@@ -120,10 +117,10 @@ public final class AlfaScenario {
     /**
      * Получение страницы по классу с возможностью выполнить проверку отображения элементов страницы
      * @param clazz - класс страницы, которую необходимо получить
-     * @param checkIsAppeared - флаг, определяющий проверку отображения элементов на странице
+     * @param checkIfElementsAppeared - флаг, определяющий проверку отображения элементов на странице
      */
-    public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
-        return Pages.getPage(clazz, checkIsAppeared);
+    public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
+        return Pages.getPage(clazz, checkIfElementsAppeared);
     }
 
     /**
