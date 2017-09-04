@@ -12,8 +12,21 @@ import java.util.Map;
 
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOrDefault;
 
+
+/**
+ *  Эмуляция мобильной версии браузера Google Chrome
+ */
+
+
 @Slf4j
 public class MobileChrome implements WebDriverProvider {
+
+    /**
+     * Создание instance google chrome эмулирующего работу на мобильном устройстве (по умолчанию nexus 5)
+     * Мобильное устройство может быть задано через системные переменные
+     * @param capabilities настройки Chrome браузера
+     * @return возвращает новый instance Chrome драйера
+     */
 
     @Override
     public WebDriver createDriver(DesiredCapabilities capabilities) {
