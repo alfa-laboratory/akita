@@ -414,7 +414,7 @@ public class DefaultSteps {
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String elementName, String expectedValue) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(elementName);
-        assertThat(String.format("Значения поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), expectedValue, equalTo(actualValue));
+        assertThat(String.format("Значение поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), expectedValue, equalTo(actualValue));
     }
 
     /**
@@ -531,7 +531,7 @@ public class DefaultSteps {
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull("Ошибка поиска файла", expectedFiles);
         assertFalse("Файл не загрузился", expectedFiles.length == 0);
-        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым назанием содержащим текст [%s]", fileName),
+        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым назанием, содержащим текст [%s]", fileName),
                 expectedFiles.length == 1);
         deleteFiles(expectedFiles);
     }
