@@ -518,7 +518,7 @@ public class DefaultSteps {
      * Ввод в поле текущей даты в заданном формате
      * При неверном формате, используется dd.MM.yyyy
      */
-    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
+    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"$")
     public void currentDate(String fieldName, String dateFormat) {
         long date = System.currentTimeMillis();
         String currentStringDate;
