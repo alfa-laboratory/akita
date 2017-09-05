@@ -49,7 +49,7 @@ public class DefaultSteps {
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
-      * Значение заданной переменной из application.properties сохраняется в переменную в alfaScenario
+     * Значение заданной переменной из application.properties сохраняется в переменную в alfaScenario
      * для дальнейшего переиспользования
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
