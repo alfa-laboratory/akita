@@ -37,7 +37,7 @@ public class AlfaScenarioTest {
         alfaScenario.getPages().put("Title", alfaPageMock);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testGetSetVarNegative1() {
         String notExistingVar = "randomName";
         alfaScenario.getVar(notExistingVar);
