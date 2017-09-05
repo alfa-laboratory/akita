@@ -41,7 +41,7 @@ public class ApiStepsTest {
 
     @Test
     public void getURLwithPathParamsCalculatedSimple() {
-        assertThat(DefaultApiSteps.getURLwithPathParamsCalculated("alfabank.ru"),
+        assertThat(DefaultApiSteps.resolveVars("alfabank.ru"),
                 equalTo("alfabank.ru"));
     }
 

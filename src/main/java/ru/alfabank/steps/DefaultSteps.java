@@ -29,7 +29,7 @@ import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
+import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
@@ -192,7 +192,7 @@ public class DefaultSteps {
     @Deprecated
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
-        urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
+        urlName = loadProperty(urlName, resolveVars(urlName));
         alfaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
         loadPage(pageName);
@@ -204,7 +204,7 @@ public class DefaultSteps {
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
-        String address = loadProperty(urlOrName, getURLwithPathParamsCalculated(urlOrName));
+        String address = loadProperty(urlOrName, resolveVars(urlOrName));
         alfaScenario.write(" url = " + address);
         WebDriverRunner.getWebDriver().get(address);
         loadPage(pageName);

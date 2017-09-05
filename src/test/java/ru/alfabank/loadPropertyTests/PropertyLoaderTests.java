@@ -10,7 +10,7 @@ import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
 import static org.junit.Assert.assertThat;
-import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
+import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
 
 /**
  * Created by rum0tbl on 02.06.17.
@@ -36,7 +36,7 @@ public class PropertyLoaderTests {
         alfaScenario.setVar("first", "pervoe");
         alfaScenario.setVar("second", "ne_rabotaet");
         String expected = "pervoe ne_rabotaet";
-        String actual = getURLwithPathParamsCalculated("{first} {second}");
+        String actual = resolveVars("{first} {second}");
         assertThat("Итоговый URL не равен 'pervoe ne_rabotaet'", actual, Matchers.equalTo(expected));
     }
 
@@ -44,7 +44,7 @@ public class PropertyLoaderTests {
     public void getValueFromPropertyFile() {
         alfaScenario.setVar("first", "alfalab");
         alfaScenario.setVar("second", "/ru/credit");
-        String actual = getURLwithPathParamsCalculated("{varFromPropertyFile1}");
+        String actual = resolveVars("{varFromPropertyFile1}");
         assertThat("Итоговый URL не равен 'caramba'", actual, Matchers.equalTo("caramba"));
     }
 
@@ -52,7 +52,7 @@ public class PropertyLoaderTests {
     public void getSomeValuesFromPropertyFile() {
         alfaScenario.setVar("first", "alfalab");
         alfaScenario.setVar("second", "/ru/credit");
-        String actual = getURLwithPathParamsCalculated("{varFromPropertyFile1}/{varFromPropertyFile2}");
+        String actual = resolveVars("{varFromPropertyFile1}/{varFromPropertyFile2}");
         assertThat("Итоговый URL не равен 'caramba/kumkvat'", actual, Matchers.equalTo("caramba/kumkvat"));
     }
 
@@ -60,7 +60,7 @@ public class PropertyLoaderTests {
     public void getSomeValuesFromPropAndMap() {
         alfaScenario.setVar("first", "alfalab");
         alfaScenario.setVar("second", "/ru/credit");
-        String actual = getURLwithPathParamsCalculated("{varFromPropertyFile1}/{first}");
+        String actual = resolveVars("{varFromPropertyFile1}/{first}");
         assertThat("Итоговый URL не равен 'caramba/alfalab'", actual, Matchers.equalTo("caramba/alfalab"));
     }
 
@@ -68,12 +68,12 @@ public class PropertyLoaderTests {
     public void getSomeValuesFromPropAndMapAndSpec() {
         alfaScenario.setVar("first", "alfalab");
         alfaScenario.setVar("second", "/ru/credit");
-        String actual = getURLwithPathParamsCalculated("/{second}/{varFromPropertyFile1}/{first}/");
+        String actual = resolveVars("/{second}/{varFromPropertyFile1}/{first}/");
         assertThat("Итоговый URL не равен '//ru/credit/caramba/alfalab/'", actual, Matchers.equalTo("//ru/credit/caramba/alfalab/"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getNotExistingValue() {
-        getURLwithPathParamsCalculated("{RandomTestVariable3321}");
+        resolveVars("{RandomTestVariable3321}");
     }
 }
