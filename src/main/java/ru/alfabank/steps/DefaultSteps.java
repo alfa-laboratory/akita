@@ -50,7 +50,7 @@ public class DefaultSteps {
 
     /**
      * Значение заданной переменной из application.properties сохраняется в переменную в alfaScenario
-     * для дальнейшего переиспользования
+     * для дальнейшего использования
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
     public void saveValueToVar(String propertyVariableName, String variableName) {
