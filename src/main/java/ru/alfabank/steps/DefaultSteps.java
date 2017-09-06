@@ -6,7 +6,6 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -49,8 +48,8 @@ public class DefaultSteps {
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
-     * Читаем значение переменной из application.properties и сохраняем в переменную в alfaScenario,
-     * для дальнейшего переиспользования
+     * Значение заданной переменной из application.properties сохраняется в переменную в alfaScenario
+     * для дальнейшего использования
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
     public void saveValueToVar(String propertyVariableName, String variableName) {
@@ -58,7 +57,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Обновляем страницу страницы
+     * Выполняется обновление страницы
      */
     @И("^выполнено обновление текущей страницы$")
     public void refreshPage() {
@@ -66,7 +65,9 @@ public class DefaultSteps {
     }
 
     /**
-     * Переходим по ссылке, разрезолвливая переменные из хранилища alfaScenario
+     * Выполняется переход по заданной ссылке,
+     * при этом все ключи переменных в фигурных скобках
+     * меняются на их значения из хранилища alfaScenario
      */
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
@@ -82,11 +83,11 @@ public class DefaultSteps {
     public void checkCurrentURL(String url) {
         String currentUrl = getWebDriver().getCurrentUrl();
         String expectedUrl = replaceVariables(url);
-        assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, Matchers.is(expectedUrl));
+        assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, is(expectedUrl));
     }
 
     /**
-     * На странице ищется элемент и по нему кликается
+     * На странице происходит клик по заданному элементу
      */
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
     public void clickOnElement(String elementName) {
@@ -94,9 +95,11 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что в течении 10 секунд ожидается появление элемента(не списка) на странице
+     * Проверка появления элемента(не списка) на странице в течение DEFAULT_TIMEOUT.
+     * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
+     * таймаут равен 10 секундам
      */
-    @И("^элемент \"([^\"]*)\" отображается на странице$")
+    @Тогда("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elementName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elementName)
@@ -104,9 +107,10 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
+     * Проверка появления элемента(не списка) на странице в течение
+     * заданного количества секунд
      */
-    @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
+    @Тогда("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
     public void testElementAppeared(String elementName, int seconds) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElement(elementName)
@@ -114,10 +118,11 @@ public class DefaultSteps {
     }
 
     /**
-     * Время задается в application.properties как "waitingCustomElementsTimeout" или по дефолту 10 секунд
-     * Проверка, что в течении нескольких секунд ожидается появление списка на странице
+     * Проверка появления списка на странице в течение DEFAULT_TIMEOUT.
+     * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
+     * таймаут равен 10 секундам
      */
-    @И("^список \"([^\"]*)\" отображается на странице$")
+    @Тогда("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elementName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElementsList(elementName)
@@ -125,26 +130,30 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. В течении 10 секунд ожидаем пока элемент исчезнет (станет невидимым)
+     * Проверка того, что элемент исчезнет со страницы (станет невидимым) в течение DEFAULT_TIMEOUT.
+     * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
+     * таймаут равен 10 секундам
      */
-    @И("^ожидается исчезновение элемента \"([^\"]*)\"")
+    @Тогда("^ожидается исчезновение элемента \"([^\"]*)\"")
     public void elemDisappered(String elementName) {
         alfaScenario.getCurrentPage().waitElementsUntil(
                 Condition.disappears, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elementName));
     }
 
     /**
-     * Проверяем, что все элементы, которые описаны в классе страницы с аннотацией @Name, но без аннотации @Optional,
-     * видны на странице. При необходимости ждем.
+     * Проверка того, что все элементы, которые описаны в классе страницы с аннотацией @Name,
+     * но без аннотации @Optional появились на странице
+     * в течение WAITING_APPEAR_TIMEOUT, которое равно значению свойства "waitingAppearTimeout"
+     * из application.properties. Если свойство не найдено, время таймаута равно 8 секундам
      */
-    @Когда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
+    @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         alfaScenario.setCurrentPage(alfaScenario.getPage(nameOfPage));
         alfaScenario.getCurrentPage().appeared();
     }
 
     /**
-     * Задать значение переменной в хранилище переменных. Один из кейсов: установка userCus для степов, использующих его.
+     * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
      */
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
     public void setVariable(String variableName, String value) {
@@ -152,9 +161,9 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
+     * Проверка равенства двух переменных из хранилища
      */
-    @Когда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
+    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compareTwoVariables(String firstVariableName, String secondVariableName) {
         String firstValueToCompare = getVar(firstVariableName).toString();
         String secondValueToCompare = getVar(secondVariableName).toString();
@@ -163,7 +172,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
+     * Проверка того, что значение из поля совпадает со значением заданной переменной из хранилища
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" совпадает со значением из переменной \"([^\"]*)\"$")
     public void compareFieldAndVariable(String elementName, String variableName) {
@@ -174,10 +183,11 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка. Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
+     * Проверка того, что значение из поля содержится в списке,
+     * полученном из хранилища переменных по заданному ключу
      */
     @SuppressWarnings("unchecked")
-    @Тогда("^список из переменной \"([^\"]*)\" содердит значение (?:поля|элемента) \"([^\"]*)\" $")
+    @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\" $")
     public void checkIfListContainsValueFromField(String elementName, String variableListName) {
         String actualValue = alfaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
@@ -186,7 +196,8 @@ public class DefaultSteps {
     }
 
     /**
-     * Совершается переход по заданной ссылке.
+     * Выполняется переход по заданной ссылке.
+     * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
     @Deprecated
@@ -199,7 +210,8 @@ public class DefaultSteps {
     }
 
     /**
-     * Совершается переход по заданной ссылке.
+     * Выполняется переход по заданной ссылке.
+     * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
@@ -211,7 +223,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Ожидание заданное количество секунд
+     * Ожидание в течение заданного количества секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) (?:секунд|секунды)")
     public void waitForSeconds(long seconds) {
@@ -219,7 +231,7 @@ public class DefaultSteps {
     }
 
     /**
-     * проверка, что блок исчез/стал невидимым
+     * Проверка того, что блок исчез/стал невидимым
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
@@ -227,7 +239,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Эмулирует нажатие на клавиатуре клавиш.
+     * Эмулирует нажатие клавиш на клавиатуре
      */
     @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
@@ -236,7 +248,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Ищется указанное текстовое поле и устанавливается в него заданное значение. Перед использованием поле нужно очистить
+     * Устанавливается значение в заданное поле. Перед использованием поле нужно очистить
      */
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
@@ -245,7 +257,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Ищется поле и очишается
+     * Очищается заданное поле
      */
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String fieldName) {
@@ -257,14 +269,13 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что поле для ввода пустое
+     * Проверка, что поле для ввода пусто
      */
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String fieldName) {
-        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
         assertThat(String.format("Поле [%s] не пусто", fieldName),
                 alfaScenario.getCurrentPage().getAnyElementText(fieldName),
-                Matchers.isEmptyOrNullString());
+                isEmptyOrNullString());
     }
 
     /**
@@ -286,18 +297,19 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что в списке со страницы есть перечисленные в таблице элементы
+     * Проверка, что список со страницы состоит только из элементов,
+     * перечисленных в таблице
      */
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
     public void checkIfListConsistsOfTableElements(String listName, List<String> textTable) {
         List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(listName);
         int numberOfTypes = actualValues.size();
-        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), numberOfTypes, Matchers.is(textTable.size()));
-        assertTrue(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), actualValues.containsAll(textTable));
+        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
+        assertThat(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), textTable, containsInAnyOrder(actualValues));
     }
 
     /**
-     * В списке со страницу кликаем по элементу, содержащим заданное значение
+     * Выбор из списка со страницы элемента с заданным значением
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String listName, String value) {
@@ -340,7 +352,17 @@ public class DefaultSteps {
     }
 
     /**
-     * Ввод логин/пароля
+     * Шаг авторизации.
+     * Для того, чтобы шаг работал, на текущей странице должны быть указаны элементы
+     * со значениями аннотации @Name:
+     * "Логин" - для поля ввода логина,
+     * "Пароль" - для поля ввода пароля и
+     * "Войти" - для кнопки входа.
+     * Также должны быть указаны логин и пароль в файле application.properties.
+     * Например для шага: "Пусть пользователь user ввел логин и пароль"
+     * логин и пароль должны быть указаны со следующими ключами:
+     * user.login - для логина и
+     * user.password - для пароля
      */
     @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
     public void loginByUserData(String userCode) {
@@ -354,7 +376,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Выполнено наведение курсора на элемент
+     * Выполняется наведение курсора на элемент
      */
     @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
     public void elementHover(String elementName) {
@@ -363,7 +385,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что элемент не отображается на странице
+     * Проверка того, что элемент не отображается на странице
      */
     @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elementName) {
@@ -392,6 +414,9 @@ public class DefaultSteps {
                 , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
     }
 
+    /**
+     * Выполняется переход в конец страницы
+     */
     @И("^совершен переход в конец страницы$")
     public void scrollDown() {
         Actions actions = new Actions(getWebDriver());
@@ -489,10 +514,10 @@ public class DefaultSteps {
     }
 
     /**
-     * Ввод в поле текущую дату в заданном формате
+     * Ввод в поле текущей даты в заданном формате
      * При неверном формате, используется dd.MM.yyyy
      */
-    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
+    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"$")
     public void currentDate(String fieldName, String dateFormat) {
         long date = System.currentTimeMillis();
         String currentStringDate;
@@ -508,7 +533,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Ввод в поле указанного текста используя буфер обмена и клавиши SHIFT + INSERT
+     * Ввод в поле указанного текста, используя буфер обмена и клавиши SHIFT + INSERT
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
     public void pasteValueToTextField(String value, String fieldName) {
@@ -522,7 +547,7 @@ public class DefaultSteps {
 
     /**
      * Выполняется поиск нужного файла в папке /Downloads
-     * Поиск осуществляется по содежранию ожидаемого текста в названияя файла. Можно передавать регулярки
+     * Поиск осуществляется по содержанию ожидаемого текста в названии файла. Можно передавать регулярное выражение.
      * После выполнения проверки файл удаляется
      */
     @Тогда("^файл \"(.*)\" загрузился в паку /Downloads$")
