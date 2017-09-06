@@ -6,7 +6,6 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -84,7 +83,7 @@ public class DefaultSteps {
     public void checkCurrentURL(String url) {
         String currentUrl = getWebDriver().getCurrentUrl();
         String expectedUrl = replaceVariables(url);
-        assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, Matchers.is(expectedUrl));
+        assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, is(expectedUrl));
     }
 
     /**
@@ -197,7 +196,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Происходит переход по заданной ссылке.
+     * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
@@ -211,7 +210,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Происходит переход по заданной ссылке.
+     * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
@@ -276,7 +275,7 @@ public class DefaultSteps {
     public void fieldInputIsEmpty(String fieldName) {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
                 alfaScenario.getCurrentPage().getAnyElementText(fieldName),
-                Matchers.isEmptyOrNullString());
+                isEmptyOrNullString());
     }
 
     /**
@@ -298,15 +297,15 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что список со страницы состоит из элементов,
+     * Проверка, что список со страницы состоит только из элементов,
      * перечисленных в таблице
      */
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
     public void checkIfListConsistsOfTableElements(String listName, List<String> textTable) {
         List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(listName);
         int numberOfTypes = actualValues.size();
-        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), numberOfTypes, Matchers.is(textTable.size()));
-        assertTrue(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), actualValues.containsAll(textTable));
+        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
+        assertThat(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), textTable, containsInAnyOrder(actualValues));
     }
 
     /**
