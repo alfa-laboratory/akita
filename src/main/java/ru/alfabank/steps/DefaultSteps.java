@@ -305,7 +305,7 @@ public class DefaultSteps {
         List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(listName);
         int numberOfTypes = actualValues.size();
         assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
-        assertThat(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), textTable, containsInAnyOrder(actualValues));
+        assertTrue(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), actualValues.containsAll(textTable));
     }
 
     /**
