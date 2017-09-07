@@ -65,8 +65,9 @@ public class DefaultApiSteps {
 
     /**
      * Посылается http GET/POST запрос по заданному урлу с заданными параметрами.
+     * И в URL, и в значениях в таблице можно использовать переменные и из application.properties, и из хранилища переменных
+     * из AlfaScenario. Для этого достаточно заключить переменные в фигурные скобки, например: http://{hostname}?user={username}
      * Результат сохраняется в заданную переменную
-     * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     public void sendHttpRequestSaveResponse(String typeOfRequest, String address, String variableName, List<RequestParam> paramsTable) throws Exception {
