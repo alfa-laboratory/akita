@@ -193,7 +193,7 @@ public class DefaultApiSteps {
      * Отправка запроса и сравнение кода http ответа
      *
      * @param typeOfRequest      тип http запроса
-     * @param address            url хоста на который будет отправлен запрос
+     * @param address            url, на который будет отправлен запрос
      * @param expectedStatusCode ожидаемый http статус код
      * @param paramsTable        список параметров для http запроса
      * @return возвращает true или false в зависимости от ожидаемого и полученного http кодов
@@ -213,8 +213,8 @@ public class DefaultApiSteps {
 
     /**
      * @param typeOfRequest тип http запроса
-     * @param address       url хоста на который будет направлен запрос
-     * @param variableName  имя переменной в которую сохраняется http ответ
+     * @param address       url, на который будет направлен запрос
+     * @param variableName  имя переменной, в которую сохраняется http ответ
      * @param paramsTable   список параметров для http запроса
      * @throws Exception
      */

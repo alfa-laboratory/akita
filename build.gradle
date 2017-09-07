@@ -46,7 +46,7 @@ dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
     compile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'com.codeborne', name: 'selenide', version: '4.4'
+    compile group: 'com.codeborne', name: 'selenide', version: '4.5'
     compile group: 'info.cukes', name: 'cucumber-java', version: cucumberVersion
     compile group: 'info.cukes', name: 'cucumber-core', version: cucumberVersion
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
@@ -55,7 +55,7 @@ dependencies {
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
 
     testCompile "org.mockito:mockito-core:2.+"
-    testCompile "com.github.tomakehurst:wiremock-standalone:2.6.+"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
 }
 
 compileJava.options.encoding = 'UTF-8'

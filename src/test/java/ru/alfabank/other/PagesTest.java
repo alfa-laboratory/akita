@@ -29,7 +29,7 @@ public class PagesTest {
         assertThat(pages.getCurrentPage(), equalTo(alfaPageMock));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = IllegalStateException.class)
     public void setCurrentPageNegative() {
         pages.setCurrentPage(null);
         pages.getCurrentPage();
