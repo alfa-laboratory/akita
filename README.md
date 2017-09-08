@@ -165,3 +165,23 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 ```ru.alfabank.tests.core.helpers.PropertyLoader```
 Класс для получения свойств
 
+
+
+Используемые зависимости:
+--------------------------
+>nebula-release-plugin - Apache License Version 2.0	
+>coveralls-gradle-plugin - The MIT License (MIT)	
+>com.codeborne.selenide - The MIT License (MIT)	
+>io.rest-assured.rest-assured - Apache License Version 2.0
+>com.google.inject.guice - Apache License Version 2.0
+>org.mockito.mockito-core - The MIT License	
+>com.github.tomakehurst:wiremock - Apache License Version 2.0
+>org.hamcrest.hamcrest-all - BSD License	
+>org.codehaus.groovy - Apache License Version 2.0
+>JUnit - Eclipse Public License
+>org.slf4j.slf4j-simple - The MIT License (MIT)	
+>org.projectlombok.lombok - The MIT License (MIT)
+>io.rest-assured.rest-assured - Apache License Version 2.0
+>info.cukes.cucumber-java - The MIT License (MIT)	
+>info.cukes.cucumber-core - The MIT License (MIT)
+>org.reflections.reflections
