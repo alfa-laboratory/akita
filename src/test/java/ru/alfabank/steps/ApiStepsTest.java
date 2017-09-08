@@ -1,6 +1,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.*;
 import ru.alfabank.StubScenario;
@@ -10,10 +11,11 @@ import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
@@ -41,7 +43,7 @@ public class ApiStepsTest {
 
     @Test
     public void getURLwithPathParamsCalculatedSimple() {
-        assertThat(DefaultApiSteps.getURLwithPathParamsCalculated("alfabank.ru"),
+        assertThat(DefaultApiSteps.resolveVars("alfabank.ru"),
                 equalTo("alfabank.ru"));
     }
 
@@ -65,6 +67,30 @@ public class ApiStepsTest {
                         .withBody("TEST_BODY")));
         api.sendHttpRequest("POST", "/post/resource", "RESPONSE_POST_BODY");
         assertThat(testScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+    }
+
+    @Test
+    public void sendHttpRequestWithVarsPost() throws java.lang.Exception {
+        String body = "testBodyValue";
+        String bodyVarName = "testBodyName";
+        alfaScenario.setVar(bodyVarName, body);
+
+        stubFor(post(urlEqualTo("/post/resource"))
+                .withRequestBody(WireMock.equalTo(body))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY")));
+
+        List<RequestParam> params = Collections.singletonList(
+                RequestParam.builder()
+                        .name("body")
+                        .type(RequestParamType.BODY)
+                        .value("{" + bodyVarName + "}")
+                        .build());
+
+        api.sendHttpRequestSaveResponse("POST", "/post/resource", "RESPONSE_POST_BODY", params);
+        assertThat(alfaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
