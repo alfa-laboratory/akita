@@ -9,8 +9,10 @@ import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
  * Created by rum0tbl on 02.06.17.
@@ -75,5 +77,11 @@ public class PropertyLoaderTests {
     @Test(expected = IllegalArgumentException.class)
     public void getNotExistingValue() {
         resolveVars("{RandomTestVariable3321}");
+    }
+
+    @Test
+    public void customPropertyFile() {
+        System.setProperty("profile", "customProperties");
+        assertThat(loadProperty("testVar"), equalTo("customTestValue"));
     }
 }
