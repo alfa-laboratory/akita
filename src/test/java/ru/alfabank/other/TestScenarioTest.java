@@ -2,14 +2,12 @@ package ru.alfabank.other;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import groovy.util.logging.Slf4j;
 import org.junit.*;
-import org.junit.rules.ExpectedException;
-import ru.alfabank.AlfaPageMock;
+import ru.alfabank.TestPageMock;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaPage;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
+import ru.alfabank.alfatest.cucumber.api.TestPage;
+import ru.alfabank.alfatest.cucumber.api.TestScenario;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -18,12 +16,12 @@ import static org.mockito.Mockito.*;
 /**
  * Created by onotole on 08.02.17.
  */
-public class AlfaScenarioTest {
-    private static AlfaScenario alfaScenario;
+public class TestScenarioTest {
+    private static TestScenario testScenario;
 
     @BeforeClass
     public static void init() {
-        alfaScenario = AlfaScenario.getInstance();
+        testScenario = TestScenario.getInstance();
     }
 
     @AfterClass
@@ -32,57 +30,57 @@ public class AlfaScenarioTest {
     @Before
     public void prepare() {
         Scenario scenario = new StubScenario();
-        AlfaPage alfaPageMock = mock(AlfaPage.class);
-        alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
-        alfaScenario.getPages().put("Title", alfaPageMock);
+        TestPage testPageMock = mock(TestPage.class);
+        testScenario.setEnvironment(new TestEnvironment(scenario));
+        testScenario.getPages().put("Title", testPageMock);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetSetVarNegative1() {
         String notExistingVar = "randomName";
-        alfaScenario.getVar(notExistingVar);
+        testScenario.getVar(notExistingVar);
     }
 
     @Test
     public void testGetSetVar() {
         String varName = "varName";
         String varValue = "1234567891011";
-        alfaScenario.setVar(varName, varValue);
+        testScenario.setVar(varName, varValue);
         assertThat("Вернулось правильное значение сохраненной переменной",
-                alfaScenario.getVar(varName).toString(), equalTo(varValue));
+                testScenario.getVar(varName).toString(), equalTo(varValue));
     }
 
     @Test
     public void putGetPagesPositive() {
-        assertThat(alfaScenario.getPage("Title"), is(notNullValue()));
+        assertThat(testScenario.getPage("Title"), is(notNullValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void putGetPagesNegative() {
-        AlfaPageMock alfaPageMock = null;
-        alfaScenario.getPages().put("Mock", alfaPageMock);
+        TestPageMock alfaPageMock = null;
+        testScenario.getPages().put("Mock", alfaPageMock);
     }
 
     @Test
     public void getEnvironmentPositive() {
-        assertThat(alfaScenario.getEnvironment(), is(notNullValue()));
+        assertThat(testScenario.getEnvironment(), is(notNullValue()));
     }
 
     @Test
     public void getEnvironmentNegative() {
-        alfaScenario.setEnvironment(null);
-        assertThat(alfaScenario.getEnvironment(), is(nullValue()) );
+        testScenario.setEnvironment(null);
+        assertThat(testScenario.getEnvironment(), is(nullValue()) );
     }
 
     @Test
     public void getCurrentPagePositive() {
-        alfaScenario.setCurrentPage(alfaScenario.getPage("Title"));
-        assertThat(alfaScenario.getCurrentPage(), is(notNullValue()));
+        testScenario.setCurrentPage(testScenario.getPage("Title"));
+        assertThat(testScenario.getCurrentPage(), is(notNullValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setCurrentPageNegative() {
-        alfaScenario.setCurrentPage(null);
+        testScenario.setCurrentPage(null);
     }
 
 }

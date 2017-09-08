@@ -1,34 +1,27 @@
 package ru.alfabank.other;
 
-import cucumber.api.Scenario;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.alfabank.AlfaPageMock;
-import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.ScopedVariables;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaPage;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.TestPageMock;
+import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Created by alexander on 02.08.17.
  */
-public class AlfaEnvironmentTest {
-    private static AlfaEnvironment env;
+public class TestEnvironmentTest {
+    private static TestEnvironment env;
 
     @BeforeClass
     public static void prepare() {
-        env = new AlfaEnvironment();
+        env = new TestEnvironment();
     }
 
     @Test
     public void initPagesTest() {
-        assertThat(env.getPage("AlfaPageMock"), is(notNullValue()));
+        assertThat(env.getPage("TestPageMock"), is(notNullValue()));
     }
 
     @Test
@@ -55,7 +48,7 @@ public class AlfaEnvironmentTest {
 
     @Test
     public void getPage() {
-        AlfaPageMock alfaPageMockInstance = new AlfaPageMock();
+        TestPageMock alfaPageMockInstance = new TestPageMock();
         env.getPages().put("newAwesomePage", alfaPageMockInstance);
         assertThat(env.getPage("newAwesomePage"), is(alfaPageMockInstance));
     }

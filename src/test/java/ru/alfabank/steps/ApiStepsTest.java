@@ -4,8 +4,8 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.*;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
+import ru.alfabank.alfatest.cucumber.api.TestScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
@@ -22,13 +22,13 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public class ApiStepsTest {
 
     private static DefaultApiSteps api;
-    private static AlfaScenario alfaScenario;
+    private static TestScenario testScenario;
 
     @BeforeClass
     public static void setup() {
-        alfaScenario = AlfaScenario.getInstance();
+        testScenario = TestScenario.getInstance();
         api = new DefaultApiSteps();
-        alfaScenario.setEnvironment(new AlfaEnvironment(new StubScenario()));
+        testScenario.setEnvironment(new TestEnvironment(new StubScenario()));
     }
 
     @AfterClass
@@ -53,7 +53,7 @@ public class ApiStepsTest {
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
         api.sendHttpRequest("GET", "/get/resource", "RESPONSE_GET_BODY");
-        assertThat(alfaScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
+        assertThat(testScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ApiStepsTest {
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
         api.sendHttpRequest("POST", "/post/resource", "RESPONSE_POST_BODY");
-        assertThat(alfaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+        assertThat(testScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ApiStepsTest {
         paramTable.add(requestParamBody);
         api.sendHttpRequestSaveResponse("POST", "/post/saveWithTable",
                 "TEST_HTTP", paramTable);
-        assertThat(alfaScenario.getVar("TEST_HTTP"), equalTo("TEST_BODY_1"));
+        assertThat(testScenario.getVar("TEST_HTTP"), equalTo("TEST_BODY_1"));
     }
 
     @Test

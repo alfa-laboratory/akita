@@ -14,12 +14,12 @@ public final class Pages {
     /**
      * Страницы, на которых будет производится тестирование < Имя, Страница >
      */
-    private Map<String, AlfaPage> pages;
+    private Map<String, TestPage> pages;
 
     /**
      * Страница, на которой в текущий момент производится тестирование
      */
-    private AlfaPage currentPage;
+    private TestPage currentPage;
 
     public Pages() {
         pages = Maps.newHashMap();
@@ -29,7 +29,7 @@ public final class Pages {
     /**
      *  Возвращает текущую страницу, на которой в текущий момент производится тестирование
      */
-    public AlfaPage getCurrentPage() {
+    public TestPage getCurrentPage() {
         if (currentPage == null) throw new IllegalStateException("Текущая страница не задана");
         return currentPage;
     }
@@ -37,7 +37,7 @@ public final class Pages {
     /**
      *  Задает текущую страницу по ее имени
      */
-    public void setCurrentPage(AlfaPage page) {
+    public void setCurrentPage(TestPage page) {
         this.currentPage = page;
     }
 
@@ -47,7 +47,7 @@ public final class Pages {
      * @param clazz класс страницы
      * @param checkIfElementsAppeared проверка всех не помеченных "@Optional" элементов
      */
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+    public static <T extends TestPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
         T page = getPage(clazz, checkIfElementsAppeared);
         consumer.accept(page);
     }
@@ -55,7 +55,7 @@ public final class Pages {
     /**
      * Получение страницы из "pages" по имени
      */
-    public AlfaPage get(String pageName) {
+    public TestPage get(String pageName) {
         return getPageMapInstanceInternal().get(pageName);
     }
 
@@ -63,22 +63,22 @@ public final class Pages {
      * Получение страницы по классу
      */
     @SuppressWarnings("unchecked")
-    public <T extends AlfaPage> T get(Class<T> clazz, String name) {
-        AlfaPage page = getPageMapInstanceInternal().get(name);
+    public <T extends TestPage> T get(Class<T> clazz, String name) {
+        TestPage page = getPageMapInstanceInternal().get(name);
         if(!clazz.isInstance(page)) {
             throw new IllegalStateException(name + " page is not a instance of " + clazz + ". Named page is a " + page);
         }
         return (T) page;
     }
 
-    private Map<String, ? extends AlfaPage> getPageMapInstanceInternal() {
+    private Map<String, ? extends TestPage> getPageMapInstanceInternal() {
         return pages;
     }
 
     /**
      * Добавление инстанциированной страницы в "pages" с проверкой на NULL
      */
-    public <T extends AlfaPage> void put(String pageName, T page) throws IllegalArgumentException {
+    public <T extends TestPage> void put(String pageName, T page) throws IllegalArgumentException {
         if (page == null)
             throw new IllegalArgumentException("Была передана пустая страница");
         pages.put(pageName, page);
@@ -87,7 +87,7 @@ public final class Pages {
     /**
      * Получение страницы по классу с возможностью выполнить проверку элементов страницы
      */
-    public static <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
+    public static <T extends TestPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         T page = Selenide.page(clazz);
         if(checkIfElementsAppeared) {
             page.isAppeared();
@@ -98,7 +98,7 @@ public final class Pages {
     /**
      * Добавление страницы в "pages" по классу
      */
-    public void put(String pageName, Class<? extends AlfaPage> clazz) {
+    public void put(String pageName, Class<? extends TestPage> clazz) {
         pages.put(pageName, Selenide.page(clazz).initialize());
     }
 }

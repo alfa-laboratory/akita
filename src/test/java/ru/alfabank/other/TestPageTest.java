@@ -6,42 +6,40 @@ import cucumber.api.Scenario;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import ru.alfabank.AlfaPageMock;
+import ru.alfabank.TestPageMock;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaPage;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
+import ru.alfabank.alfatest.cucumber.api.TestPage;
+import ru.alfabank.alfatest.cucumber.api.TestScenario;
 import ru.alfabank.steps.DefaultSteps;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
-import static org.mockito.Mockito.*;
-import static ru.alfabank.alfatest.cucumber.api.AlfaPage.getButtonFromListByName;
+import static ru.alfabank.alfatest.cucumber.api.TestPage.getButtonFromListByName;
 
 /**
  * Created by alexander on 02.08.17.
  */
-public class AlfaPageTest {
-    private static AlfaPageMock alfaPageMock;
-    private static AlfaPage page;
+public class TestPageTest {
+    private static TestPageMock alfaPageMock;
+    private static TestPage page;
 
     @BeforeClass
     public static void setup() {
-        alfaPageMock = new AlfaPageMock();
-        AlfaScenario alfaScenario = AlfaScenario.getInstance();
+        alfaPageMock = new TestPageMock();
+        TestScenario testScenario = TestScenario.getInstance();
         DefaultSteps ds = new DefaultSteps();
         Scenario scenario = new StubScenario();
-        alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
-        String inputFilePath = "src/test/resources/AlfaPageMock.html";
+        testScenario.setEnvironment(new TestEnvironment(scenario));
+        String inputFilePath = "src/test/resources/TestPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
-        alfaScenario.setVar("Page", "file://" + url);
-        page = alfaScenario.getEnvironment().getPage("AlfaPageMock");
-        ds.goToSelectedPageByLinkFromProperty("AlfaPageMock", alfaScenario.getVar("Page").toString());
+        testScenario.setVar("Page", "file://" + url);
+        page = testScenario.getEnvironment().getPage("TestPageMock");
+        ds.goToSelectedPageByLinkFromProperty("TestPageMock", testScenario.getVar("Page").toString());
     }
 
     @Test(expected = NullPointerException.class)

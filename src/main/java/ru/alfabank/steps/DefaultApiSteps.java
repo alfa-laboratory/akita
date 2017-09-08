@@ -9,7 +9,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.TestScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
@@ -36,7 +36,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public class DefaultApiSteps {
 
     @Delegate
-    AlfaScenario alfaScenario = AlfaScenario.getInstance();
+    TestScenario testScenario = TestScenario.getInstance();
 
     /**
      * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
@@ -128,7 +128,7 @@ public class DefaultApiSteps {
         }
         RequestSender request;
         if (body != null) {
-            alfaScenario.write("Тело запроса:\n" + body);
+            testScenario.write("Тело запроса:\n" + body);
             request = given()
                     .contentType(ContentType.JSON)
                     .headers(headers)
@@ -152,8 +152,8 @@ public class DefaultApiSteps {
      */
     private void getResponseAndSaveToVariable(String variableName, Response response) {
         if (200 <= response.statusCode() && response.statusCode() < 300) {
-            alfaScenario.setVar(variableName, response.getBody().asString());
-            if (log.isDebugEnabled()) alfaScenario.write("Тело ответа : \n" + response.getBody().asString());
+            testScenario.setVar(variableName, response.getBody().asString());
+            if (log.isDebugEnabled()) testScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {
             fail("Некорректный ответ на запрос: " + response.getBody().asString());
         }
@@ -172,7 +172,7 @@ public class DefaultApiSteps {
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            String value = loadProperty(varName, (String) AlfaScenario.getInstance().tryGetVar(varName));
+            String value = loadProperty(varName, (String) TestScenario.getInstance().tryGetVar(varName));
             if (value == null)
                 throw new IllegalArgumentException(
                         "Значение " + varName +
