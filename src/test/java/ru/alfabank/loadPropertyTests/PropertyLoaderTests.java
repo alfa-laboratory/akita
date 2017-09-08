@@ -22,7 +22,6 @@ public class PropertyLoaderTests {
 
     @BeforeClass
     public static void init() {
-
     }
 
     @Before
@@ -77,11 +76,5 @@ public class PropertyLoaderTests {
     @Test(expected = IllegalArgumentException.class)
     public void getNotExistingValue() {
         resolveVars("{RandomTestVariable3321}");
-    }
-
-    @Test
-    public void customPropertyFile() {
-        System.setProperty("profile", "customProperties");
-        assertThat(loadProperty("testVar"), equalTo("customTestValue"));
     }
 }

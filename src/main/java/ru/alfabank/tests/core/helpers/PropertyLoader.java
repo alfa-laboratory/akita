@@ -153,7 +153,7 @@ public class PropertyLoader {
             String path = Paths.get(profile, PROPERTIES_FILE).toString();
             URL url = PropertyLoader.class.getClassLoader().getResource(path);
             try(
-                    InputStream resourceStream = url.openStream();// PropertyLoader.class.getClass().getClassLoader().getResourceAsStream("customProperties/custom.properties");
+                    InputStream resourceStream = url.openStream();
                     InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
             ) {
                 instance.load(inputStream);
