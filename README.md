@@ -24,7 +24,7 @@ application.properties
 Работа со страницами
 ====================
 Для работы с элементами страницы ее необходимо задать как текущую.
-Таким образом можно получить доступ к методам взаимодействия с элементами, описанным в AlfaPage.
+Таким образом можно получить доступ к методам взаимодействия с элементами, описанным в AkitaPage.
 
 Новую текущую страницу можно установить шагом
 ```Когда страница "<Имя страницы>" загрузилась```
@@ -32,14 +32,14 @@ application.properties
 Для страницы депозитов шаг может выглядеть так
 ```Когда страница "Депозиты" загрузилась```
 
-Каждая страница, с которой предполагается взаимодействие, должна быть описана в классе наследующемся от AlfaPage. 
+Каждая страница, с которой предполагается взаимодействие, должна быть описана в классе наследующемся от AkitaPage. 
 Для страницы и ее элементов следует задать имя на русском, через аннотацию Name, чтобы искать можно было именно по русскому описанию. 
 Элементы страницы ищутся по локаторам, указанным в аннотации FindBy и должны иметь тип SelenideElement или List<SelenideElement>.
 
 Пример описания страницы:
 ```java  
     @Name("Депозиты")
-    public class DepositsPage extends AlfaPage {
+    public class DepositsPage extends AkitaPage {
     
         @FindBy(css = ".deposit_open")
         @Name("Открыть депозит")
@@ -61,15 +61,15 @@ application.properties
 Пример инициализации страницы "Депозиты":
 ```
 DepositsPage page = (DepositsPage) getCurrentPage();
-alfaScenario.setCurrentPage(page.initialize().appeared());
+akitaaScenario.setCurrentPage(page.initialize().appeared());
 ```
 
 Пример получения конкретной страницы:
 ```
-DepositsPage page = alfaScenario.getPage(DepositsPage.class);
+DepositsPage page = akitaScenario.getPage(DepositsPage.class);
 ```
 
-Другой способ работы с методами страницы - это использование AlfaScenario.withPage 
+Другой способ работы с методами страницы - это использование AkitaScenario.withPage 
 Пример использования: ```withPage(TestPage.class, page -> { some actions with TestPage methods});```
 
 Для страницы инициализируется карта ее элементов - это те поля, что помечены аннотацией Name.
@@ -88,8 +88,8 @@ waitingAppearTimeout=150000
 Данные строки позволяют по имени элемента найти его в карте элементов текущей страницы.
 
 ```
-alfaScenario.getCurrentPage().getElement("Открыть депозит")
-alfaScenario.getCurrentPage().getElementsList("Список депозитов")
+akitaScenario.getCurrentPage().getElement("Открыть депозит")
+akitaScenario.getCurrentPage().getElementsList("Список депозитов")
  ```  
    
 
@@ -114,7 +114,7 @@ alfaScenario.getCurrentPage().getElementsList("Список депозитов")
 
 Для того, чтобы в отчете появился блок Output с информацией, полезной для анализа отчета, можно воспользоваться следующим методом
  ```
-alfaScenario.write("Текущий URL = " + currentUrl + " \nОжидаемый URL = " + expectedUrl);
+akitaScenario.write("Текущий URL = " + currentUrl + " \nОжидаемый URL = " + expectedUrl);
  ```
  
 Проверка логического выражения
@@ -128,26 +128,26 @@ alfaScenario.write("Текущий URL = " + currentUrl + " \nОжидаемый
 Использование переменных
 =========================
 Иногда есть необходимость использовать значения из одного шага в последующих.
-Для этого реализовано хранилище переменных в AlfaScenario.
+Для этого реализовано хранилище переменных в AkitaScenario.
 Для сохранения/изъятия переменных используются методы setVar/getVar.
 
 Сохранение переменной в хранилище: 
-```alfaScenario.setVar(<имя переменной>, <значение переменной>);```
+```akitaScenario.setVar(<имя переменной>, <значение переменной>);```
 
 Получение значения переменной из хранилища: 
-```alfaScenario.getVar(<имя переменной>)```
+```akitaScenario.getVar(<имя переменной>)```
 
 Краткое описание главных классов
 =================================
      
-```ru.alfabank.alfatest.cucumber.api.AlfaEnvironment```
+```ru.alfabank.alfatest.cucumber.api.AkitaEnvironment```
 Используется для хранения страниц и переменных внутри сценария
 scenario - Сценарий из Cucumber.api, с которым связана среда
 
-```ru.alfabank.alfatest.cucumber.api.AlfaPage```
+```ru.alfabank.alfatest.cucumber.api.AkitaPage```
 Класс для реализации паттерна PageObject. Тут описаны основные методы взаимодействия с элементами страницы
 
-```ru.alfabank.alfatest.cucumber.api.AlfaScenario```
+```ru.alfabank.alfatest.cucumber.api.AkitaScenario```
 Позволяет заполнить хранилище переменных, существующее в рамках одного сценария, значениями и читать эти значения при необходимости.
 
 ```ru.alfabank.steps.DefaultApiSteps```
