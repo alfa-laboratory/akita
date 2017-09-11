@@ -1,9 +1,6 @@
 package ru.alfabank.steps;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import cucumber.api.java.ru.И;
-import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
@@ -13,8 +10,9 @@ import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +102,6 @@ public class DefaultApiSteps {
         Map<String, String> headers = new HashMap<>();
         Map<String, String> parameters = new HashMap<>();
         String body = null;
-        Gson gson = new Gson();
         for (RequestParam requestParam : paramsTable) {
             String paramValue = resolveVars(requestParam.getValue());
             String paramName = requestParam.getName();
@@ -116,11 +113,11 @@ public class DefaultApiSteps {
                     headers.put(paramName, paramValue);
                     break;
                 case BODY:
-                    String folderNameForRequestBodies = loadProperty("jsonBody", "restBodies");
+                    String folderNameForRequestBodies = getPropertyOrValue("requestBodies");
                     String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, paramValue);
-                    try (FileReader fileReader = new FileReader(path)) {
-                        JsonElement json = gson.fromJson(fileReader, JsonElement.class);
-                        body = gson.toJson(json);
+                    try {
+                        byte[] bytesBody = Files.readAllBytes(Paths.get(path));
+                        body = new String(bytesBody);
                     } catch (IOException e) {
                         body = paramValue;
                     }
@@ -133,7 +130,6 @@ public class DefaultApiSteps {
         if (body != null) {
             alfaScenario.write("Тело запроса:\n" + body);
             request = given()
-                    .contentType(ContentType.JSON)
                     .headers(headers)
                     .params(parameters)
                     .body(body)
