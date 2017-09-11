@@ -116,8 +116,7 @@ public class DefaultApiSteps {
                     String folderNameForRequestBodies = getPropertyOrValue("requestBodies");
                     String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, paramValue);
                     try {
-                        byte[] bytesBody = Files.readAllBytes(Paths.get(path));
-                        body = new String(bytesBody);
+                        body = new String(Files.readAllBytes(Paths.get(path)));
                     } catch (IOException e) {
                         body = paramValue;
                     }
