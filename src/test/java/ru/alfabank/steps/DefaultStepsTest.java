@@ -8,8 +8,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
-import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
-import ru.alfabank.alfatest.cucumber.api.TestScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,25 +25,25 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
  */
 public class DefaultStepsTest {
     private static DefaultSteps ds;
-    private static TestScenario testScenario;
+    private static AkitaScenario akitaScenario;
 
     @BeforeClass
     public static void setup() {
-        testScenario = TestScenario.getInstance();
+        akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
-        testScenario.setEnvironment(new TestEnvironment(scenario));
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         ds = new DefaultSteps();
-        String inputFilePath = "src/test/resources/TestPageMock.html";
+        String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
-        testScenario.setVar("Page", "file://" + url);
+        akitaScenario.setVar("Page", "file://" + url);
         String inputFilePath2 = "src/test/resources/RedirectionPage.html";
         String url2 = new File(inputFilePath2).getAbsolutePath();
-        testScenario.setVar("RedirectionPage", "file://" + url2);
+        akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLinkFromProperty("TestPageMock", testScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
@@ -58,7 +58,7 @@ public class DefaultStepsTest {
 
     @Test
     public void checkCurrentURLPositive() {
-        ds.checkCurrentURL(testScenario.getVar("Page").toString());
+        ds.checkCurrentURL(akitaScenario.getVar("Page").toString());
     }
 
     @Test(expected = NullPointerException.class)
@@ -79,16 +79,16 @@ public class DefaultStepsTest {
     public void storeFieldValueInVariablePositive() {
         String varName = "mockId";
         ds.storeElementValueInVariable(varName, varName);
-        assertThat(testScenario.getVar(varName), equalTo("Serious testing page"));
+        assertThat(akitaScenario.getVar(varName), equalTo("Serious testing page"));
     }
 
     @Test(expected = AssertionError.class)
     public void compareTwoDigitVarsNegative() {
         String number1Name = "number1", number1Value = "1234567890";
-        testScenario.setVar(number1Name, number1Value);
+        akitaScenario.setVar(number1Name, number1Value);
 
         String number2Name = "number2", number2Value = "1234567894";
-        testScenario.setVar(number2Name, number2Value);
+        akitaScenario.setVar(number2Name, number2Value);
 
         ds.compareTwoVariables(number1Name, number2Name);
     }
@@ -96,10 +96,10 @@ public class DefaultStepsTest {
     @Test
     public void compareTwoDigitVars() {
         String number1Name = "number1", number1Value = "1234567890.97531";
-        testScenario.setVar(number1Name, number1Value);
+        akitaScenario.setVar(number1Name, number1Value);
 
         String number2Name = "number2", number2Value = "1234567890.97531";
-        testScenario.setVar(number2Name, number2Value);
+        akitaScenario.setVar(number2Name, number2Value);
 
         ds.compareTwoVariables(number1Name, number2Name);
     }
@@ -107,13 +107,13 @@ public class DefaultStepsTest {
     @Test
     public void saveValueToVarPositive() {
         ds.saveValueToVar("testVar", "test");
-        assertThat(testScenario.getVar("test"), equalTo("testValue"));
+        assertThat(akitaScenario.getVar("test"), equalTo("testValue"));
     }
 
     @Test
     public void clickOnElementPositive() {
         ds.clickOnElement("GoodButton");
-        assertThat(testScenario.getPage("TestPageMock").getElement("GoodButton").isEnabled(),
+        assertThat(akitaScenario.getPage("AkitaPageMock").getElement("GoodButton").isEnabled(),
                 equalTo(false));
     }
 
@@ -129,12 +129,12 @@ public class DefaultStepsTest {
 
     @Test
     public void loadPageSimple() {
-        ds.loadPage("TestPageMock");
+        ds.loadPage("AkitaPageMock");
     }
 
     @Test
     public void compareFieldAndVariablePositive() {
-        testScenario.setVar("test", "Serious testing page");
+        akitaScenario.setVar("test", "Serious testing page");
         ds.compareFieldAndVariable("mockTagName", "test");
     }
 
@@ -142,13 +142,13 @@ public class DefaultStepsTest {
     public void checkIfListContainsValueFromFieldPositive() {
         List<String> list = new ArrayList<>();
         list.add("Serious testing page");
-        testScenario.setVar("list", list);
+        akitaScenario.setVar("list", list);
         ds.checkIfListContainsValueFromField("mockTagName", "list");
     }
 
     @Test(expected = ElementShouldNot.class)
     public void blockDisappearedSimple() {
-        ds.blockDisappeared("TestPageMock");
+        ds.blockDisappeared("AkitaPageMock");
     }
 
     @Test
@@ -159,8 +159,8 @@ public class DefaultStepsTest {
     @Test
     public void setFieldValuePositive() {
         ds.setFieldValue("NormalField", "test");
-        assertThat(testScenario.getEnvironment()
-                        .getPage("TestPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField"),
                 equalTo("test"));
     }
@@ -168,8 +168,8 @@ public class DefaultStepsTest {
     @Test
     public void cleanFieldPositive() {
         ds.cleanField("TextField");
-        assertThat(testScenario.getEnvironment()
-                        .getPage("TestPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("TextField"),
                 equalTo(""));
     }
@@ -234,22 +234,22 @@ public class DefaultStepsTest {
         arrayList.add("One");
         arrayList.add("Two");
         arrayList.add("Three");
-        testScenario.setVar("qwerty", arrayList);
+        akitaScenario.setVar("qwerty", arrayList);
         ds.compareListFromUIAndFromVariable("List", "qwerty");
     }
 
     @Test
     public void openReadOnlyFormPositive() {
         ds.goToSelectedPageByLinkFromProperty("RedirectionPage",
-                testScenario.getVar("RedirectionPage").toString());
+                akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
 
     @Test
     public void addValuePositive() {
         ds.addValue("TextField", "Super");
-        assertThat(testScenario.getEnvironment()
-                        .getPage("TestPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("TextField"),
                 equalTo("textSuper"));
     }
@@ -259,14 +259,14 @@ public class DefaultStepsTest {
         ds.findElement("LINK");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
-                equalTo(testScenario.getVar("RedirectionPage")));
+                equalTo(akitaScenario.getVar("RedirectionPage")));
     }
 
     @Test
     public void currentDatePositive() {
         ds.currentDate("NormalField", "dd.MM.yyyy");
-        assertThat(testScenario.getEnvironment()
-                        .getPage("TestPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField")
                         .matches("[0-3][0-9].[0-1][0-9].[0-2][0-9]{3}"),
                 equalTo(true));
@@ -318,7 +318,7 @@ public class DefaultStepsTest {
 
     @Test
     public void goToUrl() {
-        ds.goToUrl((String) testScenario.getVar("RedirectionPage"));
+        ds.goToUrl((String) akitaScenario.getVar("RedirectionPage"));
     }
 
     @Test

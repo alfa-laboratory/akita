@@ -9,8 +9,8 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
-import ru.alfabank.alfatest.cucumber.api.TestScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
@@ -18,7 +18,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 public class InitialSetupSteps {
 
     @Delegate
-    TestScenario testScenario = TestScenario.getInstance();
+    AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
      * Создает окружение(среду) для запуска сценария
@@ -28,7 +28,7 @@ public class InitialSetupSteps {
      */
     @Before(order = 10)
     public void setScenario(Scenario scenario) throws Exception {
-        testScenario.setEnvironment(new TestEnvironment(scenario));
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     /**
@@ -63,7 +63,7 @@ public class InitialSetupSteps {
     @After(order = 20)
     public void takeScreenshot(Scenario scenario) {
         if (scenario.isFailed()) {
-            TestScenario.sleep(1);
+            AkitaScenario.sleep(1);
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
             scenario.embed(screenshot, "image/png");
         }

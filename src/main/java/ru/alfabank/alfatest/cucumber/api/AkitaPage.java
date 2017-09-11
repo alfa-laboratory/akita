@@ -22,7 +22,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
  * Класс-аннотация для реализации паттерна PageObject
  */
 @Slf4j
-public abstract class TestPage extends ElementsContainer {
+public abstract class AkitaPage extends ElementsContainer {
     /**
      * Стандартный таймаут ожидания элементов
      */
@@ -47,7 +47,7 @@ public abstract class TestPage extends ElementsContainer {
         if (!(value instanceof List))
             throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
         Stream<Object> s = ((List) value).stream();
-        return s.map(TestPage::castToSelenideElement).collect(Collectors.toList());
+        return s.map(AkitaPage::castToSelenideElement).collect(Collectors.toList());
     }
 
     /**
@@ -102,19 +102,19 @@ public abstract class TestPage extends ElementsContainer {
     }
 
     /**
-     * Обертка над TestPage.isAppeared
-     * Ex: TestPage.appeared().doSomething();
+     * Обертка над AkitaPage.isAppeared
+     * Ex: AkitaPage.appeared().doSomething();
      */
-    public final TestPage appeared() {
+    public final AkitaPage appeared() {
         isAppeared();
         return this;
     }
 
     /**
-     * Обертка над TestPage.isDisappeared
-     * Ex: TestPage.disappeared().doSomething();
+     * Обертка над AkitaPage.isDisappeared
+     * Ex: AkitaPage.disappeared().doSomething();
      */
-    public final TestPage disappeared() {
+    public final AkitaPage disappeared() {
         isDisappeared();
         return this;
     }
@@ -167,7 +167,7 @@ public abstract class TestPage extends ElementsContainer {
         List<SelenideElement> elements = Arrays.stream(elementNames)
                 .map(name -> namedElements.get(name))
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
-                .map(TestPage::castToSelenideElement)
+                .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         Spectators.waitElementsUntil(condition, timeout, elements);
@@ -209,7 +209,7 @@ public abstract class TestPage extends ElementsContainer {
         initialize();
     }
 
-    public TestPage initialize() {
+    public AkitaPage initialize() {
         namedElements = readNamedElements();
         primaryElements = readWithWrappedElements();
         return this;
@@ -250,7 +250,7 @@ public abstract class TestPage extends ElementsContainer {
                 .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
                 .map(this::extractFieldValueViaReflection)
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
-                .map(TestPage::castToSelenideElement)
+                .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

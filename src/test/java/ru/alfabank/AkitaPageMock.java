@@ -3,7 +3,7 @@ package ru.alfabank;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
-import ru.alfabank.alfatest.cucumber.api.TestPage;
+import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import java.util.List;
  * Created by alexander on 01.08.17.
  */
 @Getter
-@TestPage.Name("TestPageMock")
-public class TestPageMock extends TestPage {
+@AkitaPage.Name("AkitaPageMock")
+public class AkitaPageMock extends AkitaPage {
     @FindBy(id = "mockId")
     @Name("mockId")
     public SelenideElement mockId;

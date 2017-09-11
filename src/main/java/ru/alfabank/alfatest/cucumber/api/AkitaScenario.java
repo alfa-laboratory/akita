@@ -11,29 +11,29 @@ import java.util.function.Consumer;
  * Главный класс, отвечающий за сопровождение тестовых шагов
  */
 @Slf4j
-public final class TestScenario {
+public final class AkitaScenario {
 
-    private static TestScenario instance = new TestScenario();
+    private static AkitaScenario instance = new AkitaScenario();
 
     /**
      * Среда прогона тестов, хранит в себе: Cucumber.Scenario,
      * переменные, объявленные пользователем в сценарии и страницы, тестирование которых будет производиться
      */
-    private static TestEnvironment environment;
+    private static AkitaEnvironment environment;
 
-    private TestScenario() {
+    private AkitaScenario() {
     }
 
-    public static TestScenario getInstance() {
+    public static AkitaScenario getInstance() {
         return instance;
     }
 
-    public TestEnvironment getEnvironment() {
+    public AkitaEnvironment getEnvironment() {
         return environment;
     }
 
-    public void setEnvironment(TestEnvironment testEnvironment) {
-        environment = testEnvironment;
+    public void setEnvironment(AkitaEnvironment akitaEnvironment) {
+        environment = akitaEnvironment;
     }
 
     public static void sleep(int seconds) {
@@ -43,14 +43,14 @@ public final class TestScenario {
     /**
      * Получение страницы, тестирование которой производится в данный момент
      */
-    public TestPage getCurrentPage() {
+    public AkitaPage getCurrentPage() {
         return environment.getPages().getCurrentPage();
     }
 
     /**
      * Задание страницы, тестирование которой производится в данный момент
      */
-    public void setCurrentPage(TestPage page) {
+    public void setCurrentPage(AkitaPage page) {
         if (page == null) throw new IllegalArgumentException("Происходит переход на несуществующую страницу. " +
                 "Проверь аннотации @Name у используемых страниц");
         environment.getPages().setCurrentPage(page);
@@ -58,24 +58,24 @@ public final class TestScenario {
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы, которая передается в метод в качестве аргумента.
-     * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
+     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
      * Проверка отображения всех элементов страницы выполняется всегда
      *
      * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
      */
-    public static <T extends TestPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
+    public static <T extends AkitaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
         withPage(clazz, true, consumer);
     }
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы.
-     * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
+     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
      * Проверка отображения всех элементов страницы опциональна
      *
      * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
      * @param checkIfElementsAppeared флаг, отвечающий за проверку отображения всех элементов страницы, не помеченных аннотацией @Optional
      */
-    public static <T extends TestPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+    public static <T extends AkitaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIfElementsAppeared, consumer);
     }
 
@@ -86,7 +86,7 @@ public final class TestScenario {
         return this.getEnvironment().getPages();
     }
 
-    public TestPage getPage(String name) {
+    public AkitaPage getPage(String name) {
         return this.getEnvironment().getPage(name);
     }
 
@@ -98,7 +98,7 @@ public final class TestScenario {
     }
 
     /**
-     * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в TestEnvironment
+     * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в AkitaEnvironment
      * @param name - имя переменной, для которй необходимо получить ранее сохраненное значение
      */
     public Object getVar(String name) {
@@ -119,7 +119,7 @@ public final class TestScenario {
      * @param clazz - класс страницы, которую необходимо получить
      * @param checkIfElementsAppeared - флаг, определяющий проверку отображения элементов на странице
      */
-    public <T extends TestPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
+    public <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         return Pages.getPage(clazz, checkIfElementsAppeared);
     }
 
@@ -127,7 +127,7 @@ public final class TestScenario {
      * Получение страницы по классу (проверка отображения элементов страницы не выполняется)
      * @param clazz - класс страницы, которую необходимо получить
      */
-    public <T extends TestPage> T getPage(Class<T> clazz) {
+    public <T extends AkitaPage> T getPage(Class<T> clazz) {
         return Pages.getPage(clazz, true);
     }
 
@@ -136,12 +136,12 @@ public final class TestScenario {
      * @param clazz - класс страницы, которую необходимо получить
      * @param name - название страницы, заданное в аннотации @Name
      */
-    public <T extends TestPage> T getPage(Class<T> clazz, String name) {
+    public <T extends AkitaPage> T getPage(Class<T> clazz, String name) {
         return this.getEnvironment().getPage(clazz, name);
     }
 
     /**
-     * Заменяет в строке все ключи переменных из пула переменных "variables" в классе TestEnvironment на их значения
+     * Заменяет в строке все ключи переменных из пула переменных "variables" в классе AkitaEnvironment на их значения
      *
      * @param stringToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
@@ -150,8 +150,8 @@ public final class TestScenario {
     }
 
     /**
-     *  Добавление переменной в пул "variables" в классе TestEnvironment
-     *  @param name имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе TestEnvironment
+     *  Добавление переменной в пул "variables" в классе AkitaEnvironment
+     *  @param name имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AkitaEnvironment
      *  @param object значение, которое нужно сохранить в переменную
      */
     public void setVar(String name, Object object) {
@@ -159,7 +159,7 @@ public final class TestScenario {
     }
 
     /**
-     *  Получение всех переменных из пула "variables" в классе TestEnvironment
+     *  Получение всех переменных из пула "variables" в классе AkitaEnvironment
      */
     public ScopedVariables getVars() {
         return this.getEnvironment().getVars();

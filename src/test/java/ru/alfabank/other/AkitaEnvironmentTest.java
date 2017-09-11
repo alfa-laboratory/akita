@@ -2,8 +2,8 @@ package ru.alfabank.other;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.alfabank.TestPageMock;
-import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
+import ru.alfabank.AkitaPageMock;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -11,17 +11,17 @@ import static org.hamcrest.MatcherAssert.*;
 /**
  * Created by alexander on 02.08.17.
  */
-public class TestEnvironmentTest {
-    private static TestEnvironment env;
+public class AkitaEnvironmentTest {
+    private static AkitaEnvironment env;
 
     @BeforeClass
     public static void prepare() {
-        env = new TestEnvironment();
+        env = new AkitaEnvironment();
     }
 
     @Test
     public void initPagesTest() {
-        assertThat(env.getPage("TestPageMock"), is(notNullValue()));
+        assertThat(env.getPage("AkitaPageMock"), is(notNullValue()));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class TestEnvironmentTest {
 
     @Test
     public void getPage() {
-        TestPageMock alfaPageMockInstance = new TestPageMock();
+        AkitaPageMock alfaPageMockInstance = new AkitaPageMock();
         env.getPages().put("newAwesomePage", alfaPageMockInstance);
         assertThat(env.getPage("newAwesomePage"), is(alfaPageMockInstance));
     }

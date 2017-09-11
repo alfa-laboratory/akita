@@ -9,7 +9,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import ru.alfabank.alfatest.cucumber.api.TestScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -36,7 +35,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public class DefaultApiSteps {
 
     @Delegate
-    TestScenario testScenario = TestScenario.getInstance();
+    AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
      * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
@@ -131,7 +130,7 @@ public class DefaultApiSteps {
         }
         RequestSender request;
         if (body != null) {
-            testScenario.write("Тело запроса:\n" + body);
+            akitaScenario.write("Тело запроса:\n" + body);
             request = given()
                     .contentType(ContentType.JSON)
                     .headers(headers)
@@ -155,8 +154,8 @@ public class DefaultApiSteps {
      */
     private void getResponseAndSaveToVariable(String variableName, Response response) {
         if (200 <= response.statusCode() && response.statusCode() < 300) {
-            testScenario.setVar(variableName, response.getBody().asString());
-            if (log.isDebugEnabled()) testScenario.write("Тело ответа : \n" + response.getBody().asString());
+            akitaScenario.setVar(variableName, response.getBody().asString());
+            if (log.isDebugEnabled()) akitaScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {
             fail("Некорректный ответ на запрос: " + response.getBody().asString());
         }
@@ -175,7 +174,7 @@ public class DefaultApiSteps {
         String newString = "";
         while (m.find()) {
             String varName = m.group(1);
-            String value = loadProperty(varName, (String) TestScenario.getInstance().tryGetVar(varName));
+            String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
             if (value == null)
                 throw new IllegalArgumentException(
                         "Значение " + varName +

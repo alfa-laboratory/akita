@@ -6,11 +6,11 @@ import cucumber.api.Scenario;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import ru.alfabank.TestPageMock;
+import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
-import ru.alfabank.alfatest.cucumber.api.TestPage;
-import ru.alfabank.alfatest.cucumber.api.TestScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaPage;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.steps.DefaultSteps;
 
 import java.io.File;
@@ -19,27 +19,27 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
-import static ru.alfabank.alfatest.cucumber.api.TestPage.getButtonFromListByName;
+import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByName;
 
 /**
  * Created by alexander on 02.08.17.
  */
-public class TestPageTest {
-    private static TestPageMock alfaPageMock;
-    private static TestPage page;
+public class AkitaPageTest {
+    private static AkitaPageMock alfaPageMock;
+    private static AkitaPage page;
 
     @BeforeClass
     public static void setup() {
-        alfaPageMock = new TestPageMock();
-        TestScenario testScenario = TestScenario.getInstance();
+        alfaPageMock = new AkitaPageMock();
+        AkitaScenario akitaScenario = AkitaScenario.getInstance();
         DefaultSteps ds = new DefaultSteps();
         Scenario scenario = new StubScenario();
-        testScenario.setEnvironment(new TestEnvironment(scenario));
-        String inputFilePath = "src/test/resources/TestPageMock.html";
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
-        testScenario.setVar("Page", "file://" + url);
-        page = testScenario.getEnvironment().getPage("TestPageMock");
-        ds.goToSelectedPageByLinkFromProperty("TestPageMock", testScenario.getVar("Page").toString());
+        akitaScenario.setVar("Page", "file://" + url);
+        page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
+        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test(expected = NullPointerException.class)

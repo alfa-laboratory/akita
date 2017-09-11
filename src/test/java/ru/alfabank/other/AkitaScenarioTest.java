@@ -3,11 +3,11 @@ package ru.alfabank.other;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
 import org.junit.*;
-import ru.alfabank.TestPageMock;
+import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.TestEnvironment;
-import ru.alfabank.alfatest.cucumber.api.TestPage;
-import ru.alfabank.alfatest.cucumber.api.TestScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaPage;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -16,12 +16,12 @@ import static org.mockito.Mockito.*;
 /**
  * Created by onotole on 08.02.17.
  */
-public class TestScenarioTest {
-    private static TestScenario testScenario;
+public class AkitaScenarioTest {
+    private static AkitaScenario akitaScenario;
 
     @BeforeClass
     public static void init() {
-        testScenario = TestScenario.getInstance();
+        akitaScenario = AkitaScenario.getInstance();
     }
 
     @AfterClass
@@ -30,57 +30,57 @@ public class TestScenarioTest {
     @Before
     public void prepare() {
         Scenario scenario = new StubScenario();
-        TestPage testPageMock = mock(TestPage.class);
-        testScenario.setEnvironment(new TestEnvironment(scenario));
-        testScenario.getPages().put("Title", testPageMock);
+        AkitaPage akitaPageMock = mock(AkitaPage.class);
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        akitaScenario.getPages().put("Title", akitaPageMock);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetSetVarNegative1() {
         String notExistingVar = "randomName";
-        testScenario.getVar(notExistingVar);
+        akitaScenario.getVar(notExistingVar);
     }
 
     @Test
     public void testGetSetVar() {
         String varName = "varName";
         String varValue = "1234567891011";
-        testScenario.setVar(varName, varValue);
+        akitaScenario.setVar(varName, varValue);
         assertThat("Вернулось правильное значение сохраненной переменной",
-                testScenario.getVar(varName).toString(), equalTo(varValue));
+                akitaScenario.getVar(varName).toString(), equalTo(varValue));
     }
 
     @Test
     public void putGetPagesPositive() {
-        assertThat(testScenario.getPage("Title"), is(notNullValue()));
+        assertThat(akitaScenario.getPage("Title"), is(notNullValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void putGetPagesNegative() {
-        TestPageMock alfaPageMock = null;
-        testScenario.getPages().put("Mock", alfaPageMock);
+        AkitaPageMock alfaPageMock = null;
+        akitaScenario.getPages().put("Mock", alfaPageMock);
     }
 
     @Test
     public void getEnvironmentPositive() {
-        assertThat(testScenario.getEnvironment(), is(notNullValue()));
+        assertThat(akitaScenario.getEnvironment(), is(notNullValue()));
     }
 
     @Test
     public void getEnvironmentNegative() {
-        testScenario.setEnvironment(null);
-        assertThat(testScenario.getEnvironment(), is(nullValue()) );
+        akitaScenario.setEnvironment(null);
+        assertThat(akitaScenario.getEnvironment(), is(nullValue()) );
     }
 
     @Test
     public void getCurrentPagePositive() {
-        testScenario.setCurrentPage(testScenario.getPage("Title"));
-        assertThat(testScenario.getCurrentPage(), is(notNullValue()));
+        akitaScenario.setCurrentPage(akitaScenario.getPage("Title"));
+        assertThat(akitaScenario.getCurrentPage(), is(notNullValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setCurrentPageNegative() {
-        testScenario.setCurrentPage(null);
+        akitaScenario.setCurrentPage(null);
     }
 
 }

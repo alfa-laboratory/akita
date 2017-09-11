@@ -1,10 +1,10 @@
 package ru.alfabank;
 
-import ru.alfabank.alfatest.cucumber.api.TestPage;
+import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 
 /**
  * Created by alexander on 02.08.17.
  */
-@TestPage.Name("RedirectionPage")
-public class RedirectionPage extends TestPage {
+@AkitaPage.Name("RedirectionPage")
+public class RedirectionPage extends AkitaPage {
 }
