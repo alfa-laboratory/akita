@@ -18,11 +18,7 @@ import java.util.List;
 import static com.codeborne.selenide.Selenide.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
-/**
- * Created by onotole on 08.02.17.
- */
 public class DefaultStepsTest {
     private static DefaultSteps ds;
     private static AkitaScenario akitaScenario;

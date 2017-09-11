@@ -17,9 +17,6 @@ import ru.alfabank.steps.DefaultSteps;
 import java.io.File;
 import java.util.LinkedList;
 
-/**
- * Created by alexander on 02.08.17.
- */
 public class SpectatorsTest {
     private static AkitaScenario akitaScenario;
     private static AkitaPageMock page;

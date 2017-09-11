@@ -4,14 +4,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 
-import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertTrue;
 
-/**
- * Created by alexander on 02.08.17.
- */
 public class ScopedVariablesTest {
     private static ScopedVariables variables;
 

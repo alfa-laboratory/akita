@@ -72,7 +72,7 @@ public final class AkitaScenario {
      * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
      * Проверка отображения всех элементов страницы опциональна
      *
-     * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
+     * @param clazz                   класс страницы, доступ к полям и методам которой необходимо получить
      * @param checkIfElementsAppeared флаг, отвечающий за проверку отображения всех элементов страницы, не помеченных аннотацией @Optional
      */
     public static <T extends AkitaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
@@ -99,6 +99,7 @@ public final class AkitaScenario {
 
     /**
      * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в AkitaEnvironment
+     *
      * @param name - имя переменной, для которй необходимо получить ранее сохраненное значение
      */
     public Object getVar(String name) {
@@ -116,7 +117,8 @@ public final class AkitaScenario {
 
     /**
      * Получение страницы по классу с возможностью выполнить проверку отображения элементов страницы
-     * @param clazz - класс страницы, которую необходимо получить
+     *
+     * @param clazz                   - класс страницы, которую необходимо получить
      * @param checkIfElementsAppeared - флаг, определяющий проверку отображения элементов на странице
      */
     public <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
@@ -125,6 +127,7 @@ public final class AkitaScenario {
 
     /**
      * Получение страницы по классу (проверка отображения элементов страницы не выполняется)
+     *
      * @param clazz - класс страницы, которую необходимо получить
      */
     public <T extends AkitaPage> T getPage(Class<T> clazz) {
@@ -133,8 +136,9 @@ public final class AkitaScenario {
 
     /**
      * Получение страницы по классу и имени (оба параметра должны совпадать)
+     *
      * @param clazz - класс страницы, которую необходимо получить
-     * @param name - название страницы, заданное в аннотации @Name
+     * @param name  - название страницы, заданное в аннотации @Name
      */
     public <T extends AkitaPage> T getPage(Class<T> clazz, String name) {
         return this.getEnvironment().getPage(clazz, name);
@@ -150,16 +154,17 @@ public final class AkitaScenario {
     }
 
     /**
-     *  Добавление переменной в пул "variables" в классе AkitaEnvironment
-     *  @param name имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AkitaEnvironment
-     *  @param object значение, которое нужно сохранить в переменную
+     * Добавление переменной в пул "variables" в классе AkitaEnvironment
+     *
+     * @param name   имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AkitaEnvironment
+     * @param object значение, которое нужно сохранить в переменную
      */
     public void setVar(String name, Object object) {
         this.getEnvironment().setVar(name, object);
     }
 
     /**
-     *  Получение всех переменных из пула "variables" в классе AkitaEnvironment
+     * Получение всех переменных из пула "variables" в классе AkitaEnvironment
      */
     public ScopedVariables getVars() {
         return this.getEnvironment().getVars();

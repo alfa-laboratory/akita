@@ -141,8 +141,8 @@ public abstract class AkitaPage extends ElementsContainer {
      * Обертка над Selenide.waitUntil для произвольного количества элементов
      *
      * @param condition Selenide.Condition
-     * @param timeout максимальное время ожидания для перехода элементов в заданное состояние
-     * @param elements произвольное количество selenide-элементов
+     * @param timeout   максимальное время ожидания для перехода элементов в заданное состояние
+     * @param elements  произвольное количество selenide-элементов
      */
     public void waitElementsUntil(Condition condition, int timeout, SelenideElement... elements) {
         Spectators.waitElementsUntil(condition, timeout, elements);
@@ -185,7 +185,7 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
-     *  Приведение объекта к типу SelenideElement
+     * Приведение объекта к типу SelenideElement
      */
     private static SelenideElement castToSelenideElement(Object object) {
         if (object instanceof SelenideElement) {
@@ -242,6 +242,7 @@ public abstract class AkitaPage extends ElementsContainer {
             throw new IllegalStateException("Найдено несколько аннотаций @Name с одинаковым значением в классе " + this.getClass().getName());
         }
     }
+
     /**
      * Поиск и инициализации элементов страницы без аннотации Optional
      */
