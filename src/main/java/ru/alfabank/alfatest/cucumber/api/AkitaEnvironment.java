@@ -7,10 +7,10 @@ import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import java.util.Arrays;
 
 /**
- * Класс, связанный с AlfaScenario, используется для хранения страниц и переменных внутри сценария
+ * Класс, связанный с AkitaScenario, используется для хранения страниц и переменных внутри сценария
  */
 @Slf4j
-public class AlfaEnvironment {
+public class AkitaEnvironment {
 
     /**
      * Сценарий (Cucumber.api), с которым связана среда
@@ -26,40 +26,40 @@ public class AlfaEnvironment {
      */
     private Pages pages = new Pages();
 
-    public AlfaEnvironment(Scenario scenario) {
+    public AkitaEnvironment(Scenario scenario) {
         this.scenario = scenario;
         initPages();
     }
 
-    public AlfaEnvironment() {
+    public AkitaEnvironment() {
         initPages();
     }
 
     /**
-     * Метод ищет классы, аннотированные "AlfaPage.Name",
+     * Метод ищет классы, аннотированные "AkitaPage.Name",
      * добавляя ссылки на эти классы в поле "pages"
      */
     @SuppressWarnings("unchecked")
     private void initPages() {
-        new AnnotationScanner().getClassesAnnotatedWith(AlfaPage.Name.class)
+        new AnnotationScanner().getClassesAnnotatedWith(AkitaPage.Name.class)
                 .stream()
                 .map(it -> {
-                    if(AlfaPage.class.isAssignableFrom(it)){
-                        return (Class<? extends AlfaPage>)it;
+                    if(AkitaPage.class.isAssignableFrom(it)){
+                        return (Class<? extends AkitaPage>)it;
                     }
-                    else throw new IllegalStateException("Класс " + it.getName() + " должен наследоваться от AlfaPage");
+                    else throw new IllegalStateException("Класс " + it.getName() + " должен наследоваться от AkitaPage");
                 })
                 .forEach(clazz -> pages.put(getClassAnnotationValue(clazz), clazz));
     }
 
     /**
-     * Вспомогательный метод, получает значение аннотации "AlfaPage.Name" для класса
+     * Вспомогательный метод, получает значение аннотации "AkitaPage.Name" для класса
      *
-     * @param c класс, который должен быть аннотирован "AlfaPage.Name"
-     * @return значение аннотации "AlfaPage.Name" для класса
+     * @param c класс, который должен быть аннотирован "AkitaPage.Name"
+     * @return значение аннотации "AkitaPage.Name" для класса
      */
     private String getClassAnnotationValue(Class<?> c) {
-        return Arrays.stream(c.getAnnotationsByType(AlfaPage.Name.class))
+        return Arrays.stream(c.getAnnotationsByType(AkitaPage.Name.class))
                 .findAny()
                 .orElseThrow(AssertionError::new)
                 .value();
@@ -88,11 +88,11 @@ public class AlfaEnvironment {
         return pages;
     }
 
-    public AlfaPage getPage(String name) {
+    public AkitaPage getPage(String name) {
         return pages.get(name);
     }
 
-    public <T extends AlfaPage> T getPage(Class<T> clazz, String name) {
+    public <T extends AkitaPage> T getPage(Class<T> clazz, String name) {
         return pages.get(clazz, name);
     }
 

@@ -11,29 +11,29 @@ import java.util.function.Consumer;
  * Главный класс, отвечающий за сопровождение тестовых шагов
  */
 @Slf4j
-public final class AlfaScenario {
+public final class AkitaScenario {
 
-    private static AlfaScenario instance = new AlfaScenario();
+    private static AkitaScenario instance = new AkitaScenario();
 
     /**
      * Среда прогона тестов, хранит в себе: Cucumber.Scenario,
      * переменные, объявленные пользователем в сценарии и страницы, тестирование которых будет производиться
      */
-    private static AlfaEnvironment environment;
+    private static AkitaEnvironment environment;
 
-    private AlfaScenario() {
+    private AkitaScenario() {
     }
 
-    public static AlfaScenario getInstance() {
+    public static AkitaScenario getInstance() {
         return instance;
     }
 
-    public AlfaEnvironment getEnvironment() {
+    public AkitaEnvironment getEnvironment() {
         return environment;
     }
 
-    public void setEnvironment(AlfaEnvironment alfaEnvironment) {
-        environment = alfaEnvironment;
+    public void setEnvironment(AkitaEnvironment akitaEnvironment) {
+        environment = akitaEnvironment;
     }
 
     public static void sleep(int seconds) {
@@ -43,14 +43,14 @@ public final class AlfaScenario {
     /**
      * Получение страницы, тестирование которой производится в данный момент
      */
-    public AlfaPage getCurrentPage() {
+    public AkitaPage getCurrentPage() {
         return environment.getPages().getCurrentPage();
     }
 
     /**
      * Задание страницы, тестирование которой производится в данный момент
      */
-    public void setCurrentPage(AlfaPage page) {
+    public void setCurrentPage(AkitaPage page) {
         if (page == null) throw new IllegalArgumentException("Происходит переход на несуществующую страницу. " +
                 "Проверь аннотации @Name у используемых страниц");
         environment.getPages().setCurrentPage(page);
@@ -58,24 +58,24 @@ public final class AlfaScenario {
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы, которая передается в метод в качестве аргумента.
-     * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
+     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
      * Проверка отображения всех элементов страницы выполняется всегда
      *
      * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
      */
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
+    public static <T extends AkitaPage> void withPage(Class<T> clazz, Consumer<T> consumer) {
         withPage(clazz, true, consumer);
     }
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы.
-     * Пример использования: withPage(TestPage.class, page -> { some actions with TestPage methods});
+     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
      * Проверка отображения всех элементов страницы опциональна
      *
      * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
      * @param checkIfElementsAppeared флаг, отвечающий за проверку отображения всех элементов страницы, не помеченных аннотацией @Optional
      */
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+    public static <T extends AkitaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIfElementsAppeared, consumer);
     }
 
@@ -86,7 +86,7 @@ public final class AlfaScenario {
         return this.getEnvironment().getPages();
     }
 
-    public AlfaPage getPage(String name) {
+    public AkitaPage getPage(String name) {
         return this.getEnvironment().getPage(name);
     }
 
@@ -98,7 +98,7 @@ public final class AlfaScenario {
     }
 
     /**
-     * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в AlfaEnvironment
+     * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в AkitaEnvironment
      * @param name - имя переменной, для которй необходимо получить ранее сохраненное значение
      */
     public Object getVar(String name) {
@@ -119,7 +119,7 @@ public final class AlfaScenario {
      * @param clazz - класс страницы, которую необходимо получить
      * @param checkIfElementsAppeared - флаг, определяющий проверку отображения элементов на странице
      */
-    public <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
+    public <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         return Pages.getPage(clazz, checkIfElementsAppeared);
     }
 
@@ -127,7 +127,7 @@ public final class AlfaScenario {
      * Получение страницы по классу (проверка отображения элементов страницы не выполняется)
      * @param clazz - класс страницы, которую необходимо получить
      */
-    public <T extends AlfaPage> T getPage(Class<T> clazz) {
+    public <T extends AkitaPage> T getPage(Class<T> clazz) {
         return Pages.getPage(clazz, true);
     }
 
@@ -136,12 +136,12 @@ public final class AlfaScenario {
      * @param clazz - класс страницы, которую необходимо получить
      * @param name - название страницы, заданное в аннотации @Name
      */
-    public <T extends AlfaPage> T getPage(Class<T> clazz, String name) {
+    public <T extends AkitaPage> T getPage(Class<T> clazz, String name) {
         return this.getEnvironment().getPage(clazz, name);
     }
 
     /**
-     * Заменяет в строке все ключи переменных из пула переменных "variables" в классе AlfaEnvironment на их значения
+     * Заменяет в строке все ключи переменных из пула переменных "variables" в классе AkitaEnvironment на их значения
      *
      * @param stringToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
@@ -150,8 +150,8 @@ public final class AlfaScenario {
     }
 
     /**
-     *  Добавление переменной в пул "variables" в классе AlfaEnvironment
-     *  @param name имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AlfaEnvironment
+     *  Добавление переменной в пул "variables" в классе AkitaEnvironment
+     *  @param name имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AkitaEnvironment
      *  @param object значение, которое нужно сохранить в переменную
      */
     public void setVar(String name, Object object) {
@@ -159,7 +159,7 @@ public final class AlfaScenario {
     }
 
     /**
-     *  Получение всех переменных из пула "variables" в классе AlfaEnvironment
+     *  Получение всех переменных из пула "variables" в классе AkitaEnvironment
      */
     public ScopedVariables getVars() {
         return this.getEnvironment().getVars();
