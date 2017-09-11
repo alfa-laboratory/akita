@@ -200,20 +200,6 @@ public class DefaultSteps {
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
-    @Deprecated
-    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
-    public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
-        urlName = loadProperty(urlName, resolveVars(urlName));
-        akitaScenario.write(" url = " + urlName);
-        WebDriverRunner.getWebDriver().get(urlName);
-        loadPage(pageName);
-    }
-
-    /**
-     * Выполняется переход по заданной ссылке.
-     * Шаг содержит проверку, что после перехода загружена заданная страница.
-     * Ссылка может передаваться как строка, так и как ключ из application.properties
-     */
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
         String address = loadProperty(urlOrName, resolveVars(urlOrName));
@@ -314,12 +300,11 @@ public class DefaultSteps {
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String listName, String value) {
         List<SelenideElement> listOfTypeFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        Optional<SelenideElement> itemFound = listOfTypeFromPage.stream().filter(type -> type.innerText().equals(value)).findFirst();
-        if (itemFound.isPresent()) {
-            itemFound.get().click();
-        } else {
-            throw new IllegalArgumentException(String.format("Элемент [%s] не найден в списке [%s] ", value, listName));
-        }
+        listOfTypeFromPage.stream()
+                .filter(type -> type.innerText().equals(value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке [%s] ", value, listName)))
+                .click();
     }
 
     /**

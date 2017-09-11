@@ -38,19 +38,6 @@ public class DefaultApiSteps {
     AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
-     * Посылается http GET/POST/PUT/POST/DELETE/HEAD/TRACE/OPTIONS/PATCH запрос по заданному урлу без параметров и BODY.
-     * Результат сохраняется в заданную переменную
-     * URL можно задать как напрямую в шаге, так и указав в application.properties
-     */
-    @Deprecated
-    @И("^отправлен http \"([^\"]*)\" запрос на URL \"([^\"]*)\" . Полученный ответ сохранен в переменную \"([^\"]*)\"$")
-    public void sendHttpRequest(String typeOfRequest, String address, String variableName) throws Exception {
-        String valueIfNotFoundInProperties = resolveVars(address);
-        address = loadProperty(address, valueIfNotFoundInProperties);
-        sendHttpRequest(typeOfRequest, address, variableName, new ArrayList<>());
-    }
-
-    /**
      * Посылается http GET/POST запрос по заданному урлу без параметров и BODY.
      * Результат сохраняется в заданную переменную
      * URL можно задать как напрямую в шаге, так и указав в application.properties
@@ -153,7 +140,7 @@ public class DefaultApiSteps {
      * @param response     ответ от http запроса
      */
     private void getResponseAndSaveToVariable(String variableName, Response response) {
-        if (200 <= response.statusCode() && response.statusCode() < 300) {
+        if (response.statusCode() >= 200 && response.statusCode() < 300) {
             akitaScenario.setVar(variableName, response.getBody().asString());
             if (log.isDebugEnabled()) akitaScenario.write("Тело ответа : \n" + response.getBody().asString());
         } else {
