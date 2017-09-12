@@ -434,6 +434,15 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что значение в поле содержит видимый текст, указанный в шаге
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит видимый текст \"(.*)\"$")
+    public void testFieldContainsMessageText(String fieldName, String messageText) {
+        String field = akitaScenario.getCurrentPage().getElement(fieldName).getText();
+        assertThat(String.format("Поле [%s] не содержит видимый текст [%s]", fieldName, messageText), field, containsString(messageText));
+    }
+
+    /**
      * Проверка, что значение в поле равно значению, указанному в шаге
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
