@@ -39,7 +39,7 @@ public class DefaultStepsTest {
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
@@ -236,7 +236,7 @@ public class DefaultStepsTest {
 
     @Test
     public void openReadOnlyFormPositive() {
-        ds.goToSelectedPageByLinkFromProperty("RedirectionPage",
+        ds.goToSelectedPageByLinkFromPropertyFile("RedirectionPage",
                 akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
