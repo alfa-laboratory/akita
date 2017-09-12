@@ -64,7 +64,8 @@ public class DefaultApiSteps {
     /**
      * Посылается http GET/POST запрос по заданному урлу с заданными параметрами.
      * И в URL, и в значениях в таблице можно использовать переменные и из application.properties, и из хранилища переменных
-     * из AlfaScenario. Для этого достаточно заключить переменные в фигурные скобки, например: http://{hostname}?user={username}
+     * из AlfaScenario. Для этого достаточно заключить переменные в фигурные скобки, например: http://{hostname}?user={username}.
+     * Content-Type при необходимости должен быть указан в качестве header.
      * Результат сохраняется в заданную переменную
      */
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
@@ -80,6 +81,7 @@ public class DefaultApiSteps {
      * Посылается http GET/POST запрос по заданному урлу с заданными параметрами.
      * Проверяется, что код ответа соответствует ожиданиям.
      * URL можно задать как напрямую в шаге, так и указав в application.properties
+     * Content-Type при необходимости должен быть указан в качестве header.
      */
     @И("^выполнен (GET|POST) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     public void checkResponseCode(String typeOfRequest, String address, int expectedStatusCode, List<RequestParam> paramsTable) throws Exception {
