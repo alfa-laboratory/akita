@@ -325,14 +325,14 @@ public class DefaultStepsTest {
     @Test
     public void setVariableTest() {
         ds.setVariable("ul", "Serious testing page");
-        assertThat(ds.getVar("ul"), equalTo("Serious testing page"));
+        assertThat(akitaScenario.getVar("ul"), equalTo("Serious testing page"));
     }
 
     @Test
     public void getVarsTest() {
-        ds.setVar("1", "1");
-        ds.setVar("2", "2");
-        ScopedVariables scopedVariables = ds.getVars();
+        akitaScenario.setVar("1", "1");
+        akitaScenario.setVar("2", "2");
+        ScopedVariables scopedVariables = akitaScenario.getVars();
         assertThat((String)scopedVariables.get("1") + (String)scopedVariables.get("2"),
                 equalTo("12"));
     }

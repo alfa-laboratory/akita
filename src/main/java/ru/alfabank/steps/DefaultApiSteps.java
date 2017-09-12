@@ -34,7 +34,6 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 @Slf4j
 public class DefaultApiSteps {
 
-    @Delegate
     AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
@@ -191,7 +190,7 @@ public class DefaultApiSteps {
         Response response = request.request(Method.valueOf(typeOfRequest), address);
         int statusCode = response.getStatusCode();
         if (statusCode != expectedStatusCode) {
-            write("Получен неверный статус код ответа " + statusCode + ". Ожидаемый статус код " + expectedStatusCode);
+            akitaScenario.write("Получен неверный статус код ответа " + statusCode + ". Ожидаемый статус код " + expectedStatusCode);
         }
         return statusCode == expectedStatusCode;
     }

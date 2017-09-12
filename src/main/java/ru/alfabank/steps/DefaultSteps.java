@@ -42,7 +42,6 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 @Slf4j
 public class DefaultSteps {
 
-    @Delegate
     AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
@@ -71,7 +70,7 @@ public class DefaultSteps {
      */
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
-        String url = replaceVariables(address);
+        String url = akitaScenario.replaceVariables(address);
         getWebDriver().get(url);
         akitaScenario.write("Url = " + url);
     }
@@ -82,7 +81,7 @@ public class DefaultSteps {
     @Тогда("^текущий URL равен \"([^\"]*)\"$")
     public void checkCurrentURL(String url) {
         String currentUrl = getWebDriver().getCurrentUrl();
-        String expectedUrl = replaceVariables(url);
+        String expectedUrl = akitaScenario.replaceVariables(url);
         assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, is(expectedUrl));
     }
 
@@ -165,8 +164,8 @@ public class DefaultSteps {
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compareTwoVariables(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = getVar(firstVariableName).toString();
-        String secondValueToCompare = getVar(secondVariableName).toString();
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
                 firstValueToCompare, equalTo(secondValueToCompare));
     }
