@@ -2,9 +2,8 @@ package ru.alfabank.other;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.alfabank.AlfaPageMock;
-import ru.alfabank.alfatest.cucumber.api.AlfaPage;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.AkitaPageMock;
+import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.Pages;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -15,12 +14,12 @@ import static org.hamcrest.Matchers.*;
  */
 public class PagesTest {
     private static Pages pages;
-    private static AlfaPageMock alfaPageMock;
+    private static AkitaPageMock alfaPageMock;
 
     @BeforeClass
     public static void init() {
         pages = new Pages();
-        alfaPageMock = new AlfaPageMock();
+        alfaPageMock = new AkitaPageMock();
     }
 
     @Test
@@ -29,7 +28,7 @@ public class PagesTest {
         assertThat(pages.getCurrentPage(), equalTo(alfaPageMock));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = IllegalStateException.class)
     public void setCurrentPageNegative() {
         pages.setCurrentPage(null);
         pages.getCurrentPage();
@@ -43,7 +42,7 @@ public class PagesTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void putNegative() {
-        AlfaPage nullPage = null;
+        AkitaPage nullPage = null;
         pages.put("Test", nullPage);
     }
 

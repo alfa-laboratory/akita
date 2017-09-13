@@ -6,10 +6,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import static java.lang.String.format;
+
 /**
  * Created by onotole on 09.02.17.
  */
 @Slf4j
+@Deprecated
 public class SystemSteps {
     private static final String PDF_PREFIX = "%PDF";
 
@@ -20,13 +23,15 @@ public class SystemSteps {
     /**
      * Проверка, что переданный файл имеет тип PDF
      */
+    @Deprecated
     public static boolean isFilePdf(String filePath) throws FileNotFoundException {
         return isFilePdf(new File(filePath));
     }
 
+    @Deprecated
     public static boolean isFilePdf(File file) throws FileNotFoundException {
         if (!file.exists()) {
-            throw new AssertionError("File not found by path: " + file.getAbsolutePath());
+            throw new FileNotFoundException("Файл не найден по указанному пути: " + file.getAbsolutePath());
         }
         try (Scanner scanner = new Scanner(file)) {
             return scanner.hasNextLine() && scanner.nextLine().startsWith(PDF_PREFIX);
@@ -36,13 +41,12 @@ public class SystemSteps {
     /**
      * В переданном Enum'e ищется элемент, переданный строкой
      */
+    @Deprecated
     public static <E extends Enum<E>> E enumElementLookup(Class<E> e, String id) {
         try {
             return Enum.valueOf(e, id);
         } catch (IllegalArgumentException ex) {
-            log.error("В enum не найден запрошенный элемент: " + id);
-            throw new RuntimeException(
-                    "Invalid value for enum " + e.getSimpleName() + ": " + id);
+            throw new IllegalArgumentException(format("В enum %s не найден запрошенный элемент: %s", e.getClass(), id));
         }
     }
 }

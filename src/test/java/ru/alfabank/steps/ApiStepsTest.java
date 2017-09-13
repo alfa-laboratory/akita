@@ -1,19 +1,20 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.*;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
@@ -22,13 +23,13 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public class ApiStepsTest {
 
     private static DefaultApiSteps api;
-    private static AlfaScenario alfaScenario;
+    private static AkitaScenario akitaScenario;
 
     @BeforeClass
     public static void setup() {
-        alfaScenario = AlfaScenario.getInstance();
+        akitaScenario = AkitaScenario.getInstance();
         api = new DefaultApiSteps();
-        alfaScenario.setEnvironment(new AlfaEnvironment(new StubScenario()));
+        akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
     }
 
     @AfterClass
@@ -41,7 +42,7 @@ public class ApiStepsTest {
 
     @Test
     public void getURLwithPathParamsCalculatedSimple() {
-        assertThat(DefaultApiSteps.getURLwithPathParamsCalculated("alfabank.ru"),
+        assertThat(DefaultApiSteps.resolveVars("alfabank.ru"),
                 equalTo("alfabank.ru"));
     }
 
@@ -53,7 +54,7 @@ public class ApiStepsTest {
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
         api.sendHttpRequest("GET", "/get/resource", "RESPONSE_GET_BODY");
-        assertThat(alfaScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
+        assertThat(akitaScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
@@ -64,7 +65,31 @@ public class ApiStepsTest {
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
         api.sendHttpRequest("POST", "/post/resource", "RESPONSE_POST_BODY");
-        assertThat(alfaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+        assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+    }
+
+    @Test
+    public void sendHttpRequestWithVarsPost() throws java.lang.Exception {
+        String body = "testBodyValue";
+        String bodyVarName = "testBodyName";
+        akitaScenario.setVar(bodyVarName, body);
+
+        stubFor(post(urlEqualTo("/post/resource"))
+                .withRequestBody(WireMock.equalTo(body))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY")));
+
+        List<RequestParam> params = Collections.singletonList(
+                RequestParam.builder()
+                        .name("body")
+                        .type(RequestParamType.BODY)
+                        .value("{" + bodyVarName + "}")
+                        .build());
+
+        api.sendHttpRequestSaveResponse("POST", "/post/resource", "RESPONSE_POST_BODY", params);
+        assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
@@ -89,7 +114,7 @@ public class ApiStepsTest {
         paramTable.add(requestParamBody);
         api.sendHttpRequestSaveResponse("POST", "/post/saveWithTable",
                 "TEST_HTTP", paramTable);
-        assertThat(alfaScenario.getVar("TEST_HTTP"), equalTo("TEST_BODY_1"));
+        assertThat(akitaScenario.getVar("TEST_HTTP"), equalTo("TEST_BODY_1"));
     }
 
     @Test

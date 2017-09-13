@@ -8,10 +8,10 @@ import cucumber.api.Scenario;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.alfabank.AlfaPageMock;
+import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.steps.DefaultSteps;
 
 import java.io.File;
@@ -21,20 +21,20 @@ import java.util.LinkedList;
  * Created by alexander on 02.08.17.
  */
 public class SpectatorsTest {
-    private static AlfaScenario alfaScenario;
-    private static AlfaPageMock page;
+    private static AkitaScenario akitaScenario;
+    private static AkitaPageMock page;
 
     @BeforeClass
     public static void setup() {
-        alfaScenario = AlfaScenario.getInstance();
+        akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
-        alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         DefaultSteps ds = new DefaultSteps();
-        page = (AlfaPageMock)alfaScenario.getPage("AlfaPageMock");
-        String inputFilePath = "src/test/resources/AlfaPageMock.html";
+        page = (AkitaPageMock) akitaScenario.getPage("AkitaPageMock");
+        String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
-        alfaScenario.setVar("Page", "file://" + url);
-        ds.goToSelectedPageByLinkFromProperty("AlfaPageMock", alfaScenario.getVar("Page").toString());
+        akitaScenario.setVar("Page", "file://" + url);
+        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
@@ -44,7 +44,7 @@ public class SpectatorsTest {
     public void waitElementsUntilPositiveElements() {
         SelenideElement mockId = page.mockId;
         SelenideElement mockCss = page.mockCss;
-        alfaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
+        akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
                 1000, mockCss, mockId);
     }
 
@@ -55,14 +55,14 @@ public class SpectatorsTest {
         LinkedList<SelenideElement> list = new LinkedList<>();
         list.add(mockCss);
         list.add(mockId);
-        alfaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
+        akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
                 1000, list);
     }
 
     @Test(expected = NullPointerException.class)
     public void waitElementsUntilNull() {
         SelenideElement nullElement = null;
-        alfaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
+        akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
                 1000, nullElement);
     }
 
@@ -70,14 +70,14 @@ public class SpectatorsTest {
     public void waitElementsUntilNegative() {
         SelenideElement mockId = page.mockId;
         SelenideElement mockCss = page.mockCss;
-        alfaScenario.getCurrentPage().waitElementsUntil(Condition.disappear,
+        akitaScenario.getCurrentPage().waitElementsUntil(Condition.disappear,
                 1000, mockCss, mockId);
     }
 
     @Test
     public void waitElementsUntilEmptyList() {
         LinkedList<SelenideElement> list = new LinkedList<>();
-        alfaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
+        akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
                 1000, list);
     }
 
@@ -88,7 +88,7 @@ public class SpectatorsTest {
         LinkedList<SelenideElement> list = new LinkedList<>();
         list.add(nullElement1);
         list.add(nullElement2);
-        alfaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
+        akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
                 1000, list);
     }
 }

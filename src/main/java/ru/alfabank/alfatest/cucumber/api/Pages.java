@@ -7,62 +7,98 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Created by ruslanmikhalev on 27/01/17.
+ * Предназначен для хранения страниц, используемых при прогоне тестов
  */
 public final class Pages {
-    private Map<String, AlfaPage> pages;
-    private AlfaPage currentPage;
+
+    /**
+     * Страницы, на которых будет производится тестирование < Имя, Страница >
+     */
+    private Map<String, AkitaPage> pages;
+
+    /**
+     * Страница, на которой в текущий момент производится тестирование
+     */
+    private AkitaPage currentPage;
 
     public Pages() {
         pages = Maps.newHashMap();
     }
 
-    public AlfaPage getCurrentPage() {
-        if (currentPage == null) throw new AssertionError("Current Page empty!");
+
+    /**
+     *  Возвращает текущую страницу, на которой в текущий момент производится тестирование
+     */
+    public AkitaPage getCurrentPage() {
+        if (currentPage == null) throw new IllegalStateException("Текущая страница не задана");
         return currentPage;
     }
 
-    public void setCurrentPage(AlfaPage page) {
+    /**
+     *  Задает текущую страницу по ее имени
+     */
+    public void setCurrentPage(AkitaPage page) {
         this.currentPage = page;
     }
 
-    public static <T extends AlfaPage> void withPage(Class<T> clazz, boolean checkIsAppeared, Consumer<T> consumer) {
-        T page = getPage(clazz, checkIsAppeared);
+    /**
+     * Реализация анонимных методов со страницей в качестве аргумента
+     *
+     * @param clazz класс страницы
+     * @param checkIfElementsAppeared проверка всех не помеченных "@Optional" элементов
+     */
+    public static <T extends AkitaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
+        T page = getPage(clazz, checkIfElementsAppeared);
         consumer.accept(page);
     }
 
-    public AlfaPage get(String name) {
-        return getPageMapInstanceInternal().get(name);
+    /**
+     * Получение страницы из "pages" по имени
+     */
+    public AkitaPage get(String pageName) {
+        return getPageMapInstanceInternal().get(pageName);
     }
 
+    /**
+     * Получение страницы по классу
+     */
     @SuppressWarnings("unchecked")
-    public <T extends AlfaPage> T get(Class<T> clazz, String name) {
-        AlfaPage page = getPageMapInstanceInternal().get(name);
+    public <T extends AkitaPage> T get(Class<T> clazz, String name) {
+        AkitaPage page = getPageMapInstanceInternal().get(name);
         if(!clazz.isInstance(page)) {
             throw new IllegalStateException(name + " page is not a instance of " + clazz + ". Named page is a " + page);
         }
         return (T) page;
     }
 
-    private Map<String, ? extends AlfaPage> getPageMapInstanceInternal() {
+    private Map<String, ? extends AkitaPage> getPageMapInstanceInternal() {
         return pages;
     }
 
-    public <T extends AlfaPage> void put(String pageName, T page) throws IllegalArgumentException {
+    /**
+     * Добавление инстанциированной страницы в "pages" с проверкой на NULL
+     */
+    public <T extends AkitaPage> void put(String pageName, T page) throws IllegalArgumentException {
         if (page == null)
             throw new IllegalArgumentException("Была передана пустая страница");
         pages.put(pageName, page);
     }
 
-    public static <T extends AlfaPage> T getPage(Class<T> clazz, boolean checkIsAppeared) {
+    /**
+     * Получение страницы по классу с возможностью выполнить проверку элементов страницы
+     */
+    public static <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         T page = Selenide.page(clazz);
-        if(checkIsAppeared) {
+        if(checkIfElementsAppeared) {
             page.isAppeared();
         }
         return page;
     }
 
-    public void put(String key, Class<? extends AlfaPage> clazz) {
-        pages.put(key, Selenide.page(clazz).initialize());
+    /**
+     * Добавление страницы в "pages" по классу
+     */
+    public void put(String pageName, Class<? extends AkitaPage> clazz) {
+        pages.put(pageName, Selenide.page(clazz).initialize());
     }
 }
