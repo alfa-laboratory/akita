@@ -252,9 +252,8 @@ public class DefaultSteps {
      */
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
-        cleanField(elementName);
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
         valueInput.setValue(String.valueOf(value));
     }
 
@@ -263,7 +262,7 @@ public class DefaultSteps {
      */
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(nameOfField);
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(nameOfField);
         valueInput.setValue(" ").submit();
         valueInput.doubleClick().sendKeys(Keys.DELETE);
     }
