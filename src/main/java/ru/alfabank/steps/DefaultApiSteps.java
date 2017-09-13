@@ -12,6 +12,7 @@ import ru.alfabank.tests.core.rest.RequestParam;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,9 +117,9 @@ public class DefaultApiSteps {
                     break;
                 case BODY:
                     String folderNameForRequestBodies = getPropertyOrValue("requestBodies");
-                    String path = String.join(File.separator, "src", "main", "java", folderNameForRequestBodies, paramValue);
+                    Path path = Paths.get(File.separator, "src", "main", "java", folderNameForRequestBodies, paramValue);
                     try {
-                        body = new String(Files.readAllBytes(Paths.get(path)));
+                        body = new String(Files.readAllBytes(path), "UTF-8");
                     } catch (IOException e) {
                         body = paramValue;
                     }
