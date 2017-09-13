@@ -1,7 +1,10 @@
 buildscript {
     repositories {
-        jcenter()
-        mavenCentral()
+        maven {
+            url 'http://mvn/artifactory/public'
+        }
+        //jcenter()
+        //mavenCentral()
     }
 
     dependencies {
@@ -13,8 +16,11 @@ buildscript {
 }
 
 repositories {
-    jcenter()
-    mavenCentral()
+    maven {
+        url 'http://mvn/artifactory/public'
+    }
+    //jcenter()
+    //mavenCentral()
 }
 
 apply plugin: 'java'
@@ -25,7 +31,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'nebula.nebula-release'
 apply plugin: 'org.sonarqube'
-//apply plugin: 'jacoco'
+apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 tasks.release.dependsOn tasks.artifactoryPublish
@@ -46,7 +52,7 @@ dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
     compile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'com.codeborne', name: 'selenide', version: '4.4'
+    compile group: 'com.codeborne', name: 'selenide', version: '4.5'
     compile group: 'info.cukes', name: 'cucumber-java', version: cucumberVersion
     compile group: 'info.cukes', name: 'cucumber-core', version: cucumberVersion
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
@@ -55,7 +61,7 @@ dependencies {
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
 
     testCompile "org.mockito:mockito-core:2.+"
-    testCompile "com.github.tomakehurst:wiremock:2.+"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -86,21 +92,21 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-artifactory {
+//artifactory {
 
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = 'Autotests'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publications ('maven')
-        }
-    }
-}
+// contextUrl = "${artifactory_contextUrl}"
+// publish {
+//    repository {
+//       repoKey = 'Autotests'
+//      username = "${artifactory_user}"
+//     password = "${artifactory_password}"
+//     maven = true
+//  }
+//  defaults {
+//     publications ('maven')
+//  }
+// }
+//}
 
 artifactoryPublish {
     dependsOn jar
@@ -108,7 +114,7 @@ artifactoryPublish {
 
 test {
     maxParallelForks = 1
-    ignoreFailures = true
+    ignoreFailures = false
 
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=${browser}"
@@ -125,10 +131,10 @@ test {
     }
 }
 
-//jacocoTestReport {
-//    reports {
-//        xml.enabled true
-//        csv.enabled true
-//        html.destination "${buildDir}/jacocoHtml"
-//    }
-//}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}

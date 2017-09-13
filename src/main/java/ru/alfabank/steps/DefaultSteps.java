@@ -6,13 +6,11 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -30,14 +28,14 @@ import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static ru.alfabank.steps.DefaultApiSteps.getURLwithPathParamsCalculated;
+import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
- * В alfaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
+ * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
  * Каждая страница, с которой предполагается взаимодействие, должна быть описана в соответствующем классе,
- * наследующем AlfaPage. Для каждого элемента следует задать имя на русском, через аннотацию @Name, чтобы искать
+ * наследующем AkitaPage. Для каждого элемента следует задать имя на русском, через аннотацию @Name, чтобы искать
  * можно было именно по русскому описанию, а не по селектору. Селекторы следует хранить только в классе страницы,
  * не в степах, в степах - взаимодействие по русскому названию элемента.
  */
@@ -45,21 +43,21 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 public class DefaultSteps {
 
     @Delegate
-    AlfaScenario alfaScenario = AlfaScenario.getInstance();
+    AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
-     * Читаем значение переменной из application.properties и сохраняем в переменную в alfaScenario,
-     * для дальнейшего переиспользования
+     * Значение заданной переменной из application.properties сохраняется в переменную в akitaScenario
+     * для дальнейшего использования
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
-    public void saveValueToVar(String globalVarName, String varName) {
-        alfaScenario.setVar(varName, loadProperty(globalVarName));
+    public void saveValueToVar(String propertyVariableName, String variableName) {
+        akitaScenario.setVar(variableName, loadProperty(propertyVariableName));
     }
 
     /**
-     * Обновляем страницу страницы
+     * Выполняется обновление страницы
      */
     @И("^выполнено обновление текущей страницы$")
     public void refreshPage() {
@@ -67,13 +65,15 @@ public class DefaultSteps {
     }
 
     /**
-     * Переходим по ссылке, разрезолвливая переменные из хранилища alfaScenario
+     * Выполняется переход по заданной ссылке,
+     * при этом все ключи переменных в фигурных скобках
+     * меняются на их значения из хранилища akitaScenario
      */
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
         String url = replaceVariables(address);
         getWebDriver().get(url);
-        alfaScenario.write("Url = " + url);
+        akitaScenario.write("Url = " + url);
     }
 
     /**
@@ -83,122 +83,147 @@ public class DefaultSteps {
     public void checkCurrentURL(String url) {
         String currentUrl = getWebDriver().getCurrentUrl();
         String expectedUrl = replaceVariables(url);
-        alfaScenario.write("current URL = " + currentUrl + "\n" +
-                "expected URL = " + expectedUrl);
-        assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, Matchers.is(expectedUrl));
+        assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, is(expectedUrl));
     }
 
     /**
-     * На странице ищется элемент и по нему кликается
+     * На странице происходит клик по заданному элементу
      */
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
     public void clickOnElement(String elementName) {
-        alfaScenario.getCurrentPage().getElement(elementName).click();
+        akitaScenario.getCurrentPage().getElement(elementName).click();
     }
 
     /**
-     * Проверка, что в течении 10 секунд ожидается появление элемента(не списка) на странице
+     * Проверка появления элемента(не списка) на странице в течение DEFAULT_TIMEOUT.
+     * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
+     * таймаут равен 10 секундам
      */
-    @И("^элемент \"([^\"]*)\" отображается на странице$")
-    public void elemIsPresentedOnPage(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
+    @Тогда("^элемент \"([^\"]*)\" отображается на странице$")
+    public void elemIsPresentedOnPage(String elementName) {
+        akitaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
     /**
-     * Проверка. В течение заданного количества секунд ожидается появление элемента(не списка) на странице
+     * Проверка появления элемента(не списка) на странице в течение
+     * заданного количества секунд
      */
-    @И("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
-    public void testElementAppeared(String elemName, int seconds) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, seconds * 1000, alfaScenario.getCurrentPage().getElement(elemName)
+    @Тогда("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
+    public void testElementAppeared(String elementName, int seconds) {
+        akitaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
     /**
-     * Время задается в application.properties как "waitingCustomElementsTimeout" или по дефолту 10 секунд
-     * Проверка, что в течении нескольких секунд ожидается появление списка на странице
+     * Проверка появления списка на странице в течение DEFAULT_TIMEOUT.
+     * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
+     * таймаут равен 10 секундам
      */
-    @И("^список \"([^\"]*)\" отображается на странице$")
-    public void listIsPresentedOnPage(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElementsList(elemName)
+    @Тогда("^список \"([^\"]*)\" отображается на странице$")
+    public void listIsPresentedOnPage(String elementName) {
+        akitaScenario.getCurrentPage().waitElementsUntil(
+                Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElementsList(elementName)
         );
     }
 
     /**
-     * Проверка. В течении 10 секунд ожидаем пока элемент исчезнет (станет невидимым)
+     * Проверка того, что элемент исчезнет со страницы (станет невидимым) в течение DEFAULT_TIMEOUT.
+     * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
+     * таймаут равен 10 секундам
      */
-    @И("^ожидается исчезновение элемента \"([^\"]*)\"")
-    public void elemDisappered(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName));
+    @Тогда("^ожидается исчезновение элемента \"([^\"]*)\"")
+    public void elemDisappered(String elementName) {
+        akitaScenario.getCurrentPage().waitElementsUntil(
+                Condition.disappears, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
     }
 
     /**
-     * Проверяем, что все элементы, которые описаны в классе страницы с аннотацией @Name, но без аннотации @Optional,
-     * видны на странице. При необходимости ждем.
+     * Проверка того, что все элементы, которые описаны в классе страницы с аннотацией @Name,
+     * но без аннотации @Optional появились на странице
+     * в течение WAITING_APPEAR_TIMEOUT, которое равно значению свойства "waitingAppearTimeout"
+     * из application.properties. Если свойство не найдено, время таймаута равно 8 секундам
      */
-    @Когда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
+    @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
-        alfaScenario.setCurrentPage(alfaScenario.getPage(nameOfPage));
-        alfaScenario.getCurrentPage().appeared();
+        akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
+        akitaScenario.getCurrentPage().appeared();
     }
 
     /**
-     * Задать значение переменной в хранилище переменных. Один из кейсов: установка userCus для степов, использующих его.
+     * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
      */
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
-    public void setVariable(String varName, String value) {
-        alfaScenario.setVar(varName, value);
+    public void setVariable(String variableName, String value) {
+        akitaScenario.setVar(variableName, value);
     }
 
     /**
-     * Проверка. Из хранилища достаются значения двух перменных, и сравниваются на равенство. (для строк)
+     * Проверка равенства двух переменных из хранилища
      */
-    @Когда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compareTwoVariables(String varName1, String varName2) {
-        String s1 = getVar(varName1).toString();
-        String s2 = getVar(varName2).toString();
-        assertThat("строки не совпадают", s1, equalTo(s2));
+    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
+    public void compareTwoVariables(String firstVariableName, String secondVariableName) {
+        String firstValueToCompare = getVar(firstVariableName).toString();
+        String secondValueToCompare = getVar(secondVariableName).toString();
+        assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
+                firstValueToCompare, equalTo(secondValueToCompare));
     }
 
     /**
-     * Проверка. Текстовое значение из поля совпадает со значением заданной переменной из хранилища.
+     * Проверка того, что значение из поля совпадает со значением заданной переменной из хранилища
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" совпадает со значением из переменной \"([^\"]*)\"$")
-    public void compareFieldAndVariable(String fieldName, String variableName) {
-        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        String expectedValue = alfaScenario.getVar(variableName).toString();
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
+    public void compareFieldAndVariable(String elementName, String variableName) {
+        String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
+        String expectedValue = akitaScenario.getVar(variableName).toString();
+        assertThat(String.format("Значение поля [%s] не совпадает со значением из переменной [%s]", elementName, variableName),
+                expectedValue, equalTo(actualValue));
     }
 
     /**
-     * Проверка. Из хранилища достаём список по заданному ключу. Проверяем, что текстовое значение из поля содержится в списке.
+     * Проверка того, что значение из поля содержится в списке,
+     * полученном из хранилища переменных по заданному ключу
      */
     @SuppressWarnings("unchecked")
-    @Тогда("^список из переменной \"([^\"]*)\" содердит значение (?:поля|элемента) \"([^\"]*)\" $")
-    public void checkIfListContainsValueFromField(String fieldName, String variableListName) {
-        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        List<String> listFromVariable = ((List<String>) alfaScenario.getVar(variableListName));
-        assertTrue("Значения нет в списке", listFromVariable.contains(actualValue));
+    @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\" $")
+    public void checkIfListContainsValueFromField(String elementName, String variableListName) {
+        String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
+        List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
+        assertTrue(String.format("Список из переменной [%s] не содержит значение поля [%s]", elementName, variableListName),
+                listFromVariable.contains(actualValue));
     }
 
     /**
-     * Совершается переход по заданной ссылке.
+     * Выполняется переход по заданной ссылке.
+     * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
+    @Deprecated
     @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) = \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromProperty(String pageName, String urlName) {
-        urlName = loadProperty(urlName, getURLwithPathParamsCalculated(urlName));
-        alfaScenario.write(" url = " + urlName);
+        urlName = loadProperty(urlName, resolveVars(urlName));
+        akitaScenario.write(" url = " + urlName);
         WebDriverRunner.getWebDriver().get(urlName);
         loadPage(pageName);
     }
 
     /**
-     * Ожидание заданное количество секунд
+     * Выполняется переход по заданной ссылке.
+     * Шаг содержит проверку, что после перехода загружена заданная страница.
+     * Ссылка может передаваться как строка, так и как ключ из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
+    public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
+        String address = loadProperty(urlOrName, resolveVars(urlOrName));
+        akitaScenario.write(" url = " + address);
+        WebDriverRunner.getWebDriver().get(address);
+        loadPage(pageName);
+    }
+
+    /**
+     * Ожидание в течение заданного количества секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) (?:секунд|секунды)")
     public void waitForSeconds(long seconds) {
@@ -206,15 +231,15 @@ public class DefaultSteps {
     }
 
     /**
-     * проверка, что блок исчез/стал невидимым
+     * Проверка того, что блок исчез/стал невидимым
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
-        alfaScenario.getPage(nameOfPage).disappeared();
+        akitaScenario.getPage(nameOfPage).disappeared();
     }
 
     /**
-     * Эмулирует нажатие на клавиатуре клавиш.
+     * Эмулирует нажатие клавиш на клавиатуре
      */
     @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
@@ -223,17 +248,18 @@ public class DefaultSteps {
     }
 
     /**
-     * Ищется указанное текстовое поле и устанавливается в него заданное значение. Перед использованием поле нужно очистить
+     * Устанавливается значение в заданное поле. Перед использованием поле нужно очистить
      */
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
         SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         valueInput.setValue(String.valueOf(value));
     }
 
     /**
-     * Ищется поле и очишается
+     * Очищается заданное поле
      */
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
@@ -243,14 +269,13 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что поле для ввода пустое
+     * Проверка, что поле для ввода пусто
      */
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String fieldName) {
-        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
-        assertThat("Поле '" + fieldName + "' содержит значение",
-                alfaScenario.getCurrentPage().getAnyElementText(fieldName),
-                Matchers.isEmptyOrNullString());
+        assertThat(String.format("Поле [%s] не пусто", fieldName),
+                akitaScenario.getCurrentPage().getAnyElementText(fieldName),
+                isEmptyOrNullString());
     }
 
     /**
@@ -272,36 +297,37 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что в списке со страницы есть перечисленные в таблице элементы
+     * Проверка, что список со страницы состоит только из элементов,
+     * перечисленных в таблице
      */
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
-    public void checkIfListConsistsOfTableElements(String nameOfList, List<String> listOfType) {
-        List<String> actualValues = alfaScenario.getCurrentPage().getAnyElementsListTexts(nameOfList);
+    public void checkIfListConsistsOfTableElements(String listName, List<String> textTable) {
+        List<String> actualValues = akitaScenario.getCurrentPage().getAnyElementsListTexts(listName);
         int numberOfTypes = actualValues.size();
-        assertThat("Количество элементов в списке не соответсвует ожиданию", numberOfTypes, Matchers.is(listOfType.size()));
-        assertTrue("Списки не совпадают", actualValues.containsAll(listOfType));
+        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
+        assertTrue(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), actualValues.containsAll(textTable));
     }
 
     /**
-     * В списке со страницу кликаем по элементу, содержащим заданное значение
+     * Выбор из списка со страницы элемента с заданным значением
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
-    public void checkIfSelectedListElementMatchesValue(String nameOfList, String nameOfValue) {
-        List<SelenideElement> listOfTypeFromPage = alfaScenario.getCurrentPage().getElementsList(nameOfList);
-        Optional<SelenideElement> itemFound = listOfTypeFromPage.stream().filter(type -> type.innerText().equals(nameOfValue)).findFirst();
+    public void checkIfSelectedListElementMatchesValue(String listName, String value) {
+        List<SelenideElement> listOfTypeFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        Optional<SelenideElement> itemFound = listOfTypeFromPage.stream().filter(type -> type.innerText().equals(value)).findFirst();
         if (itemFound.isPresent()) {
             itemFound.get().click();
         } else {
-            throw new IllegalStateException("Элемент не найден в списке");
+            throw new IllegalArgumentException(String.format("Элемент [%s] не найден в списке [%s] ", value, listName));
         }
     }
 
     /**
      * Сохранение значения элемента в переменную
-     * */
+     */
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
-    public void storeElementValueInVariable(String element, String variableName) {
-        alfaScenario.setVar(variableName, alfaScenario.getCurrentPage().getAnyElementText(element));
+    public void storeElementValueInVariable(String elementName, String variableName) {
+        akitaScenario.setVar(variableName, akitaScenario.getCurrentPage().getAnyElementText(elementName));
     }
 
     /**
@@ -312,7 +338,7 @@ public class DefaultSteps {
      */
     @Тогда("^верно, что \"([^\"]*)\"$")
     public void expressionExpression(String expression) {
-        alfaScenario.getVars().evaluate("assert(" + expression + ")");
+        akitaScenario.getVars().evaluate("assert(" + expression + ")");
     }
 
     /**
@@ -320,41 +346,51 @@ public class DefaultSteps {
      */
     @И("^выполнен переход на страницу \"([^\"]*)\" после нажатия на (?:ссылку|кнопку) \"([^\"]*)\"$")
     public void urlClickAndCheckRedirection(String pageName, String elementName) {
-        alfaScenario.getCurrentPage().getElement(elementName).click();
+        akitaScenario.getCurrentPage().getElement(elementName).click();
         loadPage(pageName);
-        alfaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
+        akitaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
     }
 
     /**
-     * Ввод логин/пароля
+     * Шаг авторизации.
+     * Для того, чтобы шаг работал, на текущей странице должны быть указаны элементы
+     * со значениями аннотации @Name:
+     * "Логин" - для поля ввода логина,
+     * "Пароль" - для поля ввода пароля и
+     * "Войти" - для кнопки входа.
+     * Также должны быть указаны логин и пароль в файле application.properties.
+     * Например для шага: "Пусть пользователь user ввел логин и пароль"
+     * логин и пароль должны быть указаны со следующими ключами:
+     * user.login - для логина и
+     * user.password - для пароля
      */
     @Пусть("^пользователь \"([^\"]*)\" ввел логин и пароль$")
     public void loginByUserData(String userCode) {
         String login = loadProperty(userCode + ".login");
         String password = loadProperty(userCode + ".password");
         cleanField("Логин");
-        alfaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
+        akitaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
         cleanField("Пароль");
-        alfaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
-        alfaScenario.getCurrentPage().getElement("Войти").click();
+        akitaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
+        akitaScenario.getCurrentPage().getElement("Войти").click();
     }
 
     /**
-     * Выполнено наведение курсора на элемент
+     * Выполняется наведение курсора на элемент
      */
     @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
-    public void elementHover(String fieldname) {
-        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldname);
+    public void elementHover(String elementName) {
+        SelenideElement field = akitaScenario.getCurrentPage().getElement(elementName);
         field.hover();
     }
 
     /**
-     * Проверка, что элемент не отображается на странице
+     * Проверка того, что элемент не отображается на странице
      */
     @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
-    public void elementIsNotVisible(String elemName) {
-        alfaScenario.getCurrentPage().waitElementsUntil(
-                not(Condition.appear), DEFAULT_TIMEOUT, alfaScenario.getCurrentPage().getElement(elemName)
+    public void elementIsNotVisible(String elementName) {
+        akitaScenario.getCurrentPage().waitElementsUntil(
+                not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
@@ -362,21 +398,25 @@ public class DefaultSteps {
      * Проверка, что элемент на странице кликабелен
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
-    public void clickableField(String field) {
-        SelenideElement element = alfaScenario.getCurrentPage().getElement(field);
-        assertTrue(String.format("элемент [%s] не кликабелен", field), element.isEnabled());
+    public void clickableField(String elementName) {
+        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
+        assertTrue(String.format("Элемент [%s] не кликабелен", elementName), element.isEnabled());
     }
 
     /**
      * Проверка, что у элемента есть атрибут с ожидаемым значением
      */
     @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"(.*)\"$")
-    public void checkElemContainsAtrWithValue(String elemName, String atrName, String expectedAtrValue) {
-        SelenideElement currentElement = alfaScenario.getCurrentPage().getElement(elemName);
-        String currentAtrValue = currentElement.attr(atrName);
-        assertThat("значения не совпали", currentAtrValue, equalToIgnoringCase(expectedAtrValue));
+    public void checkElemContainsAtrWithValue(String elementName, String attribute, String expectedAttributeValue) {
+        SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
+        String currentAtrValue = currentElement.attr(attribute);
+        assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
+                , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
     }
 
+    /**
+     * Выполняется переход в конец страницы
+     */
     @И("^совершен переход в конец страницы$")
     public void scrollDown() {
         Actions actions = new Actions(getWebDriver());
@@ -388,36 +428,45 @@ public class DefaultSteps {
      * Проверка, что значение в поле содержит значение, указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
-    public void testActualValueContainsSubstring(String fieldName, String expectedValue) {
-        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        assertThat("В поле нет ожидаемой подстроки", actualValue, containsString(expectedValue));
+    public void testActualValueContainsSubstring(String elementName, String expectedValue) {
+        String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
+        assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
+    }
+
+    /**
+     * Проверка, что значение в поле содержит видимый текст, указанный в шаге
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит видимый текст \"(.*)\"$")
+    public void testFieldContainsMessageText(String fieldName, String messageText) {
+        String field = akitaScenario.getCurrentPage().getElement(fieldName).getText();
+        assertThat(String.format("Поле [%s] не содержит видимый текст [%s]", fieldName, messageText), field, containsString(messageText));
     }
 
     /**
      * Проверка, что значение в поле равно значению, указанному в шаге
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
-    public void compareValInFieldAndFromStep(String fieldName, String expectedValue) {
-        String actualValue = alfaScenario.getCurrentPage().getAnyElementText(fieldName);
-        assertEquals("Значения не совпадают", expectedValue, actualValue);
+    public void compareValInFieldAndFromStep(String elementName, String expectedValue) {
+        String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
+        assertThat(String.format("Значение поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), expectedValue, equalTo(actualValue));
     }
 
     /**
      * Проверка, что кнопка/ссылка недоступна для нажатия
      */
     @Тогда("^(?:ссылка|кнопка) \"([^\"]*)\" недоступна для нажатия$")
-    public void buttonIsNotActive(String fieldName) {
-        SelenideElement element = alfaScenario.getCurrentPage().getElement(fieldName);
-        assertTrue("Элемент доступен для нажатия", element.is(Condition.disabled));
+    public void buttonIsNotActive(String elementName) {
+        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
+        assertTrue(String.format("Элемент [%s] кликабелен", elementName), element.is(Condition.disabled));
     }
 
     /**
      * Проверка, что поле нередактируемо
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен) для редактирования$")
-    public void fieldIsDisable(String fieldName) {
-        SelenideElement element = alfaScenario.getCurrentPage().getElement(fieldName);
-        assertTrue("Элемент доступен для редактирования", element.is(Condition.disabled));
+    public void fieldIsDisable(String elementName) {
+        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
+        assertTrue(String.format("Элемент [%s] доступен для редактирования", elementName), element.is(Condition.disabled));
     }
 
     /**
@@ -426,10 +475,10 @@ public class DefaultSteps {
      */
     @SuppressWarnings("unchecked")
     @Тогда("^список \"([^\"]*)\" со страницы совпадает со списком \"([^\"]*)\"$")
-    public void compareListFromUIAndFromVariable(String listName, String variableName) {
-        HashSet<String> expectedList = new HashSet<>((List<String>) alfaScenario.getVar(variableName));
-        HashSet<String> actualList = new HashSet<>(alfaScenario.getCurrentPage().getAnyElementsListTexts(listName));
-        assertEquals("Списки не совпадают", expectedList, actualList);
+    public void compareListFromUIAndFromVariable(String listName, String listVariable) {
+        HashSet<String> expectedList = new HashSet<>((List<String>) akitaScenario.getVar(listVariable));
+        HashSet<String> actualList = new HashSet<>(akitaScenario.getCurrentPage().getAnyElementsListTexts(listName));
+        assertThat(String.format("Список со страницы [%s] не совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), expectedList, equalTo(actualList));
     }
 
     /**
@@ -455,8 +504,8 @@ public class DefaultSteps {
      * Добавление строки в поле к уже заполненой строке
      */
     @Когда("^в элемент \"([^\"]*)\" дописывается значение \"(.*)\"$")
-    public void addValue(String fieldName, String value) {
-        SelenideElement field = alfaScenario.getCurrentPage().getElement(fieldName);
+    public void addValue(String elementName, String value) {
+        SelenideElement field = akitaScenario.getCurrentPage().getElement(elementName);
         String oldValue = field.getValue();
         if (oldValue.isEmpty()) {
             oldValue = field.getText();
@@ -469,44 +518,45 @@ public class DefaultSteps {
      * Нажатие на элемент по его тексту
      */
     @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
-    public void findElement(String textName) {
-        $(By.xpath("//*[text()='" + textName + "']")).click();
+    public void findElement(String text) {
+        $(By.xpath("//*[text()='" + text + "']")).click();
     }
 
     /**
-     * Ввод в поле текущую дату в заданном формате
+     * Ввод в поле текущей даты в заданном формате
      * При неверном формате, используется dd.MM.yyyy
      */
-    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"&")
-    public void currentDate(String fieldName, String formatDate) {
+    @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"$")
+    public void currentDate(String fieldName, String dateFormat) {
         long date = System.currentTimeMillis();
         String currentStringDate;
         try {
-            currentStringDate = new SimpleDateFormat(formatDate).format(date);
+            currentStringDate = new SimpleDateFormat(dateFormat).format(date);
         } catch (IllegalArgumentException ex) {
             currentStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-            log.error("Неверный формат. Дата будет использована в формате dd.MM.yyyy");
+            log.error("Неверный формат даты. Будет использоваться значание по умолчанию в формате dd.MM.yyyy");
         }
-        SelenideElement valueInput = alfaScenario.getCurrentPage().getElement(fieldName);
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
         valueInput.setValue(currentStringDate);
     }
 
     /**
-     * Ввод в поле указанного текста используя буфер обмена и клавиши SHIFT + INSERT
+     * Ввод в поле указанного текста, используя буфер обмена и клавиши SHIFT + INSERT
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
-    public void pasteValueToTextField(String value, String fieldName)  {
-        ClipboardOwner clipboardOwner = (clipboard, contents) -> { };
+    public void pasteValueToTextField(String value, String fieldName) {
+        ClipboardOwner clipboardOwner = (clipboard, contents) -> {
+        };
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection stringSelection = new StringSelection(value);
         clipboard.setContents(stringSelection, clipboardOwner);
-        alfaScenario.getCurrentPage().getElement(fieldName).sendKeys(Keys.chord(Keys.SHIFT, Keys.INSERT));
+        akitaScenario.getCurrentPage().getElement(fieldName).sendKeys(Keys.chord(Keys.SHIFT, Keys.INSERT));
     }
 
     /**
      * Выполняется поиск нужного файла в папке /Downloads
-     * Поиск осуществляется по содежранию ожидаемого текста в названияя файла. Можно передавать регулярки
+     * Поиск осуществляется по содержанию ожидаемого текста в названии файла. Можно передавать регулярное выражение.
      * После выполнения проверки файл удаляется
      */
     @Тогда("^файл \"(.*)\" загрузился в паку /Downloads$")
@@ -515,15 +565,27 @@ public class DefaultSteps {
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull("Ошибка поиска файла", expectedFiles);
         assertFalse("Файл не загрузился", expectedFiles.length == 0);
-        assertTrue("В папке присутствуют более одного файла с одинаковым назанием", expectedFiles.length == 1);
+        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым назанием, содержащим текст [%s]", fileName),
+                expectedFiles.length == 1);
         deleteFiles(expectedFiles);
     }
 
+
+    /**
+     * Возвращает каталог "Downloads" в домашней директории
+     *
+     * @return
+     */
     private File getDownloadsDir() {
         String homeDir = System.getProperty("user.home");
         return new File(homeDir + "/Downloads");
     }
 
+    /**
+     * Удаляет файлы, переданные в метод
+     *
+     * @param filesToDelete массив файлов
+     */
     private void deleteFiles(File[] filesToDelete) {
         for (File file : filesToDelete) {
             file.delete();

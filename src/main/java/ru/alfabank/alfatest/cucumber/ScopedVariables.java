@@ -38,11 +38,11 @@ public class ScopedVariables {
     /**
      * Заменяет в строке все ключи переменных из "variables" на их значения
      *
-     * @param stringToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
+     * @param textToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
-    public String replaceVariables(String stringToReplaceIn) {
+    public String replaceVariables(String textToReplaceIn) {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
-        Matcher m = p.matcher(stringToReplaceIn);
+        Matcher m = p.matcher(textToReplaceIn);
         StringBuffer buffer = new StringBuffer();
         while(m.find()) {
             String varName = m.group(1);
