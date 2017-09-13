@@ -24,17 +24,18 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 @Slf4j
 public abstract class AkitaPage extends ElementsContainer {
     /**
-     * Стандартный таймаут ожидания элементов
+     * Стандартный таймаут ожидания элементов в миллисекундах
      */
-    private static final String WAITING_APPEAR_TIMEOUT = "8000";
+    private static final String WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS = "8000";
 
     /**
      * Получение элемента со страницы по имени (аннотированного "Name")
      */
     public SelenideElement getElement(String elementName) {
         Object value = namedElements.get(elementName);
-        if (value == null)
+        if (value == null) {
             throw new IllegalArgumentException("Элемент " + elementName + " не описан на странице " + this.getClass().getName());
+        }
         return (SelenideElement) value;
     }
 
@@ -44,8 +45,9 @@ public abstract class AkitaPage extends ElementsContainer {
     @SuppressWarnings("unchecked")
     public List<SelenideElement> getElementsList(String listName) {
         Object value = namedElements.get(listName);
-        if (!(value instanceof List))
+        if (!(value instanceof List)) {
             throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
+        }
         Stream<Object> s = ((List) value).stream();
         return s.map(AkitaPage::castToSelenideElement).collect(Collectors.toList());
     }
@@ -69,7 +71,8 @@ public abstract class AkitaPage extends ElementsContainer {
     public List<String> getAnyElementsListTexts(String listName) {
         List<SelenideElement> elementsList = getElementsList(listName);
         return elementsList.stream()
-                .map(element -> element.getTagName().equals("input") ? element.getValue()
+                .map(element -> element.getTagName().equals("input")
+                        ? element.getValue()
                         : element.innerText()
                 )
                 .collect(Collectors.toList());
@@ -97,7 +100,9 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение всех элементов страницы, не помеченных аннотацией "Optional"
      */
     public List<SelenideElement> getPrimaryElements() {
-        if (primaryElements == null) primaryElements = readWithWrappedElements();
+        if (primaryElements == null) {
+            primaryElements = readWithWrappedElements();
+        }
         return new ArrayList<>(primaryElements);
     }
 
@@ -123,7 +128,7 @@ public abstract class AkitaPage extends ElementsContainer {
      * Проверка появления всех элементов страницы, не помеченных аннотацией "Optional"
      */
     protected void isAppeared() {
-        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
                 elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
     }
@@ -132,7 +137,7 @@ public abstract class AkitaPage extends ElementsContainer {
      * Проверка, что все элементы страницы, не помеченные аннотацией "Optional", исчезли
      */
     protected void isDisappeared() {
-        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT);
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
                 elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
     }
