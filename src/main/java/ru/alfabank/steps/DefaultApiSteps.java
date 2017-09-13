@@ -117,7 +117,7 @@ public class DefaultApiSteps {
                     break;
                 case BODY:
                     String folderNameForRequestBodies = getPropertyOrValue("requestBodies");
-                    Path path = Paths.get(File.separator, "src", "main", "java", folderNameForRequestBodies, paramValue);
+                    Path path = Paths.get("src", "main", "java", folderNameForRequestBodies, paramValue);
                     try {
                         body = new String(Files.readAllBytes(path), "UTF-8");
                     } catch (IOException e) {
