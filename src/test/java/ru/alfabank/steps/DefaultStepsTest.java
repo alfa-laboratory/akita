@@ -6,12 +6,10 @@ import cucumber.api.Scenario;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import ru.alfabank.AlfaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
-import ru.alfabank.alfatest.cucumber.api.Pages;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,32 +19,31 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
-import static org.mockito.Mockito.*;
 
 /**
  * Created by onotole on 08.02.17.
  */
 public class DefaultStepsTest {
     private static DefaultSteps ds;
-    private static AlfaScenario alfaScenario;
+    private static AkitaScenario akitaScenario;
 
     @BeforeClass
     public static void setup() {
-        alfaScenario = AlfaScenario.getInstance();
+        akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
-        alfaScenario.setEnvironment(new AlfaEnvironment(scenario));
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         ds = new DefaultSteps();
-        String inputFilePath = "src/test/resources/AlfaPageMock.html";
+        String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
-        alfaScenario.setVar("Page", "file://" + url);
+        akitaScenario.setVar("Page", "file://" + url);
         String inputFilePath2 = "src/test/resources/RedirectionPage.html";
         String url2 = new File(inputFilePath2).getAbsolutePath();
-        alfaScenario.setVar("RedirectionPage", "file://" + url2);
+        akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLinkFromProperty("AlfaPageMock", alfaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
@@ -61,7 +58,7 @@ public class DefaultStepsTest {
 
     @Test
     public void checkCurrentURLPositive() {
-        ds.checkCurrentURL(alfaScenario.getVar("Page").toString());
+        ds.checkCurrentURL(akitaScenario.getVar("Page").toString());
     }
 
     @Test(expected = NullPointerException.class)
@@ -82,16 +79,16 @@ public class DefaultStepsTest {
     public void storeFieldValueInVariablePositive() {
         String varName = "mockId";
         ds.storeElementValueInVariable(varName, varName);
-        assertThat(alfaScenario.getVar(varName), equalTo("Serious testing page"));
+        assertThat(akitaScenario.getVar(varName), equalTo("Serious testing page"));
     }
 
     @Test(expected = AssertionError.class)
     public void compareTwoDigitVarsNegative() {
         String number1Name = "number1", number1Value = "1234567890";
-        alfaScenario.setVar(number1Name, number1Value);
+        akitaScenario.setVar(number1Name, number1Value);
 
         String number2Name = "number2", number2Value = "1234567894";
-        alfaScenario.setVar(number2Name, number2Value);
+        akitaScenario.setVar(number2Name, number2Value);
 
         ds.compareTwoVariables(number1Name, number2Name);
     }
@@ -99,10 +96,10 @@ public class DefaultStepsTest {
     @Test
     public void compareTwoDigitVars() {
         String number1Name = "number1", number1Value = "1234567890.97531";
-        alfaScenario.setVar(number1Name, number1Value);
+        akitaScenario.setVar(number1Name, number1Value);
 
         String number2Name = "number2", number2Value = "1234567890.97531";
-        alfaScenario.setVar(number2Name, number2Value);
+        akitaScenario.setVar(number2Name, number2Value);
 
         ds.compareTwoVariables(number1Name, number2Name);
     }
@@ -110,13 +107,13 @@ public class DefaultStepsTest {
     @Test
     public void saveValueToVarPositive() {
         ds.saveValueToVar("testVar", "test");
-        assertThat(alfaScenario.getVar("test"), equalTo("testValue"));
+        assertThat(akitaScenario.getVar("test"), equalTo("testValue"));
     }
 
     @Test
     public void clickOnElementPositive() {
         ds.clickOnElement("GoodButton");
-        assertThat(alfaScenario.getPage("AlfaPageMock").getElement("GoodButton").isEnabled(),
+        assertThat(akitaScenario.getPage("AkitaPageMock").getElement("GoodButton").isEnabled(),
                 equalTo(false));
     }
 
@@ -132,12 +129,12 @@ public class DefaultStepsTest {
 
     @Test
     public void loadPageSimple() {
-        ds.loadPage("AlfaPageMock");
+        ds.loadPage("AkitaPageMock");
     }
 
     @Test
     public void compareFieldAndVariablePositive() {
-        alfaScenario.setVar("test", "Serious testing page");
+        akitaScenario.setVar("test", "Serious testing page");
         ds.compareFieldAndVariable("mockTagName", "test");
     }
 
@@ -145,13 +142,13 @@ public class DefaultStepsTest {
     public void checkIfListContainsValueFromFieldPositive() {
         List<String> list = new ArrayList<>();
         list.add("Serious testing page");
-        alfaScenario.setVar("list", list);
+        akitaScenario.setVar("list", list);
         ds.checkIfListContainsValueFromField("mockTagName", "list");
     }
 
     @Test(expected = ElementShouldNot.class)
     public void blockDisappearedSimple() {
-        ds.blockDisappeared("AlfaPageMock");
+        ds.blockDisappeared("AkitaPageMock");
     }
 
     @Test
@@ -162,8 +159,8 @@ public class DefaultStepsTest {
     @Test
     public void setFieldValuePositive() {
         ds.setFieldValue("NormalField", "test");
-        assertThat(alfaScenario.getEnvironment()
-                        .getPage("AlfaPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField"),
                 equalTo("test"));
     }
@@ -171,8 +168,8 @@ public class DefaultStepsTest {
     @Test
     public void cleanFieldPositive() {
         ds.cleanField("TextField");
-        assertThat(alfaScenario.getEnvironment()
-                        .getPage("AlfaPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("TextField"),
                 equalTo(""));
     }
@@ -237,22 +234,22 @@ public class DefaultStepsTest {
         arrayList.add("One");
         arrayList.add("Two");
         arrayList.add("Three");
-        alfaScenario.setVar("qwerty", arrayList);
+        akitaScenario.setVar("qwerty", arrayList);
         ds.compareListFromUIAndFromVariable("List", "qwerty");
     }
 
     @Test
     public void openReadOnlyFormPositive() {
         ds.goToSelectedPageByLinkFromProperty("RedirectionPage",
-                alfaScenario.getVar("RedirectionPage").toString());
+                akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
 
     @Test
     public void addValuePositive() {
         ds.addValue("TextField", "Super");
-        assertThat(alfaScenario.getEnvironment()
-                        .getPage("AlfaPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("TextField"),
                 equalTo("textSuper"));
     }
@@ -262,14 +259,14 @@ public class DefaultStepsTest {
         ds.findElement("LINK");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
-                equalTo(alfaScenario.getVar("RedirectionPage")));
+                equalTo(akitaScenario.getVar("RedirectionPage")));
     }
 
     @Test
     public void currentDatePositive() {
         ds.currentDate("NormalField", "dd.MM.yyyy");
-        assertThat(alfaScenario.getEnvironment()
-                        .getPage("AlfaPageMock")
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField")
                         .matches("[0-3][0-9].[0-1][0-9].[0-2][0-9]{3}"),
                 equalTo(true));
@@ -321,7 +318,7 @@ public class DefaultStepsTest {
 
     @Test
     public void goToUrl() {
-        ds.goToUrl((String) alfaScenario.getVar("RedirectionPage"));
+        ds.goToUrl((String) akitaScenario.getVar("RedirectionPage"));
     }
 
     @Test

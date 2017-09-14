@@ -2,7 +2,6 @@ package ru.alfabank.alfatest.cucumber.api;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsContainer;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
@@ -23,7 +22,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
  * Класс-аннотация для реализации паттерна PageObject
  */
 @Slf4j
-public abstract class AlfaPage extends ElementsContainer {
+public abstract class AkitaPage extends ElementsContainer {
     /**
      * Стандартный таймаут ожидания элементов
      */
@@ -48,7 +47,7 @@ public abstract class AlfaPage extends ElementsContainer {
         if (!(value instanceof List))
             throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
         Stream<Object> s = ((List) value).stream();
-        return s.map(AlfaPage::castToSelenideElement).collect(Collectors.toList());
+        return s.map(AkitaPage::castToSelenideElement).collect(Collectors.toList());
     }
 
     /**
@@ -103,19 +102,19 @@ public abstract class AlfaPage extends ElementsContainer {
     }
 
     /**
-     * Обертка над AlfaPage.isAppeared
-     * Ex: AlfaPage.appeared().doSomething();
+     * Обертка над AkitaPage.isAppeared
+     * Ex: AkitaPage.appeared().doSomething();
      */
-    public final AlfaPage appeared() {
+    public final AkitaPage appeared() {
         isAppeared();
         return this;
     }
 
     /**
-     * Обертка над AlfaPage.isDisappeared
-     * Ex: AlfaPage.disappeared().doSomething();
+     * Обертка над AkitaPage.isDisappeared
+     * Ex: AkitaPage.disappeared().doSomething();
      */
-    public final AlfaPage disappeared() {
+    public final AkitaPage disappeared() {
         isDisappeared();
         return this;
     }
@@ -168,7 +167,7 @@ public abstract class AlfaPage extends ElementsContainer {
         List<SelenideElement> elements = Arrays.stream(elementNames)
                 .map(name -> namedElements.get(name))
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
-                .map(AlfaPage::castToSelenideElement)
+                .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         Spectators.waitElementsUntil(condition, timeout, elements);
@@ -210,7 +209,7 @@ public abstract class AlfaPage extends ElementsContainer {
         initialize();
     }
 
-    public AlfaPage initialize() {
+    public AkitaPage initialize() {
         namedElements = readNamedElements();
         primaryElements = readWithWrappedElements();
         return this;
@@ -251,7 +250,7 @@ public abstract class AlfaPage extends ElementsContainer {
                 .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
                 .map(this::extractFieldValueViaReflection)
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
-                .map(AlfaPage::castToSelenideElement)
+                .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

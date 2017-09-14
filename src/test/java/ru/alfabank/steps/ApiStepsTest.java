@@ -5,13 +5,12 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.*;
 import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,13 +23,13 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public class ApiStepsTest {
 
     private static DefaultApiSteps api;
-    private static AlfaScenario alfaScenario;
+    private static AkitaScenario akitaScenario;
 
     @BeforeClass
     public static void setup() {
-        alfaScenario = AlfaScenario.getInstance();
+        akitaScenario = AkitaScenario.getInstance();
         api = new DefaultApiSteps();
-        alfaScenario.setEnvironment(new AlfaEnvironment(new StubScenario()));
+        akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
     }
 
     @AfterClass
@@ -55,7 +54,7 @@ public class ApiStepsTest {
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
         api.sendHttpRequest("GET", "/get/resource", "RESPONSE_GET_BODY");
-        assertThat(alfaScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
+        assertThat(akitaScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
@@ -66,14 +65,14 @@ public class ApiStepsTest {
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
         api.sendHttpRequest("POST", "/post/resource", "RESPONSE_POST_BODY");
-        assertThat(alfaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+        assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
     public void sendHttpRequestWithVarsPost() throws java.lang.Exception {
         String body = "testBodyValue";
         String bodyVarName = "testBodyName";
-        alfaScenario.setVar(bodyVarName, body);
+        akitaScenario.setVar(bodyVarName, body);
 
         stubFor(post(urlEqualTo("/post/resource"))
                 .withRequestBody(WireMock.equalTo(body))
@@ -90,7 +89,7 @@ public class ApiStepsTest {
                         .build());
 
         api.sendHttpRequestSaveResponse("POST", "/post/resource", "RESPONSE_POST_BODY", params);
-        assertThat(alfaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+        assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class ApiStepsTest {
         paramTable.add(requestParamBody);
         api.sendHttpRequestSaveResponse("POST", "/post/saveWithTable",
                 "TEST_HTTP", paramTable);
-        assertThat(alfaScenario.getVar("TEST_HTTP"), equalTo("TEST_BODY_1"));
+        assertThat(akitaScenario.getVar("TEST_HTTP"), equalTo("TEST_BODY_1"));
     }
 
     @Test
