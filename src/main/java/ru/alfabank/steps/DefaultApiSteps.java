@@ -131,8 +131,8 @@ public class DefaultApiSteps {
             }
         }
         RequestSender request;
-        boolean jsonTypeNeeded = isJsonContentTypeNeeded(body, headers);
         if (body != null) {
+            boolean jsonTypeNeeded = isJsonContentTypeNeeded(body, headers);
             akitaScenario.write("Тело запроса:\n" + body);
             if (jsonTypeNeeded) {
                 request = given()
