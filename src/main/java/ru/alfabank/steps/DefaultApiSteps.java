@@ -1,6 +1,9 @@
 package ru.alfabank.steps;
 
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import cucumber.api.java.ru.И;
+import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
@@ -9,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -129,13 +131,24 @@ public class DefaultApiSteps {
             }
         }
         RequestSender request;
+        boolean jsonTypeNeeded = isJsonContentTypeNeeded(body, headers);
         if (body != null) {
             alfaScenario.write("Тело запроса:\n" + body);
-            request = given()
-                    .headers(headers)
-                    .params(parameters)
-                    .body(body)
-                    .when();
+            if (jsonTypeNeeded) {
+                request = given()
+                        .headers(headers)
+                        .contentType(ContentType.JSON)
+                        .params(parameters)
+                        .body(body)
+                        .when();
+            }
+            else {
+                request = given()
+                        .headers(headers)
+                        .params(parameters)
+                        .body(body)
+                        .when();
+            }
         } else {
             request = given()
                     .headers(headers)
@@ -143,6 +156,20 @@ public class DefaultApiSteps {
                     .when();
         }
         return request;
+    }
+
+    private boolean isJsonContentTypeNeeded(String body, Map<String, String> headers) {
+        if (headers.containsKey("Content-Type")) {
+            return false;
+        }
+        else {
+            try {
+                new JsonParser().parse(body);
+                return true;
+            } catch (JsonSyntaxException ex) {
+                return false;
+            }
+        }
     }
 
     /**
