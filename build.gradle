@@ -1,10 +1,7 @@
 buildscript {
     repositories {
-        maven {
-            url 'http://mvn/artifactory/public'
-        }
-        //jcenter()
-        //mavenCentral()
+        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -16,11 +13,9 @@ buildscript {
 }
 
 repositories {
-    maven {
-        url 'http://mvn/artifactory/public'
-    }
-    //jcenter()
-    //mavenCentral()
+
+    jcenter()
+    mavenCentral()
 }
 
 apply plugin: 'java'
