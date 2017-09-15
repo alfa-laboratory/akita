@@ -1,9 +1,6 @@
 package ru.alfabank.steps;
 
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import cucumber.api.java.ru.И;
-import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
@@ -132,23 +129,12 @@ public class DefaultApiSteps {
         }
         RequestSender request;
         if (body != null) {
-            boolean jsonTypeNeeded = isJsonContentTypeNeeded(body, headers);
             akitaScenario.write("Тело запроса:\n" + body);
-            if (jsonTypeNeeded) {
-                request = given()
-                        .headers(headers)
-                        .contentType(ContentType.JSON)
-                        .params(parameters)
-                        .body(body)
-                        .when();
-            }
-            else {
-                request = given()
-                        .headers(headers)
-                        .params(parameters)
-                        .body(body)
-                        .when();
-            }
+            request = given()
+                    .headers(headers)
+                    .params(parameters)
+                    .body(body)
+                    .when();
         } else {
             request = given()
                     .headers(headers)
@@ -156,20 +142,6 @@ public class DefaultApiSteps {
                     .when();
         }
         return request;
-    }
-
-    private boolean isJsonContentTypeNeeded(String body, Map<String, String> headers) {
-        if (headers.containsKey("Content-Type")) {
-            return false;
-        }
-        else {
-            try {
-                new JsonParser().parse(body);
-                return true;
-            } catch (JsonSyntaxException ex) {
-                return false;
-            }
-        }
     }
 
     /**
