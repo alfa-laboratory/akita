@@ -187,7 +187,7 @@ public class DefaultSteps {
      * полученном из хранилища переменных по заданному ключу
      */
     @SuppressWarnings("unchecked")
-    @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\" $")
+    @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\"$")
     public void checkIfListContainsValueFromField(String elementName, String variableListName) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
