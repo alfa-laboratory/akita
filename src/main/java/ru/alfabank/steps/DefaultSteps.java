@@ -387,7 +387,7 @@ public class DefaultSteps {
     /**
      * Проверка того, что элемент не отображается на странице
      */
-    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
+    @Тогда("^(?:поле|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)

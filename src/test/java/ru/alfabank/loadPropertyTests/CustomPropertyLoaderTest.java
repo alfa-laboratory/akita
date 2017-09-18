@@ -4,19 +4,19 @@ import com.codeborne.selenide.WebDriverRunner;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import ru.alfabank.alfatest.cucumber.api.AlfaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AlfaScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 public class CustomPropertyLoaderTest {
-    private static AlfaScenario alfaScenario = AlfaScenario.getInstance();
+    private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
    @Before
     public void prepare() {
-        alfaScenario.setEnvironment(new AlfaEnvironment());
+        akitaScenario.setEnvironment(new AkitaEnvironment());
     }
 
     @AfterClass
