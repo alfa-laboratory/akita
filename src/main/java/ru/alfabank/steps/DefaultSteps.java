@@ -248,6 +248,31 @@ public class DefaultSteps {
     }
 
     /**
+     * Эмулирует нажатие сочетания клавиш на клавиатуре.
+     * Допустим, чтобы эмулировать нажатие на Ctrl+A, в таблице должны быть следующие значения
+     *  | CONTROL |
+     *  | a       |
+     *
+     * @param keyNames название клавиши
+     */
+    @И("^выполнено нажатие на сочетание клавиш из таблицы$")
+    public void pressKeyCombination(List<String> keyNames) {
+        Iterable<CharSequence> listKeys = keyNames.stream()
+                .map(this::getKeyOrCharacter)
+                .collect(Collectors.toList());
+        String combination = Keys.chord(listKeys);
+        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(combination);
+    }
+
+    private CharSequence getKeyOrCharacter(String key) {
+        try {
+            return Keys.valueOf(key.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return key;
+        }
+    }
+
+    /**
      * Устанавливается значение в заданное поле. Перед использованием поле нужно очистить
      */
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
