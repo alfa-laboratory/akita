@@ -9,15 +9,16 @@ import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 public class PropertyLoaderTests {
     private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     @BeforeClass
     public static void init() {
-
     }
 
     @Before

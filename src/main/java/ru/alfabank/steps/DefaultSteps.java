@@ -186,7 +186,7 @@ public class DefaultSteps {
      * полученном из хранилища переменных по заданному ключу
      */
     @SuppressWarnings("unchecked")
-    @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\" $")
+    @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\"$")
     public void checkIfListContainsValueFromField(String elementName, String variableListName) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
@@ -230,6 +230,31 @@ public class DefaultSteps {
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
         WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
+    }
+
+    /**
+     * Эмулирует нажатие сочетания клавиш на клавиатуре.
+     * Допустим, чтобы эмулировать нажатие на Ctrl+A, в таблице должны быть следующие значения
+     *  | CONTROL |
+     *  | a       |
+     *
+     * @param keyNames название клавиши
+     */
+    @И("^выполнено нажатие на сочетание клавиш из таблицы$")
+    public void pressKeyCombination(List<String> keyNames) {
+        Iterable<CharSequence> listKeys = keyNames.stream()
+                .map(this::getKeyOrCharacter)
+                .collect(Collectors.toList());
+        String combination = Keys.chord(listKeys);
+        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(combination);
+    }
+
+    private CharSequence getKeyOrCharacter(String key) {
+        try {
+            return Keys.valueOf(key.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return key;
+        }
     }
 
     /**
@@ -371,7 +396,7 @@ public class DefaultSteps {
     /**
      * Проверка того, что элемент не отображается на странице
      */
-    @Тогда("^(?:поле|блок|форма|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
+    @Тогда("^(?:поле|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
@@ -415,6 +440,15 @@ public class DefaultSteps {
     public void testActualValueContainsSubstring(String elementName, String expectedValue) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
+    }
+
+    /**
+     * Проверка, что значение в поле содержит видимый текст, указанный в шаге
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит видимый текст \"(.*)\"$")
+    public void testFieldContainsMessageText(String fieldName, String messageText) {
+        String field = akitaScenario.getCurrentPage().getElement(fieldName).getText();
+        assertThat(String.format("Поле [%s] не содержит видимый текст [%s]", fieldName, messageText), field, containsString(messageText));
     }
 
     /**

@@ -3,10 +3,11 @@ package ru.alfabank.tests.core.helpers;
 import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -149,8 +150,10 @@ public class PropertyLoader {
         Properties instance = new Properties();
         String profile = System.getProperty("profile", "");
         if (!Strings.isNullOrEmpty(profile)) {
-            try (
-                    InputStream resourceStream = PropertyLoader.class.getResourceAsStream("/" + profile + PROPERTIES_FILE);
+            String path = Paths.get(profile, PROPERTIES_FILE).toString();
+            URL url = PropertyLoader.class.getClassLoader().getResource(path);
+            try(
+                    InputStream resourceStream = url.openStream();
                     InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
             ) {
                 instance.load(inputStream);
