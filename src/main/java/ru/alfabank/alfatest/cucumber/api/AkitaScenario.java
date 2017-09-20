@@ -51,8 +51,10 @@ public final class AkitaScenario {
      * Задание страницы, тестирование которой производится в данный момент
      */
     public void setCurrentPage(AkitaPage page) {
-        if (page == null) throw new IllegalArgumentException("Происходит переход на несуществующую страницу. " +
-                "Проверь аннотации @Name у используемых страниц");
+        if (page == null) {
+            throw new IllegalArgumentException("Происходит переход на несуществующую страницу. " +
+                    "Проверь аннотации @Name у используемых страниц");
+        }
         environment.getPages().setCurrentPage(page);
     }
 
@@ -104,7 +106,9 @@ public final class AkitaScenario {
      */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
-        if (obj == null) throw new IllegalArgumentException("Переменная " + name + " не найдена");
+        if (obj == null) {
+            throw new IllegalArgumentException("Переменная " + name + " не найдена");
+        }
         return obj;
     }
 
