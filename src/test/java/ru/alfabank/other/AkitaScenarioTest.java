@@ -13,9 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by onotole on 08.02.17.
- */
 public class AkitaScenarioTest {
     private static AkitaScenario akitaScenario;
 
@@ -25,7 +22,9 @@ public class AkitaScenarioTest {
     }
 
     @AfterClass
-    public static void close() { WebDriverRunner.closeWebDriver(); }
+    public static void close() {
+        WebDriverRunner.closeWebDriver();
+    }
 
     @Before
     public void prepare() {
@@ -69,7 +68,7 @@ public class AkitaScenarioTest {
     @Test
     public void getEnvironmentNegative() {
         akitaScenario.setEnvironment(null);
-        assertThat(akitaScenario.getEnvironment(), is(nullValue()) );
+        assertThat(akitaScenario.getEnvironment(), is(nullValue()));
     }
 
     @Test

@@ -73,7 +73,7 @@ public class PropertyLoader {
      */
     public static String loadProperty(String propertyName, String defaultValue) {
         String value = tryLoadProperty(propertyName);
-        return value != null ? value: defaultValue;
+        return value != null ? value : defaultValue;
     }
 
     /**
@@ -128,7 +128,7 @@ public class PropertyLoader {
     @SneakyThrows(IOException.class)
     private static Properties getPropertiesInstance() {
         Properties instance = new Properties();
-        try(
+        try (
                 InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
                 InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
         ) {

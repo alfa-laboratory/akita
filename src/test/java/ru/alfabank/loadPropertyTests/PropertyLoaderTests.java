@@ -14,9 +14,6 @@ import static org.junit.Assert.assertThat;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
-/**
- * Created by rum0tbl on 02.06.17.
- */
 public class PropertyLoaderTests {
     private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
@@ -30,7 +27,9 @@ public class PropertyLoaderTests {
     }
 
     @AfterClass
-    public static void close() { WebDriverRunner.closeWebDriver(); }
+    public static void close() {
+        WebDriverRunner.closeWebDriver();
+    }
 
     @Test
     public void someValuesFromMap() {

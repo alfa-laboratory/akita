@@ -44,10 +44,10 @@ public class AkitaEnvironment {
         new AnnotationScanner().getClassesAnnotatedWith(AkitaPage.Name.class)
                 .stream()
                 .map(it -> {
-                    if(AkitaPage.class.isAssignableFrom(it)){
-                        return (Class<? extends AkitaPage>)it;
-                    }
-                    else throw new IllegalStateException("Класс " + it.getName() + " должен наследоваться от AkitaPage");
+                    if (AkitaPage.class.isAssignableFrom(it)) {
+                        return (Class<? extends AkitaPage>) it;
+                    } else
+                        throw new IllegalStateException("Класс " + it.getName() + " должен наследоваться от AkitaPage");
                 })
                 .forEach(clazz -> pages.put(getClassAnnotationValue(clazz), clazz));
     }
