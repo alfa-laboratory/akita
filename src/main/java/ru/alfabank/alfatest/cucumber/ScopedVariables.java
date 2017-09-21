@@ -44,7 +44,7 @@ public class ScopedVariables {
         Pattern p = Pattern.compile("\\{(\\w+)\\}");
         Matcher m = p.matcher(textToReplaceIn);
         StringBuffer buffer = new StringBuffer();
-        while(m.find()) {
+        while (m.find()) {
             String varName = m.group(1);
             String value = get(varName).toString();
             m.appendReplacement(buffer, value);

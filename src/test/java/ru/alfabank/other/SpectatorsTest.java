@@ -17,9 +17,6 @@ import ru.alfabank.steps.DefaultSteps;
 import java.io.File;
 import java.util.LinkedList;
 
-/**
- * Created by alexander on 02.08.17.
- */
 public class SpectatorsTest {
     private static AkitaScenario akitaScenario;
     private static AkitaPageMock page;
@@ -34,7 +31,7 @@ public class SpectatorsTest {
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
