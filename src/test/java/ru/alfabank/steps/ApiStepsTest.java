@@ -17,8 +17,6 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertTrue;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 public class ApiStepsTest {
 
@@ -53,7 +51,7 @@ public class ApiStepsTest {
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
-        api.sendHttpRequest("GET", "/get/resource", "RESPONSE_GET_BODY");
+        api.sendHttpRequestWithoutParams("GET", "/get/resource", "RESPONSE_GET_BODY");
         assertThat(akitaScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
     }
 
@@ -64,7 +62,7 @@ public class ApiStepsTest {
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
                         .withBody("TEST_BODY")));
-        api.sendHttpRequest("POST", "/post/resource", "RESPONSE_POST_BODY");
+        api.sendHttpRequestWithoutParams("POST", "/post/resource", "RESPONSE_POST_BODY");
         assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 

@@ -17,13 +17,10 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByName;
 
-/**
- * Created by alexander on 02.08.17.
- */
 public class AkitaPageTest {
     private static AkitaPageMock alfaPageMock;
     private static AkitaPage page;
@@ -39,7 +36,7 @@ public class AkitaPageTest {
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
         page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
-        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test(expected = NullPointerException.class)
@@ -74,7 +71,7 @@ public class AkitaPageTest {
 
     @Test(expected = NullPointerException.class)
     public void waitElementsUntilNegative() {
-        alfaPageMock.waitElementsUntil(Condition.appear, 1,"test");
+        alfaPageMock.waitElementsUntil(Condition.appear, 1, "test");
     }
 
     @Test(expected = NullPointerException.class)
@@ -108,7 +105,7 @@ public class AkitaPageTest {
 
     @Test
     public void waitElementsUntilPositive() {
-        page.waitElementsUntil(Condition.disappear, 1,"HiddenDiv");
+        page.waitElementsUntil(Condition.disappear, 1, "HiddenDiv");
     }
 
     @Ignore

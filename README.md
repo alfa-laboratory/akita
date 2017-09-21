@@ -181,7 +181,6 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 >JUnit - Eclipse Public License
 >org.slf4j.slf4j-simple - The MIT License (MIT)	
 >org.projectlombok.lombok - The MIT License (MIT)
->io.rest-assured.rest-assured - Apache License Version 2.0
 >info.cukes.cucumber-java - The MIT License (MIT)	
 >info.cukes.cucumber-core - The MIT License (MIT)
 >org.reflections.reflections
