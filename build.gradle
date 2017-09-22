@@ -13,6 +13,7 @@ buildscript {
 }
 
 repositories {
+
     jcenter()
     mavenCentral()
 }
@@ -88,18 +89,18 @@ task sourceJar(type: Jar) {
 
 artifactory {
 
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = 'Autotests'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publications ('maven')
-        }
-    }
+ contextUrl = "${artifactory_contextUrl}"
+ publish {
+    repository {
+       repoKey = 'Autotests'
+      username = "${artifactory_user}"
+     password = "${artifactory_password}"
+     maven = true
+  }
+  defaults {
+     publications ('maven')
+  }
+ }
 }
 
 artifactoryPublish {
