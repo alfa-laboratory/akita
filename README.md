@@ -1,9 +1,8 @@
-<img align="left" width="140" height="140" title="akita"
-     src="https://github.com/alfa-laboratory/akita/akita.png"/>
-
-Akita - бери и тестируй
-==========================================
-
+<div>
+  <img align="left" width="140" height="140" title="akita"
+       src="https://github.com/alfa-laboratory/akita/akita.png"/>
+  <h1 >Akita - бери и тестируй</h1>
+</div>
 BDD библиотека шагов для тестирования на основе cucumber и selenide.
 Тесты пишутся на русском языке и представляют собой пользовательские сценарии, которые могут выступать в качестве пользовательской документации на приложение.
 
