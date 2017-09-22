@@ -1,5 +1,5 @@
 <img align="left" width="140" height="140" title="akita"
-     src="https://rawgit.com/alfa-laboratory/akita/akita.png"/>
+     src="https://github.com/alfa-laboratory/akita/akita.png"/>
 
 Akita - бери и тестируй
 ==========================================
