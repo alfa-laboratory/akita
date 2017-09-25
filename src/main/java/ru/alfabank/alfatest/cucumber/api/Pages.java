@@ -42,7 +42,7 @@ public final class Pages {
 
 
     /**
-     *  Возвращает текущую страницу, на которой в текущий момент производится тестирование
+     * Возвращает текущую страницу, на которой в текущий момент производится тестирование
      */
     public AkitaPage getCurrentPage() {
         if (currentPage == null) throw new IllegalStateException("Текущая страница не задана");
@@ -50,7 +50,7 @@ public final class Pages {
     }
 
     /**
-     *  Задает текущую страницу по ее имени
+     * Задает текущую страницу по ее имени
      */
     public void setCurrentPage(AkitaPage page) {
         this.currentPage = page;
@@ -59,7 +59,7 @@ public final class Pages {
     /**
      * Реализация анонимных методов со страницей в качестве аргумента
      *
-     * @param clazz класс страницы
+     * @param clazz                   класс страницы
      * @param checkIfElementsAppeared проверка всех не помеченных "@Optional" элементов
      */
     public static <T extends AkitaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
@@ -80,7 +80,7 @@ public final class Pages {
     @SuppressWarnings("unchecked")
     public <T extends AkitaPage> T get(Class<T> clazz, String name) {
         AkitaPage page = getPageMapInstanceInternal().get(name);
-        if(!clazz.isInstance(page)) {
+        if (!clazz.isInstance(page)) {
             throw new IllegalStateException(name + " page is not a instance of " + clazz + ". Named page is a " + page);
         }
         return (T) page;
@@ -104,7 +104,7 @@ public final class Pages {
      */
     public static <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         T page = Selenide.page(clazz);
-        if(checkIfElementsAppeared) {
+        if (checkIfElementsAppeared) {
             page.isAppeared();
         }
         return page;

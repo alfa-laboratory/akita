@@ -22,9 +22,6 @@ import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 
 import java.util.List;
 
-/**
- * Created by alexander on 01.08.17.
- */
 @Getter
 @AkitaPage.Name("AkitaPageMock")
 public class AkitaPageMock extends AkitaPage {

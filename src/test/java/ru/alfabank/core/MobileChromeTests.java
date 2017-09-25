@@ -15,8 +15,6 @@
  */
 package ru.alfabank.core;
 
-import com.codeborne.selenide.WebDriverRunner;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
@@ -26,9 +24,6 @@ import ru.alfabank.tests.core.drivers.MobileChrome;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-/**
- * Created by alexander on 16.08.17.
- */
 public class MobileChromeTests {
     private static MobileChrome mobileChrome = new MobileChrome();
     private static WebDriver mobileDriver;
@@ -40,5 +35,7 @@ public class MobileChromeTests {
     }
 
     @AfterClass
-    public static void close() { mobileDriver.close(); }
+    public static void close() {
+        mobileDriver.close();
+    }
 }

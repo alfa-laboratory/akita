@@ -20,12 +20,9 @@ import org.junit.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
-/**
- * Created by alexander on 02.08.17.
- */
 public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
 

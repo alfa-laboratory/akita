@@ -15,20 +15,15 @@
  */
 package ru.alfabank.core;
 
-import org.hamcrest.Matcher;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertTrue;
 
-
-/**
- * Created by alexander on 16.08.17.
- */
 public class RequestParamTests {
     private static RequestParam requestParam;
     private static RequestParam requestParamForCompare;

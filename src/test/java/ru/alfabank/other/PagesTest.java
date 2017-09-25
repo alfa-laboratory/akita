@@ -24,9 +24,6 @@ import ru.alfabank.alfatest.cucumber.api.Pages;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-/**
- * Created by alexander on 02.08.17.
- */
 public class PagesTest {
     private static Pages pages;
     private static AkitaPageMock alfaPageMock;

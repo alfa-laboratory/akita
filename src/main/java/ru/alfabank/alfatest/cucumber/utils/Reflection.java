@@ -32,7 +32,7 @@ public final class Reflection {
      * Получение поля класса с помощью механизма рефлексии
      */
     public static Object extractFieldValue(Field field, Object owner) {
-            field.setAccessible(true);
+        field.setAccessible(true);
         try {
             return field.get(owner);
         } catch (IllegalAccessException e) {

@@ -33,11 +33,7 @@ import java.util.List;
 import static com.codeborne.selenide.Selenide.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
-/**
- * Created by onotole on 08.02.17.
- */
 public class DefaultStepsTest {
     private static DefaultSteps ds;
     private static AkitaScenario akitaScenario;
@@ -58,7 +54,7 @@ public class DefaultStepsTest {
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLinkFromProperty("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
@@ -255,7 +251,7 @@ public class DefaultStepsTest {
 
     @Test
     public void openReadOnlyFormPositive() {
-        ds.goToSelectedPageByLinkFromProperty("RedirectionPage",
+        ds.goToSelectedPageByLinkFromPropertyFile("RedirectionPage",
                 akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
@@ -344,14 +340,14 @@ public class DefaultStepsTest {
     @Test
     public void setVariableTest() {
         ds.setVariable("ul", "Serious testing page");
-        assertThat(ds.getVar("ul"), equalTo("Serious testing page"));
+        assertThat(akitaScenario.getVar("ul"), equalTo("Serious testing page"));
     }
 
     @Test
     public void getVarsTest() {
-        ds.setVar("1", "1");
-        ds.setVar("2", "2");
-        ScopedVariables scopedVariables = ds.getVars();
+        akitaScenario.setVar("1", "1");
+        akitaScenario.setVar("2", "2");
+        ScopedVariables scopedVariables = akitaScenario.getVars();
         assertThat((String)scopedVariables.get("1") + (String)scopedVariables.get("2"),
                 equalTo("12"));
     }

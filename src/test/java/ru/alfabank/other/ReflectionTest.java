@@ -19,15 +19,11 @@ import lombok.Getter;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
-import java.lang.Class;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static ru.alfabank.alfatest.cucumber.utils.Reflection.extractFieldValue;
 
-/**
- * Created by alexander on 03.08.17.
- */
 public class ReflectionTest {
 
     @Getter
@@ -51,6 +47,6 @@ public class ReflectionTest {
         MockClass mockClass = new MockClass();
         Class reflectClass = mockClass.getClass();
         Field field = reflectClass.getField("mockField");
-        assertThat(extractFieldValue(field, mockClass), equalTo(mockClass.getMockField()) );
+        assertThat(extractFieldValue(field, mockClass), equalTo(mockClass.getMockField()));
     }
 }

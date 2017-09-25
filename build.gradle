@@ -14,6 +14,7 @@ buildscript {
 }
 
 repositories {
+
     jcenter()
     mavenCentral()
 }
@@ -88,6 +89,21 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
+artifactory {
+
+ contextUrl = "${artifactory_contextUrl}"
+ publish {
+    repository {
+       repoKey = 'Autotests'
+      username = "${artifactory_user}"
+     password = "${artifactory_password}"
+     maven = true
+  }
+  defaults {
+     publications ('maven')
+  }
+ }
+}
 
 artifactoryPublish {
     dependsOn jar

@@ -19,9 +19,6 @@ import cucumber.api.Scenario;
 
 import java.util.Collection;
 
-/**
- * Created by onotole on 08.02.17.
- */
 public class StubScenario implements Scenario {
     @Override
     public Collection<String> getSourceTagNames() {

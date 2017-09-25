@@ -29,10 +29,11 @@ public final class Spectators {
 
     /**
      * Обертка над Selenide waitUntil для произвольного числа элементов
-     * @see SelenideElement#waitUntil(Condition, long)
+     *
      * @param selenideCondition Selenide.Condition
-     * @param timeout максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
-     * @param selenideElements произвольное количество selenide-элементов
+     * @param timeout           максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
+     * @param selenideElements  произвольное количество selenide-элементов
+     * @see SelenideElement#waitUntil(Condition, long)
      */
     public static void waitElementsUntil(Condition selenideCondition, int timeout, SelenideElement... selenideElements) {
         Arrays.stream(selenideElements).forEach(e -> e.waitUntil(selenideCondition, timeout));
@@ -40,10 +41,11 @@ public final class Spectators {
 
     /**
      * Обертка над Selenide waitUntil для работы с колекцией элементов
-     * @see SelenideElement#waitUntil(Condition, long)
+     *
      * @param selenideCondition Selenide.Condition
-     * @param timeout максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
-     * @param selenideElements коллекция selenide-элементов
+     * @param timeout           максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
+     * @param selenideElements  коллекция selenide-элементов
+     * @see SelenideElement#waitUntil(Condition, long)
      */
     public static void waitElementsUntil(Condition selenideCondition, int timeout, Collection<SelenideElement> selenideElements) {
         selenideElements.forEach(e -> e.waitUntil(selenideCondition, timeout));
