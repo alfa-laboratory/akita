@@ -32,7 +32,7 @@ import java.util.List;
 
 import static com.codeborne.selenide.Selenide.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 public class DefaultStepsTest {
     private static DefaultSteps ds;
@@ -118,7 +118,7 @@ public class DefaultStepsTest {
     @Test
     public void saveValueToVarPositive() {
         ds.saveValueToVar("testVar", "test");
-        assertThat(akitaScenario.getVar("test"), equalTo("testValue"));
+        assertThat(akitaScenario.getVar("test"), equalTo("customTestValue"));
     }
 
     @Test
@@ -348,7 +348,7 @@ public class DefaultStepsTest {
         akitaScenario.setVar("1", "1");
         akitaScenario.setVar("2", "2");
         ScopedVariables scopedVariables = akitaScenario.getVars();
-        assertThat((String)scopedVariables.get("1") + (String)scopedVariables.get("2"),
+        assertThat((String) scopedVariables.get("1") + (String) scopedVariables.get("2"),
                 equalTo("12"));
     }
 }

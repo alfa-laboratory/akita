@@ -26,6 +26,6 @@ public class CustomPropertyLoaderTest {
     public void customPropertyFile() {
         System.setProperty("profile", "customProperties");
         System.out.println(System.getProperty("profile"));
-        assertThat(loadProperty("testVar"), equalTo("customTestValue"));
+        assertThat(loadProperty("testVar"), equalTo("customPropertiesTestValue"));
     }
 }
