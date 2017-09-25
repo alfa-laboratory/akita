@@ -9,6 +9,7 @@ buildscript {
         classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
     }
 }
 
@@ -27,6 +28,7 @@ apply plugin: 'nebula.nebula-release'
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'license'
 
 tasks.release.dependsOn tasks.artifactoryPublish
 
@@ -86,21 +88,6 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-artifactory {
-
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = 'Autotests'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publications ('maven')
-        }
-    }
-}
 
 artifactoryPublish {
     dependsOn jar
@@ -131,4 +118,9 @@ jacocoTestReport {
         csv.enabled true
         html.destination "${buildDir}/jacocoHtml"
     }
+}
+
+license {
+    header rootProject.file('HEADER')
+    strictCheck true
 }
