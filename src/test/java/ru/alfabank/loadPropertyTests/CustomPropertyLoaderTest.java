@@ -14,13 +14,15 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 public class CustomPropertyLoaderTest {
     private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
-   @Before
+    @Before
     public void prepare() {
         akitaScenario.setEnvironment(new AkitaEnvironment());
     }
 
     @AfterClass
-    public static void close() { WebDriverRunner.closeWebDriver(); }
+    public static void close() {
+        WebDriverRunner.closeWebDriver();
+    }
 
     @Test
     public void customPropertyFile() {
