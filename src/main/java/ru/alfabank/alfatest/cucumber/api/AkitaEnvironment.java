@@ -1,12 +1,12 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,8 +61,9 @@ public class AkitaEnvironment {
                 .map(it -> {
                     if (AkitaPage.class.isAssignableFrom(it)) {
                         return (Class<? extends AkitaPage>) it;
-                    } else
+                    } else {
                         throw new IllegalStateException("Класс " + it.getName() + " должен наследоваться от AkitaPage");
+                    }
                 })
                 .forEach(clazz -> pages.put(getClassAnnotationValue(clazz), clazz));
     }
@@ -76,8 +77,8 @@ public class AkitaEnvironment {
     private String getClassAnnotationValue(Class<?> c) {
         return Arrays.stream(c.getAnnotationsByType(AkitaPage.Name.class))
                 .findAny()
-                .orElseThrow(AssertionError::new)
-                .value();
+                .map(AkitaPage.Name::value)
+                .orElseThrow(() -> new AssertionError("Не найдены аннотации AkitaPage.Name в класса " + c.getClass().getName()));
     }
 
     /**
