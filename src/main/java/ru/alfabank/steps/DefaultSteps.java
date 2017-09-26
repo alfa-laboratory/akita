@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
@@ -335,10 +336,13 @@ public class DefaultSteps {
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String listName, String value) {
         List<SelenideElement> listOfTypeFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsText = listOfTypeFromPage.stream()
+                .map(element -> element.getText().trim())
+                .collect(toList());
         listOfTypeFromPage.stream()
-                .filter(type -> type.innerText().equals(value))
+                .filter(type -> type.getText().trim().equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке [%s] ", value, listName)))
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText.toString())))
                 .click();
     }
 
