@@ -581,13 +581,13 @@ public class DefaultSteps {
      * Поиск осуществляется по содержанию ожидаемого текста в названии файла. Можно передавать регулярное выражение.
      * После выполнения проверки файл удаляется
      */
-    @Тогда("^файл \"(.*)\" загрузился в паку /Downloads$")
+    @Тогда("^файл \"(.*)\" загрузился в папку /Downloads$")
     public void testFileDownloaded(String fileName) {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull("Ошибка поиска файла", expectedFiles);
         assertFalse("Файл не загрузился", expectedFiles.length == 0);
-        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым назанием, содержащим текст [%s]", fileName),
+        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
                 expectedFiles.length == 1);
         deleteFiles(expectedFiles);
     }
