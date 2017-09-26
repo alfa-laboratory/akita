@@ -193,7 +193,7 @@ public class DefaultSteps {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         String expectedValue = akitaScenario.getVar(variableName).toString();
         assertThat(String.format("Значение поля [%s] не совпадает со значением из переменной [%s]", elementName, variableName),
-                expectedValue, equalTo(actualValue));
+                actualValue, equalTo(expectedValue));
     }
 
     /**
@@ -470,7 +470,7 @@ public class DefaultSteps {
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String elementName, String expectedValue) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
-        assertThat(String.format("Значение поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), expectedValue, equalTo(actualValue));
+        assertThat(String.format("Значение поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), actualValue, equalTo(expectedValue));
     }
 
     /**
@@ -500,7 +500,7 @@ public class DefaultSteps {
     public void compareListFromUIAndFromVariable(String listName, String listVariable) {
         HashSet<String> expectedList = new HashSet<>((List<String>) akitaScenario.getVar(listVariable));
         HashSet<String> actualList = new HashSet<>(akitaScenario.getCurrentPage().getAnyElementsListTexts(listName));
-        assertThat(String.format("Список со страницы [%s] не совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), expectedList, equalTo(actualList));
+        assertThat(String.format("Список со страницы [%s] не совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), actualList, equalTo(expectedList));
     }
 
     /**
