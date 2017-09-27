@@ -347,6 +347,23 @@ public class DefaultSteps {
     }
 
     /**
+     * Выбор из списка со страницы элемента, который содержит заданный текст
+     * Не чувствителен к регистру
+     */
+    @Тогда("^в списке \"([^\"]*)\" выбран элемент содержащий текст \"([^\"]*)\"$")
+    public void selectElementInListIfFoundByText(String listName, String value) {
+        List<SelenideElement> listOfTypeFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> text = listOfTypeFromPage.stream()
+                .map(element -> element.getText().trim().toLowerCase())
+                .collect(toList());
+        listOfTypeFromPage.stream()
+                .filter(type -> type.getText().trim().toLowerCase().contains(value.toLowerCase()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, text.toString())))
+                .click();
+    }
+
+    /**
      * Сохранение значения элемента в переменную
      */
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
