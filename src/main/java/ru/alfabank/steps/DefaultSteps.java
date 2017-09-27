@@ -19,7 +19,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -35,7 +34,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.not;
@@ -434,6 +432,20 @@ public class DefaultSteps {
         String currentAtrValue = currentElement.attr(attribute);
         assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
                 , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
+    }
+
+    /**
+     * Проверка, что элемент содержит указанный класс
+     * Например:
+     * если нужно проверить что элемент не отображается на странице, но проверки Selenium отрабатывают неверно,
+     * можно использовать данный метод и проверить, что среди его классов есть disabled
+     */
+    @Тогда("^элемент \"([^\"]*)\" содержит класс со значением \"(.*)\"$")
+    public void checkElemClassContainsExpectedValue(String elementName, String expectedClassValue) {
+        SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
+        String currentClassValue = currentElement.getAttribute("class");
+        assertThat(String.format("Элемент [%s] не содержит класс со значением [%s]", elementName, expectedClassValue)
+                , currentClassValue.toLowerCase(), containsString(expectedClassValue.toLowerCase()));
     }
 
     /**
