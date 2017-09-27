@@ -335,14 +335,14 @@ public class DefaultSteps {
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String listName, String value) {
-        List<SelenideElement> listOfTypeFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        List<String> elementsText = listOfTypeFromPage.stream()
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsText = listOfElementsFromPage.stream()
                 .map(element -> element.getText().trim())
                 .collect(toList());
-        listOfTypeFromPage.stream()
-                .filter(type -> type.getText().trim().equalsIgnoreCase(value))
+        listOfElementsFromPage.stream()
+                .filter(element -> element.getText().trim().equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText.toString())))
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
                 .click();
     }
 
@@ -352,14 +352,14 @@ public class DefaultSteps {
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент содержащий текст \"([^\"]*)\"$")
     public void selectElementInListIfFoundByText(String listName, String value) {
-        List<SelenideElement> listOfTypeFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        List<String> text = listOfTypeFromPage.stream()
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsListText = listOfElementsFromPage.stream()
                 .map(element -> element.getText().trim().toLowerCase())
                 .collect(toList());
-        listOfTypeFromPage.stream()
-                .filter(type -> type.getText().trim().toLowerCase().contains(value.toLowerCase()))
+        listOfElementsFromPage.stream()
+                .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, text.toString())))
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
                 .click();
     }
 
