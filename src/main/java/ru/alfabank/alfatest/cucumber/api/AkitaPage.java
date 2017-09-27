@@ -1,12 +1,12 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -47,11 +48,8 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение элемента со страницы по имени (аннотированного "Name")
      */
     public SelenideElement getElement(String elementName) {
-        Object value = namedElements.get(elementName);
-        if (value == null) {
-            throw new IllegalArgumentException("Элемент " + elementName + " не описан на странице " + this.getClass().getName());
-        }
-        return (SelenideElement) value;
+        return (SelenideElement) java.util.Optional.ofNullable(namedElements.get(elementName))
+                .orElseThrow(() -> new IllegalArgumentException("Элемент " + elementName + " не описан на странице " + this.getClass().getName()));
     }
 
     /**
@@ -64,7 +62,7 @@ public abstract class AkitaPage extends ElementsContainer {
             throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
         }
         Stream<Object> s = ((List) value).stream();
-        return s.map(AkitaPage::castToSelenideElement).collect(Collectors.toList());
+        return s.map(AkitaPage::castToSelenideElement).collect(toList());
     }
 
     /**
@@ -90,7 +88,7 @@ public abstract class AkitaPage extends ElementsContainer {
                         ? element.getValue()
                         : element.innerText()
                 )
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     /**
@@ -189,7 +187,7 @@ public abstract class AkitaPage extends ElementsContainer {
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
                 .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .collect(toList());
         Spectators.waitElementsUntil(condition, timeout, elements);
     }
 
@@ -247,7 +245,7 @@ public abstract class AkitaPage extends ElementsContainer {
                         throw new IllegalStateException(
                                 format("Поле с аннотацией @Name должно иметь тип SelenideElement или List<SelenideElement>, но найдено поле с типом %s", f.getType()));
                 })
-                .collect(Collectors.toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
+                .collect(toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
     }
 
     /**
@@ -257,7 +255,7 @@ public abstract class AkitaPage extends ElementsContainer {
         List<String> list = Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .map(f -> f.getDeclaredAnnotation(Name.class).value())
-                .collect(Collectors.toList());
+                .collect(toList());
         if (list.size() != new HashSet<>(list).size()) {
             throw new IllegalStateException("Найдено несколько аннотаций @Name с одинаковым значением в классе " + this.getClass().getName());
         }
@@ -273,7 +271,7 @@ public abstract class AkitaPage extends ElementsContainer {
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
                 .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private Object extractFieldValueViaReflection(Field field) {

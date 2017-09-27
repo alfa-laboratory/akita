@@ -21,7 +21,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script type="text/javascript">
-        var HIDEnSHOW = function() {
+        var HIDEnSHOW = function () {
             var element = document.getElementById("ul");
             if (element.style.display === "none") {
                 element.style.display = "block";
@@ -31,32 +31,32 @@
     </script>
 </head>
 <body>
-    <div id="mockId">Serious testing page</div>
-    <div class="mockCss">
-        <a name="mockName">321</a>
-        <button onclick="HIDEnSHOW()" name="SUPERBUTTON">SUPERBUTTON</button>
-        <button onclick="this.disabled=true" name="goodButton">GoodButton</button>
-        <button disabled="true" id="permDisabledBtn">Disabled :p</button>
-        <div class="mockXpath">
-            <p id="ul" style="display: block">Serious testing page</p>
-        </div>
-        <div id="hiddenDiv" style="display: none">123</div>
-
-        <ul id="list">
-            <li>Three</li>
-            <li>One</li>
-            <li>Two</li>
-        </ul>
-
+<div id="mockId">Serious testing page</div>
+<div class="mockCss">
+    <a name="mockName">321</a>
+    <button onclick="HIDEnSHOW()" name="SUPERBUTTON">SUPERBUTTON</button>
+    <button onclick="this.disabled=true" name="goodButton">GoodButton</button>
+    <button disabled="true" id="permDisabledBtn">Disabled :p</button>
+    <div class="mockXpath">
+        <p id="ul" style="display: block">Serious testing page</p>
     </div>
-    <input type="text" name="normalField">
-    <input type="text" name="disabledField" readonly disabled="true">
-    <input type="text" name="fieldWithText" value="text">
-    <br><a href="RedirectionPage.html" id="link">LINK</a>
-    <form>
-        <input type="email" id="login">
-        <input type="password" id="psw">
-        <input type="submit" id="submit">
-    </form>
+    <div id="hiddenDiv" style="display: none">123</div>
+
+    <ul id="list">
+        <li>Three</li>
+        <li>One</li>
+        <li>Two</li>
+    </ul>
+
+</div>
+<input type="text" name="normalField">
+<input type="text" name="disabledField" readonly disabled="true">
+<input type="text" name="fieldWithText" value="text">
+<br><a href="RedirectionPage.html" id="link">LINK</a>
+<form>
+    <input type="email" id="login">
+    <input type="password" id="psw">
+    <input type="submit" id="submit">
+</form>
 </body>
 </html>

@@ -1,12 +1,12 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
@@ -334,11 +335,31 @@ public class DefaultSteps {
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String listName, String value) {
-        List<SelenideElement> listOfTypeFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        listOfTypeFromPage.stream()
-                .filter(type -> type.innerText().equals(value))
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsText = listOfElementsFromPage.stream()
+                .map(element -> element.getText().trim())
+                .collect(toList());
+        listOfElementsFromPage.stream()
+                .filter(element -> element.getText().trim().equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке [%s] ", value, listName)))
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
+                .click();
+    }
+
+    /**
+     * Выбор из списка со страницы элемента, который содержит заданный текст
+     * Не чувствителен к регистру
+     */
+    @Тогда("^в списке \"([^\"]*)\" выбран элемент содержащий текст \"([^\"]*)\"$")
+    public void selectElementInListIfFoundByText(String listName, String value) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsListText = listOfElementsFromPage.stream()
+                .map(element -> element.getText().trim().toLowerCase())
+                .collect(toList());
+        listOfElementsFromPage.stream()
+                .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
                 .click();
     }
 
