@@ -154,7 +154,7 @@ public class DefaultStepsTest {
         List<String> list = new ArrayList<>();
         list.add("Serious testing page");
         akitaScenario.setVar("list", list);
-        ds.checkIfListContainsValueFromField("mockTagName", "list");
+        ds.checkIfListContainsValueFromField("list", "mockTagName");
     }
 
     @Test(expected = ElementShouldNot.class)
