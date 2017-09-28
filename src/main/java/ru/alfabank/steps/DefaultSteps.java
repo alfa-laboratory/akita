@@ -201,10 +201,10 @@ public class DefaultSteps {
      */
     @SuppressWarnings("unchecked")
     @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\"$")
-    public void checkIfListContainsValueFromField(String elementName, String variableListName) {
+    public void checkIfListContainsValueFromField(String variableListName, String elementName) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
-        assertTrue(String.format("Список из переменной [%s] не содержит значение поля [%s]", elementName, variableListName),
+        assertTrue(String.format("Список из переменной [%s] не содержит значение поля [%s]", variableListName, elementName),
                 listFromVariable.contains(actualValue));
     }
 
