@@ -1,6 +1,11 @@
 <img align="left" width="140" height="140" title="akita"
      src="https://github.com/alfa-laboratory/akita/blob/master/akita.png" />
 
+# Akita
+[![Build Status](https://travis-ci.org/alfa-laboratory/akita.svg?branch=master)](https://travis-ci.org/alfa-laboratory/akita)
+[![Coverage Status](https://coveralls.io/repos/github/alfa-laboratory/akita/badge.svg?branch=master)](https://coveralls.io/github/alfa-laboratory/akita?branch=master)
+[![Download](https://api.bintray.com/packages/alfa-laboratory/maven-releases/akita/images/download.svg) ](https://bintray.com/alfa-laboratory/maven-releases/akita/_latestVersion)
+
 Akita - бери и тестируй
 =========================
 
