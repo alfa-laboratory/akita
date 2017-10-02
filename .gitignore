@@ -28,4 +28,4 @@ local.properties
 *.project
 *.settings
 
-artifactory.properties
+gradle.properties

@@ -7,7 +7,6 @@ buildscript {
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
         classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
     }
@@ -25,7 +24,6 @@ apply plugin: 'idea'
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'nebula.nebula-release'
-apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
@@ -63,15 +61,6 @@ dependencies {
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
-
-sonarqube {
-    properties {
-        property 'sonar.projectName', rootProject.name
-        property 'sonar.projectDescription', "Testiodor autotest framework"
-        property 'sonar.sourceEncoding', 'UTF-8'
-    }
-}
-
 publishing {
     publications {
         maven(MavenPublication) {
@@ -84,27 +73,42 @@ publishing {
     }
 }
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
+ext {
+    bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
+    bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
+    bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
+
 }
 
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = 'Autotests'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publications('maven')
+bintray {
+    user = bintrayUserName
+    key = bintrayPassword
+
+    publications = ['nebula']
+    dryRun = false
+    publish = true
+    pkg {
+        userOrg = 'alfa-laboratory'
+        repo='maven-releases'
+        name = 'akita'
+        desc = project.description
+        websiteUrl = 'https://github.com/alfa-laboratory/akita'
+        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita'
+        vcsUrl = 'https://github.com/alfa-laboratory/akita'
+        licenses = ['Apache-2.0']
+        labels = ['gradle', 'nebula']
+        publicDownloadNumbers = true
+        attributes = [:]
+        version {
+            name = project.version
+            vcsTag = project.version
+            attributes = [:]
         }
     }
 }
 
-artifactoryPublish {
-    dependsOn jar
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
 }
 
 test {
@@ -125,6 +129,9 @@ test {
         junitXml.enabled = false
     }
 }
+
+bintrayUpload.onlyIf { !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV") }
+
 
 jacocoTestReport {
     reports {
