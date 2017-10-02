@@ -289,11 +289,6 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void expandWindowToFullScreenSimple() {
-        ds.expandWindowToFullScreen();
-    }
-
-    @Test
     public void elementHoverTest() {
         ds.elementHover("NormalField");
     }
