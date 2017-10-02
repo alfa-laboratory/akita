@@ -1,4 +1,4 @@
-![Alt text] (akita.png)
+![Alt text](/akita.png?raw=true "Title")
 
 Akita - бери и тестируй
 =========================
