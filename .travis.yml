@@ -2,13 +2,20 @@ language: java
 sudo: false
 jdk:
   - oraclejdk8
+dist: trusty
+addons:
+  chrome: stable
 install:
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - sudo dpkg -i google-chrome*.deb
+#  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#  - sudo dpkg -i google-chrome*.deb
   - wget 'https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip'
   - sudo apt-get install -y unzip
   - mkdir -p $TRAVIS_BUILD_DIR/drivers
   - unzip chromedriver_linux64.zip -d $TRAVIS_BUILD_DIR/drivers
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
 script: PATH=$PATH:$TRAVIS_BUILD_DIR/drivers ./gradlew check
 cache:
   directories:
