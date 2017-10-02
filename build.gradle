@@ -5,13 +5,14 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
         classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
-g
+
 repositories {
     jcenter()
     mavenCentral()
@@ -27,6 +28,8 @@ apply plugin: 'nebula.nebula-release'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'distribution'
 
 tasks.release.dependsOn tasks.artifactoryPublish
 
@@ -56,6 +59,7 @@ dependencies {
 
     testCompile "org.mockito:mockito-core:2.+"
     testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
+
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -71,6 +75,10 @@ publishing {
             }
         }
     }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
 }
 
 ext {
@@ -105,10 +113,6 @@ bintray {
             attributes = [:]
         }
     }
-}
-
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
 }
 
 test {
