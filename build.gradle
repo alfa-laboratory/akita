@@ -120,18 +120,8 @@ test {
     ignoreFailures = false
 
     jvmArgs += "-Dfile.encoding=UTF-8"
-    jvmArgs += "-Dbrowser=${browser}"
-    jvmArgs += "-Dprofile=${profile}"
+    jvmArgs += "-Dbrowser=chrome"
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
-
-    if (remoteHub) {
-        jvmArgs += "-Dremote=${remoteHub}"
-    }
-
-    reports {
-        html.enabled = false
-        junitXml.enabled = false
-    }
 }
 
 bintrayUpload.onlyIf { !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV") }
