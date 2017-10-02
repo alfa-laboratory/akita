@@ -59,7 +59,7 @@ public class SpectatorsTest {
         SelenideElement mockId = page.mockId;
         SelenideElement mockCss = page.mockCss;
         akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
-                1000, mockCss, mockId);
+                3000, mockCss, mockId);
     }
 
     @Test
@@ -70,14 +70,14 @@ public class SpectatorsTest {
         list.add(mockCss);
         list.add(mockId);
         akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
-                1000, list);
+                3000, list);
     }
 
     @Test(expected = NullPointerException.class)
     public void waitElementsUntilNull() {
         SelenideElement nullElement = null;
         akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
-                1000, nullElement);
+                3000, nullElement);
     }
 
     @Test(expected = ElementShould.class)
@@ -85,14 +85,14 @@ public class SpectatorsTest {
         SelenideElement mockId = page.mockId;
         SelenideElement mockCss = page.mockCss;
         akitaScenario.getCurrentPage().waitElementsUntil(Condition.disappear,
-                1000, mockCss, mockId);
+                3000, mockCss, mockId);
     }
 
     @Test
     public void waitElementsUntilEmptyList() {
         LinkedList<SelenideElement> list = new LinkedList<>();
         akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
-                1000, list);
+                3000, list);
     }
 
     @Test(expected = NullPointerException.class)
@@ -103,6 +103,6 @@ public class SpectatorsTest {
         list.add(nullElement1);
         list.add(nullElement2);
         akitaScenario.getCurrentPage().waitElementsUntil(Condition.appear,
-                1000, list);
+                3000, list);
     }
 }
