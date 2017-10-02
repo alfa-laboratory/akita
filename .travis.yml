@@ -7,7 +7,8 @@ install:
   - sudo dpkg -i google-chrome*.deb
   - wget 'https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip'
   - sudo apt-get install -y unzip
-  - unzip chromedriver_linux64.zip -d drivers
+  - mkdir -p /usr/local/bin/drivers
+  - unzip chromedriver_linux64.zip -d /usr/local/bin/drivers
 script: PATH=$PATH:/usr/local/bin/drivers ./gradlew check
 cache:
   directories:
