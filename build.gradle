@@ -120,6 +120,7 @@ test {
     ignoreFailures = false
 
     jvmArgs += "-Dfile.encoding=UTF-8"
+    jvmArgs += "-Dbrowser=chrome"
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
 }
 
