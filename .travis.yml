@@ -8,8 +8,7 @@ install:
   - wget 'https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip'
   - sudo apt-get install -y unzip
   - unzip chromedriver_linux64.zip -d drivers
-  - PATH=$PATH:/usr/local/bin/drivers
-  - export PATH
+script: PATH=$PATH:/usr/local/bin/drivers ./gradlew check
 cache:
   directories:
   - "$HOME/.gradle/caches/"
