@@ -3,13 +3,17 @@ sudo: false
 jdk:
   - oraclejdk8
 install:
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - sudo dpkg -i google-chrome*.deb
-  - wget 'https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip'
-  - sudo apt-get install -y unzip
-  - mkdir -p /usr/local/bin/drivers
-  - unzip chromedriver_linux64.zip -d /usr/local/bin/drivers
-script: PATH=$PATH:/usr/local/bin/drivers ./gradlew check
+#  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#  - sudo dpkg -i google-chrome*.deb
+#  - wget 'https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip'
+#  - sudo apt-get install -y unzip
+#  - mkdir -p /usr/local/bin/drivers
+#  - unzip chromedriver_linux64.zip -d /usr/local/bin/drivers
+#script: PATH=$PATH:/usr/local/bin/drivers ./gradlew check
+  - cd /usr/local/
+  - wget http://ftp.mozilla.org/pub/firefox/releases/50.0/linux-x86_64/ru/firefox-50.0.tar.bz2
+  - tar xvjf firefox-50.0.tar.bz2
+  - sudo ln -s /usr/local/firefox/firefox /usr/bin/firefox
 cache:
   directories:
   - "$HOME/.gradle/caches/"
