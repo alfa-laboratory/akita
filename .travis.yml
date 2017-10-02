@@ -5,8 +5,8 @@ jdk:
 install:
   - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   - sudo dpkg -i google-chrome*.deb
-  - wget https://chromedriver.storage.googleapis.com/index.html?path=2.32/chromedriver_linux64.zip
-  - sudo apt-get install unzip
+  - wget 'https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip'
+  - sudo apt-get install -y unzip
   - unzip chromedriver_linux64.zip -d drivers
 cache:
   directories:
