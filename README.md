@@ -1,4 +1,5 @@
-![Alt text](/akita.png?raw=true "Title")
+<img align="left" width="140" height="140" title="akita"
+     src="https://github.com/alfa-laboratory/akita/blob/master/akita.png" />
 
 Akita - бери и тестируй
 =========================
