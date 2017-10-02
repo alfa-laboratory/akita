@@ -2,7 +2,12 @@ language: java
 sudo: false
 jdk:
   - oraclejdk8
-install: true
+install:
+  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  - sudo dpkg -i google-chrome*.deb
+  - wget https://chromedriver.storage.googleapis.com/index.html?path=2.32/chromedriver_linux64.zip
+  - sudo apt-get install unzip
+  - unzip chromedriver_linux64.zip -d drivers
 cache:
   directories:
   - "$HOME/.gradle/caches/"
