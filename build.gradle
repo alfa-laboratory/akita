@@ -1,0 +1,147 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
+        classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
+    }
+}
+g
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+apply plugin: 'nebula.nebula-release'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'license'
+
+tasks.release.dependsOn tasks.artifactoryPublish
+
+group = 'ru.alfabank.tests'
+
+description = """light testing framework Akita"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+project.ext {
+    cucumberVersion = '1.2.5'
+}
+
+dependencies {
+    compile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
+    compile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'com.codeborne', name: 'selenide', version: '4.5'
+    compile group: 'info.cukes', name: 'cucumber-java', version: cucumberVersion
+    compile group: 'info.cukes', name: 'cucumber-core', version: cucumberVersion
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
+    compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
+    compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+
+    testCompile "org.mockito:mockito-core:2.+"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+ext {
+    bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
+    bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
+    bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
+
+}
+
+bintray {
+    user = bintrayUserName
+    key = bintrayPassword
+
+    publications = ['nebula']
+    dryRun = false
+    publish = true
+    pkg {
+        userOrg = 'alfa-laboratory'
+        repo='maven-releases'
+        name = 'akita'
+        desc = project.description
+        websiteUrl = 'https://github.com/alfa-laboratory/akita'
+        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita'
+        vcsUrl = 'https://github.com/alfa-laboratory/akita'
+        licenses = ['Apache-2.0']
+        labels = ['gradle', 'nebula']
+        publicDownloadNumbers = true
+        attributes = [:]
+        version {
+            name = project.version
+            vcsTag = project.version
+            attributes = [:]
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+test {
+    maxParallelForks = 1
+    ignoreFailures = false
+
+    jvmArgs += "-Dfile.encoding=UTF-8"
+    jvmArgs += "-Dbrowser=${browser}"
+    jvmArgs += "-Dprofile=${profile}"
+    jvmArgs += "-Dselenide.pageLoadStrategy=none"
+
+    if (remoteHub) {
+        jvmArgs += "-Dremote=${remoteHub}"
+    }
+
+    reports {
+        html.enabled = false
+        junitXml.enabled = false
+    }
+}
+
+bintrayUpload.onlyIf { !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV") }
+
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+license {
+    header rootProject.file('HEADER')
+    strictCheck true
+}
