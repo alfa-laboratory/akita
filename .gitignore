@@ -8,6 +8,7 @@
 .svn/
 target/
 build/
+classes/
 .gradle/
 bin/**
 tmp/**
