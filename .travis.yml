@@ -18,7 +18,7 @@ before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
-script: PATH=$PATH:$TRAVIS_BUILD_DIR/drivers ./gradlew check
+script: PATH=$PATH:$TRAVIS_BUILD_DIR/drivers "./gradle/buildViaTravis.sh"
 cache:
   directories:
   - "$HOME/.gradle/caches/"
