@@ -6,14 +6,21 @@ buildscript {
 
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
-        classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+
+        classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:4.9.1'
+        classpath 'com.netflix.nebula:nebula-project-plugin:3.3.0'
     }
 }
 
 repositories {
+    maven {
+        url  "http://dl.bintray.com/alfa-laboratory/maven-releases"
+    }
+    mavenLocal()
     jcenter()
     mavenCentral()
 }
@@ -24,12 +31,15 @@ apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
-apply plugin: 'nebula.nebula-release'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'distribution'
+
+apply plugin: 'nebula.release'
+apply plugin: 'nebula.project'
+apply plugin: 'nebula.maven-publish'
 
 tasks.release.dependsOn tasks.artifactoryPublish
 
@@ -77,9 +87,9 @@ publishing {
     }
 }
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
-}
+//task sourceJar(type: Jar) {
+//    from sourceSets.main.allJava
+//}
 
 ext {
     bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
