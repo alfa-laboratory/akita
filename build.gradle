@@ -75,7 +75,10 @@ ext {
 
 bintray {
     user = bintrayUserName
-    key = bintrayPassword
+    apiKey = bintrayPassword
+
+    logger.debug "bintray user: ${bintrayUserName?.size()}"
+    logger.debug "bintray apiKey: ${bintrayPassword?.size()}"
 
     publications = ['maven']
     dryRun = false
