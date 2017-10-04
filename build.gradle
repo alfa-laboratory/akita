@@ -80,6 +80,7 @@ bintray {
     publications = ['maven']
     dryRun = false
     publish = true
+
     pkg {
         userOrg = 'alfa-laboratory'
         repo = 'maven-releases'
