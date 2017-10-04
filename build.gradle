@@ -36,7 +36,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'distribution'
-
+//welcome to hell
 apply plugin: 'nebula.release'
 apply plugin: 'nebula.project'
 apply plugin: 'nebula.maven-publish'
