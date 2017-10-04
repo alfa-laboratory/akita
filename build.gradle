@@ -16,7 +16,7 @@ buildscript {
 
 repositories {
     maven {
-        url  "http://dl.bintray.com/alfa-laboratory/maven-releases"
+        url "http://dl.bintray.com/alfa-laboratory/maven-releases"
     }
     mavenLocal()
     jcenter()
@@ -28,15 +28,12 @@ apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'base'
-apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'distribution'
-
-// ==== nebula
 apply plugin: 'nebula.nebula-release'
 
 group = 'ru.alfabank.tests'
@@ -65,7 +62,6 @@ dependencies {
 
     testCompile "org.mockito:mockito-core:2.+"
     testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
-
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -75,20 +71,18 @@ compileTestJava.options.encoding = 'UTF-8'
 ext {
     bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
     bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
-    bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
-
 }
 
 bintray {
     user = bintrayUserName
     key = bintrayPassword
 
-    publications = ['nebula']
+    publications = ['maven']
     dryRun = false
     publish = true
     pkg {
         userOrg = 'alfa-laboratory'
-        repo='maven-releases'
+        repo = 'maven-releases'
         name = 'akita'
         desc = project.description
         websiteUrl = 'https://github.com/alfa-laboratory/akita'
@@ -115,7 +109,9 @@ test {
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
 }
 
-bintrayUpload.onlyIf { !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV") }
+bintrayUpload.onlyIf {
+    !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
+}
 
 
 jacocoTestReport {
@@ -131,8 +127,6 @@ license {
     strictCheck true
 }
 
-tasks.release.dependsOn tasks.artifactoryPublish
-
 publishing {
     publications {
         maven(MavenPublication) {
@@ -143,10 +137,6 @@ publishing {
             }
         }
     }
-}
-
-artifactoryPublish {
-    dependsOn jar
 }
 
 task sourceJar(type: Jar) {
