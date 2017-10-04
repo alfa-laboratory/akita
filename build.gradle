@@ -75,7 +75,7 @@ ext {
 
 bintray {
     user = bintrayUserName
-    apiKey = bintrayPassword
+    key = bintrayPassword
 
     logger.debug "bintray user: ${bintrayUserName?.size()}"
     logger.debug "bintray apiKey: ${bintrayPassword?.size()}"
