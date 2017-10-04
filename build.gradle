@@ -10,9 +10,7 @@ buildscript {
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
 
-        classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
-        classpath 'com.netflix.nebula:nebula-publishing-plugin:4.9.1'
-        classpath 'com.netflix.nebula:nebula-project-plugin:3.3.0'
+        classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
     }
 }
 
@@ -39,9 +37,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'distribution'
 
 // ==== nebula
-apply plugin: 'nebula.release'
-apply plugin: 'nebula.project'
-apply plugin: 'nebula.maven-publish'
+apply plugin: 'nebula.nebula-release'
 
 group = 'ru.alfabank.tests'
 
@@ -74,18 +70,6 @@ dependencies {
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-    }
-}
 
 
 ext {
@@ -145,4 +129,26 @@ jacocoTestReport {
 license {
     header rootProject.file('HEADER')
     strictCheck true
+}
+
+tasks.release.dependsOn tasks.artifactoryPublish
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+artifactoryPublish {
+    dependsOn jar
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
 }
