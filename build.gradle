@@ -87,9 +87,6 @@ publishing {
     }
 }
 
-//task sourceJar(type: Jar) {
-//    from sourceSets.main.allJava
-//}
 
 ext {
     bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
