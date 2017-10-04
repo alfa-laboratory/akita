@@ -29,6 +29,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'idea'
+apply plugin: 'base'
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
@@ -41,8 +42,6 @@ apply plugin: 'distribution'
 apply plugin: 'nebula.release'
 apply plugin: 'nebula.project'
 apply plugin: 'nebula.maven-publish'
-
-tasks.release.dependsOn tasks.artifactoryPublish
 
 group = 'ru.alfabank.tests'
 
