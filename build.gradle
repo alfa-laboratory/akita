@@ -42,8 +42,6 @@ apply plugin: 'nebula.release'
 apply plugin: 'nebula.project'
 apply plugin: 'nebula.maven-publish'
 
-tasks.release.dependsOn tasks.artifactoryPublish
-
 group = 'ru.alfabank.tests'
 
 description = """light testing framework Akita"""
