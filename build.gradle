@@ -40,6 +40,7 @@ apply plugin: 'distribution'
 // ==== nebula
 apply plugin: 'nebula.release'
 apply plugin: 'nebula.project'
+apply plugin: 'nebula.javadoc-jar'
 apply plugin: 'nebula.maven-publish'
 
 tasks.release.dependsOn tasks.artifactoryPublish
@@ -81,6 +82,10 @@ publishing {
         maven(MavenPublication) {
             from components.java
 
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+
             artifact sourceJar {
                 classifier "sources"
             }
@@ -109,8 +114,8 @@ bintray {
         name = 'akita'
         desc = project.description
         websiteUrl = 'https://github.com/alfa-laboratory/akita'
-        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita'
-        vcsUrl = 'https://github.com/alfa-laboratory/akita'
+        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita/issues'
+        vcsUrl = 'https://github.com/alfa-laboratory/akita.git'
         licenses = ['Apache-2.0']
         labels = ['gradle', 'nebula']
         publicDownloadNumbers = true
