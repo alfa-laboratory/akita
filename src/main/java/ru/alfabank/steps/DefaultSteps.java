@@ -104,7 +104,7 @@ public class DefaultSteps {
      */
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
     public void clickOnElement(String elementName) {
-        akitaScenario.getCurrentPage().getElement(elementName).click();
+        akitaScenario.getCurrentPage().getElement(elementName).scrollTo().click();
     }
 
     /**
@@ -343,6 +343,7 @@ public class DefaultSteps {
                 .filter(element -> element.getText().trim().equalsIgnoreCase(value))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
+                .scrollTo()
                 .click();
     }
 
@@ -360,6 +361,7 @@ public class DefaultSteps {
                 .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
+                .scrollTo()
                 .click();
     }
 
@@ -387,7 +389,7 @@ public class DefaultSteps {
      */
     @И("^выполнен переход на страницу \"([^\"]*)\" после нажатия на (?:ссылку|кнопку) \"([^\"]*)\"$")
     public void urlClickAndCheckRedirection(String pageName, String elementName) {
-        akitaScenario.getCurrentPage().getElement(elementName).click();
+        akitaScenario.getCurrentPage().getElement(elementName).scrollTo().click();
         loadPage(pageName);
         akitaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
     }
@@ -413,7 +415,7 @@ public class DefaultSteps {
         akitaScenario.getCurrentPage().getElement("Логин").sendKeys(login);
         cleanField("Пароль");
         akitaScenario.getCurrentPage().getElement("Пароль").sendKeys(password);
-        akitaScenario.getCurrentPage().getElement("Войти").click();
+        akitaScenario.getCurrentPage().getElement("Войти").scrollTo().click();
     }
 
     /**
@@ -574,7 +576,7 @@ public class DefaultSteps {
      */
     @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
     public void findElement(String text) {
-        $(By.xpath("//*[text()='" + text + "']")).click();
+        $(By.xpath("//*[text()='" + text + "']")).scrollTo().click();
     }
 
     /**
