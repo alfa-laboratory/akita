@@ -75,7 +75,7 @@ public final class AkitaScenario {
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы, которая передается в метод в качестве аргумента.
-     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
+     * Пример использования: {@code withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});}
      * Проверка отображения всех элементов страницы выполняется всегда
      *
      * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
@@ -86,7 +86,7 @@ public final class AkitaScenario {
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы.
-     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
+     * Пример использования: {@code withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});}
      * Проверка отображения всех элементов страницы опциональна
      *
      * @param clazz                   класс страницы, доступ к полям и методам которой необходимо получить

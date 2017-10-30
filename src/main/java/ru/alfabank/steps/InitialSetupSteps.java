@@ -71,7 +71,7 @@ public class InitialSetupSteps {
 
     /**
      * Если сценарий завершился со статусом "fail" будет создан скриншот и сохранен в директорию
-     * <project>/build/reports/tests
+     * {@code <project>/build/reports/tests}
      *
      * @param scenario текущий сценарий
      */

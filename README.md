@@ -173,17 +173,18 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 ```ru.alfabank.tests.core.helpers.PropertyLoader```
 Класс для получения свойств
 
-
+# Template
+https://github.com/alfa-laboratory/akita-testing-template
 
 Используемые зависимости:
 --------------------------
->nebula-release-plugin - Apache License Version 2.0
->coveralls-gradle-plugin - The MIT License (MIT)
->com.codeborne.selenide - The MIT License (MIT)
->io.rest-assured.rest-assured - Apache License Version 2.0
->com.google.inject.guice - Apache License Version 2.0
->org.mockito.mockito-core - The MIT License
->com.github.tomakehurst:wiremock - Apache License Version 2.0
+> nebula-release-plugin - Apache License Version 2.0
+> coveralls-gradle-plugin - The MIT License (MIT)
+> com.codeborne.selenide - The MIT License (MIT)
+> io.rest-assured.rest-assured - Apache License Version 2.0
+> com.google.inject.guice - Apache License Version 2.0
+> org.mockito.mockito-core - The MIT License
+> com.github.tomakehurst:wiremock - Apache License Version 2.0
 >org.hamcrest.hamcrest-all - BSD License
 >org.codehaus.groovy - Apache License Version 2.0
 >JUnit - Eclipse Public License
