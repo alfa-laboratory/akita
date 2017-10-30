@@ -10,9 +10,10 @@ buildscript {
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
 
-        classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
+        classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
+        classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.+'
         classpath 'com.netflix.nebula:nebula-publishing-plugin:4.9.1'
-        classpath 'com.netflix.nebula:nebula-project-plugin:3.3.0'
     }
 }
 
@@ -39,11 +40,9 @@ apply plugin: 'distribution'
 
 // ==== nebula
 apply plugin: 'nebula.release'
-apply plugin: 'nebula.project'
-apply plugin: 'nebula.javadoc-jar'
 apply plugin: 'nebula.maven-publish'
-
-tasks.release.dependsOn tasks.artifactoryPublish
+apply plugin: 'nebula.source-jar'
+apply plugin: 'nebula.javadoc-jar'
 
 group = 'ru.alfabank.tests'
 
