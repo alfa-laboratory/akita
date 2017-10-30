@@ -103,7 +103,7 @@ bintray {
     user = bintrayUserName
     key = bintrayPassword
 
-    publications = ['nebula']
+    publications = ['maven']
     dryRun = false
     publish = true
 
