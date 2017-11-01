@@ -10,7 +10,10 @@ buildscript {
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
 
-        classpath 'com.netflix.nebula:nebula-release-plugin:4.2.0'
+        classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
+        classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.+'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:4.9.1'
     }
 }
 
@@ -34,7 +37,12 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'distribution'
-apply plugin: 'nebula.nebula-release'
+
+// ==== nebula
+apply plugin: 'nebula.release'
+apply plugin: 'nebula.maven-publish'
+apply plugin: 'nebula.source-jar'
+apply plugin: 'nebula.javadoc-jar'
 
 group = 'ru.alfabank.tests'
 
@@ -67,18 +75,33 @@ dependencies {
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
 
 ext {
     bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
     bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
+    bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
+
 }
 
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-
-    logger.debug "bintray user: ${bintrayUserName?.size()}"
-    logger.debug "bintray apiKey: ${bintrayPassword?.size()}"
 
     publications = ['maven']
     dryRun = false
@@ -90,8 +113,8 @@ bintray {
         name = 'akita'
         desc = project.description
         websiteUrl = 'https://github.com/alfa-laboratory/akita'
-        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita'
-        vcsUrl = 'https://github.com/alfa-laboratory/akita'
+        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita/issues'
+        vcsUrl = 'https://github.com/alfa-laboratory/akita.git'
         licenses = ['Apache-2.0']
         labels = ['gradle', 'nebula']
         publicDownloadNumbers = true
@@ -129,20 +152,4 @@ jacocoTestReport {
 license {
     header rootProject.file('HEADER')
     strictCheck true
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
-        }
-    }
-}
-
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
 }
