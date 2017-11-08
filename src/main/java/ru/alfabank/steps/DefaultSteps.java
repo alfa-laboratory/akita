@@ -676,7 +676,7 @@ public class DefaultSteps {
                 .map(element -> element.getText().trim().toLowerCase())
                 .collect(toList());
         assertTrue(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
-                elementsListText.stream().anyMatch(item -> item.contains(value.toLowerCase())));
+                elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
     }
 
     /**

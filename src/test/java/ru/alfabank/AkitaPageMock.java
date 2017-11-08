@@ -53,6 +53,10 @@ public class AkitaPageMock extends AkitaPage {
     @Name("List")
     public List<SelenideElement> list;
 
+    @FindBy(xpath = "//ul[@id=\"list2\"]/li")
+    @Name("List2")
+    public List<SelenideElement> list2;
+
     @FindBy(name = "goodButton")
     @Name("GoodButton")
     public SelenideElement goodButton;

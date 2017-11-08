@@ -358,8 +358,16 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void selectRandomElementFromListPositive() {
-        ds.selectRandomElementFromList("List");
+    public void selectRandomElementFromListPositive() { ds.selectRandomElementFromList("List"); }
+
+    @Test
+    public void checkListElementsContainsTextPositive() {
+        ds.checkListElementsContainsText("List2", "item");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void checkListElementsContainsTextNegative() {
+        ds.checkListElementsContainsText("List2", "item1");
     }
 
 
