@@ -638,6 +638,34 @@ public class DefaultSteps {
     }
 
     /**
+     * Выбор из списка со страницы любого случайного элемента
+     */
+    @Тогда("^выбран любой элемент в списке \"([^\"]*)\"$")
+    public void selectRandomElementFromList(String listName) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size())).shouldBe(Condition.enabled).click();
+    }
+
+    /**
+     * Выбор n-го элемента из списка со страницы
+     * Нумерация элементов начинается с 1
+     */
+    @Тогда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\"$")
+    public void selectElementNumberFromList(Integer elementNumber, String listName) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        SelenideElement elementToSelect;
+        Integer selectedElementNumber = elementNumber - 1;
+        try {
+            elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
+        } catch (IndexOutOfBoundsException ex) {
+            throw new IndexOutOfBoundsException(
+                    String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
+                            listName, elementNumber, listOfElementsFromPage.size()));
+        }
+        elementToSelect.shouldBe(Condition.enabled).click();
+    }
+
+    /**
      * Возвращает каталог "Downloads" в домашней директории
      *
      * @return
@@ -656,6 +684,15 @@ public class DefaultSteps {
         for (File file : filesToDelete) {
             file.delete();
         }
+    }
+
+    /**
+     * Возвращает случайное число от нуля до maxValueInRange
+     *
+     * @param maxValueInRange максимальная граница диапазона генерации случайных чисел
+     */
+    private int getRandom(int maxValueInRange) {
+        return (int) (Math.random() * maxValueInRange);
     }
 
 }
