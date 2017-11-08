@@ -346,4 +346,21 @@ public class DefaultStepsTest {
         assertThat((String) scopedVariables.get("1") + (String) scopedVariables.get("2"),
                 equalTo("12"));
     }
+
+    @Test
+    public void selectElementNumberFromListPositive() {
+        ds.selectElementNumberFromList(1, "List");
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void selectElementNumberFromListNegative() {
+        ds.selectElementNumberFromList(100, "List");
+    }
+
+    @Test
+    public void selectRandomElementFromListPositive() {
+        ds.selectRandomElementFromList("List");
+    }
+
+
 }
