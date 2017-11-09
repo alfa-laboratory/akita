@@ -656,7 +656,7 @@ public class DefaultSteps {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement elementToSelect;
         Integer selectedElementNumber = elementNumber - 1;
-        if (selectedElementNumber < 0 || selectedElementNumber > listOfElementsFromPage.size()) {
+        if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
             throw new IndexOutOfBoundsException(
                 String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
                     listName, elementNumber, listOfElementsFromPage.size()));
