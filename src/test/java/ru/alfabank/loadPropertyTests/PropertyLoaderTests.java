@@ -85,6 +85,19 @@ public class PropertyLoaderTests {
         assertThat("Итоговый URL не равен '//ru/credit/caramba/alfalab/'", actual, Matchers.equalTo("//ru/credit/caramba/alfalab/"));
     }
 
+    @Test
+    public void getValuesByNameWithDot() {
+        String resolvedString = resolveVars("{testUser.password}");
+        assertThat("успешно разрезолвилась переменная с .", resolvedString, Matchers.equalTo("testPassword"));
+    }
+
+    @Test
+    public void getValueFromMapByNameWithDot() {
+        akitaScenario.setVar("user.login", "superLogin");
+        String resolvedString = akitaScenario.replaceVariables("{user.login}");
+        assertThat("успешно разрезолвилась переменная с .", resolvedString, Matchers.equalTo("superLogin"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void getNotExistingValue() {
         resolveVars("{RandomTestVariable3321}");

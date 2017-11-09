@@ -167,7 +167,7 @@ public class DefaultApiSteps {
      * @return новая строка
      */
     public static String resolveVars(String inputString) {
-        Pattern p = Pattern.compile("\\{(\\w+)\\}");
+        Pattern p = Pattern.compile("\\{([^{}]+)\\}");
         Matcher m = p.matcher(inputString);
         String newString = "";
         while (m.find()) {
