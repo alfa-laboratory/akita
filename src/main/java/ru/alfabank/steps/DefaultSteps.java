@@ -638,6 +638,48 @@ public class DefaultSteps {
     }
 
     /**
+     * Выбор из списка со страницы любого случайного элемента
+     */
+    @Тогда("^выбран любой элемент в списке \"([^\"]*)\"$")
+    public void selectRandomElementFromList(String listName) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
+            .shouldBe(Condition.enabled).click();
+    }
+
+    /**
+     * Выбор n-го элемента из списка со страницы
+     * Нумерация элементов начинается с 1
+     */
+    @Тогда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\"$")
+    public void selectElementNumberFromList(Integer elementNumber, String listName) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        SelenideElement elementToSelect;
+        Integer selectedElementNumber = elementNumber - 1;
+        if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
+            throw new IndexOutOfBoundsException(
+                String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
+                    listName, elementNumber, listOfElementsFromPage.size()));
+        }
+        elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
+        elementToSelect.shouldBe(Condition.enabled).click();
+    }
+
+    /**
+     * Проверка, что каждый элемент списка содержит ожидаемый текст
+     * Не чувствителен к регистру
+     */
+    @Тогда("^элементы списка \"([^\"]*)\" содержат текст \"([^\"]*)\"$")
+    public void checkListElementsContainsText(String listName, String value) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsListText = listOfElementsFromPage.stream()
+            .map(element -> element.getText().trim().toLowerCase())
+            .collect(toList());
+        assertTrue(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
+            elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
+    }
+
+    /**
      * Возвращает каталог "Downloads" в домашней директории
      *
      * @return
@@ -656,6 +698,15 @@ public class DefaultSteps {
         for (File file : filesToDelete) {
             file.delete();
         }
+    }
+
+    /**
+     * Возвращает случайное число от нуля до maxValueInRange
+     *
+     * @param maxValueInRange максимальная граница диапазона генерации случайных чисел
+     */
+    private int getRandom(int maxValueInRange) {
+        return (int) (Math.random() * maxValueInRange);
     }
 
 }
