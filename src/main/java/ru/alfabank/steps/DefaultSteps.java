@@ -643,7 +643,8 @@ public class DefaultSteps {
     @Тогда("^выбран любой элемент в списке \"([^\"]*)\"$")
     public void selectRandomElementFromList(String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size())).shouldBe(Condition.enabled).click();
+        listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
+            .shouldBe(Condition.enabled).click();
     }
 
     /**
