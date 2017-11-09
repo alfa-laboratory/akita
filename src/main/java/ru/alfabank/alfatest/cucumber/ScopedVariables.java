@@ -56,7 +56,7 @@ public class ScopedVariables {
      * @param textToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
     public String replaceVariables(String textToReplaceIn) {
-        Pattern p = Pattern.compile("\\{(\\w+)\\}");
+        Pattern p = Pattern.compile("\\{([^{}]+)\\}");
         Matcher m = p.matcher(textToReplaceIn);
         StringBuffer buffer = new StringBuffer();
         while (m.find()) {
