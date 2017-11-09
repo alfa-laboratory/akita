@@ -119,7 +119,7 @@ public class DefaultSteps {
     @Тогда("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
+            Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
@@ -130,7 +130,7 @@ public class DefaultSteps {
     @Тогда("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
     public void testElementAppeared(String elementName, int seconds) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
+            Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
@@ -142,7 +142,7 @@ public class DefaultSteps {
     @Тогда("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElementsList(elementName)
+            Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElementsList(elementName)
         );
     }
 
@@ -154,7 +154,7 @@ public class DefaultSteps {
     @Тогда("^ожидается исчезновение элемента \"([^\"]*)\"")
     public void elemDisappered(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
+            Condition.disappears, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
     }
 
     /**
@@ -185,7 +185,7 @@ public class DefaultSteps {
         String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
-                firstValueToCompare, equalTo(secondValueToCompare));
+            firstValueToCompare, equalTo(secondValueToCompare));
     }
 
     /**
@@ -196,7 +196,7 @@ public class DefaultSteps {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         String expectedValue = akitaScenario.getVar(variableName).toString();
         assertThat(String.format("Значение поля [%s] не совпадает со значением из переменной [%s]", elementName, variableName),
-                actualValue, equalTo(expectedValue));
+            actualValue, equalTo(expectedValue));
     }
 
     /**
@@ -209,7 +209,7 @@ public class DefaultSteps {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
         assertTrue(String.format("Список из переменной [%s] не содержит значение поля [%s]", variableListName, elementName),
-                listFromVariable.contains(actualValue));
+            listFromVariable.contains(actualValue));
     }
 
     /**
@@ -261,8 +261,8 @@ public class DefaultSteps {
     @И("^выполнено нажатие на сочетание клавиш из таблицы$")
     public void pressKeyCombination(List<String> keyNames) {
         Iterable<CharSequence> listKeys = keyNames.stream()
-                .map(this::getKeyOrCharacter)
-                .collect(Collectors.toList());
+            .map(this::getKeyOrCharacter)
+            .collect(Collectors.toList());
         String combination = Keys.chord(listKeys);
         WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(combination);
     }
@@ -300,8 +300,8 @@ public class DefaultSteps {
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String fieldName) {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
-                akitaScenario.getCurrentPage().getAnyElementText(fieldName),
-                isEmptyOrNullString());
+            akitaScenario.getCurrentPage().getAnyElementText(fieldName),
+            isEmptyOrNullString());
     }
 
     /**
@@ -341,13 +341,13 @@ public class DefaultSteps {
     public void checkIfSelectedListElementMatchesValue(String listName, String value) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsText = listOfElementsFromPage.stream()
-                .map(element -> element.getText().trim())
-                .collect(toList());
+            .map(element -> element.getText().trim())
+            .collect(toList());
         listOfElementsFromPage.stream()
-                .filter(element -> element.getText().trim().equalsIgnoreCase(value))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
-                .click();
+            .filter(element -> element.getText().trim().equalsIgnoreCase(value))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
+            .click();
     }
 
     /**
@@ -358,13 +358,13 @@ public class DefaultSteps {
     public void selectElementInListIfFoundByText(String listName, String value) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
-                .map(element -> element.getText().trim().toLowerCase())
-                .collect(toList());
+            .map(element -> element.getText().trim().toLowerCase())
+            .collect(toList());
         listOfElementsFromPage.stream()
-                .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
-                .click();
+            .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
+            .click();
     }
 
     /**
@@ -435,7 +435,7 @@ public class DefaultSteps {
     @Тогда("^(?:поле|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-                not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
+            not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
@@ -456,7 +456,7 @@ public class DefaultSteps {
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         String currentAtrValue = currentElement.attr(attribute);
         assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
-                , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
+            , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
     }
 
     /**
@@ -470,7 +470,7 @@ public class DefaultSteps {
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         String currentClassValue = currentElement.getAttribute("class");
         assertThat(String.format("Элемент [%s] не содержит класс со значением [%s]", elementName, expectedClassValue)
-                , currentClassValue.toLowerCase(), containsString(expectedClassValue.toLowerCase()));
+            , currentClassValue.toLowerCase(), containsString(expectedClassValue.toLowerCase()));
     }
 
     /**
@@ -555,8 +555,8 @@ public class DefaultSteps {
 
     private List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {
         return $$(cssSelector).stream()
-                .filter(SelenideElement::isDisplayed)
-                .collect(Collectors.toList());
+            .filter(SelenideElement::isDisplayed)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -625,7 +625,7 @@ public class DefaultSteps {
         assertNotNull("Ошибка поиска файла", expectedFiles);
         assertFalse("Файл не загрузился", expectedFiles.length == 0);
         assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
-                expectedFiles.length == 1);
+            expectedFiles.length == 1);
         deleteFiles(expectedFiles);
     }
 
@@ -659,8 +659,8 @@ public class DefaultSteps {
             elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
         } catch (IndexOutOfBoundsException ex) {
             throw new IndexOutOfBoundsException(
-                    String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
-                            listName, elementNumber, listOfElementsFromPage.size()));
+                String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
+                    listName, elementNumber, listOfElementsFromPage.size()));
         }
         elementToSelect.shouldBe(Condition.enabled).click();
     }
@@ -673,10 +673,10 @@ public class DefaultSteps {
     public void checkListElementsContainsText(String listName, String value) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
-                .map(element -> element.getText().trim().toLowerCase())
-                .collect(toList());
+            .map(element -> element.getText().trim().toLowerCase())
+            .collect(toList());
         assertTrue(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
-                elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
+            elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
     }
 
     /**
