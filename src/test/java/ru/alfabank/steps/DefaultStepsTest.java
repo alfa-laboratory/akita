@@ -348,13 +348,13 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void selectElementNumberFromListPositive() {
+    public void selectElementNumberFromListMinBorder() {
         ds.selectElementNumberFromList(1, "List");
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void selectElementNumberFromListNegative() {
-        ds.selectElementNumberFromList(100, "List");
+    public void selectElementNumberFromListUnderMinBorder() {
+        ds.selectElementNumberFromList(0, "List");
     }
 
     @Test()
@@ -363,8 +363,8 @@ public class DefaultStepsTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void selectElementNumberFromListMinBorder() {
-        ds.selectElementNumberFromList(0, "List");
+    public void selectElementNumberFromListOverMaxBorder() {
+        ds.selectElementNumberFromList(4, "List");
     }
 
     @Test
