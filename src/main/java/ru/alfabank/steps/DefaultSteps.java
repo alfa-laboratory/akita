@@ -656,13 +656,12 @@ public class DefaultSteps {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement elementToSelect;
         Integer selectedElementNumber = elementNumber - 1;
-        try {
-            elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
-        } catch (IndexOutOfBoundsException ex) {
+        if (selectedElementNumber < 0 || selectedElementNumber > listOfElementsFromPage.size()) {
             throw new IndexOutOfBoundsException(
                 String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
                     listName, elementNumber, listOfElementsFromPage.size()));
         }
+        elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
         elementToSelect.shouldBe(Condition.enabled).click();
     }
 
