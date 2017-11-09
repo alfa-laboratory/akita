@@ -51,4 +51,14 @@ public class DefaultManageBrowserSteps {
         Cookie cookie = new Cookie(cookieDomain, cookieName, cookieValue);
         getWebDriver().manage().addCookie(cookie);
     }
+
+    /**
+     * Находим куку по имени и подменяем ее значение. Имя куки и домен не меняются
+     */
+    @Когда("^для куки с именем \"([^\"]*)\" подменяем значение на значение \"([^\"]*)\" из property файла$")
+    public void replaceCookie(String cookieName, String cookieValue){
+        String nameCookie = loadProperty(cookieName);
+        String valueCookie = loadProperty(cookieValue);
+        getWebDriver().manage().addCookie(new Cookie(nameCookie, valueCookie));
+    }
 }
