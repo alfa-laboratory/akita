@@ -69,7 +69,7 @@ application.properties
 Пример инициализации страницы "Депозиты":
 ```
 DepositsPage page = (DepositsPage) getCurrentPage();
-akitaaScenario.setCurrentPage(page.initialize().appeared());
+akitaScenario.setCurrentPage(page.initialize().appeared());
 ```
 
 Пример получения конкретной страницы:
