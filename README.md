@@ -173,10 +173,10 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 ```ru.alfabank.tests.core.helpers.PropertyLoader```
 Класс для получения свойств
 
-# Template
+## Template
 https://github.com/alfa-laboratory/akita-testing-template
-# Telegram group
-@akitaQA
+## Контакты 
+[Telegram](https://t.me/akitaQA)
 
 Используемые зависимости:
 --------------------------
