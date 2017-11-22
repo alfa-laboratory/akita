@@ -175,6 +175,8 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 
 # Template
 https://github.com/alfa-laboratory/akita-testing-template
+# Telegram group
+@akitaQA
 
 Используемые зависимости:
 --------------------------
