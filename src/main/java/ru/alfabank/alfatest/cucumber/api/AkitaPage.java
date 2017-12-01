@@ -73,7 +73,7 @@ public abstract class AkitaPage extends ElementsContainer {
         if (element.getTagName().equals("input")) {
             return element.getValue();
         } else {
-            return element.innerText();
+            return element.getText();
         }
     }
 
@@ -86,7 +86,7 @@ public abstract class AkitaPage extends ElementsContainer {
         return elementsList.stream()
                 .map(element -> element.getTagName().equals("input")
                         ? element.getValue()
-                        : element.innerText()
+                        : element.getText()
                 )
                 .collect(toList());
     }
