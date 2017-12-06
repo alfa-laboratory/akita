@@ -19,12 +19,10 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
+import ru.alfabank.alfatest.cucumber.annotations.Name;
+import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Stream;
@@ -89,24 +87,6 @@ public abstract class AkitaPage extends ElementsContainer {
                         : element.getText()
                 )
                 .collect(toList());
-    }
-
-    /**
-     * Аннотация для элементов страницы, служащая для их индентификации в cucumber-сценариях
-     */
-    @Target({ElementType.FIELD, ElementType.TYPE})
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Name {
-        String value();
-    }
-
-    /**
-     * Аннотация для элементов страницы,
-     * служащая для отключения проверки появления элемента после загрузки страницы
-     */
-    @Target(ElementType.FIELD)
-    @Retention(RetentionPolicy.RUNTIME)
-    protected @interface Optional {
     }
 
     /**
