@@ -15,8 +15,11 @@
  */
 package ru.alfabank;
 
+
+import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 
-@AkitaPage.Name("RedirectionPage")
+
+@Name("RedirectionPage")
 public class RedirectionPage extends AkitaPage {
 }
