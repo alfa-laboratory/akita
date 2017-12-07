@@ -219,6 +219,16 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void selectElementInListIfFoundByTextTest() {
+        ds.selectElementInListIfFoundByText("List2", "item2");
+    }
+
+    @Test
+    public void selectElementInListIfFoundByTextTestWithProps() {
+        ds.selectElementInListIfFoundByText("List2", "item2ValueInProps");
+    }
+
+    @Test
     public void expressionExpressionPositive() {
         ds.expressionExpression("\"test\".equals(\"test\")");
     }
@@ -236,6 +246,11 @@ public class DefaultStepsTest {
     @Test
     public void checkElemContainsAtrWithValuePositive() {
         ds.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
+    }
+
+    @Test
+    public void testFieldContainsMessageTextTest() {
+ds.testFieldContainsMessageText("DisabledButton", "Disabled :p");
     }
 
     @Test
