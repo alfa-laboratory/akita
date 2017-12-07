@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ru.alfabank;
+package ru.alfabank.alfatest.cucumber.annotations;
 
-import ru.alfabank.alfatest.cucumber.annotations.Name;
-import ru.alfabank.alfatest.cucumber.api.AkitaPage;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Name("RedirectionPage")
-public class RedirectionPage extends AkitaPage {
+/**
+ * Аннотация для элементов страницы,
+ * служащая для отключения проверки появления элемента после загрузки страницы
+ */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Optional {
 }
