@@ -250,7 +250,7 @@ public class DefaultStepsTest {
 
     @Test
     public void testFieldContainsMessageTextTest() {
-ds.testFieldContainsMessageText("DisabledButton", "Disabled :p");
+        ds.testFieldContainsMessageText("DisabledButton", "Disabled :p");
     }
 
     @Test
