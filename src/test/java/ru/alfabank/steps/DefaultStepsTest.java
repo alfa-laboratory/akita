@@ -219,13 +219,23 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void selectElementInListIfFoundByTextTest() {
+    public void selectElementInListIfFoundByTextTestPositive() {
         ds.selectElementInListIfFoundByText("List2", "item2");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void selectElementInListIfFoundByTextTestNegative() {
+        ds.selectElementInListIfFoundByText("List2", "item5");
+    }
+
     @Test
-    public void selectElementInListIfFoundByTextTestWithProps() {
+    public void selectElementInListIfFoundByTextTestPositiveWithProps() {
         ds.selectElementInListIfFoundByText("List2", "item2ValueInProps");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void selectElementInListIfFoundByTextTestNegativeWithProps() {
+        ds.selectElementInListIfFoundByText("List2", "item5ValueInProps");
     }
 
     @Test
@@ -249,8 +259,13 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testFieldContainsMessageTextTest() {
-        ds.testFieldContainsMessageText("DisabledButton", "Disabled :p");
+    public void testFieldContainsMessageTextTestPositive() {
+        ds.testFieldContainsMessageText("DisabledButton", "Disabled");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldContainsMessageTextTestNegative() {
+        ds.testFieldContainsMessageText("DisabledButton", "disabled");
     }
 
     @Test
