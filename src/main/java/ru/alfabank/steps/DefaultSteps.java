@@ -644,7 +644,7 @@ public class DefaultSteps {
     public void selectRandomElementFromList(String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
-            .shouldBe(Condition.enabled).click();
+            .shouldBe(Condition.visible).click();
     }
 
     /**
@@ -662,7 +662,7 @@ public class DefaultSteps {
                     listName, elementNumber, listOfElementsFromPage.size()));
         }
         elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
-        elementToSelect.shouldBe(Condition.enabled).click();
+        elementToSelect.shouldBe(Condition.visible).click();
     }
 
     /**
