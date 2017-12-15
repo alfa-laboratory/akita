@@ -47,6 +47,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
@@ -453,6 +454,7 @@ public class DefaultSteps {
      */
     @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"(.*)\"$")
     public void checkElemContainsAtrWithValue(String elementName, String attribute, String expectedAttributeValue) {
+        expectedAttributeValue = getPropertyOrValue(expectedAttributeValue);
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         String currentAtrValue = currentElement.attr(attribute);
         assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
