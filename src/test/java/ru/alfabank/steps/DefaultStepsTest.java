@@ -219,6 +219,26 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void selectElementInListIfFoundByTextTestPositive() {
+        ds.selectElementInListIfFoundByText("List2", "item2");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void selectElementInListIfFoundByTextTestNegative() {
+        ds.selectElementInListIfFoundByText("List2", "item5");
+    }
+
+    @Test
+    public void selectElementInListIfFoundByTextTestPositiveWithProps() {
+        ds.selectElementInListIfFoundByText("List2", "item2ValueInProps");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void selectElementInListIfFoundByTextTestNegativeWithProps() {
+        ds.selectElementInListIfFoundByText("List2", "item5ValueInProps");
+    }
+
+    @Test
     public void expressionExpressionPositive() {
         ds.expressionExpression("\"test\".equals(\"test\")");
     }
@@ -236,6 +256,16 @@ public class DefaultStepsTest {
     @Test
     public void checkElemContainsAtrWithValuePositive() {
         ds.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
+    }
+
+    @Test
+    public void testFieldContainsMessageTextTestPositive() {
+        ds.testFieldContainsMessageText("DisabledButton", "Disabled");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldContainsMessageTextTestNegative() {
+        ds.testFieldContainsMessageText("DisabledButton", "disabled");
     }
 
     @Test
