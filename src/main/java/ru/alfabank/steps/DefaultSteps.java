@@ -18,11 +18,7 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.java.ru.Если;
-import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Когда;
-import cucumber.api.java.ru.Пусть;
-import cucumber.api.java.ru.Тогда;
+import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -47,6 +43,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
@@ -175,6 +172,7 @@ public class DefaultSteps {
      */
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
     public void setVariable(String variableName, String value) {
+        value = getPropertyOrValue(value);
         akitaScenario.setVar(variableName, value);
     }
 
@@ -281,9 +279,10 @@ public class DefaultSteps {
      */
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
+        value = getPropertyOrValue(value);
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
-        valueInput.setValue(String.valueOf(value));
+        valueInput.setValue(value);
     }
 
     /**
@@ -339,7 +338,8 @@ public class DefaultSteps {
      * Выбор из списка со страницы элемента с заданным значением
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
-    public void checkIfSelectedListElementMatchesValue(String listName, String value) {
+    public void checkIfSelectedListElementMatchesValue(String listName, String expectedValue) {
+        final String value = getPropertyOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsText = listOfElementsFromPage.stream()
             .map(element -> element.getText().trim())
@@ -356,7 +356,8 @@ public class DefaultSteps {
      * Не чувствителен к регистру
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент содержащий текст \"([^\"]*)\"$")
-    public void selectElementInListIfFoundByText(String listName, String value) {
+    public void selectElementInListIfFoundByText(String listName, String expectedValue) {
+        final String value = getPropertyOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
             .map(element -> element.getText().trim().toLowerCase())
@@ -490,15 +491,17 @@ public class DefaultSteps {
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
     public void testActualValueContainsSubstring(String elementName, String expectedValue) {
+        expectedValue = getPropertyOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
     }
 
     /**
-     * Проверка, что значение в поле содержит видимый текст, указанный в шаге
+     * Проверка, что значение в элементе содержит видимый текст, указанный в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит видимый текст \"(.*)\"$")
     public void testFieldContainsMessageText(String fieldName, String messageText) {
+        messageText = getPropertyOrValue(messageText);
         String field = akitaScenario.getCurrentPage().getElement(fieldName).getText();
         assertThat(String.format("Поле [%s] не содержит видимый текст [%s]", fieldName, messageText), field, containsString(messageText));
     }
@@ -508,6 +511,7 @@ public class DefaultSteps {
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String elementName, String expectedValue) {
+        expectedValue = getPropertyOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Значение поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), actualValue, equalTo(expectedValue));
     }
@@ -566,6 +570,7 @@ public class DefaultSteps {
      */
     @Когда("^в элемент \"([^\"]*)\" дописывается значение \"(.*)\"$")
     public void addValue(String elementName, String value) {
+        value = getPropertyOrValue(value);
         SelenideElement field = akitaScenario.getCurrentPage().getElement(elementName);
         String oldValue = field.getValue();
         if (oldValue.isEmpty()) {
@@ -607,6 +612,7 @@ public class DefaultSteps {
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
     public void pasteValueToTextField(String value, String fieldName) {
+        value = getPropertyOrValue(value);
         ClipboardOwner clipboardOwner = (clipboard, contents) -> {
         };
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -672,7 +678,8 @@ public class DefaultSteps {
      * Не чувствителен к регистру
      */
     @Тогда("^элементы списка \"([^\"]*)\" содержат текст \"([^\"]*)\"$")
-    public void checkListElementsContainsText(String listName, String value) {
+    public void checkListElementsContainsText(String listName, String expectedValue) {
+        final String value = getPropertyOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
             .map(element -> element.getText().trim().toLowerCase())

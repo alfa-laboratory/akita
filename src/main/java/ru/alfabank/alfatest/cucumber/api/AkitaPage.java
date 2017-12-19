@@ -19,12 +19,10 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
+import ru.alfabank.alfatest.cucumber.annotations.Name;
+import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Stream;
@@ -35,7 +33,7 @@ import static java.util.stream.Collectors.toMap;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
- * Класс-аннотация для реализации паттерна PageObject
+ * Класс для реализации паттерна PageObject
  */
 @Slf4j
 public abstract class AkitaPage extends ElementsContainer {
@@ -73,7 +71,7 @@ public abstract class AkitaPage extends ElementsContainer {
         if (element.getTagName().equals("input")) {
             return element.getValue();
         } else {
-            return element.innerText();
+            return element.getText();
         }
     }
 
@@ -86,27 +84,9 @@ public abstract class AkitaPage extends ElementsContainer {
         return elementsList.stream()
                 .map(element -> element.getTagName().equals("input")
                         ? element.getValue()
-                        : element.innerText()
+                        : element.getText()
                 )
                 .collect(toList());
-    }
-
-    /**
-     * Аннотация для элементов страницы, служащая для их индентификации в cucumber-сценариях
-     */
-    @Target({ElementType.FIELD, ElementType.TYPE})
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface Name {
-        String value();
-    }
-
-    /**
-     * Аннотация для элементов страницы,
-     * служащая для отключения проверки появления элемента после загрузки страницы
-     */
-    @Target(ElementType.FIELD)
-    @Retention(RetentionPolicy.RUNTIME)
-    protected @interface Optional {
     }
 
     /**

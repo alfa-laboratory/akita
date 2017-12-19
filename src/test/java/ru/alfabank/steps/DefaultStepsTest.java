@@ -125,7 +125,7 @@ public class DefaultStepsTest {
     public void clickOnElementPositive() {
         ds.clickOnElement("GoodButton");
         assertThat(akitaScenario.getPage("AkitaPageMock").getElement("GoodButton").isEnabled(),
-            equalTo(false));
+                equalTo(false));
     }
 
     @Test
@@ -171,18 +171,27 @@ public class DefaultStepsTest {
     public void setFieldValuePositive() {
         ds.setFieldValue("NormalField", "test");
         assertThat(akitaScenario.getEnvironment()
-                .getPage("AkitaPageMock")
-                .getAnyElementText("NormalField"),
-            equalTo("test"));
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo("test"));
+    }
+
+    @Test
+    public void setFieldValuePositiveWithProps() {
+        ds.setFieldValue("NormalField", "testValueInProps");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo("test"));
     }
 
     @Test
     public void cleanFieldPositive() {
         ds.cleanField("TextField");
         assertThat(akitaScenario.getEnvironment()
-                .getPage("AkitaPageMock")
-                .getAnyElementText("TextField"),
-            equalTo(""));
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("TextField"),
+                equalTo(""));
     }
 
     @Test
@@ -202,6 +211,31 @@ public class DefaultStepsTest {
     @Test
     public void checkIfSelectedListElementMatchesValueTest() {
         ds.checkIfSelectedListElementMatchesValue("List", "One");
+    }
+
+    @Test
+    public void checkIfSelectedListElementMatchesValueWithProps() {
+        ds.checkIfSelectedListElementMatchesValue("List", "oneValueInProps");
+    }
+
+    @Test
+    public void selectElementInListIfFoundByTextTestPositive() {
+        ds.selectElementInListIfFoundByText("List2", "item2");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void selectElementInListIfFoundByTextTestNegative() {
+        ds.selectElementInListIfFoundByText("List2", "item5");
+    }
+
+    @Test
+    public void selectElementInListIfFoundByTextTestPositiveWithProps() {
+        ds.selectElementInListIfFoundByText("List2", "item2ValueInProps");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void selectElementInListIfFoundByTextTestNegativeWithProps() {
+        ds.selectElementInListIfFoundByText("List2", "item5ValueInProps");
     }
 
     @Test
@@ -225,8 +259,23 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testFieldContainsMessageTextTestPositive() {
+        ds.testFieldContainsMessageText("DisabledButton", "Disabled");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldContainsMessageTextTestNegative() {
+        ds.testFieldContainsMessageText("DisabledButton", "disabled");
+    }
+
+    @Test
     public void testActualValueContainsSubstringPositive() {
         ds.testActualValueContainsSubstring("TextField", "xt");
+    }
+
+    @Test
+    public void testActualValueContainsSubstringPositiveWithProps() {
+        ds.testActualValueContainsSubstring("TextField", "textValueInProps");
     }
 
     @Test
@@ -252,7 +301,7 @@ public class DefaultStepsTest {
     @Test
     public void openReadOnlyFormPositive() {
         ds.goToSelectedPageByLinkFromPropertyFile("RedirectionPage",
-            akitaScenario.getVar("RedirectionPage").toString());
+                akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
 
@@ -260,9 +309,18 @@ public class DefaultStepsTest {
     public void addValuePositive() {
         ds.addValue("TextField", "Super");
         assertThat(akitaScenario.getEnvironment()
-                .getPage("AkitaPageMock")
-                .getAnyElementText("TextField"),
-            equalTo("textSuper"));
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("TextField"),
+                equalTo("textSuper"));
+    }
+
+    @Test
+    public void addValuePositiveWithProps() {
+        ds.addValue("TextField", "itemValueInProps");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("TextField"),
+                equalTo("textitem"));
     }
 
     @Test
@@ -270,17 +328,17 @@ public class DefaultStepsTest {
         ds.findElement("LINK");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
-            equalTo(akitaScenario.getVar("RedirectionPage")));
+                equalTo(akitaScenario.getVar("RedirectionPage")));
     }
 
     @Test
     public void currentDatePositive() {
         ds.currentDate("NormalField", "dd.MM.yyyy");
         assertThat(akitaScenario.getEnvironment()
-                .getPage("AkitaPageMock")
-                .getAnyElementText("NormalField")
-                .matches("[0-3][0-9].[0-1][0-9].[0-2][0-9]{3}"),
-            equalTo(true));
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField")
+                        .matches("[0-3][0-9].[0-1][0-9].[0-2][0-9]{3}"),
+                equalTo(true));
     }
 
     @Test
@@ -312,7 +370,14 @@ public class DefaultStepsTest {
     public void pasteValuePositive() {
         ds.pasteValueToTextField("testVal", "NormalField");
         assertThat(WebDriverRunner.getWebDriver().findElement(By.name("normalField")).getAttribute("value"),
-            equalTo("testVal"));
+                equalTo("testVal"));
+    }
+
+    @Test
+    public void pasteValuePositiveWithProps() {
+        ds.pasteValueToTextField("textValueInProps", "NormalField");
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("normalField")).getAttribute("value"),
+                equalTo("text"));
     }
 
     @Test
@@ -339,12 +404,17 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void compareValInFieldAndFromStepTestWithProps() {
+        ds.compareValInFieldAndFromStep("ul", "testingPageTextProps");
+    }
+
+    @Test
     public void getVarsTest() {
         akitaScenario.setVar("1", "1");
         akitaScenario.setVar("2", "2");
         ScopedVariables scopedVariables = akitaScenario.getVars();
         assertThat((String) scopedVariables.get("1") + (String) scopedVariables.get("2"),
-            equalTo("12"));
+                equalTo("12"));
     }
 
     @Test
@@ -368,11 +438,18 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void selectRandomElementFromListPositive() { ds.selectRandomElementFromList("List"); }
+    public void selectRandomElementFromListPositive() {
+        ds.selectRandomElementFromList("List");
+    }
 
     @Test
     public void checkListElementsContainsTextPositive() {
         ds.checkListElementsContainsText("List2", "item");
+    }
+
+    @Test
+    public void checkListElementsContainsTextPositiveWithProps() {
+        ds.checkListElementsContainsText("List2", "itemValueInProps");
     }
 
     @Test(expected = AssertionError.class)
