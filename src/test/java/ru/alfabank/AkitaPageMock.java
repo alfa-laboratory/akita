@@ -59,6 +59,10 @@ public class AkitaPageMock extends AkitaPage {
     @Name("List2")
     public List<SelenideElement> list2;
 
+    @FindBy(xpath = "//ul[@id=\"list3\"]/li")
+    @Name("List3")
+    public List<SelenideElement> list3;
+
     @FindBy(name = "goodButton")
     @Name("GoodButton")
     public SelenideElement goodButton;
@@ -109,4 +113,9 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(id = "ul")
     @Name("ul")
     public SelenideElement ul;
+
+    @FindBy(id = "innerText1")
+    @Name("innerTextP")
+    public SelenideElement innerTextP;
+
 }
