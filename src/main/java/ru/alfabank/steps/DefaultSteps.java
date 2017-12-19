@@ -452,6 +452,7 @@ public class DefaultSteps {
      */
     @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"(.*)\"$")
     public void checkElemContainsAtrWithValue(String elementName, String attribute, String expectedAttributeValue) {
+        expectedAttributeValue = getPropertyOrValue(expectedAttributeValue);
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         String currentAtrValue = currentElement.attr(attribute);
         assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
@@ -648,7 +649,7 @@ public class DefaultSteps {
     public void selectRandomElementFromList(String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
-            .shouldBe(Condition.enabled).click();
+            .shouldBe(Condition.visible).click();
     }
 
     /**
@@ -666,7 +667,7 @@ public class DefaultSteps {
                     listName, elementNumber, listOfElementsFromPage.size()));
         }
         elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
-        elementToSelect.shouldBe(Condition.enabled).click();
+        elementToSelect.shouldBe(Condition.visible).click();
     }
 
     /**
