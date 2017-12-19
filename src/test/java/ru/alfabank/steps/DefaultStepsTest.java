@@ -258,14 +258,14 @@ public class DefaultStepsTest {
         ds.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
     }
 
-    @Test
-    public void testFieldContainsMessageTextTestPositive() {
-        ds.testFieldContainsMessageText("DisabledButton", "Disabled");
+    @Test(expected = AssertionError.class)
+    public void testFieldContainsInnerTextNegative() {
+        ds.testFieldContainsInnerText("DisabledButton", "disabled");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testFieldContainsMessageTextTestNegative() {
-        ds.testFieldContainsMessageText("DisabledButton", "disabled");
+    @Test
+    public void testFieldContainsInnerTextPositive() {
+        ds.testFieldContainsInnerText("innerTextP", "inner text");
     }
 
     @Test
@@ -457,5 +457,34 @@ public class DefaultStepsTest {
         ds.checkListElementsContainsText("List2", "item1");
     }
 
+    @Test
+    public void checkIfListInnerTextConsistsOfTableElements() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One 1");
+        types.add("Two 2");
+        types.add("Three 3");
+        ds.checkIfListInnerTextConsistsOfTableElements("List3", types);
+    }
+
+    @Test()
+    public void testListInnerTextCorrespondsToListFromVariable() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One 1");
+        arrayList.add("Two 2");
+        arrayList.add("Three 3");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListInnerTextCorrespondsToListFromVariableNegativeSize() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One 1");
+        arrayList.add("Two 2");
+        arrayList.add("Three 3");
+        arrayList.add("One 1");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
+    }
 
 }
