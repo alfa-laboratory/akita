@@ -258,11 +258,6 @@ public class DefaultStepsTest {
         ds.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testFieldContainsInnerTextNegative() {
-        ds.testFieldContainsInnerText("DisabledButton", "disabled");
-    }
-
     @Test
     public void testFieldContainsInnerTextPositive() {
         ds.testFieldContainsInnerText("innerTextP", "inner text");
