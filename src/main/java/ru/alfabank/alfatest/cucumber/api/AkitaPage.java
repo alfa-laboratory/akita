@@ -64,6 +64,23 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
+     * Получение текстов всех элементов, содержащихся в элементе-списке,
+     * состоящего как из редактируемых полей, так и статичных элементов по имени
+     * Используется метод innerText(), который получает как видимый, так и скрытый текст из элемента,
+     * обрезая перенос строк и пробелы в конце и начале строчки.
+     */
+    public List<String> getAnyElementsListInnerTexts(String listName) {
+        List<SelenideElement> elementsList = getElementsList(listName);
+        return elementsList.stream()
+            .map(element -> element.getTagName().equals("input")
+                ? element.getValue().trim()
+                : element.innerText().trim()
+            )
+            .collect(toList());
+    }
+
+
+    /**
      * Получение текста элемента, как редактируемого поля, так и статичного элемента по имени
      */
     public String getAnyElementText(String elementName) {

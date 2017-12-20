@@ -32,6 +32,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
@@ -322,6 +324,7 @@ public class DefaultSteps {
     /**
      * Проверка, что список со страницы состоит только из элементов,
      * перечисленных в таблице
+     * Для получения текста из элементов списка используется метод getText()
      */
     @Тогда("^список \"([^\"]*)\" состоит из элементов из таблицы$")
     public void checkIfListConsistsOfTableElements(String listName, List<String> textTable) {
@@ -329,6 +332,20 @@ public class DefaultSteps {
         int numberOfTypes = actualValues.size();
         assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
         assertTrue(String.format("Значения элементов в списке [%s] не совпадают с ожидаемыми значениями из таблицы", listName), actualValues.containsAll(textTable));
+    }
+
+    /**
+     * Проверка, что список со страницы состоит только из элементов,
+     * перечисленных в таблице
+     * Для получения текста из элементов списка используется метод innerText()
+     */
+    @Тогда("^список \"([^\"]*)\" состоит из элементов таблицы$")
+    public void checkIfListInnerTextConsistsOfTableElements(String listName, List<String> textTable) {
+        List<String> actualValues = akitaScenario.getCurrentPage().getAnyElementsListInnerTexts(listName);
+        int numberOfTypes = actualValues.size();
+        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
+        assertTrue(String.format("Значения элементов в списке %s: %s не совпадают с ожидаемыми значениями из таблицы %s", listName, actualValues, textTable),
+            actualValues.containsAll(textTable));
     }
 
     /**
@@ -364,6 +381,22 @@ public class DefaultSteps {
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
             .click();
+    }
+
+    /**
+     * Проверка, что список со страницы совпадает со списком из переменной
+     * без учёта порядка элементов
+     * Для получения текста из элементов списка используется метод innerText()
+     */
+    @SuppressWarnings("unchecked")
+    @Тогда("^список \"([^\"]*)\" на странице совпадает со списком \"([^\"]*)\"$")
+    public void checkListInnerTextCorrespondsToListFromVariable(String listName, String listVariable) {
+        List<String> expectedList = new ArrayList<>((List<String>) akitaScenario.getVar(listVariable));
+        List<String> actualList = new ArrayList<>(akitaScenario.getCurrentPage().getAnyElementsListInnerTexts(listName));
+        assertThat(String.format("Количество элементов списка %s = %s, ожидаемое значение = %s", listName, actualList.size(), expectedList.size()), actualList,
+            hasSize(expectedList.size()));
+        assertThat(String.format("Список со страницы %s: %s не совпадает с ожидаемым списком из переменной %s:%s", listName, actualList, listVariable, expectedList)
+            , actualList, containsInAnyOrder(expectedList.toArray()));
     }
 
     /**
@@ -494,13 +527,17 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что значение в элементе содержит видимый текст, указанный в шаге
+     * Проверка, что значение в поле содержит текст, указанный в шаге
+     * (в приоритете: из проперти, из переменной среды, значение аргумента).
+     * Используется метод innerText(), который получает как видимый, так и скрытый текст из элемента,
+     * обрезая перенос строк и пробелы в конце и начале строчки.
+     * Не чувствителен к регистру
      */
-    @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит видимый текст \"(.*)\"$")
-    public void testFieldContainsMessageText(String fieldName, String messageText) {
-        messageText = getPropertyOrValue(messageText);
-        String field = akitaScenario.getCurrentPage().getElement(fieldName).getText();
-        assertThat(String.format("Поле [%s] не содержит видимый текст [%s]", fieldName, messageText), field, containsString(messageText));
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит внутренний текст \"(.*)\"$")
+    public void testFieldContainsInnerText(String fieldName, String expectedText) {
+        expectedText = getPropertyOrValue(expectedText);
+        String field = akitaScenario.getCurrentPage().getElement(fieldName).innerText().trim().toLowerCase();
+        assertThat(String.format("Поле [%s] не содержит текст [%s]", fieldName, expectedText), field, containsString(expectedText.toLowerCase()));
     }
 
     /**
@@ -684,6 +721,7 @@ public class DefaultSteps {
         assertTrue(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
             elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
     }
+
 
     /**
      * Возвращает каталог "Downloads" в домашней директории
