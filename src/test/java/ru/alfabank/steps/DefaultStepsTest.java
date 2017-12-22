@@ -170,11 +170,11 @@ public class DefaultStepsTest {
 
     @Test
     public void setFieldValuePositive() {
-        ds.setFieldValue("NormalField", "test");
+        ds.setFieldValue("NormalField", "testSetFieldValue");
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField"),
-                equalTo("test"));
+                equalTo("testSetFieldValue"));
     }
 
     @Test
