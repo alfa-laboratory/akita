@@ -25,6 +25,7 @@ import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -169,11 +170,11 @@ public class DefaultStepsTest {
 
     @Test
     public void setFieldValuePositive() {
-        ds.setFieldValue("NormalField", "test");
+        ds.setFieldValue("NormalField", "testSetFieldValue");
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField"),
-                equalTo("test"));
+                equalTo("testSetFieldValue"));
     }
 
     @Test
@@ -482,4 +483,23 @@ public class DefaultStepsTest {
         ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
     }
 
+    @Test
+    public void testGetPropertyOrStringVariableOrValueFromProperty() {
+        akitaScenario.setVar("testVar", "shouldNotLoadMe");
+        assertThat(ds.getPropertyOrStringVariableOrValue("testVar"),
+                equalTo(PropertyLoader.loadProperty("testVar")));
+    }
+
+    @Test
+    public void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
+        akitaScenario.setVar("123", "shouldLoadMe");
+        assertThat(ds.getPropertyOrStringVariableOrValue("123"),
+                equalTo("shouldLoadMe"));
+    }
+
+    @Test
+    public void testGetPropertyOrStringVariableOrValueFromValue() {
+        assertThat(ds.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
+                equalTo("getPropertyOrVariableOrValueTestValue"));
+    }
 }
