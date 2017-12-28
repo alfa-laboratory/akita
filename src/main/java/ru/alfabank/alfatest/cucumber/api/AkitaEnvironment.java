@@ -18,6 +18,7 @@ package ru.alfabank.alfatest.cucumber.api;
 import cucumber.api.Scenario;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
+import ru.alfabank.alfatest.cucumber.annotations.Name;
 
 import java.util.Arrays;
 
@@ -56,7 +57,7 @@ public class AkitaEnvironment {
      */
     @SuppressWarnings("unchecked")
     private void initPages() {
-        new AnnotationScanner().getClassesAnnotatedWith(AkitaPage.Name.class)
+        new AnnotationScanner().getClassesAnnotatedWith(Name.class)
                 .stream()
                 .map(it -> {
                     if (AkitaPage.class.isAssignableFrom(it)) {
@@ -75,9 +76,9 @@ public class AkitaEnvironment {
      * @return значение аннотации "AkitaPage.Name" для класса
      */
     private String getClassAnnotationValue(Class<?> c) {
-        return Arrays.stream(c.getAnnotationsByType(AkitaPage.Name.class))
+        return Arrays.stream(c.getAnnotationsByType(Name.class))
                 .findAny()
-                .map(AkitaPage.Name::value)
+                .map(Name::value)
                 .orElseThrow(() -> new AssertionError("Не найдены аннотации AkitaPage.Name в класса " + c.getClass().getName()));
     }
 

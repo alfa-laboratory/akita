@@ -18,12 +18,14 @@ package ru.alfabank;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
+import ru.alfabank.alfatest.cucumber.annotations.Name;
+import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 
 import java.util.List;
 
 @Getter
-@AkitaPage.Name("AkitaPageMock")
+@Name("AkitaPageMock")
 public class AkitaPageMock extends AkitaPage {
     @FindBy(id = "mockId")
     @Name("mockId")
@@ -56,6 +58,10 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(xpath = "//ul[@id=\"list2\"]/li")
     @Name("List2")
     public List<SelenideElement> list2;
+
+    @FindBy(xpath = "//ul[@id=\"list3\"]/li")
+    @Name("List3")
+    public List<SelenideElement> list3;
 
     @FindBy(name = "goodButton")
     @Name("GoodButton")
@@ -107,4 +113,9 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(id = "ul")
     @Name("ul")
     public SelenideElement ul;
+
+    @FindBy(id = "innerText1")
+    @Name("innerTextP")
+    public SelenideElement innerTextP;
+
 }
