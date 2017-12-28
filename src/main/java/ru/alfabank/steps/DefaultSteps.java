@@ -764,6 +764,7 @@ public class DefaultSteps {
                 returnValue = propertyNameOrVariableNameOrValue;
             }
         }
+
         return returnValue;
     }
 
