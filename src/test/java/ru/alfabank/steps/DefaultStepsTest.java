@@ -502,4 +502,23 @@ public class DefaultStepsTest {
         assertThat(ds.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
                 equalTo("getPropertyOrVariableOrValueTestValue"));
     }
+
+    @Test
+    public void testSetRandomCharSequenceCyrillic() {
+        ds.setRandomCharSequence("NormalField", 4, "кириллице");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(4));
+    }
+
+    @Test
+    public void testSetRandomCharSequenceLathin() {
+        ds.setRandomCharSequence("NormalField", 7, "латинице");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(7));
+    }
+
 }
