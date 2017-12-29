@@ -800,8 +800,10 @@ public class DefaultSteps {
 
     /**
      * Возвращает последовательность случайных символов переданных алфавита и длины
+     * Принимает на вход варианты языков 'ru' и 'en'
+     * Для других входных параметров возвращает латинские символы (en)
      */
-    private String getRandCharSequence(int lenght, String lang) {
+    public String getRandCharSequence(int lenght, String lang) {
 
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < lenght; i++) {
