@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.not;
@@ -734,6 +735,20 @@ public class DefaultSteps {
     }
 
     /**
+     * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице)$")
+    public void setRandomCharSequence(String elementName, int seqLength, String lang) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+
+        if (lang.equals("кириллице")) lang = "ru";
+        else lang = "en";
+        String charSeq = getRandCharSequence(seqLength, lang);
+        valueInput.setValue(charSeq);
+    }
+
+    /**
      * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
      * если и оно отсутствует, то возвращает значение переданной на вход переменной
      *
@@ -749,6 +764,7 @@ public class DefaultSteps {
                 returnValue = propertyNameOrVariableNameOrValue;
             }
         }
+
         return returnValue;
     }
 
@@ -781,4 +797,32 @@ public class DefaultSteps {
     private int getRandom(int maxValueInRange) {
         return (int) (Math.random() * maxValueInRange);
     }
+
+    /**
+     * Возвращает последовательность случайных символов переданных алфавита и длины
+     * Принимает на вход варианты языков 'ru' и 'en'
+     * Для других входных параметров возвращает латинские символы (en)
+     */
+    public String getRandCharSequence(int lenght, String lang) {
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < lenght; i++) {
+            char symbol = charGenerator(lang);
+            builder.append(symbol);
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Возвращает случайный символ переданного алфавита
+     */
+    private char charGenerator(String lang) {
+        Random random = new Random();
+        char symbol = 32;
+        if (lang.equals("ru")) symbol = (char) (1072 + random.nextInt(32));
+        else symbol = (char) (97 + random.nextInt(26));
+
+        return symbol;
+    }
+
 }
