@@ -31,9 +31,6 @@ public class PageElementTest {
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        String inputFilePath2 = "src/test/resources/RedirectionPage.html";
-        String url2 = new File(inputFilePath2).getAbsolutePath();
-        akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
     @Before
