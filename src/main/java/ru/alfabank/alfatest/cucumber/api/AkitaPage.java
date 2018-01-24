@@ -43,6 +43,14 @@ public abstract class AkitaPage extends ElementsContainer {
     private static final String WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS = "8000";
 
     /**
+     * Получение блока со страницы по имени (аннотированного "Name")
+     */
+    public AkitaPage getBlock(String blockName) {
+        return (AkitaPage) java.util.Optional.ofNullable(namedElements.get(blockName))
+                .orElseThrow(() -> new IllegalArgumentException("Блок " + blockName + " не описан на странице " + this.getClass().getName()));
+    }
+
+    /**
      * Получение элемента со страницы по имени (аннотированного "Name")
      */
     public SelenideElement getElement(String elementName) {
@@ -238,9 +246,13 @@ public abstract class AkitaPage extends ElementsContainer {
         return Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .peek(f -> {
-                    if (!SelenideElement.class.isAssignableFrom(f.getType()) && !List.class.isAssignableFrom(f.getType()))
+                    if (!SelenideElement.class.isAssignableFrom(f.getType())
+                            && !List.class.isAssignableFrom(f.getType())
+                            && !AkitaPage.class.isAssignableFrom(f.getType()))
                         throw new IllegalStateException(
-                                format("Поле с аннотацией @Name должно иметь тип SelenideElement или List<SelenideElement>, но найдено поле с типом %s", f.getType()));
+                                format("Поле с аннотацией @Name должно иметь тип SelenideElement или List<SelenideElement>.\n" +
+                                        "Если поле описывает блок, оно должно принадлежать классу, унаследованному от AkitaPage.\n" +
+                                        "Найдено поле с типом %s", f.getType()));
                 })
                 .collect(toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
     }

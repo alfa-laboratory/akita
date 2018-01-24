@@ -54,6 +54,16 @@ public class AkitaPageTest {
         ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
+    @Test
+    public void getBlockPositive() {
+        assertThat(page.getBlock("SearchBlock"), is(notNullValue()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getBlockNegative() {
+        page.getBlock("Not exact Block");
+    }
+
     @Test(expected = NullPointerException.class)
     public void getElementNegative() {
         alfaPageMock.getElement("test");
