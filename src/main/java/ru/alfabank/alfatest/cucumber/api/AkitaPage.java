@@ -47,7 +47,7 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     public AkitaPage getBlock(String blockName) {
         return (AkitaPage) java.util.Optional.ofNullable(namedElements.get(blockName))
-                .orElseThrow(() -> new IllegalArgumentException("Элемент " + blockName + " не описан на странице " + this.getClass().getName()));
+                .orElseThrow(() -> new IllegalArgumentException("Блок " + blockName + " не описан на странице " + this.getClass().getName()));
     }
 
     /**

@@ -27,8 +27,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 
 public class PageElementTest {
 
@@ -61,7 +60,6 @@ public class PageElementTest {
     @Test
     public void clickOnElementInBlockPositiveTest() {
         dpes.clickOnElementInBlock("SearchButton", "SearchBlock");
-        assertThat(akitaScenario.getPage("SearchBlock").getElement("SearchButton").isEnabled(),
-                equalTo(false));
+        assertFalse(akitaScenario.getPage("SearchBlock").getElement("SearchButton").isEnabled());
     }
 }
