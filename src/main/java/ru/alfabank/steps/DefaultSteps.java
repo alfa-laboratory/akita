@@ -58,7 +58,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 @Slf4j
 public class DefaultSteps {
 
-    AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 

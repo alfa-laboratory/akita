@@ -47,7 +47,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 @Slf4j
 public class DefaultApiSteps {
 
-    AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
      * Посылается http GET/POST запрос по заданному урлу без параметров и BODY.
