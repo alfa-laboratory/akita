@@ -18,6 +18,7 @@ package ru.alfabank.steps;
 import cucumber.api.java.ru.Когда;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.WebDriver;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.Set;
@@ -31,14 +32,23 @@ import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
 @Slf4j
 public class DefaultManageBrowserSteps {
 
-    private AkitaScenario akitascenario = AkitaScenario.getInstance();
+    private AkitaScenario akitascenario;
+    private WebDriver webDriver;
+
+    public DefaultManageBrowserSteps(WebDriver webDriver, AkitaScenario akitaScenario) {
+        this.webDriver = webDriver;
+        this.akitascenario = akitaScenario;
+    }
+    public DefaultManageBrowserSteps() {
+        this(getWebDriver(), AkitaScenario.getInstance());
+    }
 
     /**
      * Удаляем все cookies
      */
     @Когда("^cookies приложения очищены$")
     public void deleteCookies(){
-        getWebDriver().manage().deleteAllCookies();
+        webDriver.manage().deleteAllCookies();
     }
 
     /**
@@ -47,7 +57,7 @@ public class DefaultManageBrowserSteps {
     @Когда("^cookie с именем \"([^\"]*)\" сохранена в переменную \"([^\"]*)\"$")
     public void saveCookieToVar(String nameCookie, String cookieVar){
         String cookieName = resolveVars(nameCookie);
-        Cookie var = getWebDriver().manage().getCookieNamed(cookieName);
+        Cookie var = webDriver.manage().getCookieNamed(cookieName);
         akitascenario.setVar(cookieVar, var);
     }
 
@@ -56,7 +66,7 @@ public class DefaultManageBrowserSteps {
      */
     @Когда("^cookies сохранены в переменную \"([^\"]*)\"$")
     public void saveAllCookies(String variableName){
-        Set cookies = getWebDriver().manage().getCookies();
+        Set cookies = webDriver.manage().getCookies();
         akitascenario.setVar(variableName, cookies);
     }
 
@@ -67,6 +77,6 @@ public class DefaultManageBrowserSteps {
     public void replaceCookie(String cookieName, String cookieValue){
         String nameCookie = resolveVars(cookieName);
         String valueCookie = resolveVars(cookieValue);
-        getWebDriver().manage().addCookie(new Cookie(nameCookie, valueCookie));
+        webDriver.manage().addCookie(new Cookie(nameCookie, valueCookie));
     }
 }

@@ -1,72 +1,72 @@
+/**
+ * Copyright 2017 Alfa Laboratory
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ru.alfabank.steps;
 
-import com.codeborne.selenide.WebDriverRunner;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.*;
 import org.openqa.selenium.Cookie;
-import ru.alfabank.StubScenario;
-import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
+import org.openqa.selenium.WebDriver;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import org.openqa.selenium.WebDriver.Options;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.CoreMatchers.containsString;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.mockito.Mockito.*;
 
 
 public class DefaultManageBrowserStepsTest {
 
-    private static DefaultApiSteps api;
-    private static DefaultSteps ds;
-    private static AkitaScenario akitaScenario;
-    private static DefaultManageBrowserSteps dmbs;
+    private DefaultManageBrowserSteps dmbs;
+    private WebDriver webDriver;
+    private AkitaScenario akitaScenario;
 
-    @BeforeClass
-    public static void setup() {
-        akitaScenario = AkitaScenario.getInstance();
-        api = new DefaultApiSteps();
-        ds = new DefaultSteps();
-        akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
-        dmbs = new DefaultManageBrowserSteps();
-        ds.goToUrl("https://www.google.ru/");
+    @Before
+    public void setup() {
+
+        akitaScenario = mock(AkitaScenario.class);
+        webDriver = mock(WebDriver.class);
+        dmbs = new DefaultManageBrowserSteps(webDriver, akitaScenario);
+        when(webDriver.manage()).thenReturn(mock(Options.class));
     }
-
-//    @Before
-//    public void prepare() {
-//        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
-//    }
-
-    @AfterClass
-    public static void close() {
-        WebDriverRunner.closeWebDriver();
-    }
-
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule();
 
     @Test
     public void deleteCookiesTest() {
-        assertThat(WebDriverRunner.getWebDriver().manage().getCookies().isEmpty(), equalTo(false));
         dmbs.deleteCookies();
-        assertThat(WebDriverRunner.getWebDriver().manage().getCookies().isEmpty(), equalTo(true));
+        verify(webDriver.manage(), times(1)).deleteAllCookies();
     }
 
     @Test
     public void saveCookieToVarTest() {
-        WebDriverRunner.getWebDriver().manage().addCookie(new Cookie("cookieName", "123"));
+        Cookie cookie = new Cookie("cookieName", "123");
+        when(webDriver.manage().getCookieNamed("cookieName")).thenReturn(cookie);
         dmbs.saveCookieToVar("cookieName", "varName");
-        assertThat(akitaScenario.getVar("varName").toString(), containsString("123"));
+        verify(akitaScenario, times(1)).setVar("varName", cookie);
     }
 
     @Test
     public void saveAllCookiesTest(){
+        Set set = new HashSet();
+        when(webDriver.manage().getCookies()).thenReturn(set);
         dmbs.saveAllCookies("var2");
-        assertThat(akitaScenario.getVar("var2").toString().isEmpty(), equalTo(false));
+        verify(akitaScenario, times(1)).setVar("var2", set);
     }
 
     @Test
     public void replaceCookieTest() {
-        WebDriverRunner.getWebDriver().manage().deleteAllCookies();
         dmbs.replaceCookie("testName", "12qwe");
-        assertThat(WebDriverRunner.getWebDriver().manage().getCookieNamed("testName").getValue(), equalTo("12qwe"));
+        verify(webDriver.manage(), times(1)).addCookie(new Cookie("testName", "12qwe"));
     }
 }
