@@ -45,10 +45,10 @@ public class DefaultManageBrowserSteps {
      * Ищем cookie по имени. Сохраняем cookie в переменную для дальнейшего использования
      */
     @Когда("^cookie с именем \"([^\"]*)\" сохранена в переменную \"([^\"]*)\"$")
-    public void saveCookieToVar(String nameCookie, String cookie){
+    public void saveCookieToVar(String nameCookie, String cookieVar){
         String cookieName = resolveVars(nameCookie);
         Cookie var = getWebDriver().manage().getCookieNamed(cookieName);
-        akitascenario.setVar(cookie, var);
+        akitascenario.setVar(cookieVar, var);
     }
 
     /**
