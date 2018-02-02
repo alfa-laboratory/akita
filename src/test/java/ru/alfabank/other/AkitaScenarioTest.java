@@ -17,10 +17,7 @@ package ru.alfabank.other;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -100,4 +97,9 @@ public class AkitaScenarioTest {
         akitaScenario.setCurrentPage(null);
     }
 
+    @Test
+    public void shouldReturnScenarioTest() {
+        Scenario actualScenario = akitaScenario.getScenario();
+        Assert.assertEquals("My scenario", actualScenario.getName());
+    }
 }

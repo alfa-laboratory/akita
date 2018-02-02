@@ -47,7 +47,7 @@ public class StubScenario implements Scenario {
 
     @Override
     public String getName() {
-        return null;
+        return "My scenario";
     }
 
     @Override
