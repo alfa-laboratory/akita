@@ -33,8 +33,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
 
 public class ApiStepsTest {
 
@@ -141,7 +143,7 @@ public class ApiStepsTest {
                         .withHeader("Content-Type", "text/xml")));
         List<RequestParam> paramTable = new ArrayList<>();
         RequestParam requestParam = RequestParam.builder()
-                .type(RequestParamType.PARAMETER)
+                .type(PARAMETER)
                 .name("param")
                 .value("test")
                 .build();
@@ -150,4 +152,23 @@ public class ApiStepsTest {
                 404, paramTable);
     }
 
+    @Test
+    public void shouldCreateRequestForEqualsParamNamesTest() throws Exception{
+        stubFor(get(urlEqualTo("/get/responseWithTable?param=first&param=second"))
+            .willReturn(aResponse()
+            .withStatus(200)));
+        List<RequestParam> paramTable = asList(
+                new RequestParam(PARAMETER, "param", "first"),
+                new RequestParam(PARAMETER, "param", "second")
+        );
+        api.checkResponseCode("GET", "/get/responseWithTable", 200, paramTable);
+    }
+
+    @Test
+    public void shouldSendPutRequest() throws Exception {
+        stubFor(put(urlEqualTo("/put/someInfo"))
+            .willReturn(aResponse()
+            .withStatus(205)));
+        api.checkResponseCode("PUT", "/put/someInfo", 205, new ArrayList<>());
+    }
 }
