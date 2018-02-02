@@ -804,10 +804,10 @@ public class DefaultSteps {
      * Принимает на вход варианты языков 'ru' и 'en'
      * Для других входных параметров возвращает латинские символы (en)
      */
-    public String getRandCharSequence(int lenght, String lang) {
+    public String getRandCharSequence(int length, String lang) {
 
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < lenght; i++) {
+        for (int i = 0; i < length; i++) {
             char symbol = charGenerator(lang);
             builder.append(symbol);
         }
