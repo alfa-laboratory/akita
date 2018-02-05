@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.WebDriverRunner.url;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -76,7 +77,7 @@ public class DefaultSteps {
      */
     @И("^выполнено обновление текущей страницы$")
     public void refreshPage() {
-        getWebDriver().navigate().refresh();
+        refresh();
     }
 
     /**
@@ -100,7 +101,7 @@ public class DefaultSteps {
      */
     @Тогда("^текущий URL равен \"([^\"]*)\"$")
     public void checkCurrentURL(String url) {
-        String currentUrl = getWebDriver().getCurrentUrl();
+        String currentUrl = url();
         String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
         assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, is(expectedUrl));
     }
@@ -434,7 +435,7 @@ public class DefaultSteps {
     public void urlClickAndCheckRedirection(String pageName, String elementName) {
         akitaScenario.getCurrentPage().getElement(elementName).click();
         loadPage(pageName);
-        akitaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
+        akitaScenario.write(" url = " + url());
     }
 
     /**
@@ -803,10 +804,10 @@ public class DefaultSteps {
      * Принимает на вход варианты языков 'ru' и 'en'
      * Для других входных параметров возвращает латинские символы (en)
      */
-    public String getRandCharSequence(int lenght, String lang) {
+    public String getRandCharSequence(int length, String lang) {
 
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < lenght; i++) {
+        for (int i = 0; i < length; i++) {
             char symbol = charGenerator(lang);
             builder.append(symbol);
         }
@@ -818,11 +819,11 @@ public class DefaultSteps {
      */
     private char charGenerator(String lang) {
         Random random = new Random();
-        char symbol = 32;
-        if (lang.equals("ru")) symbol = (char) (1072 + random.nextInt(32));
-        else symbol = (char) (97 + random.nextInt(26));
-
-        return symbol;
+        if (lang.equals("ru")) {
+            return (char) (1072 + random.nextInt(32));
+        }
+        else {
+            return (char) (97 + random.nextInt(26));
+        }
     }
-
 }

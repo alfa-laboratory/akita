@@ -101,6 +101,10 @@ public class AkitaEnvironment {
         getVariables().put(name, object);
     }
 
+    public Scenario getScenario() {
+        return scenario;
+    }
+
     public Pages getPages() {
         return pages;
     }

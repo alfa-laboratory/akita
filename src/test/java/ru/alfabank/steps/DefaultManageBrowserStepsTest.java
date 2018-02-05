@@ -15,15 +15,21 @@
  */
 package ru.alfabank.steps;
 
+import com.codeborne.selenide.WebDriverRunner;
+import cucumber.api.Scenario;
 import org.junit.*;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
+import ru.alfabank.StubScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import org.openqa.selenium.WebDriver.Options;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 
@@ -35,10 +41,12 @@ public class DefaultManageBrowserStepsTest {
 
     @Before
     public void setup() {
-
-        akitaScenario = mock(AkitaScenario.class);
+        akitaScenario = AkitaScenario.getInstance();
+        Scenario scenario = new StubScenario();
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         webDriver = mock(WebDriver.class);
-        dmbs = new DefaultManageBrowserSteps(webDriver, akitaScenario);
+        WebDriverRunner.setWebDriver(webDriver);
+        dmbs = new DefaultManageBrowserSteps();
         when(webDriver.manage()).thenReturn(mock(Options.class));
     }
 
@@ -53,7 +61,7 @@ public class DefaultManageBrowserStepsTest {
         Cookie cookie = new Cookie("cookieName", "123");
         when(webDriver.manage().getCookieNamed("cookieName")).thenReturn(cookie);
         dmbs.saveCookieToVar("cookieName", "varName");
-        verify(akitaScenario, times(1)).setVar("varName", cookie);
+        assertThat(akitaScenario.getVar("varName"), equalTo(cookie));
     }
 
     @Test
@@ -61,7 +69,7 @@ public class DefaultManageBrowserStepsTest {
         Set set = new HashSet();
         when(webDriver.manage().getCookies()).thenReturn(set);
         dmbs.saveAllCookies("var2");
-        verify(akitaScenario, times(1)).setVar("var2", set);
+        assertThat(akitaScenario.getVar("var2"), equalTo(set));
     }
 
     @Test
