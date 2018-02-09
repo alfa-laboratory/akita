@@ -17,6 +17,7 @@ package ru.alfabank.tests.core.helpers;
 
 import com.google.common.base.Strings;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,7 @@ import java.util.Properties;
 /**
  * Класс для получения свойств
  */
+@Slf4j
 public class PropertyLoader {
     private static final String PROPERTIES_FILE = "/application.properties";
     private static final Properties PROPERTIES = getPropertiesInstance();
@@ -52,6 +54,23 @@ public class PropertyLoader {
         return propValue != null ? propValue : defaultValue;
     }
 
+    /**
+     * Возвращает Integer значение системного свойства
+     * (из доступных для данной JVM) по его названию,
+     * в случае, если оно не найдено, вернется значение по умолчанию
+     *
+     * @param propertyName название свойства
+     * @param defaultValue Integer значение по умолчанию
+     * @return Integer значение свойства по названию или значение по умолчанию
+     */
+    public static Integer loadSystemPropertyOrDefault(String propertyName, Integer defaultValue) {
+        try {
+            return Integer.valueOf(System.getProperty(propertyName, defaultValue.toString()).trim());
+        } catch (NumberFormatException ex) {
+            log.error("Could not parse value to Integer ", ex.getMessage());
+            return defaultValue;
+        }
+    }
     /**
      * Возвращает свойство по его названию из property-файла
      *
