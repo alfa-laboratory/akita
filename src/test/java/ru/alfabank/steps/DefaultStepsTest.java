@@ -25,6 +25,7 @@ import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -169,11 +170,11 @@ public class DefaultStepsTest {
 
     @Test
     public void setFieldValuePositive() {
-        ds.setFieldValue("NormalField", "test");
+        ds.setFieldValue("NormalField", "testSetFieldValue");
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField"),
-                equalTo("test"));
+                equalTo("testSetFieldValue"));
     }
 
     @Test
@@ -480,6 +481,44 @@ public class DefaultStepsTest {
         arrayList.add("One 1");
         akitaScenario.setVar("qwerty", arrayList);
         ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
+    }
+
+    @Test
+    public void testGetPropertyOrStringVariableOrValueFromProperty() {
+        akitaScenario.setVar("testVar", "shouldNotLoadMe");
+        assertThat(ds.getPropertyOrStringVariableOrValue("testVar"),
+                equalTo(PropertyLoader.loadProperty("testVar")));
+    }
+
+    @Test
+    public void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
+        akitaScenario.setVar("123", "shouldLoadMe");
+        assertThat(ds.getPropertyOrStringVariableOrValue("123"),
+                equalTo("shouldLoadMe"));
+    }
+
+    @Test
+    public void testGetPropertyOrStringVariableOrValueFromValue() {
+        assertThat(ds.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
+                equalTo("getPropertyOrVariableOrValueTestValue"));
+    }
+
+    @Test
+    public void testSetRandomCharSequenceCyrillic() {
+        ds.setRandomCharSequence("NormalField", 4, "кириллице");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(4));
+    }
+
+    @Test
+    public void testSetRandomCharSequenceLathin() {
+        ds.setRandomCharSequence("NormalField", 7, "латинице");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(7));
     }
 
 }

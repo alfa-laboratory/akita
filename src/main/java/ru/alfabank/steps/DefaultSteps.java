@@ -35,11 +35,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.WebDriverRunner.url;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -57,7 +59,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 @Slf4j
 public class DefaultSteps {
 
-    AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
@@ -75,28 +77,32 @@ public class DefaultSteps {
      */
     @И("^выполнено обновление текущей страницы$")
     public void refreshPage() {
-        getWebDriver().navigate().refresh();
+        refresh();
     }
 
     /**
      * Выполняется переход по заданной ссылке,
+     * ссылка берется из property / переменной, если такая переменная не найдена,
+     * то берется переданное значение
      * при этом все ключи переменных в фигурных скобках
      * меняются на их значения из хранилища akitaScenario
      */
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
-        String url = akitaScenario.replaceVariables(address);
+        String url = resolveVars(getPropertyOrStringVariableOrValue(address));
         getWebDriver().get(url);
         akitaScenario.write("Url = " + url);
     }
 
     /**
      * Проверка, что текущий URL совпадает с ожидаемым
+     * (берется из property / переменной, если такая переменная не найдена,
+     * то берется переданное значение)
      */
     @Тогда("^текущий URL равен \"([^\"]*)\"$")
     public void checkCurrentURL(String url) {
-        String currentUrl = getWebDriver().getCurrentUrl();
-        String expectedUrl = akitaScenario.replaceVariables(url);
+        String currentUrl = url();
+        String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
         assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, is(expectedUrl));
     }
 
@@ -274,11 +280,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Устанавливается значение в заданное поле. Перед использованием поле нужно очистить
+     * Устанавливается значение (в приоритете: из property, из переменной сценария, значение аргумента) в заданное поле.
+     * Перед использованием поле нужно очистить
      */
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
-        value = getPropertyOrValue(value);
+        value = getPropertyOrStringVariableOrValue(value);
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
         valueInput.setValue(value);
@@ -350,10 +357,11 @@ public class DefaultSteps {
 
     /**
      * Выбор из списка со страницы элемента с заданным значением
+     * (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String listName, String expectedValue) {
-        final String value = getPropertyOrValue(expectedValue);
+        final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsText = listOfElementsFromPage.stream()
             .map(element -> element.getText().trim())
@@ -367,11 +375,12 @@ public class DefaultSteps {
 
     /**
      * Выбор из списка со страницы элемента, который содержит заданный текст
+     * (в приоритете: из property, из переменной сценария, значение аргумента)
      * Не чувствителен к регистру
      */
     @Тогда("^в списке \"([^\"]*)\" выбран элемент содержащий текст \"([^\"]*)\"$")
     public void selectElementInListIfFoundByText(String listName, String expectedValue) {
-        final String value = getPropertyOrValue(expectedValue);
+        final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
             .map(element -> element.getText().trim().toLowerCase())
@@ -409,6 +418,7 @@ public class DefaultSteps {
 
     /**
      * Проверка выражения на истинность
+     * выражение из property, из переменной сценария или значение аргумента
      * Например, string1.equals(string2)
      * OR string.equals("string")
      * Любое Java-выражение, возвращающие boolean
@@ -425,7 +435,7 @@ public class DefaultSteps {
     public void urlClickAndCheckRedirection(String pageName, String elementName) {
         akitaScenario.getCurrentPage().getElement(elementName).click();
         loadPage(pageName);
-        akitaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
+        akitaScenario.write(" url = " + url());
     }
 
     /**
@@ -481,11 +491,11 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что у элемента есть атрибут с ожидаемым значением
+     * Проверка, что у элемента есть атрибут с ожидаемым значением (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"(.*)\"$")
     public void checkElemContainsAtrWithValue(String elementName, String attribute, String expectedAttributeValue) {
-        expectedAttributeValue = getPropertyOrValue(expectedAttributeValue);
+        expectedAttributeValue = getPropertyOrStringVariableOrValue(expectedAttributeValue);
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         String currentAtrValue = currentElement.attr(attribute);
         assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
@@ -493,7 +503,7 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что элемент содержит указанный класс
+     * Проверка, что элемент содержит указанный класс (в приоритете: из property, из переменной сценария, значение аргумента)
      * Например:
      * если нужно проверить что элемент не отображается на странице, но проверки Selenium отрабатывают неверно,
      * можно использовать данный метод и проверить, что среди его классов есть disabled
@@ -501,6 +511,7 @@ public class DefaultSteps {
     @Тогда("^элемент \"([^\"]*)\" содержит класс со значением \"(.*)\"$")
     public void checkElemClassContainsExpectedValue(String elementName, String expectedClassValue) {
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
+        expectedClassValue = getPropertyOrStringVariableOrValue(expectedClassValue);
         String currentClassValue = currentElement.getAttribute("class");
         assertThat(String.format("Элемент [%s] не содержит класс со значением [%s]", elementName, expectedClassValue)
             , currentClassValue.toLowerCase(), containsString(expectedClassValue.toLowerCase()));
@@ -517,35 +528,36 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что значение в поле содержит значение, указанное в шаге
+     * Проверка, что значение в поле содержит значение (в приоритете: из property, из переменной сценария, значение аргумента),
+     * указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
     public void testActualValueContainsSubstring(String elementName, String expectedValue) {
-        expectedValue = getPropertyOrValue(expectedValue);
+        expectedValue = getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
     }
 
     /**
      * Проверка, что значение в поле содержит текст, указанный в шаге
-     * (в приоритете: из проперти, из переменной среды, значение аргумента).
+     * (в приоритете: из property, из переменной сценария, значение аргумента).
      * Используется метод innerText(), который получает как видимый, так и скрытый текст из элемента,
      * обрезая перенос строк и пробелы в конце и начале строчки.
      * Не чувствителен к регистру
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит внутренний текст \"(.*)\"$")
     public void testFieldContainsInnerText(String fieldName, String expectedText) {
-        expectedText = getPropertyOrValue(expectedText);
+        expectedText = getPropertyOrStringVariableOrValue(expectedText);
         String field = akitaScenario.getCurrentPage().getElement(fieldName).innerText().trim().toLowerCase();
         assertThat(String.format("Поле [%s] не содержит текст [%s]", fieldName, expectedText), field, containsString(expectedText.toLowerCase()));
     }
 
     /**
-     * Проверка, что значение в поле равно значению, указанному в шаге
+     * Проверка, что значение в поле равно значению, указанному в шаге (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
     public void compareValInFieldAndFromStep(String elementName, String expectedValue) {
-        expectedValue = getPropertyOrValue(expectedValue);
+        expectedValue = getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Значение поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), actualValue, equalTo(expectedValue));
     }
@@ -600,11 +612,11 @@ public class DefaultSteps {
     }
 
     /**
-     * Добавление строки в поле к уже заполненой строке
+     * Добавление строки (в приоритете: из property, из переменной сценария, значение аргумента) в поле к уже заполненой строке
      */
     @Когда("^в элемент \"([^\"]*)\" дописывается значение \"(.*)\"$")
     public void addValue(String elementName, String value) {
-        value = getPropertyOrValue(value);
+        value = getPropertyOrStringVariableOrValue(value);
         SelenideElement field = akitaScenario.getCurrentPage().getElement(elementName);
         String oldValue = field.getValue();
         if (oldValue.isEmpty()) {
@@ -615,11 +627,11 @@ public class DefaultSteps {
     }
 
     /**
-     * Нажатие на элемент по его тексту
+     * Нажатие на элемент по его тексту (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
     public void findElement(String text) {
-        $(By.xpath("//*[text()='" + text + "']")).click();
+        $(By.xpath("//*[text()='" + getPropertyOrStringVariableOrValue(text) + "']")).click();
     }
 
     /**
@@ -642,11 +654,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Ввод в поле указанного текста, используя буфер обмена и клавиши SHIFT + INSERT
+     * Ввод в поле указанного текста (в приоритете: из property, из переменной сценария, значение аргумента),
+     * используя буфер обмена и клавиши SHIFT + INSERT
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
     public void pasteValueToTextField(String value, String fieldName) {
-        value = getPropertyOrValue(value);
+        value = getPropertyOrStringVariableOrValue(value);
         ClipboardOwner clipboardOwner = (clipboard, contents) -> {
         };
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -722,6 +735,39 @@ public class DefaultSteps {
             elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
     }
 
+    /**
+     * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице)$")
+    public void setRandomCharSequence(String elementName, int seqLength, String lang) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+
+        if (lang.equals("кириллице")) lang = "ru";
+        else lang = "en";
+        String charSeq = getRandCharSequence(seqLength, lang);
+        valueInput.setValue(charSeq);
+    }
+
+    /**
+     * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
+     * если и оно отсутствует, то возвращает значение переданной на вход переменной
+     *
+     * @return
+     */
+    public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
+        String returnValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
+        if (returnValue == null) {
+            log.warn("Переменная " + propertyNameOrVariableNameOrValue + " в property файле не найдена");
+            returnValue = (String)akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
+            if (returnValue == null) {
+                log.warn("Переменная сценария " + propertyNameOrVariableNameOrValue + " не найдена");
+                returnValue = propertyNameOrVariableNameOrValue;
+            }
+        }
+
+        return returnValue;
+    }
 
     /**
      * Возвращает каталог "Downloads" в домашней директории
@@ -753,4 +799,31 @@ public class DefaultSteps {
         return (int) (Math.random() * maxValueInRange);
     }
 
+    /**
+     * Возвращает последовательность случайных символов переданных алфавита и длины
+     * Принимает на вход варианты языков 'ru' и 'en'
+     * Для других входных параметров возвращает латинские символы (en)
+     */
+    public String getRandCharSequence(int length, String lang) {
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            char symbol = charGenerator(lang);
+            builder.append(symbol);
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Возвращает случайный символ переданного алфавита
+     */
+    private char charGenerator(String lang) {
+        Random random = new Random();
+        if (lang.equals("ru")) {
+            return (char) (1072 + random.nextInt(32));
+        }
+        else {
+            return (char) (97 + random.nextInt(26));
+        }
+    }
 }
