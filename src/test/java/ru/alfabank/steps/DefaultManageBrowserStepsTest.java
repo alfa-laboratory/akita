@@ -50,6 +50,11 @@ public class DefaultManageBrowserStepsTest {
         when(webDriver.manage()).thenReturn(mock(Options.class));
     }
 
+    @AfterClass
+    public static void close() {
+        WebDriverRunner.closeWebDriver();
+    }
+
     @Test
     public void deleteCookiesTest() {
         dmbs.deleteCookies();

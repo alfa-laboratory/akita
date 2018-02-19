@@ -17,7 +17,9 @@ package ru.alfabank.other;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -52,6 +54,11 @@ public class AkitaPageTest {
         akitaScenario.setVar("Page", "file://" + url);
         page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
         ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
+    }
+
+    @AfterClass
+    public static void close() {
+        WebDriverRunner.closeWebDriver();
     }
 
     @Test
