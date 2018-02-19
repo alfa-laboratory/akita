@@ -68,8 +68,8 @@ dependencies {
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
 
-    testCompile "org.mockito:mockito-core:2.+"
-    testCompile "org.mockito:mockito-inline:2.+"
+    testCompile "org.mockito:mockito-core:2.13.0"
+    testCompile "org.mockito:mockito-inline:2.13.0"
     testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
 }
 
