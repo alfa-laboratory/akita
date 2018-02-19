@@ -9,7 +9,6 @@
 target/
 build/
 classes/
-drivers/
 .gradle/
 bin/**
 tmp/**
