@@ -18,12 +18,15 @@ package ru.alfabank.tests.core.helpers;
 import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -195,6 +198,26 @@ public class PropertyLoader {
             }
         }
         return instance;
+    }
+
+    /**
+     * Вспомогательный метод, возвращает содержимое файла по указанному пути
+     * или из переменной с указанным названием
+     * pathToScripts - переменная, через которую можно задать путь к файлу из которого нужно прочитать данные
+     */
+    @SneakyThrows
+    public static String loadFilePropertyOrDefault(String valueToFind) {
+        String propertyValue = tryLoadProperty(valueToFind);
+        if (StringUtils.isNotBlank(propertyValue)) {
+            return propertyValue;
+        } else {
+            try {
+                Path path = Paths.get(loadProperty("pathToScripts", "/src/main/java/"), valueToFind);
+                return new String(Files.readAllBytes(path), "UTF-8");
+            } catch (Exception e) {
+                return valueToFind;
+            }
+        }
     }
 }
 

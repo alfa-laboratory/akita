@@ -18,6 +18,7 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.ex.ElementShouldNot;
 import cucumber.api.Scenario;
+import org.hamcrest.core.IsEqual;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -31,13 +32,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.sleep;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadFilePropertyOrDefault;
 
 public class DefaultStepsTest {
     private static DefaultSteps ds;
     private static AkitaScenario akitaScenario;
+    private static DefaultManageBrowserSteps dmbs;
 
     @BeforeClass
     public static void setup() {
@@ -45,6 +50,7 @@ public class DefaultStepsTest {
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         ds = new DefaultSteps();
+        dmbs = new DefaultManageBrowserSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
@@ -126,7 +132,7 @@ public class DefaultStepsTest {
     public void clickOnElementPositive() {
         ds.clickOnElement("GoodButton");
         assertThat(akitaScenario.getPage("AkitaPageMock").getElement("GoodButton").isEnabled(),
-                equalTo(false));
+            equalTo(false));
     }
 
     @Test
@@ -172,27 +178,27 @@ public class DefaultStepsTest {
     public void setFieldValuePositive() {
         ds.setFieldValue("NormalField", "testSetFieldValue");
         assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("NormalField"),
-                equalTo("testSetFieldValue"));
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField"),
+            equalTo("testSetFieldValue"));
     }
 
     @Test
     public void setFieldValuePositiveWithProps() {
         ds.setFieldValue("NormalField", "testValueInProps");
         assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("NormalField"),
-                equalTo("test"));
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField"),
+            equalTo("test"));
     }
 
     @Test
     public void cleanFieldPositive() {
         ds.cleanField("TextField");
         assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("TextField"),
-                equalTo(""));
+                .getPage("AkitaPageMock")
+                .getAnyElementText("TextField"),
+            equalTo(""));
     }
 
     @Test
@@ -297,7 +303,7 @@ public class DefaultStepsTest {
     @Test
     public void openReadOnlyFormPositive() {
         ds.goToSelectedPageByLinkFromPropertyFile("RedirectionPage",
-                akitaScenario.getVar("RedirectionPage").toString());
+            akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
 
@@ -305,18 +311,18 @@ public class DefaultStepsTest {
     public void addValuePositive() {
         ds.addValue("TextField", "Super");
         assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("TextField"),
-                equalTo("textSuper"));
+                .getPage("AkitaPageMock")
+                .getAnyElementText("TextField"),
+            equalTo("textSuper"));
     }
 
     @Test
     public void addValuePositiveWithProps() {
         ds.addValue("TextField", "itemValueInProps");
         assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("TextField"),
-                equalTo("textitem"));
+                .getPage("AkitaPageMock")
+                .getAnyElementText("TextField"),
+            equalTo("textitem"));
     }
 
     @Test
@@ -324,17 +330,17 @@ public class DefaultStepsTest {
         ds.findElement("LINK");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
-                equalTo(akitaScenario.getVar("RedirectionPage")));
+            equalTo(akitaScenario.getVar("RedirectionPage")));
     }
 
     @Test
     public void currentDatePositive() {
         ds.currentDate("NormalField", "dd.MM.yyyy");
         assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("NormalField")
-                        .matches("[0-3][0-9].[0-1][0-9].[0-2][0-9]{3}"),
-                equalTo(true));
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField")
+                .matches("[0-3][0-9].[0-1][0-9].[0-2][0-9]{3}"),
+            equalTo(true));
     }
 
     @Test
@@ -366,14 +372,14 @@ public class DefaultStepsTest {
     public void pasteValuePositive() {
         ds.pasteValueToTextField("testVal", "NormalField");
         assertThat(WebDriverRunner.getWebDriver().findElement(By.name("normalField")).getAttribute("value"),
-                equalTo("testVal"));
+            equalTo("testVal"));
     }
 
     @Test
     public void pasteValuePositiveWithProps() {
         ds.pasteValueToTextField("textValueInProps", "NormalField");
         assertThat(WebDriverRunner.getWebDriver().findElement(By.name("normalField")).getAttribute("value"),
-                equalTo("text"));
+            equalTo("text"));
     }
 
     @Test
@@ -410,7 +416,7 @@ public class DefaultStepsTest {
         akitaScenario.setVar("2", "2");
         ScopedVariables scopedVariables = akitaScenario.getVars();
         assertThat((String) scopedVariables.get("1") + (String) scopedVariables.get("2"),
-                equalTo("12"));
+            equalTo("12"));
     }
 
     @Test
@@ -487,20 +493,20 @@ public class DefaultStepsTest {
     public void testGetPropertyOrStringVariableOrValueFromProperty() {
         akitaScenario.setVar("testVar", "shouldNotLoadMe");
         assertThat(ds.getPropertyOrStringVariableOrValue("testVar"),
-                equalTo(PropertyLoader.loadProperty("testVar")));
+            equalTo(PropertyLoader.loadProperty("testVar")));
     }
 
     @Test
     public void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
         akitaScenario.setVar("123", "shouldLoadMe");
         assertThat(ds.getPropertyOrStringVariableOrValue("123"),
-                equalTo("shouldLoadMe"));
+            equalTo("shouldLoadMe"));
     }
 
     @Test
     public void testGetPropertyOrStringVariableOrValueFromValue() {
         assertThat(ds.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
-                equalTo("getPropertyOrVariableOrValueTestValue"));
+            equalTo("getPropertyOrVariableOrValueTestValue"));
     }
 
     @Test
@@ -519,6 +525,40 @@ public class DefaultStepsTest {
                 .getPage("AkitaPageMock")
                 .getAnyElementText("NormalField").length(),
             equalTo(7));
+    }
+
+    @Test
+    public void testSwitchToTheNextTab() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheNextTab();
+        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("RedirectionPage"));
+        dmbs.switchToTheNextTab();
+        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
+    }
+
+    @Test
+    public void testCheckPageTitleSuccess() {
+        dmbs.checkPageTitle("Title");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckPageTitleFailure() {
+        dmbs.checkPageTitle("NoTitle");
+    }
+
+    @Test
+    public void testStringOrLoadFilePropertyOrDefault2() {
+        assertThat(loadFilePropertyOrDefault("testScript"), equalTo("alert('privet');"));
+    }
+    @Test
+    public void testTestScript() {
+        ds.executeJsScript("HIDEnSHOW()");
+        ds.elementIsNotVisible("ul");
+    }
+
+    @Test
+    public void testCheckFieldSize() {
+        ds.checkFieldSymbolsCount("ul", 20);
     }
 
 }
