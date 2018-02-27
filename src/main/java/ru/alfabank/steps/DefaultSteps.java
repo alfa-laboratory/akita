@@ -16,6 +16,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
@@ -48,6 +49,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadFilePropertyOrDefault;
 
 /**
  * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
@@ -747,6 +749,25 @@ public class DefaultSteps {
         else lang = "en";
         String charSeq = getRandCharSequence(seqLength, lang);
         valueInput.setValue(charSeq);
+    }
+
+    /**
+     * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
+     * Скрипт можно передать как аргумент метода или значение из application.properties
+     */
+    @Когда("^выполнен js-скрипт \"([^\"]*)\"")
+    public void executeJsScript(String scriptName) {
+        String content = loadFilePropertyOrDefault(scriptName);
+        Selenide.executeJavaScript(content);
+    }
+
+    /**
+     *  Производится проверка количества символов в поле со значением, указанным в шаге
+     */
+    @Тогда("^в поле \"([^\"]*)\" содержится (\\d+) символов$")
+    public void checkFieldSymbolsCount(String element, int num) {
+        int length = akitaScenario.getCurrentPage().getAnyElementText(element).length();
+        assertEquals(String.format("Неверное количество символов. Ожидаемый результат: %s, текущий результат: %s", num, length), num, length);
     }
 
     /**

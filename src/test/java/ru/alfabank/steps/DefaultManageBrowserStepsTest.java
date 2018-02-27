@@ -17,13 +17,15 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Options;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import org.openqa.selenium.WebDriver.Options;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -70,7 +72,7 @@ public class DefaultManageBrowserStepsTest {
     }
 
     @Test
-    public void saveAllCookiesTest(){
+    public void saveAllCookiesTest() {
         Set set = new HashSet();
         when(webDriver.manage().getCookies()).thenReturn(set);
         dmbs.saveAllCookies("var2");
@@ -82,4 +84,5 @@ public class DefaultManageBrowserStepsTest {
         dmbs.replaceCookie("testName", "12qwe");
         verify(webDriver.manage(), times(1)).addCookie(new Cookie("testName", "12qwe"));
     }
+
 }

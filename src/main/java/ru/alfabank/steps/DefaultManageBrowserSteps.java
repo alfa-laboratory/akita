@@ -16,6 +16,7 @@
 package ru.alfabank.steps;
 
 import cucumber.api.java.ru.Когда;
+import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Cookie;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -23,6 +24,8 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import java.util.Set;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
 
 /**
@@ -69,4 +72,32 @@ public class DefaultManageBrowserSteps {
         String valueCookie = resolveVars(cookieValue);
         getWebDriver().manage().addCookie(new Cookie(nameCookie, valueCookie));
     }
+
+    /**
+     *  Переключение на следующую вкладку браузера
+     */
+    @Когда("выполнено переключение на следующую вкладку")
+    public void switchToTheNextTab() {
+        String nextWindowHandle = nextWindowHandle();
+        getWebDriver().switchTo().window(nextWindowHandle);
+    }
+
+    /**
+     *  Производится сравнение заголовка страницы со значением, указанным в шаге
+     */
+    @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
+    public void checkPageTitle(String pageTitleName) {
+        String currentTitle = getWebDriver().getTitle().trim();
+        assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
+            pageTitleName, equalToIgnoringCase(currentTitle));
+    }
+
+    private String nextWindowHandle() {
+        String currentWindowHandle = getWebDriver().getWindowHandle();
+        Set<String> windowHandles = getWebDriver().getWindowHandles();
+        windowHandles.remove(currentWindowHandle);
+
+        return windowHandles.iterator().next();
+    }
+
 }
