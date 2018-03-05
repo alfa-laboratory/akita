@@ -52,7 +52,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 project.ext {
-    cucumberVersion = '1.2.5'
+    cucumberVersion = '2.3.1'
+    selenideVersion = '4.10'
 }
 
 dependencies {
@@ -60,9 +61,9 @@ dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
     compile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'com.codeborne', name: 'selenide', version: '4.8'
-    compile group: 'info.cukes', name: 'cucumber-java', version: cucumberVersion
-    compile group: 'info.cukes', name: 'cucumber-core', version: cucumberVersion
+    compile group: 'com.codeborne', name: 'selenide', version: selenideVersion
+    compile group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
+    compile group: 'io.cucumber', name: 'cucumber-core', version: cucumberVersion
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
@@ -92,12 +93,10 @@ publishing {
     }
 }
 
-
 ext {
     bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
     bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
     bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
-
 }
 
 bintray {
@@ -146,7 +145,7 @@ jacocoTestReport {
     reports {
         xml.enabled true
         csv.enabled true
-        html.destination "${buildDir}/jacocoHtml"
+        html.destination file("${buildDir}/jacocoHtml")
     }
 }
 
