@@ -16,19 +16,23 @@
 package ru.alfabank.alfatest.cucumber;
 
 import com.google.common.collect.Maps;
+import com.google.gson.JsonParser;
 import groovy.lang.GroovyShell;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+
 /**
  * Реализация хранилища переменных, заданных пользователем, внутри тестовых сценариев
  */
 public class ScopedVariables {
 
-
+    public static final String CURVE_BRACES_PATTERN = "\\{([^{}]+)\\}";
     private Map<String, Object> variables = Maps.newHashMap();
 
     /**
@@ -56,7 +60,7 @@ public class ScopedVariables {
      * @param textToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
     public String replaceVariables(String textToReplaceIn) {
-        Pattern p = Pattern.compile("\\{([^{}]+)\\}");
+        Pattern p = Pattern.compile(CURVE_BRACES_PATTERN);
         Matcher m = p.matcher(textToReplaceIn);
         StringBuffer buffer = new StringBuffer();
         while (m.find()) {
@@ -66,6 +70,49 @@ public class ScopedVariables {
         }
         m.appendTail(buffer);
         return buffer.toString();
+    }
+
+    /**
+     * Производит поиск в заданной строке на наличие совпадений параметров.
+     * В случае нахождения параметра в строке заменяет его значение на значение из properties или хранилища переменных
+     *
+     * @param inputString заданная строка
+     * @return новая строка
+     */
+    public static String resolveVars(String inputString) {
+        if (isJSONValid(inputString)) return inputString;
+        Pattern p = Pattern.compile(CURVE_BRACES_PATTERN);
+        Matcher m = p.matcher(inputString);
+        String newString = "";
+        while (m.find()) {
+            String varName = m.group(1);
+            String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
+            if (value == null)
+                throw new IllegalArgumentException(
+                    "Значение " + varName +
+                        " не было найдено ни в application.properties, ни в environment переменной");
+            newString = m.replaceFirst(value);
+            m = p.matcher(newString);
+        }
+        if (newString.isEmpty()) {
+            newString = inputString;
+        }
+        return newString;
+    }
+
+    /**
+     * Проверяет, является ли переданная в качестве аргумента строка валидным JSON
+     * @param jsonInString - строка для валидации
+     * @return
+     */
+    public static boolean isJSONValid(String jsonInString) {
+        try {
+            JsonParser parser = new JsonParser();
+            parser.parse(jsonInString);
+        } catch (com.google.gson.JsonSyntaxException ex) {
+            return false;
+        }
+        return true;
     }
 
     public void put(String name, Object value) {
