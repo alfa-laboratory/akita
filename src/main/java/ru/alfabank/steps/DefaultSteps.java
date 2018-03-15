@@ -825,6 +825,7 @@ public class DefaultSteps {
         return (int) (Math.random() * maxValueInRange);
     }
 
+
     /**
      * Возвращает последовательность случайных символов переданных алфавита и длины
      * Принимает на вход варианты языков 'ru' и 'en'
