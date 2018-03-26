@@ -83,7 +83,7 @@ public class CustomDriverProvider implements WebDriverProvider {
 
         if (OPERA.equalsIgnoreCase(expectedBrowser)) {
             capabilities = getOperaDriverCapabilities();
-            return "local".equalsIgnoreCase(remoteUrl) ? new OperaDriver() : getRemoteDriver(capabilities, remoteUrl);
+            return "local".equalsIgnoreCase(remoteUrl) ? new OperaDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(BROWSER_VERSION));
