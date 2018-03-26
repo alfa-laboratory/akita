@@ -19,6 +19,7 @@ import com.codeborne.selenide.WebDriverProvider;
 import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.proxy.BlacklistEntry;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -28,10 +29,13 @@ import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import ru.alfabank.tests.core.helpers.BlackList;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import static com.codeborne.selenide.WebDriverRunner.*;
@@ -59,20 +63,22 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static String REMOTE_URL = "remoteUrl";
     public final static String WINDOW_WIDTH = "width";
     public final static String WINDOW_HEIGHT = "height";
+    private BrowserMobProxy proxy = new BrowserMobProxyServer();
 
     @Override
     public WebDriver createDriver(DesiredCapabilities capabilities) {
         String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, CHROME);
         String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, "local");
+        BlackList blackList = new BlackList();
 
         if (FIREFOX.equalsIgnoreCase(expectedBrowser)) {
             capabilities = getFirefoxDriverCapabilities();
-            return "local".equalsIgnoreCase(remoteUrl) ? new FirefoxDriver() : getRemoteDriver(capabilities, remoteUrl);
+            return "local".equalsIgnoreCase(remoteUrl) ? new FirefoxDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (MOBILE_DRIVER.equalsIgnoreCase(expectedBrowser)) {
             capabilities.setCapability(ChromeOptions.CAPABILITY, getMobileChromeOptions());
-            return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions()) : getRemoteDriver(capabilities, remoteUrl);
+            return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions()) : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (OPERA.equalsIgnoreCase(expectedBrowser)) {
@@ -82,7 +88,7 @@ public class CustomDriverProvider implements WebDriverProvider {
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(BROWSER_VERSION));
         capabilities = getChromeDriverCapabilities();
-        return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver() : getRemoteDriver(capabilities, remoteUrl);
+        return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
     }
 
     /**
@@ -107,6 +113,19 @@ public class CustomDriverProvider implements WebDriverProvider {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /** Задает capabilities для запуска Remote драйвера для Selenoid
+     * со списком регулярных выражений соответствующих URL, которые добавляются в Blacklist
+     *
+     * @param capabilities
+     * @param remoteUrl
+     * @param blacklistEntries - список url для добавления в Blacklist
+     * @return
+     */
+    private WebDriver getRemoteDriver(DesiredCapabilities capabilities, String remoteUrl, List<BlacklistEntry> blacklistEntries) {
+        proxy.setBlacklist(blacklistEntries);
+        return getRemoteDriver(capabilities, remoteUrl);
     }
 
     /**
