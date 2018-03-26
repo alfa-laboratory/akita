@@ -21,6 +21,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
@@ -36,8 +37,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
  * Шаги для тестирования API, доступные по умолчанию в каждом новом проекте
@@ -104,16 +104,7 @@ public class DefaultApiSteps {
                     request.header(name, value);
                     break;
                 case BODY:
-                    String folder = getPropertyOrValue("requestBodies");
-                    try {
-                        Path path = Paths.get("src", "main", "java", folder, value);
-                        body = new String(Files.readAllBytes(path), "UTF-8");
-                    } catch (IOException | InvalidPathException e) {
-                        akitaScenario.write("Request body с ключем: " + value + " не найдено в папке " + folder
-                            + ". Будет исользовано значение body по умолчанию " + value);
-                        body = value;
-                    }
-                    request.body(body);
+                    request.body(loadRequestBodyFromFileOrPropertyOrValue(value));
                     break;
                 default:
                     throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), name));
@@ -123,6 +114,28 @@ public class DefaultApiSteps {
             akitaScenario.write("Тело запроса:\n" + body);
         }
         return request;
+    }
+
+    /**
+     * Получает body из application.properties, json файла по переданному пути или как String аргумент
+     * @param body - ключ к body в application.properties, путь к json файлу c body, body как String
+     * @return body как String
+     */
+    public String loadRequestBodyFromFileOrPropertyOrValue(String body) {
+        String propertyValue = tryLoadProperty(body);
+        if (StringUtils.isNotBlank(propertyValue)) {
+            return propertyValue;
+        }
+        String pathString = StringUtils.EMPTY;
+        try {
+            Path path = Paths.get(System.getProperty("user.dir") + body);
+            pathString = path.toString();
+            return new String(Files.readAllBytes(path), "UTF-8");
+        } catch (IOException | InvalidPathException e) {
+            akitaScenario.write("Request body не найдено в папке " + pathString
+                + ". Будет исользовано значение body по умолчанию " + body);
+            return body;
+        }
     }
 
     /**
@@ -158,12 +171,12 @@ public class DefaultApiSteps {
     /**
      * Отправка http запроса
      *
-     * @param method        тип http запроса
-     * @param address       url, на который будет направлен запроc
-     * @param paramsTable   список параметров для http запроса
+     * @param method      тип http запроса
+     * @param address     url, на который будет направлен запроc
+     * @param paramsTable список параметров для http запроса
      */
     public Response sendRequest(String method, String address,
-                                     List<RequestParam> paramsTable) {
+                                List<RequestParam> paramsTable) {
         address = loadProperty(address, resolveVars(address));
         RequestSender request = createRequest(paramsTable);
         return request.request(Method.valueOf(method), address);
