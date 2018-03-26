@@ -26,6 +26,7 @@ import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -104,10 +105,12 @@ public class DefaultApiSteps {
                     break;
                 case BODY:
                     String folder = getPropertyOrValue("requestBodies");
-                    Path path = Paths.get("src", "main", "java", folder, value);
                     try {
+                        Path path = Paths.get("src", "main", "java", folder, value);
                         body = new String(Files.readAllBytes(path), "UTF-8");
-                    } catch (IOException e) {
+                    } catch (IOException | InvalidPathException e) {
+                        akitaScenario.write("Request body с ключем: " + value + " не найдено в папке " + folder
+                            + ". Будет исользовано значение body по умолчанию " + value);
                         body = value;
                     }
                     request.body(body);
@@ -159,7 +162,7 @@ public class DefaultApiSteps {
      * @param address       url, на который будет направлен запроc
      * @param paramsTable   список параметров для http запроса
      */
-    private Response sendRequest(String method, String address,
+    public Response sendRequest(String method, String address,
                                      List<RequestParam> paramsTable) {
         address = loadProperty(address, resolveVars(address));
         RequestSender request = createRequest(paramsTable);
