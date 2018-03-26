@@ -656,6 +656,7 @@ public class DefaultSteps {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
         valueInput.setValue(currentStringDate);
+        akitaScenario.write("Текущая дата " + currentStringDate);
     }
 
     /**
