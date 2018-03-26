@@ -37,10 +37,11 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadFilePropertyOrDefault;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrGetAsString;
 
 public class DefaultStepsTest {
     private static DefaultSteps ds;
+    private static DefaultApiSteps api;
     private static AkitaScenario akitaScenario;
     private static DefaultManageBrowserSteps dmbs;
 
@@ -548,7 +549,7 @@ public class DefaultStepsTest {
 
     @Test
     public void testStringOrLoadFilePropertyOrDefault2() {
-        assertThat(loadFilePropertyOrDefault("testScript"), equalTo("alert('privet');"));
+        assertThat(loadValueFromFileOrPropertyOrGetAsString("testScript"), equalTo("alert('privet');"));
     }
     @Test
     public void testTestScript() {

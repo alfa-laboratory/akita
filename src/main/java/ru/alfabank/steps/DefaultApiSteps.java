@@ -104,7 +104,7 @@ public class DefaultApiSteps {
                     request.header(name, value);
                     break;
                 case BODY:
-                    request.body(loadRequestBodyFromFileOrPropertyOrValue(value));
+                    request.body(loadValueFromFileOrPropertyOrGetAsString(value));
                     break;
                 default:
                     throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), name));
@@ -114,28 +114,6 @@ public class DefaultApiSteps {
             akitaScenario.write("Тело запроса:\n" + body);
         }
         return request;
-    }
-
-    /**
-     * Получает body из application.properties, json файла по переданному пути или как String аргумент
-     * @param body - ключ к body в application.properties, путь к json файлу c body, body как String
-     * @return body как String
-     */
-    public String loadRequestBodyFromFileOrPropertyOrValue(String body) {
-        String propertyValue = tryLoadProperty(body);
-        if (StringUtils.isNotBlank(propertyValue)) {
-            return propertyValue;
-        }
-        String pathString = StringUtils.EMPTY;
-        try {
-            Path path = Paths.get(System.getProperty("user.dir") + body);
-            pathString = path.toString();
-            return new String(Files.readAllBytes(path), "UTF-8");
-        } catch (IOException | InvalidPathException e) {
-            akitaScenario.write("Request body не найдено в папке " + pathString
-                + ". Будет исользовано значение body по умолчанию " + body);
-            return body;
-        }
     }
 
     /**

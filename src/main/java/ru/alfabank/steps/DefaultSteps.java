@@ -756,7 +756,7 @@ public class DefaultSteps {
      */
     @Когда("^выполнен js-скрипт \"([^\"]*)\"")
     public void executeJsScript(String scriptName) {
-        String content = loadFilePropertyOrDefault(scriptName);
+        String content = loadValueFromFileOrPropertyOrGetAsString(scriptName);
         Selenide.executeJavaScript(content);
     }
 

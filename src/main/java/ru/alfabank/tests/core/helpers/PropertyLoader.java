@@ -19,6 +19,7 @@ import com.google.common.base.Strings;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -115,17 +117,6 @@ public class PropertyLoader {
     }
 
     /**
-     * Возвращает значение свойства типа Integer из property-файла по названию
-     *
-     * @param propertyName название свойста
-     * @return значение свойства типа Integer
-     */
-    public static Integer loadPropertyInt(String propertyName) {
-        String value = tryLoadProperty(propertyName);
-        return Integer.parseInt(value);
-    }
-
-    /**
      * Возвращает значение свойства типа Integer из property-файла по названию,
      * если ничего не найдено, возвращает значение по умолчанию
      *
@@ -201,22 +192,25 @@ public class PropertyLoader {
     }
 
     /**
-     * Вспомогательный метод, возвращает содержимое файла по указанному пути
-     * или из переменной с указанным названием
-     * pathToScripts - переменная, через которую можно задать путь к файлу из которого нужно прочитать данные
+     * Получает значение из application.properties, файла по переданному пути или как String аргумент
+     * Используется для получение body.json api шагах, либо для получения script.js в ui шагах
+     * @param valueToFind - ключ к значению в application.properties, путь к файлу c нужным значением, значение как String
+     * @return значение как String
      */
-    @SneakyThrows
-    public static String loadFilePropertyOrDefault(String valueToFind) {
+    public static String loadValueFromFileOrPropertyOrGetAsString(String valueToFind) {
+        String pathString = StringUtils.EMPTY;
         String propertyValue = tryLoadProperty(valueToFind);
         if (StringUtils.isNotBlank(propertyValue)) {
             return propertyValue;
-        } else {
-            try {
-                Path path = Paths.get(loadProperty("pathToScripts", "/src/main/java/"), valueToFind);
-                return new String(Files.readAllBytes(path), "UTF-8");
-            } catch (Exception e) {
-                return valueToFind;
-            }
+        }
+        try {
+            Path path = Paths.get(System.getProperty("user.dir") + valueToFind);
+            pathString = path.toString();
+            return new String(Files.readAllBytes(path), "UTF-8");
+        } catch (IOException | InvalidPathException e) {
+            AkitaScenario.getInstance().write("Значение не найдено в папке " + pathString
+                + ". Будет исользовано значение по умолчанию " + valueToFind);
+            return valueToFind;
         }
     }
 }
