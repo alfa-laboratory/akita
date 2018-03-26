@@ -26,7 +26,7 @@ import java.util.Set;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 /**
  * Шаги для работы с cookies

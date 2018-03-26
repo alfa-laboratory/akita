@@ -36,6 +36,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
 
 public class ApiStepsTest {
@@ -60,7 +61,7 @@ public class ApiStepsTest {
 
     @Test
     public void getURLwithPathParamsCalculatedSimple() {
-        assertThat(DefaultApiSteps.resolveVars("alfabank.ru"),
+        assertThat(resolveVars("alfabank.ru"),
                 equalTo("alfabank.ru"));
     }
 

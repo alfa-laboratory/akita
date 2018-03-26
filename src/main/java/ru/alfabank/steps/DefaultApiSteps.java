@@ -30,12 +30,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
@@ -136,33 +135,6 @@ public class DefaultApiSteps {
         } else {
             fail("Некорректный ответ на запрос: " + response.getBody().asString());
         }
-    }
-
-    /**
-     * Производит поиск в заданной строке на наличие совпадений параметров.
-     * В случае нахождения параметра в строке заменяет его значение на значение из properties или хранилище переменных
-     *
-     * @param inputString заданная строка
-     * @return новая строка
-     */
-    public static String resolveVars(String inputString) {
-        Pattern p = Pattern.compile("\\{([^{}]+)\\}");
-        Matcher m = p.matcher(inputString);
-        String newString = "";
-        while (m.find()) {
-            String varName = m.group(1);
-            String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
-            if (value == null)
-                throw new IllegalArgumentException(
-                        "Значение " + varName +
-                                " не было найдено ни в application.properties, ни в environment переменной");
-            newString = m.replaceFirst(value);
-            m = p.matcher(newString);
-        }
-        if (newString.isEmpty()) {
-            newString = inputString;
-        }
-        return newString;
     }
 
     /**

@@ -47,9 +47,8 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadFilePropertyOrDefault;
 
 /**
  * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
