@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package ru.alfabank.tests.core.helpers;
 
 import com.google.common.base.Strings;
@@ -76,6 +77,7 @@ public class PropertyLoader {
             return defaultValue;
         }
     }
+
     /**
      * Возвращает свойство по его названию из property-файла
      *
@@ -158,8 +160,8 @@ public class PropertyLoader {
     private static Properties getPropertiesInstance() {
         Properties instance = new Properties();
         try (
-                InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
-                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+            InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
+            InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
         ) {
             instance.load(inputStream);
         }
@@ -182,8 +184,8 @@ public class PropertyLoader {
             String path = Paths.get(profile, PROPERTIES_FILE).toString();
             URL url = PropertyLoader.class.getClassLoader().getResource(path);
             try (
-                    InputStream resourceStream = url.openStream();
-                    InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+                InputStream resourceStream = url.openStream();
+                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
             ) {
                 instance.load(inputStream);
             }
