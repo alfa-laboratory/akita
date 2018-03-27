@@ -21,15 +21,9 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +98,7 @@ public class DefaultApiSteps {
                     request.header(name, value);
                     break;
                 case BODY:
-                    request.body(loadValueFromFileOrPropertyOrGetAsString(value));
+                    request.body(loadValueFromFileOrPropertyOrDefault(value));
                     break;
                 default:
                     throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), name));

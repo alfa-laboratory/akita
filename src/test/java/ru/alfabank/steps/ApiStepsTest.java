@@ -37,7 +37,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrGetAsString;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
 
 public class ApiStepsTest {
@@ -177,21 +177,21 @@ public class ApiStepsTest {
     @Test()
     public void shouldNotFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"value\": \"true\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrGetAsString(expectedBodyValue);
+        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(expectedBodyValue);
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
     public void shouldFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"asn\": \"1\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrGetAsString("/src/test/resources/body.json");
+        String actualBodyValue = loadValueFromFileOrPropertyOrDefault("/src/test/resources/body.json");
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
     public void shouldFindBodyByPropertyKey() throws Exception {
         String expectedBodyValue = "{\"property\":\"body\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrGetAsString("bodyValue");
+        String actualBodyValue = loadValueFromFileOrPropertyOrDefault("bodyValue");
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 }
