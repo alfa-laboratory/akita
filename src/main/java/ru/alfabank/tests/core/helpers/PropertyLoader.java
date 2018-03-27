@@ -201,14 +201,14 @@ public class PropertyLoader {
         String pathAsString = StringUtils.EMPTY;
         String propertyValue = tryLoadProperty(valueToFind);
         if (StringUtils.isNotBlank(propertyValue)) {
-            AkitaScenario.getInstance().write("Значение из application.properties = " + propertyValue);
+            AkitaScenario.getInstance().write("Значение переменной " + valueToFind + " из application.properties = " + propertyValue);
             return propertyValue;
         }
         try {
             Path path = Paths.get(System.getProperty("user.dir") + valueToFind);
             pathAsString = path.toString();
             String fileValue = new String(Files.readAllBytes(path), "UTF-8");
-            AkitaScenario.getInstance().write("Значение из файла = " + fileValue);
+            AkitaScenario.getInstance().write("Значение из файла " + valueToFind + " = " + fileValue);
             return fileValue;
         } catch (IOException | InvalidPathException e) {
             AkitaScenario.getInstance().write("Значение не найдено по пути " + pathAsString

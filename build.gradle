@@ -102,11 +102,9 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-
     publications = ['maven']
     dryRun = false
     publish = true
-
     pkg {
         userOrg = 'alfa-laboratory'
         repo = 'maven-releases'
@@ -151,5 +149,6 @@ jacocoTestReport {
 
 license {
     header rootProject.file('HEADER')
-    strictCheck true
+    exclude ("body.json")
+    strictCheck false
 }
