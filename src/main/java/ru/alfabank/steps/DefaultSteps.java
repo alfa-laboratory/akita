@@ -787,9 +787,11 @@ public class DefaultSteps {
         if (returnValue == null) {
             log.warn("Переменная " + propertyNameOrVariableNameOrValue + " в property файле не найдена");
             returnValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
+            akitaScenario.write("Переменная из property файла " + returnValue);
             if (returnValue == null) {
                 log.warn("Переменная сценария " + propertyNameOrVariableNameOrValue + " не найдена");
                 returnValue = propertyNameOrVariableNameOrValue;
+                akitaScenario.write("Переменная сценария " + returnValue);
             }
         }
 
