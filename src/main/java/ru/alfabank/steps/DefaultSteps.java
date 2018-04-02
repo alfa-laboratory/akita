@@ -784,25 +784,6 @@ public class DefaultSteps {
      *
      * @return
      */
-//    public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
-//        String returnValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
-//        if (returnValue == null) {
-//            log.warn(
-//                "Переменная {} в property файле не найдена",
-//                propertyNameOrVariableNameOrValue
-//            );
-//            returnValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
-//            akitaScenario.write("Переменная из property файла " + returnValue);
-//            if (returnValue == null) {
-//                log.warn("Переменная сценария " + propertyNameOrVariableNameOrValue + " не найдена");
-//                returnValue = propertyNameOrVariableNameOrValue;
-//                akitaScenario.write("Переменная сценария " + returnValue);
-//            }
-//        }
-//
-//        return returnValue;
-//    }
-
     public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
         String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
         String variableValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
@@ -820,6 +801,7 @@ public class DefaultSteps {
         }
         else {
             log.info(message + result);
+            akitaScenario.write(message + result);
         }
     }
 
