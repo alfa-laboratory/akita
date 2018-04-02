@@ -38,11 +38,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.url;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -782,20 +784,43 @@ public class DefaultSteps {
      *
      * @return
      */
-    public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
-        String returnValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
-        if (returnValue == null) {
-            log.warn("Переменная " + propertyNameOrVariableNameOrValue + " в property файле не найдена");
-            returnValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
-            akitaScenario.write("Переменная из property файла " + returnValue);
-            if (returnValue == null) {
-                log.warn("Переменная сценария " + propertyNameOrVariableNameOrValue + " не найдена");
-                returnValue = propertyNameOrVariableNameOrValue;
-                akitaScenario.write("Переменная сценария " + returnValue);
-            }
-        }
+//    public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
+//        String returnValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
+//        if (returnValue == null) {
+//            log.warn(
+//                "Переменная {} в property файле не найдена",
+//                propertyNameOrVariableNameOrValue
+//            );
+//            returnValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
+//            akitaScenario.write("Переменная из property файла " + returnValue);
+//            if (returnValue == null) {
+//                log.warn("Переменная сценария " + propertyNameOrVariableNameOrValue + " не найдена");
+//                returnValue = propertyNameOrVariableNameOrValue;
+//                akitaScenario.write("Переменная сценария " + returnValue);
+//            }
+//        }
+//
+//        return returnValue;
+//    }
 
-        return returnValue;
+    public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
+        String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
+        String variableValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
+
+        boolean propertyCheck=  checkResult(propertyValue, "Переменная из property файла");
+        boolean variableCheck=  checkResult(variableValue, "Переменная сценария");
+        checkResult(propertyNameOrVariableNameOrValue, "Переменная переданная на вход");
+
+        return  propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
+    }
+
+    private  boolean checkResult(String result, String message) {
+        if (isNull(result)) {
+            log.warn(message + " не найдена");
+        }
+        else {
+            log.info(message + result);
+        }
     }
 
     /**
