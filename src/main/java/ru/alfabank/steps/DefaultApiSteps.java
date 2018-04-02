@@ -30,6 +30,7 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
@@ -88,7 +89,7 @@ public class DefaultApiSteps {
         String body = null;
         RequestSpecification request = given();
         for (RequestParam requestParam : paramsTable) {
-            String value = resolveVars(requestParam.getValue());
+            String value = resolveJsonVars(requestParam.getValue());
             String name = requestParam.getName();
             switch (requestParam.getType()) {
                 case PARAMETER:
