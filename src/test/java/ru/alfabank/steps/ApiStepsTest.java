@@ -36,6 +36,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
@@ -177,21 +178,30 @@ public class ApiStepsTest {
     @Test()
     public void shouldNotFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"value\": \"true\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(expectedBodyValue);
+        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars(expectedBodyValue));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
     public void shouldFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"asn\": \"1\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrDefault("/src/test/resources/body.json");
+        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars("/src/test/resources/body.json"));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
     public void shouldFindBodyByPropertyKey() throws Exception {
         String expectedBodyValue = "{\"property\":\"body\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrDefault("bodyValue");
+        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars("bodyValue"));
+        assertThat(actualBodyValue, equalTo(expectedBodyValue));
+    }
+
+    @Test
+    public void shouldFindBodyWithVarResolving() throws Exception {
+        akitaScenario.setVar("var1", "\"1\"");
+        String defaultBodyValue = "{\"a\":{var1}, \"b\": {\"c\": {var2}}}";
+        String expectedBodyValue = "{\"a\":\"1\", \"b\": {\"c\": \"2\"}}";
+        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars(defaultBodyValue));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 }
