@@ -71,7 +71,7 @@ dependencies {
 
     testCompile "org.mockito:mockito-core:2.13.0"
     testCompile "org.mockito:mockito-inline:2.13.0"
-    testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
 }
 
 compileJava.options.encoding = 'UTF-8'
