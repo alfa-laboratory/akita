@@ -788,21 +788,21 @@ public class DefaultSteps {
         String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
         String variableValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
 
-        boolean propertyCheck=  checkResult(propertyValue, "Переменная из property файла");
-        boolean variableCheck=  checkResult(variableValue, "Переменная сценария");
+        boolean propertyCheck =  checkResult(propertyValue, "Переменная из property файла");
+        boolean variableCheck =  checkResult(variableValue, "Переменная сценария");
         checkResult(propertyNameOrVariableNameOrValue, "Переменная переданная на вход");
 
         return  propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
     }
 
-    private  boolean checkResult(String result, String message) {
+    private boolean checkResult(String result, String message) {
         if (isNull(result)) {
             log.warn(message + " не найдена");
+            return false;
         }
-        else {
-            log.info(message + result);
-            akitaScenario.write(message + result);
-        }
+        log.info(message + result);
+        akitaScenario.write(message + result);
+        return true;
     }
 
     /**
