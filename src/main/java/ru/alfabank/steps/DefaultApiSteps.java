@@ -24,19 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
  * Шаги для тестирования API, доступные по умолчанию в каждом новом проекте
@@ -93,7 +89,7 @@ public class DefaultApiSteps {
         String body = null;
         RequestSpecification request = given();
         for (RequestParam requestParam : paramsTable) {
-            String value = resolveVars(requestParam.getValue());
+            String value = resolveJsonVars(requestParam.getValue());
             String name = requestParam.getName();
             switch (requestParam.getType()) {
                 case PARAMETER:
@@ -103,14 +99,7 @@ public class DefaultApiSteps {
                     request.header(name, value);
                     break;
                 case BODY:
-                    String folder = getPropertyOrValue("requestBodies");
-                    Path path = Paths.get("src", "main", "java", folder, value);
-                    try {
-                        body = new String(Files.readAllBytes(path), "UTF-8");
-                    } catch (IOException e) {
-                        body = value;
-                    }
-                    request.body(body);
+                    request.body(loadValueFromFileOrPropertyOrDefault(value));
                     break;
                 default:
                     throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), name));
@@ -155,12 +144,12 @@ public class DefaultApiSteps {
     /**
      * Отправка http запроса
      *
-     * @param method        тип http запроса
-     * @param address       url, на который будет направлен запроc
-     * @param paramsTable   список параметров для http запроса
+     * @param method      тип http запроса
+     * @param address     url, на который будет направлен запроc
+     * @param paramsTable список параметров для http запроса
      */
-    private Response sendRequest(String method, String address,
-                                     List<RequestParam> paramsTable) {
+    public Response sendRequest(String method, String address,
+                                List<RequestParam> paramsTable) {
         address = loadProperty(address, resolveVars(address));
         RequestSender request = createRequest(paramsTable);
         return request.request(Method.valueOf(method), address);

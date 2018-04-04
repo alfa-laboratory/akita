@@ -71,7 +71,7 @@ dependencies {
 
     testCompile "org.mockito:mockito-core:2.13.0"
     testCompile "org.mockito:mockito-inline:2.13.0"
-    testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -102,11 +102,9 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-
     publications = ['maven']
     dryRun = false
     publish = true
-
     pkg {
         userOrg = 'alfa-laboratory'
         repo = 'maven-releases'
@@ -151,5 +149,6 @@ jacocoTestReport {
 
 license {
     header rootProject.file('HEADER')
-    strictCheck true
+    exclude ("body.json")
+    strictCheck false
 }
