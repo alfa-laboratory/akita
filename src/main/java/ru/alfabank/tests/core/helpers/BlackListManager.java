@@ -50,8 +50,9 @@ public class BlackListManager {
             file = Files.readAllBytes(new File(classLoader.getResource("blacklist").getFile()).toPath());
             return new String(file, "UTF-8");
         } catch (IOException e) {
-            System.out.println("Файла 'blacklist' - не существует\n");
             e.printStackTrace();
+        } catch (NullPointerException ne) {
+            System.out.println("Файла 'blacklist' - не существует\n");
         }
         return new String(file);
     }
