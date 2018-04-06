@@ -15,15 +15,18 @@
  */
 package ru.alfabank.tests.core.helpers;
 
+import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.proxy.BlacklistEntry;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class BlackListManager {
     /**
      * Производится парсинг строки из файла blacklist на наличие ссылок типа:
@@ -47,14 +50,18 @@ public class BlackListManager {
         ClassLoader classLoader = getClass().getClassLoader();
         byte[] file = new byte[0];
         try {
-            file = Files.readAllBytes(new File(classLoader.getResource("blacklist").getFile()).toPath());
-            return new String(file, "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
+            Path path = Paths.get(classLoader.getResource("").getPath() + "../resources/blacklist");
+            if(Files.exists(path)) {
+                file = Files.readAllBytes(path);
+                return new String(file, "UTF-8");
+            }
+            else log.warn("Файла 'blacklist' - не существует\n");
         } catch (NullPointerException ne) {
-            System.out.println("Файла 'blacklist' - не существует\n");
+            log.warn("Файла 'blacklist' - не существует\n");
+        }
+          catch (IOException e) {
+            e.printStackTrace();
         }
         return new String(file);
     }
-
 }
