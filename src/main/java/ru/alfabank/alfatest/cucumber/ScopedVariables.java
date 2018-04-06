@@ -80,7 +80,6 @@ public class ScopedVariables {
      * @return новая строка
      */
     public static String resolveVars(String inputString) {
-        if (isJSONValid(inputString)) return inputString;
         Pattern p = Pattern.compile(CURVE_BRACES_PATTERN);
         Matcher m = p.matcher(inputString);
         String newString = "";
@@ -96,6 +95,36 @@ public class ScopedVariables {
         }
         if (newString.isEmpty()) {
             newString = inputString;
+        }
+        return newString;
+    }
+
+
+    /**
+     * Производит поиск параметров в переданном строкой json.
+     * В случае нахождения параметра - заменяет его значение на значение из properties или хранилища переменных
+     *
+     * @param inputJsonAsString заданная строка
+     * @return новая строка
+     */
+    public static String resolveJsonVars(String inputJsonAsString) {
+        if (isJSONValid(inputJsonAsString)) return inputJsonAsString;
+        Pattern p = Pattern.compile(CURVE_BRACES_PATTERN);
+        Matcher m = p.matcher(inputJsonAsString);
+        String newString = "";
+        while (m.find()) {
+            String varName = m.group(1);
+            String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
+            if (value == null)
+                throw new IllegalArgumentException(
+                    "Значение " + varName +
+                        " не было найдено ни в application.properties, ни в environment переменной");
+            newString = m.replaceFirst(value);
+            if (isJSONValid(newString)) return newString;
+            m = p.matcher(newString);
+        }
+        if (newString.isEmpty()) {
+            newString = inputJsonAsString;
         }
         return newString;
     }

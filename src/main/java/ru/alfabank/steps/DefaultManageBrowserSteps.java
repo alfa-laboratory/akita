@@ -80,6 +80,7 @@ public class DefaultManageBrowserSteps {
     public void switchToTheNextTab() {
         String nextWindowHandle = nextWindowHandle();
         getWebDriver().switchTo().window(nextWindowHandle);
+        akitascenario.write("Текущая вкладка " + nextWindowHandle);
     }
 
     /**
