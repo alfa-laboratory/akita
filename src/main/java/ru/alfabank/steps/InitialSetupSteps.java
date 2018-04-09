@@ -28,6 +28,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.WebDriverRunner.hasWebDriverStarted;
 
 @Slf4j
 public class InitialSetupSteps {
@@ -77,7 +78,7 @@ public class InitialSetupSteps {
      */
     @After(order = 20)
     public void takeScreenshot(Scenario scenario) {
-        if (scenario.isFailed()) {
+        if (scenario.isFailed() && hasWebDriverStarted()) {
             AkitaScenario.sleep(1);
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
             scenario.embed(screenshot, "image/png");
@@ -90,7 +91,7 @@ public class InitialSetupSteps {
 
     @After(order = 10)
     public void closeWebDriver() {
-        if (getWebDriver() != null) {
+        if (hasWebDriverStarted()) {
             getWebDriver().manage().deleteAllCookies();
             WebDriverRunner.closeWebDriver();
         }

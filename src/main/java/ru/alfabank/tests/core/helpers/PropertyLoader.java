@@ -13,22 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package ru.alfabank.tests.core.helpers;
 
 import com.google.common.base.Strings;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
  * Класс для получения свойств
  */
+@Slf4j
 public class PropertyLoader {
     private static final String PROPERTIES_FILE = "/application.properties";
     private static final Properties PROPERTIES = getPropertiesInstance();
@@ -50,6 +58,24 @@ public class PropertyLoader {
     public static String loadSystemPropertyOrDefault(String propertyName, String defaultValue) {
         String propValue = System.getProperty(propertyName);
         return propValue != null ? propValue : defaultValue;
+    }
+
+    /**
+     * Возвращает Integer значение системного свойства
+     * (из доступных для данной JVM) по его названию,
+     * в случае, если оно не найдено, вернется значение по умолчанию
+     *
+     * @param propertyName название свойства
+     * @param defaultValue Integer значение по умолчанию
+     * @return Integer значение свойства по названию или значение по умолчанию
+     */
+    public static Integer loadSystemPropertyOrDefault(String propertyName, Integer defaultValue) {
+        try {
+            return Integer.valueOf(System.getProperty(propertyName, defaultValue.toString()).trim());
+        } catch (NumberFormatException ex) {
+            log.error("Could not parse value to Integer ", ex.getMessage());
+            return defaultValue;
+        }
     }
 
     /**
@@ -90,17 +116,6 @@ public class PropertyLoader {
     public static String loadProperty(String propertyName, String defaultValue) {
         String value = tryLoadProperty(propertyName);
         return value != null ? value : defaultValue;
-    }
-
-    /**
-     * Возвращает значение свойства типа Integer из property-файла по названию
-     *
-     * @param propertyName название свойста
-     * @return значение свойства типа Integer
-     */
-    public static Integer loadPropertyInt(String propertyName) {
-        String value = tryLoadProperty(propertyName);
-        return Integer.parseInt(value);
     }
 
     /**
@@ -145,8 +160,8 @@ public class PropertyLoader {
     private static Properties getPropertiesInstance() {
         Properties instance = new Properties();
         try (
-                InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
-                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+            InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
+            InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
         ) {
             instance.load(inputStream);
         }
@@ -169,13 +184,39 @@ public class PropertyLoader {
             String path = Paths.get(profile, PROPERTIES_FILE).toString();
             URL url = PropertyLoader.class.getClassLoader().getResource(path);
             try (
-                    InputStream resourceStream = url.openStream();
-                    InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+                InputStream resourceStream = url.openStream();
+                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
             ) {
                 instance.load(inputStream);
             }
         }
         return instance;
+    }
+
+    /**
+     * Получает значение из application.properties, файла по переданному пути или как String аргумент
+     * Используется для получение body.json api шагах, либо для получения script.js в ui шагах
+     * @param valueToFind - ключ к значению в application.properties, путь к файлу c нужным значением, значение как String
+     * @return значение как String
+     */
+    public static String loadValueFromFileOrPropertyOrDefault(String valueToFind) {
+        String pathAsString = StringUtils.EMPTY;
+        String propertyValue = tryLoadProperty(valueToFind);
+        if (StringUtils.isNotBlank(propertyValue)) {
+            AkitaScenario.getInstance().write("Значение переменной " + valueToFind + " из application.properties = " + propertyValue);
+            return propertyValue;
+        }
+        try {
+            Path path = Paths.get(System.getProperty("user.dir") + valueToFind);
+            pathAsString = path.toString();
+            String fileValue = new String(Files.readAllBytes(path), "UTF-8");
+            AkitaScenario.getInstance().write("Значение из файла " + valueToFind + " = " + fileValue);
+            return fileValue;
+        } catch (IOException | InvalidPathException e) {
+            AkitaScenario.getInstance().write("Значение не найдено по пути " + pathAsString
+                + ". Будет исользовано значение по умолчанию " + valueToFind);
+            return valueToFind;
+        }
     }
 }
 

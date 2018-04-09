@@ -24,8 +24,10 @@ import org.junit.Test;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 public class PropertyLoaderTests {
     private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
@@ -101,5 +103,12 @@ public class PropertyLoaderTests {
     @Test(expected = IllegalArgumentException.class)
     public void getNotExistingValue() {
         resolveVars("{RandomTestVariable3321}");
+    }
+
+    @Test
+    public void getJsonStringType() {
+        String expectedValue = "{\"accounts\": []}";
+        String actualValue = resolveJsonVars(expectedValue);
+        assertThat(actualValue, is(expectedValue));
     }
 }

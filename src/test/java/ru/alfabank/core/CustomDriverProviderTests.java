@@ -15,27 +15,22 @@
  */
 package ru.alfabank.core;
 
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import ru.alfabank.tests.core.drivers.MobileChrome;
+import ru.alfabank.tests.core.drivers.CustomDriverProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.isA;
+import static org.hamcrest.core.Is.is;
 
-public class MobileChromeTests {
-    private static MobileChrome mobileChrome = new MobileChrome();
-    private static WebDriver mobileDriver;
+public class CustomDriverProviderTests {
 
     @Test
-    public void createDriverTest() {
-        mobileDriver = mobileChrome.createDriver(new DesiredCapabilities());
-        assertThat(mobileDriver, isA(WebDriver.class));
-    }
-
-    @AfterClass
-    public static void close() {
-        mobileDriver.close();
+    public void createChromeDriverTest() {
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.chrome.ChromeDriver"));
+        currentDriver.quit();
     }
 }
