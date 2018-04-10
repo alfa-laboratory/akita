@@ -21,6 +21,7 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -37,6 +38,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,6 +47,7 @@ import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.url;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -759,6 +763,19 @@ public class DefaultSteps {
     }
 
     /**
+     * Проход по списку и проверка текста у элемента на соответствие формату регулярного выражения
+     */
+    @И("элементы списка \"([^\"]*)\" соответствуют формату \"([^\"]*)\"$")
+    public void checkListTextsByRegExp(String listName, String pattern) {
+        akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
+            String str = akitaScenario.getCurrentPage().getAnyElementText(element);
+            Assert.assertTrue(
+                format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName), isTextMatches(str, pattern));
+        });
+    }
+
+
+    /**
      * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
      * Скрипт можно передать как аргумент метода или значение из application.properties
      */
@@ -859,5 +876,14 @@ public class DefaultSteps {
         } else {
             return (char) (97 + random.nextInt(26));
         }
+    }
+
+    /**
+     * Проверка на соответствие строки паттерну
+     */
+    public boolean isTextMatches(String str, String pattern) {
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(str);
+        return m.matches();
     }
 }

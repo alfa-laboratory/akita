@@ -561,4 +561,15 @@ public class DefaultStepsTest {
         ds.checkFieldSymbolsCount("ul", 20);
     }
 
+    @Test
+    public void testCheckListTextsByRegExpPositive() {
+        ds.checkListTextsByRegExp("List", "[A-z]*");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListTextsByRegExpNegative() {
+        ds.checkListTextsByRegExp("List", "[0-9]*");
+    }
+
+
 }
