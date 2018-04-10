@@ -60,6 +60,6 @@ public class BlackListTests {
 
     @Before
     public void initBlackList() {
-        new BlackListManager().fillBlackList(defaultBlacklistEntries);
+        new BlackListManager("blacklist").fillBlackList(defaultBlacklistEntries);
     }
 }
