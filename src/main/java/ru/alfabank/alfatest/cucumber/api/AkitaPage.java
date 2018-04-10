@@ -87,12 +87,17 @@ public abstract class AkitaPage extends ElementsContainer {
             .collect(toList());
     }
 
-
     /**
      * Получение текста элемента, как редактируемого поля, так и статичного элемента по имени
      */
     public String getAnyElementText(String elementName) {
-        SelenideElement element = getElement(elementName);
+        return getAnyElementText(getElement(elementName));
+    }
+
+    /**
+     * Получение текста элемента, как редактируемого поля, так и статичного элемента по значению элемента
+     */
+    public String getAnyElementText(SelenideElement element) {
         if (element.getTagName().equals("input")) {
             return element.getValue();
         } else {
