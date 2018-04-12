@@ -98,7 +98,7 @@ public class DefaultSteps {
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
         String url = resolveVars(getPropertyOrStringVariableOrValue(address));
-        getWebDriver().get(url);
+        open(url);
         akitaScenario.write("Url = " + url);
     }
 
@@ -228,12 +228,27 @@ public class DefaultSteps {
      * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
+     * Deprecated
      */
-    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
+    @Deprecated
+    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке из property файла \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
         String address = loadProperty(urlOrName, resolveVars(urlOrName));
         akitaScenario.write(" url = " + address);
-        WebDriverRunner.getWebDriver().get(address);
+        open(address);
+        loadPage(pageName);
+    }
+
+    /**
+     * Выполняется переход по заданной ссылке.
+     * Шаг содержит проверку, что после перехода загружена заданная страница.
+     * Ссылка может передаваться как строка, так и как ключ из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке \"([^\"]*)\"$")
+    public void goToSelectedPageByLink(String pageName, String urlOrName) {
+        String address = loadProperty(urlOrName, resolveVars(urlOrName));
+        akitaScenario.write(" url = " + address);
+        open(address);
         loadPage(pageName);
     }
 
@@ -259,7 +274,7 @@ public class DefaultSteps {
     @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
-        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
+        switchTo().activeElement().sendKeys(key);
     }
 
     /**
@@ -276,7 +291,7 @@ public class DefaultSteps {
             .map(this::getKeyOrCharacter)
             .collect(Collectors.toList());
         String combination = Keys.chord(listKeys);
-        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(combination);
+        switchTo().activeElement().sendKeys(combination);
     }
 
     private CharSequence getKeyOrCharacter(String key) {
@@ -320,7 +335,9 @@ public class DefaultSteps {
 
     /**
      * Устанавливает размеры окна браузера
+     * Deprecated
      */
+    @Deprecated
     @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
     public void setWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
@@ -330,11 +347,20 @@ public class DefaultSteps {
     }
 
     /**
+     * Устанавливает размеры окна браузера
+     */
+    @И("^установлено разрешение экрана (\\d+) х (\\d+)$")
+    public void setBrowserWindowSize(int width, int height) {
+        getWebDriver().manage().window().setSize(new Dimension(width, height));
+        akitaScenario.write("Установлены размеры окна браузера: ширина " + width + " высота" + height);
+    }
+
+    /**
      * Разворачивает окно с браузером на весь экран
      */
     @Если("^окно развернуто на весь экран$")
     public void expandWindowToFullScreen() {
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        getWebDriver().manage().window().maximize();
     }
 
     /**
@@ -804,11 +830,11 @@ public class DefaultSteps {
         String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
         String variableValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
 
-        boolean propertyCheck =  checkResult(propertyValue, "Переменная из property файла");
-        boolean variableCheck =  checkResult(variableValue, "Переменная сценария");
+        boolean propertyCheck = checkResult(propertyValue, "Переменная из property файла");
+        boolean variableCheck = checkResult(variableValue, "Переменная сценария");
         checkResult(propertyNameOrVariableNameOrValue, "Переменная переданная на вход");
 
-        return  propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
+        return propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
     }
 
     private boolean checkResult(String result, String message) {
