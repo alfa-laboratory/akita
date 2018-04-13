@@ -18,7 +18,9 @@ package ru.alfabank.alfatest.cucumber.api;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.reflections.ReflectionUtils;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
@@ -241,11 +243,23 @@ public abstract class AkitaPage extends ElementsContainer {
     /**
      * Поиск и инициализации элементов страницы
      */
-    private Map<String, Object> readNamedElements() {
+    private Map<String, Object> readNamedElements(/*Class<? extends AkitaPage> clazz*/) {
         checkNamedAnnotations();
-        return Arrays.stream(getClass().getDeclaredFields())
+        //Map<String, Object> mapWithBlockElements;
+        Map<String, Object> map = Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
-                .peek(f -> {
+                .peek((Field f) -> {
+//                    if (AkitaPage.class.isAssignableFrom(f.getType())){
+//
+//                        Name name = f.getType().getAnnotation(Name.class);
+//                        //проверка на null
+//                        System.out.println("Name: " + name.value());
+//                        System.out.println(f.getType().getClass());
+//                        if(name.value() != null) {
+//                            AkitaScenario akitaScenario = AkitaScenario.getInstance();
+//                            akitaScenario.getPage(name.value()).appeared();
+//                        }
+//                    }
                     if (!SelenideElement.class.isAssignableFrom(f.getType())
                             && !List.class.isAssignableFrom(f.getType())
                             && !AkitaPage.class.isAssignableFrom(f.getType()))
@@ -254,7 +268,13 @@ public abstract class AkitaPage extends ElementsContainer {
                                         "Если поле описывает блок, оно должно принадлежать классу, унаследованному от AkitaPage.\n" +
                                         "Найдено поле с типом %s", f.getType()));
                 })
+//                .peek(f -> {
+//                    System.out.println(f.getDeclaredAnnotation(Name.class).value());
+//                    System.out.println(extractFieldValueViaReflection(f));
+//                })
                 .collect(toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
+        //map.putAll(mapWithBlockElements);
+        return map;
     }
 
     /**
@@ -263,6 +283,10 @@ public abstract class AkitaPage extends ElementsContainer {
     private void checkNamedAnnotations() {
         List<String> list = Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
+//                .peek(f -> {
+//                    System.out.println(f.getDeclaredAnnotation(Name.class).value());
+//                    System.out.println(f.getDeclaredAnnotation(Name.class).clazz().getName());
+//                })
                 .map(f -> f.getDeclaredAnnotation(Name.class).value())
                 .collect(toList());
         if (list.size() != new HashSet<>(list).size()) {
@@ -281,6 +305,26 @@ public abstract class AkitaPage extends ElementsContainer {
                 .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
                 .collect(toList());
+    }
+
+
+    private List<Field> getFieldsRecursive() {
+        List<Field> fields = new ArrayList<>();
+        Arrays.stream(getClass().getDeclaredFields())
+                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
+                .forEach((Field f) -> {
+                    if (AkitaPage.class.isAssignableFrom(f.getType())){
+                        f.setAccessible(true);
+                        try {
+                            fields.addAll(((AkitaPage)f.get(this)).getFieldsRecursive());
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        fields.add(f);
+                    }
+                });
+        return fields;
     }
 
     private Object extractFieldValueViaReflection(Field field) {
