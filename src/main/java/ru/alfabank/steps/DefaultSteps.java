@@ -821,6 +821,29 @@ public class DefaultSteps {
     }
 
     /**
+     *  Производится проверка соответствия числа элементов списка значению, указанному в шаге
+     */
+    @Тогда("^в списке \"([^\"]*)\" содержится (\\d+) (?:элемент|элементов|элемента)")
+    public void listContainsNumberOfElements(String listName, int quantity) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        assertTrue(String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() == quantity);
+
+    }
+
+    /**
+     *  Производится сопоставление числа элементов списка и значения, указанного в шаге
+     */
+    @Тогда("^в списке \"([^\"]*)\" содержится (более|менее) (\\d+) элементов")
+    public void listContainsMoreOrLessElements(String listName, String moreOrLess, int quantity) {
+        sleep(5000);
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        if ("более".equals(moreOrLess)) {
+            assertTrue(String.format("Число элементов списка меньше ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() > quantity);
+        } else assertTrue(String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() < quantity);
+
+    }
+
+    /**
      * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
      * если и оно отсутствует, то возвращает значение переданной на вход переменной
      *
