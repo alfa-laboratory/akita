@@ -61,7 +61,7 @@ public class DefaultStepsTest {
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
@@ -88,7 +88,7 @@ public class DefaultStepsTest {
     @Test
     public void setWindowSizeSimple() {
         Dimension expectedDimension = new Dimension(800, 600);
-        ds.setWindowSize("800", "600");
+        ds.setBrowserWindowSize(800, 600);
         Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
         assertThat(expectedDimension, equalTo(actualDimension));
     }
@@ -498,8 +498,8 @@ public class DefaultStepsTest {
 
     @Test
     public void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
-        akitaScenario.setVar("123", "shouldLoadMe");
-        assertThat(ds.getPropertyOrStringVariableOrValue("123"),
+        akitaScenario.setVar("akita.url", "shouldLoadMe");
+        assertThat(ds.getPropertyOrStringVariableOrValue("akita.url"),
             equalTo("shouldLoadMe"));
     }
 
@@ -507,6 +507,16 @@ public class DefaultStepsTest {
     public void testGetPropertyOrStringVariableOrValueFromValue() {
         assertThat(ds.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
             equalTo("getPropertyOrVariableOrValueTestValue"));
+    }
+
+    @Test
+    public void testGetPropertyOrStringVariableOrValueFromSystemVariable() {
+        String propertyName = "akita.url";
+        String expectedValue = "http://url";
+        System.setProperty(propertyName, expectedValue);
+        String actualValue = ds.getPropertyOrStringVariableOrValue(propertyName);
+        System.clearProperty(propertyName);
+        assertThat(actualValue, equalTo(expectedValue));
     }
 
     @Test
@@ -560,5 +570,16 @@ public class DefaultStepsTest {
     public void testCheckFieldSize() {
         ds.checkFieldSymbolsCount("ul", 20);
     }
+
+    @Test
+    public void testCheckListTextsByRegExpPositive() {
+        ds.checkListTextsByRegExp("List", "[A-z]*");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListTextsByRegExpNegative() {
+        ds.checkListTextsByRegExp("List", "[0-9]*");
+    }
+
 
 }

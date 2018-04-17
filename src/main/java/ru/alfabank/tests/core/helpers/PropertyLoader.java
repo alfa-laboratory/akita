@@ -133,7 +133,8 @@ public class PropertyLoader {
 
     /**
      * Вспомогательный метод, возвращает значение свойства по имени.
-     * Сначала поиск в property-файле, если указано системное свойство "profile"
+     * Сначала поиск в System переменным,
+     * затем в property-файле, если указано системное свойство "profile"
      * Если ничего не найдено, поиск в /application.properties
      *
      * @param propertyName название свойства
@@ -142,8 +143,10 @@ public class PropertyLoader {
     public static String tryLoadProperty(String propertyName) {
         String value = null;
         if (!Strings.isNullOrEmpty(propertyName)) {
-            value = PROFILE_PROPERTIES.getProperty(propertyName);
+            String systemProperty = loadSystemPropertyOrDefault(propertyName, propertyName);
+            if(!propertyName.equals(systemProperty)) return systemProperty;
 
+            value = PROFILE_PROPERTIES.getProperty(propertyName);
             if (null == value) {
                 value = PROPERTIES.getProperty(propertyName);
             }

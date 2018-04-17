@@ -23,7 +23,7 @@ import java.util.List;
 public class BlackList {
     private List<BlacklistEntry> blacklistEntries = new ArrayList<>();
 
-    private BlackListManager blackListManager = new BlackListManager();
+    private BlackListManager blackListManager = new BlackListManager("blacklist");
 
     public BlackList() {
         setDefaultBlacklistEntries();

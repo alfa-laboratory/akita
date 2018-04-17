@@ -21,6 +21,7 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -37,13 +38,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.url;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -72,8 +75,9 @@ public class DefaultSteps {
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
     public void saveValueToVar(String propertyVariableName, String variableName) {
-        akitaScenario.setVar(variableName, loadProperty(propertyVariableName));
-        akitaScenario.write("Знечение сохраненной переменной " + variableName);
+        propertyVariableName = loadProperty(propertyVariableName);
+        akitaScenario.setVar(variableName, propertyVariableName);
+        akitaScenario.write("Значение сохраненной переменной " + propertyVariableName);
     }
 
     /**
@@ -94,7 +98,7 @@ public class DefaultSteps {
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
         String url = resolveVars(getPropertyOrStringVariableOrValue(address));
-        getWebDriver().get(url);
+        open(url);
         akitaScenario.write("Url = " + url);
     }
 
@@ -224,12 +228,27 @@ public class DefaultSteps {
      * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
+     * Deprecated
      */
-    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
+    @Deprecated
+    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке из property файла \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
         String address = loadProperty(urlOrName, resolveVars(urlOrName));
         akitaScenario.write(" url = " + address);
-        WebDriverRunner.getWebDriver().get(address);
+        open(address);
+        loadPage(pageName);
+    }
+
+    /**
+     * Выполняется переход по заданной ссылке.
+     * Шаг содержит проверку, что после перехода загружена заданная страница.
+     * Ссылка может передаваться как строка, так и как ключ из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке \"([^\"]*)\"$")
+    public void goToSelectedPageByLink(String pageName, String urlOrName) {
+        String address = loadProperty(urlOrName, resolveVars(urlOrName));
+        akitaScenario.write(" url = " + address);
+        open(address);
         loadPage(pageName);
     }
 
@@ -255,7 +274,7 @@ public class DefaultSteps {
     @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
-        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
+        switchTo().activeElement().sendKeys(key);
     }
 
     /**
@@ -272,7 +291,7 @@ public class DefaultSteps {
             .map(this::getKeyOrCharacter)
             .collect(Collectors.toList());
         String combination = Keys.chord(listKeys);
-        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(combination);
+        switchTo().activeElement().sendKeys(combination);
     }
 
     private CharSequence getKeyOrCharacter(String key) {
@@ -316,7 +335,9 @@ public class DefaultSteps {
 
     /**
      * Устанавливает размеры окна браузера
+     * Deprecated
      */
+    @Deprecated
     @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
     public void setWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
@@ -326,11 +347,20 @@ public class DefaultSteps {
     }
 
     /**
+     * Устанавливает размеры окна браузера
+     */
+    @И("^установлено разрешение экрана (\\d+) х (\\d+)$")
+    public void setBrowserWindowSize(int width, int height) {
+        getWebDriver().manage().window().setSize(new Dimension(width, height));
+        akitaScenario.write("Установлены размеры окна браузера: ширина " + width + " высота" + height);
+    }
+
+    /**
      * Разворачивает окно с браузером на весь экран
      */
     @Если("^окно развернуто на весь экран$")
     public void expandWindowToFullScreen() {
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        getWebDriver().manage().window().maximize();
     }
 
     /**
@@ -759,6 +789,19 @@ public class DefaultSteps {
     }
 
     /**
+     * Проход по списку и проверка текста у элемента на соответствие формату регулярного выражения
+     */
+    @И("элементы списка \"([^\"]*)\" соответствуют формату \"([^\"]*)\"$")
+    public void checkListTextsByRegExp(String listName, String pattern) {
+        akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
+            String str = akitaScenario.getCurrentPage().getAnyElementText(element);
+            Assert.assertTrue(
+                format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName), isTextMatches(str, pattern));
+        });
+    }
+
+
+    /**
      * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
      * Скрипт можно передать как аргумент метода или значение из application.properties
      */
@@ -787,11 +830,10 @@ public class DefaultSteps {
         String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
         String variableValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
 
-        boolean propertyCheck =  checkResult(propertyValue, "Переменная из property файла");
-        boolean variableCheck =  checkResult(variableValue, "Переменная сценария");
-        checkResult(propertyNameOrVariableNameOrValue, "Переменная переданная на вход");
+        boolean propertyCheck = checkResult(propertyValue, "Переменная " + propertyNameOrVariableNameOrValue + " из property файла");
+        boolean variableCheck = checkResult(variableValue, "Переменная сценария " + propertyNameOrVariableNameOrValue);
 
-        return  propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
+        return propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
     }
 
     private boolean checkResult(String result, String message) {
@@ -799,8 +841,8 @@ public class DefaultSteps {
             log.warn(message + " не найдена");
             return false;
         }
-        log.info(message + result);
-        akitaScenario.write(message + result);
+        log.info(message + " = " +  result);
+        akitaScenario.write(message + " = " + result);
         return true;
     }
 
@@ -859,5 +901,14 @@ public class DefaultSteps {
         } else {
             return (char) (97 + random.nextInt(26));
         }
+    }
+
+    /**
+     * Проверка на соответствие строки паттерну
+     */
+    public boolean isTextMatches(String str, String pattern) {
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(str);
+        return m.matches();
     }
 }
