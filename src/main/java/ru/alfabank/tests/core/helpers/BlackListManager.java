@@ -60,7 +60,6 @@ public class BlackListManager {
         byte[] file = new byte[0];
         try {
             Path path = Paths.get(classLoader.getResource("").toURI().getPath() + "../resources/" + fileName);
-            System.out.println(classLoader.getResource("").toURI().getPath() + "../resources/" + fileName);
             if(Files.exists(path)) {
                 file = Files.readAllBytes(path);
                 return new String(file, "UTF-8");
