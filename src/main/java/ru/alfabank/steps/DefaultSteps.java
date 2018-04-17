@@ -41,7 +41,6 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
@@ -76,8 +75,9 @@ public class DefaultSteps {
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
     public void saveValueToVar(String propertyVariableName, String variableName) {
-        akitaScenario.setVar(variableName, loadProperty(propertyVariableName));
-        akitaScenario.write("Знечение сохраненной переменной " + variableName);
+        propertyVariableName = loadProperty(propertyVariableName);
+        akitaScenario.setVar(variableName, propertyVariableName);
+        akitaScenario.write("Значение сохраненной переменной " + propertyVariableName);
     }
 
     /**
@@ -830,9 +830,8 @@ public class DefaultSteps {
         String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
         String variableValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
 
-        boolean propertyCheck = checkResult(propertyValue, "Переменная из property файла");
-        boolean variableCheck = checkResult(variableValue, "Переменная сценария");
-        checkResult(propertyNameOrVariableNameOrValue, "Переменная переданная на вход");
+        boolean propertyCheck = checkResult(propertyValue, "Переменная " + propertyNameOrVariableNameOrValue + " из property файла");
+        boolean variableCheck = checkResult(variableValue, "Переменная сценария " + propertyNameOrVariableNameOrValue);
 
         return propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
     }
@@ -842,8 +841,8 @@ public class DefaultSteps {
             log.warn(message + " не найдена");
             return false;
         }
-        log.info(message + result);
-        akitaScenario.write(message + result);
+        log.info(message + " = " +  result);
+        akitaScenario.write(message + " = " + result);
         return true;
     }
 
