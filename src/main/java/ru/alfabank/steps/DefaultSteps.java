@@ -77,7 +77,7 @@ public class DefaultSteps {
     public void saveValueToVar(String propertyVariableName, String variableName) {
         propertyVariableName = loadProperty(propertyVariableName);
         akitaScenario.setVar(variableName, propertyVariableName);
-        akitaScenario.write("Знечение сохраненной переменной " + propertyVariableName);
+        akitaScenario.write("Значение сохраненной переменной " + propertyVariableName);
     }
 
     /**
