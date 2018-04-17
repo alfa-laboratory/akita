@@ -26,18 +26,18 @@ import static org.hamcrest.Matchers.*;
 
 public class PagesTest {
     private static Pages pages;
-    private static AkitaPageMock alfaPageMock;
+    private static AkitaPageMock akitaPageMock;
 
     @BeforeClass
     public static void init() {
         pages = new Pages();
-        alfaPageMock = new AkitaPageMock();
+        akitaPageMock = new AkitaPageMock();
     }
 
     @Test
     public void getSetCurrentPagePositive() {
-        pages.setCurrentPage(alfaPageMock);
-        assertThat(pages.getCurrentPage(), equalTo(alfaPageMock));
+        pages.setCurrentPage(akitaPageMock);
+        assertThat(pages.getCurrentPage(), equalTo(akitaPageMock));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -48,8 +48,8 @@ public class PagesTest {
 
     @Test
     public void getPutPositive() {
-        pages.put("Test", alfaPageMock);
-        assertThat(pages.get("Test"), equalTo(alfaPageMock));
+        pages.put("Test", akitaPageMock);
+        assertThat(pages.get("Test"), equalTo(akitaPageMock));
     }
 
     @Test(expected = IllegalArgumentException.class)
