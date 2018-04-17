@@ -256,7 +256,7 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     private Map<String, Object> readNamedElements() {
         checkNamedAnnotations();
-        Map<String, Object> map = Arrays.stream(getClass().getDeclaredFields())
+        return Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .peek((Field f) -> {
                     if (!SelenideElement.class.isAssignableFrom(f.getType())
@@ -268,7 +268,6 @@ public abstract class AkitaPage extends ElementsContainer {
                                         "Найдено поле с типом %s", f.getType()));
                 })
                 .collect(toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
-        return map;
     }
 
     /**
