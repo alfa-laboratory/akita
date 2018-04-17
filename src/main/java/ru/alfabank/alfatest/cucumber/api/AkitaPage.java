@@ -18,15 +18,14 @@ package ru.alfabank.alfatest.cucumber.api;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.reflections.ReflectionUtils;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -151,6 +150,18 @@ public abstract class AkitaPage extends ElementsContainer {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
                 elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+        eachForm(AkitaPage::isAppeared);
+    }
+
+    private void eachForm(Consumer<AkitaPage> func) {
+        Arrays.stream(getClass().getDeclaredFields())
+                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
+                .forEach(f -> {
+                    if (AkitaPage.class.isAssignableFrom(f.getType())){
+                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType());
+                        func.accept(akitaPage);
+                    }
+                });
     }
 
     /**
@@ -243,23 +254,11 @@ public abstract class AkitaPage extends ElementsContainer {
     /**
      * Поиск и инициализации элементов страницы
      */
-    private Map<String, Object> readNamedElements(/*Class<? extends AkitaPage> clazz*/) {
+    private Map<String, Object> readNamedElements() {
         checkNamedAnnotations();
-        //Map<String, Object> mapWithBlockElements;
         Map<String, Object> map = Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .peek((Field f) -> {
-//                    if (AkitaPage.class.isAssignableFrom(f.getType())){
-//
-//                        Name name = f.getType().getAnnotation(Name.class);
-//                        //проверка на null
-//                        System.out.println("Name: " + name.value());
-//                        System.out.println(f.getType().getClass());
-//                        if(name.value() != null) {
-//                            AkitaScenario akitaScenario = AkitaScenario.getInstance();
-//                            akitaScenario.getPage(name.value()).appeared();
-//                        }
-//                    }
                     if (!SelenideElement.class.isAssignableFrom(f.getType())
                             && !List.class.isAssignableFrom(f.getType())
                             && !AkitaPage.class.isAssignableFrom(f.getType()))
@@ -268,12 +267,7 @@ public abstract class AkitaPage extends ElementsContainer {
                                         "Если поле описывает блок, оно должно принадлежать классу, унаследованному от AkitaPage.\n" +
                                         "Найдено поле с типом %s", f.getType()));
                 })
-//                .peek(f -> {
-//                    System.out.println(f.getDeclaredAnnotation(Name.class).value());
-//                    System.out.println(extractFieldValueViaReflection(f));
-//                })
                 .collect(toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
-        //map.putAll(mapWithBlockElements);
         return map;
     }
 
@@ -283,10 +277,6 @@ public abstract class AkitaPage extends ElementsContainer {
     private void checkNamedAnnotations() {
         List<String> list = Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
-//                .peek(f -> {
-//                    System.out.println(f.getDeclaredAnnotation(Name.class).value());
-//                    System.out.println(f.getDeclaredAnnotation(Name.class).clazz().getName());
-//                })
                 .map(f -> f.getDeclaredAnnotation(Name.class).value())
                 .collect(toList());
         if (list.size() != new HashSet<>(list).size()) {
@@ -307,27 +297,68 @@ public abstract class AkitaPage extends ElementsContainer {
                 .collect(toList());
     }
 
-
-    private List<Field> getFieldsRecursive() {
-        List<Field> fields = new ArrayList<>();
-        Arrays.stream(getClass().getDeclaredFields())
-                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
-                .forEach((Field f) -> {
-                    if (AkitaPage.class.isAssignableFrom(f.getType())){
-                        f.setAccessible(true);
-                        try {
-                            fields.addAll(((AkitaPage)f.get(this)).getFieldsRecursive());
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
-                        fields.add(f);
-                    }
-                });
-        return fields;
-    }
-
     private Object extractFieldValueViaReflection(Field field) {
         return Reflection.extractFieldValue(field, this);
     }
+
+//    /**
+//     * Поиск по аннотации "Name"
+//     */
+//    private void checkNamedAnnotations() {
+//        List<String> list = Arrays.stream(getClass().getDeclaredFields())
+//                .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
+////                .peek(f -> {
+////                    System.out.println(f.getDeclaredAnnotation(Name.class).value());
+////                    System.out.println(f.getDeclaredAnnotation(Name.class).clazz().getName());
+////                })
+//                .map(f -> f.getDeclaredAnnotation(Name.class).value())
+//                .collect(toList());
+//        if (list.size() != new HashSet<>(list).size()) {
+//            throw new IllegalStateException("Найдено несколько аннотаций @Name с одинаковым значением в классе " + this.getClass().getName());
+//        }
+//    }
+//
+//    /**
+//     * Поиск и инициализации элементов страницы без аннотации Optional
+//     */
+//    private List<SelenideElement> readWithWrappedElements() {
+////        return Arrays.stream(getClass().getDeclaredFields())
+//////                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
+//        return getFieldsRecursive().stream()
+//                .map(this::extractFieldValueViaReflection)
+//                .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
+//                .map(AkitaPage::castToSelenideElement)
+//                .filter(Objects::nonNull)
+//                .collect(toList());
+//    }
+//
+//
+//    private static class Tuple {
+//        AkitaPage page;
+//        Field field;
+//        Tuple(AkitaPage page, Field field) {
+//            this.page = page;
+//            this.field = field;
+//        }
+//    }
+//
+//    private List<Tuple> getFieldsRecursive() {
+//        List<Tuple> fields = new ArrayList<>();
+//        Arrays.stream(getClass().getDeclaredFields())
+//                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
+//                .forEach((Field f) -> {
+//                    if (AkitaPage.class.isAssignableFrom(f.getType())){
+//                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType());
+////                        akitaPage.getFieldsRecursive()
+////                        fields.add(new Tuple(akitaPage, ));
+//                    }else{
+//                        fields.add(new Tuple(this, f));
+//                    }
+//                });
+//        return fields;
+//    }
+//
+//    private Object extractFieldValueViaReflection(Tuple tuple) {
+//        return Reflection.extractFieldValue(tuple.field, tuple.page);
+//    }
 }
