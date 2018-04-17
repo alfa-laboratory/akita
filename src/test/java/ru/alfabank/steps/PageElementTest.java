@@ -49,7 +49,7 @@ public class PageElementTest {
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass

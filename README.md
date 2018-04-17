@@ -4,8 +4,7 @@
 # Akita
 [![Build Status](https://travis-ci.org/alfa-laboratory/akita.svg?branch=master)](https://travis-ci.org/alfa-laboratory/akita)
 [![Coverage Status](https://coveralls.io/repos/github/alfa-laboratory/akita/badge.svg?branch=master)](https://coveralls.io/github/alfa-laboratory/akita?branch=master)
-[![Download](https://api.bintray.com/packages/alfa-laboratory/maven-releases/akita/images/download.svg) ](https://bintray.com/alfa-laboratory/maven-releases/akita/_latestVersion)<br /> <br />
-[![@akitaQA](https://img.shields.io/badge/Telegram-%40akitaQA-orange.svg)](https://t.me/joinchat/D53UAg8lG2xv81zgb7dEtQ)<br />
+[![Download](https://api.bintray.com/packages/alfa-laboratory/maven-releases/akita/images/download.svg) ](https://bintray.com/alfa-laboratory/maven-releases/akita/_latestVersion)<br /> <br />  [![@akitaQA](https://img.shields.io/badge/Telegram-%40akitaQA-orange.svg)](https://t.me/joinchat/D53UAg8lG2xv81zgb7dEtQ)<br />
 ⇧ Join us! ⇧
 
 Akita - бери и тестируй
