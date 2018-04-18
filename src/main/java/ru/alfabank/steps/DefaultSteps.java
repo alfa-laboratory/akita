@@ -835,7 +835,6 @@ public class DefaultSteps {
      */
     @Тогда("^в списке \"([^\"]*)\" содержится (более|менее) (\\d+) элементов")
     public void listContainsMoreOrLessElements(String listName, String moreOrLess, int quantity) {
-        sleep(5000);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         if ("более".equals(moreOrLess)) {
             assertTrue(String.format("Число элементов списка меньше ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() > quantity);
