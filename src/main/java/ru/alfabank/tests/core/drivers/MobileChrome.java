@@ -34,6 +34,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
 
 
 @Slf4j
+@Deprecated
 public class MobileChrome implements WebDriverProvider {
 
     /**

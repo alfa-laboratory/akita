@@ -15,9 +15,11 @@
  */
 package ru.alfabank;
 
+import cucumber.api.Result;
 import cucumber.api.Scenario;
 
 import java.util.Collection;
+import java.util.List;
 
 public class StubScenario implements Scenario {
     @Override
@@ -26,9 +28,10 @@ public class StubScenario implements Scenario {
     }
 
     @Override
-    public String getStatus() {
+    public Result.Type getStatus() {
         return null;
     }
+
 
     @Override
     public boolean isFailed() {
@@ -47,11 +50,21 @@ public class StubScenario implements Scenario {
 
     @Override
     public String getName() {
-        return null;
+        return "My scenario";
     }
 
     @Override
     public String getId() {
+        return null;
+    }
+
+    @Override
+    public String getUri() {
+        return null;
+    }
+
+    @Override
+    public List<Integer> getLines() {
         return null;
     }
 }

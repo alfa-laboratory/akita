@@ -15,8 +15,10 @@
  */
 package ru.alfabank.tests.core.rest;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Builder для формирования http запроса
@@ -24,6 +26,8 @@ import lombok.Data;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestParam {
 
     private RequestParamType type;

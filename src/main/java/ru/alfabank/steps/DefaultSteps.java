@@ -16,10 +16,12 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -36,16 +38,21 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.WebDriverRunner.url;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static ru.alfabank.steps.DefaultApiSteps.resolveVars;
+import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
@@ -68,7 +75,9 @@ public class DefaultSteps {
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
     public void saveValueToVar(String propertyVariableName, String variableName) {
-        akitaScenario.setVar(variableName, loadProperty(propertyVariableName));
+        propertyVariableName = loadProperty(propertyVariableName);
+        akitaScenario.setVar(variableName, propertyVariableName);
+        akitaScenario.write("Значение сохраненной переменной " + propertyVariableName);
     }
 
     /**
@@ -76,7 +85,7 @@ public class DefaultSteps {
      */
     @И("^выполнено обновление текущей страницы$")
     public void refreshPage() {
-        getWebDriver().navigate().refresh();
+        refresh();
     }
 
     /**
@@ -89,7 +98,7 @@ public class DefaultSteps {
     @Когда("^совершен переход по ссылке \"([^\"]*)\"$")
     public void goToUrl(String address) {
         String url = resolveVars(getPropertyOrStringVariableOrValue(address));
-        getWebDriver().get(url);
+        open(url);
         akitaScenario.write("Url = " + url);
     }
 
@@ -100,7 +109,7 @@ public class DefaultSteps {
      */
     @Тогда("^текущий URL равен \"([^\"]*)\"$")
     public void checkCurrentURL(String url) {
-        String currentUrl = getWebDriver().getCurrentUrl();
+        String currentUrl = url();
         String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
         assertThat("Текущий URL не совпадает с ожидаемым", currentUrl, is(expectedUrl));
     }
@@ -219,12 +228,27 @@ public class DefaultSteps {
      * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
+     * Deprecated
      */
-    @И("^совершен переход на страницу \"([^\"]*)\" по (?:ссылке|ссылке из property файла) \"([^\"]*)\"$")
+    @Deprecated
+    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке из property файла \"([^\"]*)\"$")
     public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
         String address = loadProperty(urlOrName, resolveVars(urlOrName));
         akitaScenario.write(" url = " + address);
-        WebDriverRunner.getWebDriver().get(address);
+        open(address);
+        loadPage(pageName);
+    }
+
+    /**
+     * Выполняется переход по заданной ссылке.
+     * Шаг содержит проверку, что после перехода загружена заданная страница.
+     * Ссылка может передаваться как строка, так и как ключ из application.properties
+     */
+    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке \"([^\"]*)\"$")
+    public void goToSelectedPageByLink(String pageName, String urlOrName) {
+        String address = loadProperty(urlOrName, resolveVars(urlOrName));
+        akitaScenario.write(" url = " + address);
+        open(address);
         loadPage(pageName);
     }
 
@@ -250,7 +274,7 @@ public class DefaultSteps {
     @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
-        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(key);
+        switchTo().activeElement().sendKeys(key);
     }
 
     /**
@@ -267,7 +291,7 @@ public class DefaultSteps {
             .map(this::getKeyOrCharacter)
             .collect(Collectors.toList());
         String combination = Keys.chord(listKeys);
-        WebDriverRunner.getWebDriver().switchTo().activeElement().sendKeys(combination);
+        switchTo().activeElement().sendKeys(combination);
     }
 
     private CharSequence getKeyOrCharacter(String key) {
@@ -311,12 +335,24 @@ public class DefaultSteps {
 
     /**
      * Устанавливает размеры окна браузера
+     * Deprecated
      */
+    @Deprecated
     @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
     public void setWindowSize(String widthRaw, String heightRaw) {
         int width = Integer.valueOf(widthRaw);
         int height = Integer.valueOf(heightRaw);
         WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
+        akitaScenario.write("Установлены размеры окна браузера: ширина " + widthRaw + " высота" + heightRaw);
+    }
+
+    /**
+     * Устанавливает размеры окна браузера
+     */
+    @И("^установлено разрешение экрана (\\d+) х (\\d+)$")
+    public void setBrowserWindowSize(int width, int height) {
+        getWebDriver().manage().window().setSize(new Dimension(width, height));
+        akitaScenario.write("Установлены размеры окна браузера: ширина " + width + " высота" + height);
     }
 
     /**
@@ -324,7 +360,7 @@ public class DefaultSteps {
      */
     @Если("^окно развернуто на весь экран$")
     public void expandWindowToFullScreen() {
-        WebDriverRunner.getWebDriver().manage().window().maximize();
+        getWebDriver().manage().window().maximize();
     }
 
     /**
@@ -413,6 +449,7 @@ public class DefaultSteps {
     @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
     public void storeElementValueInVariable(String elementName, String variableName) {
         akitaScenario.setVar(variableName, akitaScenario.getCurrentPage().getAnyElementText(elementName));
+        akitaScenario.write("Значение сохраненное в переменную: " + akitaScenario.getCurrentPage().getAnyElementText(elementName));
     }
 
     /**
@@ -434,7 +471,7 @@ public class DefaultSteps {
     public void urlClickAndCheckRedirection(String pageName, String elementName) {
         akitaScenario.getCurrentPage().getElement(elementName).click();
         loadPage(pageName);
-        akitaScenario.write(" url = " + WebDriverRunner.getWebDriver().getCurrentUrl());
+        akitaScenario.write(" url = " + url());
     }
 
     /**
@@ -650,6 +687,7 @@ public class DefaultSteps {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");
         valueInput.setValue(currentStringDate);
+        akitaScenario.write("Текущая дата " + currentStringDate);
     }
 
     /**
@@ -699,6 +737,7 @@ public class DefaultSteps {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
             .shouldBe(Condition.visible).click();
+        akitaScenario.write("Выбран случайный элемент: " + listOfElementsFromPage);
     }
 
     /**
@@ -746,6 +785,62 @@ public class DefaultSteps {
         else lang = "en";
         String charSeq = getRandCharSequence(seqLength, lang);
         valueInput.setValue(charSeq);
+        akitaScenario.write("Строка случайных символов равна :" + charSeq);
+    }
+
+    /**
+     * Проход по списку и проверка текста у элемента на соответствие формату регулярного выражения
+     */
+    @И("элементы списка \"([^\"]*)\" соответствуют формату \"([^\"]*)\"$")
+    public void checkListTextsByRegExp(String listName, String pattern) {
+        akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
+            String str = akitaScenario.getCurrentPage().getAnyElementText(element);
+            Assert.assertTrue(
+                format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName), isTextMatches(str, pattern));
+        });
+    }
+
+
+    /**
+     * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
+     * Скрипт можно передать как аргумент метода или значение из application.properties
+     */
+    @Когда("^выполнен js-скрипт \"([^\"]*)\"")
+    public void executeJsScript(String scriptName) {
+        String content = loadValueFromFileOrPropertyOrDefault(scriptName);
+        Selenide.executeJavaScript(content);
+    }
+
+    /**
+     *  Производится проверка количества символов в поле со значением, указанным в шаге
+     */
+    @Тогда("^в поле \"([^\"]*)\" содержится (\\d+) символов$")
+    public void checkFieldSymbolsCount(String element, int num) {
+        int length = akitaScenario.getCurrentPage().getAnyElementText(element).length();
+        assertEquals(String.format("Неверное количество символов. Ожидаемый результат: %s, текущий результат: %s", num, length), num, length);
+    }
+
+    /**
+     *  Производится проверка соответствия числа элементов списка значению, указанному в шаге
+     */
+    @Тогда("^в списке \"([^\"]*)\" содержится (\\d+) (?:элемент|элементов|элемента)")
+    public void listContainsNumberOfElements(String listName, int quantity) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        assertTrue(String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() == quantity);
+
+    }
+
+    /**
+     *  Производится сопоставление числа элементов списка и значения, указанного в шаге
+     */
+    @Тогда("^в списке \"([^\"]*)\" содержится (более|менее) (\\d+) элементов")
+    public void listContainsMoreOrLessElements(String listName, String moreOrLess, int quantity) {
+        sleep(5000);
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        if ("более".equals(moreOrLess)) {
+            assertTrue(String.format("Число элементов списка меньше ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() > quantity);
+        } else assertTrue(String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() < quantity);
+
     }
 
     /**
@@ -755,17 +850,23 @@ public class DefaultSteps {
      * @return
      */
     public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
-        String returnValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
-        if (returnValue == null) {
-            log.warn("Переменная " + propertyNameOrVariableNameOrValue + " в property файле не найдена");
-            returnValue = (String)akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
-            if (returnValue == null) {
-                log.warn("Переменная сценария " + propertyNameOrVariableNameOrValue + " не найдена");
-                returnValue = propertyNameOrVariableNameOrValue;
-            }
-        }
+        String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
+        String variableValue = (String) akitaScenario.tryGetVar(propertyNameOrVariableNameOrValue);
 
-        return returnValue;
+        boolean propertyCheck = checkResult(propertyValue, "Переменная " + propertyNameOrVariableNameOrValue + " из property файла");
+        boolean variableCheck = checkResult(variableValue, "Переменная сценария " + propertyNameOrVariableNameOrValue);
+
+        return propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
+    }
+
+    private boolean checkResult(String result, String message) {
+        if (isNull(result)) {
+            log.warn(message + " не найдена");
+            return false;
+        }
+        log.info(message + " = " +  result);
+        akitaScenario.write(message + " = " + result);
+        return true;
     }
 
     /**
@@ -803,10 +904,10 @@ public class DefaultSteps {
      * Принимает на вход варианты языков 'ru' и 'en'
      * Для других входных параметров возвращает латинские символы (en)
      */
-    public String getRandCharSequence(int lenght, String lang) {
+    public String getRandCharSequence(int length, String lang) {
 
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < lenght; i++) {
+        for (int i = 0; i < length; i++) {
             char symbol = charGenerator(lang);
             builder.append(symbol);
         }
@@ -818,11 +919,19 @@ public class DefaultSteps {
      */
     private char charGenerator(String lang) {
         Random random = new Random();
-        char symbol = 32;
-        if (lang.equals("ru")) symbol = (char) (1072 + random.nextInt(32));
-        else symbol = (char) (97 + random.nextInt(26));
-
-        return symbol;
+        if (lang.equals("ru")) {
+            return (char) (1072 + random.nextInt(32));
+        } else {
+            return (char) (97 + random.nextInt(26));
+        }
     }
 
+    /**
+     * Проверка на соответствие строки паттерну
+     */
+    public boolean isTextMatches(String str, String pattern) {
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(str);
+        return m.matches();
+    }
 }
