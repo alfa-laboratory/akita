@@ -36,6 +36,7 @@ import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
@@ -442,6 +443,18 @@ public class DefaultStepsTest {
     @Test
     public void selectRandomElementFromListPositive() {
         ds.selectRandomElementFromList("List");
+    }
+
+    @Test
+    public void selectRandomElementFromListAndSaveVarPositive() {
+        ds.selectRandomElementFromListAndSaveVar("List", "test");
+        assertThat(akitaScenario.tryGetVar("test"), anyOf(equalTo("One"),
+                equalTo("Two"), equalTo("Three")));
+    };
+
+    @Test(expected = IllegalArgumentException.class)
+    public void selectRandomElementFromListAndSaveVarNegative() {
+        ds.selectRandomElementFromListAndSaveVar("NormalField", "test");
     }
 
     @Test
