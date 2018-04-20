@@ -1,4 +1,19 @@
-package ru.alfabank.tests.core.helpers;
+/**
+ * Copyright 2017 Alfa Laboratory
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ru.alfabank.tests.core.formatters;
 
 import cucumber.api.TestStep;
 import cucumber.api.event.EventHandler;
@@ -25,7 +40,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 @Slf4j
 public class StepFormatter implements Formatter {
-    public final String SCREENSHOT_AFTER_STEPS = "akita.stepScreenshot";
+    public final String SCREENSHOT_AFTER_STEPS = "takeScreenshotAfterSteps";
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
@@ -42,31 +57,22 @@ public class StepFormatter implements Formatter {
         }
     }
 
-
     private void afterStep(TestStep testStep) {
-        String method = testStep.getCodeLocation();
-        String currentMethodName = method.substring(method.indexOf('.') + 1, method.indexOf('('));
-        log.info("methodName = " + currentMethodName);
+        String fullMethodLocation = testStep.getCodeLocation();
+        String currentMethodName = fullMethodLocation.substring(fullMethodLocation.indexOf('.') + 1, fullMethodLocation.indexOf('('));
 
-        Reflections reflections = new Reflections(new MethodAnnotationsScanner());
-        Set<Method> methods = reflections.getMethodsAnnotatedWith(Screenshot.class);
-        log.info("methods = " + methods.toString());
-
-        List<Method> methodsWithAnnotation = methods.stream()
+        List<Method> methodsWithScreenshotAnnotation = new Reflections(new MethodAnnotationsScanner())
+            .getMethodsAnnotatedWith(Screenshot.class)
+            .stream()
             .filter(m -> m.getName().contains(currentMethodName))
             .collect(Collectors.toList());
 
-        log.info("methodsWithAnnotation = " + methodsWithAnnotation.toString());
-        boolean isScreenshotAnnotationPresent = methodsWithAnnotation.size() > 0;
+        boolean isScreenshotAnnotationPresent = methodsWithScreenshotAnnotation.size() > 0;
 
-        log.info("isScreenshotAnnotationPresent " + isScreenshotAnnotationPresent);
-
-        boolean stepScreenshots = System.getProperty(SCREENSHOT_AFTER_STEPS) == null
+        boolean isTakeScreenshotAfterStepsProperty = System.getProperty(SCREENSHOT_AFTER_STEPS) != null
             ? Boolean.valueOf(System.getProperty(SCREENSHOT_AFTER_STEPS)) : false;
 
-        log.info("stepScreenshots " + stepScreenshots);
-
-        if (isScreenshotAnnotationPresent || stepScreenshots) {
+        if (isScreenshotAnnotationPresent || isTakeScreenshotAfterStepsProperty) {
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
             AkitaScenario.getInstance().getScenario().embed(screenshot, "image/png");
         }
