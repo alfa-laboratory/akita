@@ -743,12 +743,14 @@ public class DefaultSteps {
     /**
      * Выбор из списка со страницы любого случайного элемента и сохранение его значения в переменную
      */
-    @Когда("^выбран любой элемент из списка \"([^\"]*)\", его значение сохранено в переменную \"([^\"]*)\"$")
+    @Когда("^выбран любой элемент из списка \"([^\"]*)\" и его значение сохранено в переменную \"([^\"]*)\"$")
     public void selectRandomElementFromListAndSaveVar(String listName, String varName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement element = listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()));
         element.shouldBe(Condition.visible).click();
         akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(element).trim());
+        akitaScenario.write(String.format("Переменной [%s] присвоено значение [%s] из списка [%s]", varName,
+                akitaScenario.getVar(varName), listName));
     }
 
     /**
