@@ -39,12 +39,12 @@ import static org.hamcrest.Matchers.*;
 import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByName;
 
 public class AkitaPageTest {
-    private static AkitaPageMock alfaPageMock;
+    private static AkitaPageMock akitaPageMock;
     private static AkitaPage page;
 
     @BeforeClass
     public static void setup() {
-        alfaPageMock = new AkitaPageMock();
+        akitaPageMock = new AkitaPageMock();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         DefaultSteps ds = new DefaultSteps();
         Scenario scenario = new StubScenario();
@@ -73,42 +73,42 @@ public class AkitaPageTest {
 
     @Test(expected = NullPointerException.class)
     public void getElementNegative() {
-        alfaPageMock.getElement("test");
+        akitaPageMock.getElement("test");
     }
 
     @Test(expected = NullPointerException.class)
     public void getElementsListNegative() {
-        alfaPageMock.getElementsList("test");
+        akitaPageMock.getElementsList("test");
     }
 
     @Test(expected = NullPointerException.class)
     public void getAnyElementTextNegative() {
-        alfaPageMock.getAnyElementText("test");
+        akitaPageMock.getAnyElementText("test");
     }
 
     @Test(expected = NullPointerException.class)
     public void getAnyElementsListTextsNegative() {
-        alfaPageMock.getAnyElementsListTexts("test");
+        akitaPageMock.getAnyElementsListTexts("test");
     }
 
     @Test
     public void appearedPositive() {
-        assertThat(alfaPageMock.appeared(), equalTo(alfaPageMock));
+        assertThat(akitaPageMock.appeared(), equalTo(akitaPageMock));
     }
 
     @Test
     public void disappearedNegative() {
-        assertThat(alfaPageMock.disappeared(), equalTo(alfaPageMock));
+        assertThat(akitaPageMock.disappeared(), equalTo(akitaPageMock));
     }
 
     @Test(expected = NullPointerException.class)
     public void waitElementsUntilNegative() {
-        alfaPageMock.waitElementsUntil(Condition.appear, 1, "test");
+        akitaPageMock.waitElementsUntil(Condition.appear, 1, "test");
     }
 
     @Test(expected = NullPointerException.class)
     public void getButtonFromListByNameNegative() {
-        SelenideElement selenideElementMock = alfaPageMock.getMockCss();
+        SelenideElement selenideElementMock = akitaPageMock.getMockCss();
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElementMock);
         getButtonFromListByName(list, "test");
@@ -143,7 +143,7 @@ public class AkitaPageTest {
     @Ignore
     @Test
     public void getButtonFromListByNamePositive() {
-        SelenideElement selenideElement = alfaPageMock.getGoodButton();
+        SelenideElement selenideElement = akitaPageMock.getGoodButton();
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElement);
         assertThat(getButtonFromListByName(list, "GoodButton"), is(notNullValue()));
