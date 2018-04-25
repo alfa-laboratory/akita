@@ -38,6 +38,11 @@ import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
+/**
+ * При подключении StepFormatter к проеку с тестами, становится достуна опция снятия скриншотов
+ * после каждого шага. Для этого необходимо задать системную переменную takeScreenshotAfterSteps=true
+ * Скриншот так же будет сниматься после каждого метода, помеченного аннотацией @Screenshot
+ */
 @Slf4j
 public class StepFormatter implements Formatter {
     public final String SCREENSHOT_AFTER_STEPS = "takeScreenshotAfterSteps";
@@ -57,6 +62,13 @@ public class StepFormatter implements Formatter {
         }
     }
 
+    /**
+     * Метод осуществляет снятие скришота и прикрепление его к cucumber отчету.
+     * Скриншот снимается после шагов, помеченных аннотацией @Screenshot,
+     * либо после каждого шага, если задана системная переменная takeScreenshotAfterSteps=true
+     * @param testStep - текущий шаг
+     *
+     */
     private void afterStep(TestStep testStep) {
         String fullMethodLocation = testStep.getCodeLocation();
         String currentMethodName = fullMethodLocation.substring(fullMethodLocation.indexOf('.') + 1, fullMethodLocation.indexOf('('));
