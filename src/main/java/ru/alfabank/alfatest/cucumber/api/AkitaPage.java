@@ -25,6 +25,7 @@ import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -154,6 +155,18 @@ public abstract class AkitaPage extends ElementsContainer {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
                 elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+        eachForm(AkitaPage::isAppeared);
+    }
+
+    private void eachForm(Consumer<AkitaPage> func) {
+        Arrays.stream(getClass().getDeclaredFields())
+                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
+                .forEach(f -> {
+                    if (AkitaPage.class.isAssignableFrom(f.getType())){
+                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType());
+                        func.accept(akitaPage);
+                    }
+                });
     }
 
     /**
@@ -250,7 +263,7 @@ public abstract class AkitaPage extends ElementsContainer {
         checkNamedAnnotations();
         return Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
-                .peek(f -> {
+                .peek((Field f) -> {
                     if (!SelenideElement.class.isAssignableFrom(f.getType())
                             && !List.class.isAssignableFrom(f.getType())
                             && !AkitaPage.class.isAssignableFrom(f.getType()))

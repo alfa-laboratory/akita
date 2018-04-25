@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.proxy.BlacklistEntry;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -53,12 +54,12 @@ public class BlackListManager {
         }
     }
 
-    @SneakyThrows(IOException.class)
+    @SneakyThrows({IOException.class, URISyntaxException.class})
     private String getResource() {
         ClassLoader classLoader = getClass().getClassLoader();
         byte[] file = new byte[0];
         try {
-            Path path = Paths.get(classLoader.getResource("").getPath() + "../resources/" + fileName);
+            Path path = Paths.get(classLoader.getResource("").toURI().getPath() + "../resources/" + fileName);
             if(Files.exists(path)) {
                 file = Files.readAllBytes(path);
                 return new String(file, "UTF-8");
