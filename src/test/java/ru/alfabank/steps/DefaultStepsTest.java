@@ -36,6 +36,7 @@ import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
@@ -445,6 +446,18 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void selectRandomElementFromListAndSaveVarPositive() {
+        ds.selectRandomElementFromListAndSaveVar("List", "test");
+        assertThat(akitaScenario.tryGetVar("test"), anyOf(equalTo("One"),
+                equalTo("Two"), equalTo("Three")));
+    };
+
+    @Test(expected = IllegalArgumentException.class)
+    public void selectRandomElementFromListAndSaveVarNegative() {
+        ds.selectRandomElementFromListAndSaveVar("NormalField", "test");
+    }
+
+    @Test
     public void checkListElementsContainsTextPositive() {
         ds.checkListElementsContainsText("List2", "item");
     }
@@ -560,6 +573,7 @@ public class DefaultStepsTest {
     public void testStringOrLoadFilePropertyOrDefault2() {
         assertThat(loadValueFromFileOrPropertyOrDefault("testScript"), equalTo("alert('privet');"));
     }
+
     @Test
     public void testTestScript() {
         ds.executeJsScript("HIDEnSHOW()");
@@ -581,5 +595,34 @@ public class DefaultStepsTest {
         ds.checkListTextsByRegExp("List", "[0-9]*");
     }
 
+    @Test
+    public void testListContainsNumberOfElementsPositive() {
+        ds.listContainsNumberOfElements("List", 3);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListContainsNumberOfElementsNegative() {
+        ds.listContainsNumberOfElements("List", 4);
+    }
+
+    @Test
+    public void testListContainsMoreOrLessElementsLessPositive(){
+        ds.listContainsMoreOrLessElements("List", "менее", 4);
+    }
+
+    @Test
+    public void testListContainsMoreOrLessElementsMorePositive(){
+        ds.listContainsMoreOrLessElements("List", "более", 2);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListContainsMoreOrLessElementsLessNegative(){
+        ds.listContainsMoreOrLessElements("List", "менее", 3);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListContainsMoreOrLessElementsMoreNegative(){
+        ds.listContainsMoreOrLessElements("List", "более", 3);
+    }
 
 }

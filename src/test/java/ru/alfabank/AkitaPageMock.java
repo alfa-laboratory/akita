@@ -121,10 +121,9 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(className = "searchBlock")
     @Name("SearchBlock")
     public SearchFieldMock searchField;
-
+  
     @FindBy(id = "t1")
     @Name("AkitaTable")
     @Optional
     public AkitaTableMock akitaTableMock;
-
 }
