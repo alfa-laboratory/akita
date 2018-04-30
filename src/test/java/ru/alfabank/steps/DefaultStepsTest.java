@@ -625,4 +625,23 @@ public class DefaultStepsTest {
         ds.listContainsMoreOrLessElements("List", "более", 3);
     }
 
+    @Test
+    public void scrollWhileElemNotFoundOnPagePositive() {
+        ds.scrollWhileElemNotFoundOnPage(1,"mockTagName");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void scrollWhileElemNotFoundOnPageNegative() {
+        ds.scrollWhileElemNotFoundOnPage(1,"Кнопка Показать ещё");
+    }
+
+    @Test
+    public void scrollWhileElemWithTextNotFoundOnPagePositive() {
+        ds.scrollWhileElemWithTextNotFoundOnPage(1,"Serious testing page");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void scrollWhileElemWithTextNotFoundOnPageNegative() {
+        ds.scrollWhileElemWithTextNotFoundOnPage(1,"Not serious testing page");
+    }
 }

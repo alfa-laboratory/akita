@@ -856,6 +856,44 @@ public class DefaultSteps {
     }
 
     /**
+     *  Скроллит страницу вниз до появления элемента каждые n-секунд.
+     */
+    @И("^скроллить каждые (\\d+) (?:секунд|секунды), пока элемент \"([^\"]*)\" не отобразится на странице$")
+    public void scrollWhileElemNotFoundOnPage(long seconds, String elementName) {
+        SelenideElement el = null;
+        for (int i = 0; i < 10 ; i++) {
+            el =  akitaScenario.getCurrentPage().getElement(elementName);
+            if (el.exists()) {
+                break;
+            }
+            Actions actions = new Actions(getWebDriver());
+            actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
+            actions.keyUp(Keys.CONTROL).perform();
+            sleep(1000 * seconds);
+        }
+        assertThat("Элемент " + elementName + " не найден", el.exists());
+    }
+
+    /**
+     *  Скроллит страницу вниз до появления элемента с текстом каждые n-секунд.
+     */
+    @И("^скроллить каждые (\\d+) (?:секунд|секунды), пока элемент с текстом \"([^\"]*)\" не отобразится на странице$")
+    public void scrollWhileElemWithTextNotFoundOnPage(long seconds, String expectedValue) {
+        SelenideElement el = null;
+        for (int i = 0; i < 10 ; i++) {
+            el =  $(By.xpath("//*[text()='" + getPropertyOrStringVariableOrValue(expectedValue) + "']"));
+            if (el.exists()) {
+                break;
+            }
+            Actions actions = new Actions(getWebDriver());
+            actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
+            actions.keyUp(Keys.CONTROL).perform();
+            sleep(1000 * seconds);
+        }
+        assertThat("Элемент с текстом " + expectedValue + " не найден", el.exists());
+    }
+
+    /**
      * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
      * если и оно отсутствует, то возвращает значение переданной на вход переменной
      *

@@ -122,4 +122,8 @@ public class AkitaPageMock extends AkitaPage {
     @Name("SearchBlock")
     public SearchFieldMock searchField;
 
+    @Optional
+    @FindBy(xpath = "//span[text()='Показать ещё']")
+    @Name("Кнопка Показать ещё")
+    public SelenideElement buttonShowMore;
 }
