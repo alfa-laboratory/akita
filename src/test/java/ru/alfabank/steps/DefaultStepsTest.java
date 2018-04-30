@@ -626,22 +626,22 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void scrollWhileElemNotFoundOnPagePositive() {
+    public void testScrollWhileElemNotFoundOnPagePositive() {
         ds.scrollWhileElemNotFoundOnPage(1,"mockTagName");
     }
 
     @Test(expected = AssertionError.class)
-    public void scrollWhileElemNotFoundOnPageNegative() {
+    public void testScrollWhileElemNotFoundOnPageNegative() {
         ds.scrollWhileElemNotFoundOnPage(1,"Кнопка Показать ещё");
     }
 
     @Test
-    public void scrollWhileElemWithTextNotFoundOnPagePositive() {
+    public void testScrollWhileElemWithTextNotFoundOnPagePositive() {
         ds.scrollWhileElemWithTextNotFoundOnPage(1,"Serious testing page");
     }
 
     @Test(expected = AssertionError.class)
-    public void scrollWhileElemWithTextNotFoundOnPageNegative() {
+    public void testScrollWhileElemWithTextNotFoundOnPageNegative() {
         ds.scrollWhileElemWithTextNotFoundOnPage(1,"Not serious testing page");
     }
 }

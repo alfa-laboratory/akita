@@ -858,7 +858,7 @@ public class DefaultSteps {
     /**
      *  Скроллит страницу вниз до появления элемента каждые n-секунд.
      */
-    @И("^скроллить каждые (\\d+) (?:секунд|секунды), пока элемент \"([^\"]*)\" не отобразится на странице$")
+    @И("^выполнен скролл каждые (\\d+) (?:секунд|секунды), пока элемент \"([^\"]*)\" не отобразился на странице$")
     public void scrollWhileElemNotFoundOnPage(long seconds, String elementName) {
         SelenideElement el = null;
         for (int i = 0; i < 10 ; i++) {
@@ -877,11 +877,11 @@ public class DefaultSteps {
     /**
      *  Скроллит страницу вниз до появления элемента с текстом каждые n-секунд.
      */
-    @И("^скроллить каждые (\\d+) (?:секунд|секунды), пока элемент с текстом \"([^\"]*)\" не отобразится на странице$")
+    @И("^выполнен скролл каждые (\\d+) (?:секунд|секунды), пока элемент с текстом \"([^\"]*)\" не отобразился на странице$")
     public void scrollWhileElemWithTextNotFoundOnPage(long seconds, String expectedValue) {
         SelenideElement el = null;
         for (int i = 0; i < 10 ; i++) {
-            el =  $(By.xpath("//*[text()='" + getPropertyOrStringVariableOrValue(expectedValue) + "']"));
+            el =  $(By.xpath("//*[text()='" + expectedValue + "']"));
             if (el.exists()) {
                 break;
             }
