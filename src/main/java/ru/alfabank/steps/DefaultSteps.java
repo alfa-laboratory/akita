@@ -21,6 +21,7 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -799,6 +800,32 @@ public class DefaultSteps {
         String charSeq = getRandCharSequence(seqLength, lang);
         valueInput.setValue(charSeq);
         akitaScenario.write("Строка случайных символов равна :" + charSeq);
+    }
+
+    /**
+     * Ввод в поле случайной последовательности цифр задаваемой длины
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных (?:цифр|цифры)$")
+    public void inputRandomNumSequence(String elementName, int seqLength) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+        String numSeq = RandomStringUtils.randomNumeric(seqLength);
+        valueInput.setValue(numSeq);
+        akitaScenario.write(String.format("В поле [%s] введено значение [%s]", elementName, numSeq));
+    }
+
+    /**
+     * Ввод в поле случайной последовательности цифр задаваемой длины и сохранение этого значения в переменную
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных (?:цифр|цифры) и сохранено в переменную \"([^\"]*)\"$")
+    public void inputAndSetRandomNumSequence(String elementName, int seqLength, String varName) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+        String numSeq = RandomStringUtils.randomNumeric(seqLength);
+        valueInput.setValue(numSeq);
+        akitaScenario.setVar(varName, numSeq);
+        akitaScenario.write(String.format("В поле [%s] введено значение [%s] и сохранено в переменную [%s]",
+                elementName, numSeq, varName));
     }
 
     /**
