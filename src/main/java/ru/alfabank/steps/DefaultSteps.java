@@ -805,7 +805,7 @@ public class DefaultSteps {
     /**
      * Ввод в поле случайной последовательности цифр задаваемой длины
      */
-    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных (?:цифр|цифры)$")
+    @Когда("^в поле \"([^\"]*)\" введено число, случайно сгенерированное из (\\d+) (?:цифр|цифры)$")
     public void inputRandomNumSequence(String elementName, int seqLength) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
@@ -817,7 +817,7 @@ public class DefaultSteps {
     /**
      * Ввод в поле случайной последовательности цифр задаваемой длины и сохранение этого значения в переменную
      */
-    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных (?:цифр|цифры) и сохранено в переменную \"([^\"]*)\"$")
+    @Когда("^в поле \"([^\"]*)\" введено число, случайно сгенерированное из (\\d+) (?:цифр|цифры) и сохраненное в переменную \"([^\"]*)\"$")
     public void inputAndSetRandomNumSequence(String elementName, int seqLength, String varName) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
