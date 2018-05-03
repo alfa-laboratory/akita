@@ -551,6 +551,44 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testInputRandomNumSequencePositive() {
+        ds.inputRandomNumSequence("NormalField",4);
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(4));
+    }
+
+    @Test(expected = AssertionError.class)
+    public  void testInputRandomNumSequenceNegative() {
+        ds.inputRandomNumSequence("GoodButton", 4);
+        assertThat(akitaScenario.getEnvironment()
+                 .getPage("AkitaPageMock")
+                 .getAnyElementText("GoodButton").length(),
+            equalTo(4));
+    }
+
+    @Test
+    public void testInputAndSetRandomNumSequencePositive() {
+        ds.inputAndSetRandomNumSequence("NormalField", 5, "test");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField"),
+            equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
+    public void testInputAndSetRandomNumSequenceOverrideVariable() {
+        akitaScenario.setVar("test", "Lathin");
+        akitaScenario.write(String.format("11111111111 [%s]", akitaScenario.getVar("test")));
+        ds.inputAndSetRandomNumSequence("NormalField", 5, "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
     public void testSwitchToTheNextTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         dmbs.switchToTheNextTab();
