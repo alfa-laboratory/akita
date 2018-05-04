@@ -22,6 +22,7 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -883,6 +884,48 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что список содержит количество элементов,
+     * равное сохраненному ранее значению из переменной
+     */
+    @Тогда("^список \"([^\"]*)\" содержит количество элементов, равное значению в переменной \"([^\"]*)\"$")
+    public void checkIfListContainsCounterFromVariable(String listName, String variableName) {
+        List<SelenideElement> list = akitaScenario.getCurrentPage().getElementsList(listName);
+        int expectedListSize = getCounterFromString(variableName);
+        assertEquals("Количество записей в списке " + listName + " должно быть " + expectedListSize,
+                list.size(), expectedListSize);
+    }
+
+    /**
+     * Проверка, что список не содержит количество элементов,
+     * равное сохраненному ранее значению из переменной
+     */
+    @Тогда("^список \"([^\"]*)\" не содержит количество элементов, равное значению в переменной \"([^\"]*)\"$")
+    public void checkIfListNotContainsCounterFromVariable(String listName, String variableName) {
+        List<SelenideElement> list = akitaScenario.getCurrentPage().getElementsList(listName);
+        int expectedListSize = getCounterFromString(variableName);
+        assertThat("Количество записей в списке " + listName + " не должно быть " + expectedListSize,
+                list.size(), is(Matchers.not(expectedListSize)));
+    }
+
+    /**
+     * Проверка совпадения значения из переменной и значения и property
+     */
+    @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
+    public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
+        assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
+                akitaScenario.getVar(envVarible), equalTo(loadProperty(propertyVariable)));
+    }
+
+    /**
+     * Проверка несовпадения значения из переменной и значения и property
+     */
+    @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" не совпадают$")
+    public void checkIfValueFromVariableNotEqualPropertyVariable(String envVarible, String propertyVariable) {
+        assertThat("Переменные " + envVarible + " и " + propertyVariable + " совпадают",
+                akitaScenario.getVar(envVarible), is(Matchers.not(equalTo(loadProperty(propertyVariable)))));
+    }
+
+    /**
      * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
      * если и оно отсутствует, то возвращает значение переданной на вход переменной
      *
@@ -972,5 +1015,29 @@ public class DefaultSteps {
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(str);
         return m.matches();
+    }
+
+    /**
+     *  Выдергиваем число из строки
+     */
+    private int getCounterFromString(String variableName) {
+        String valueOfVariableString = (String)akitaScenario.getVar(variableName);
+        Matcher matcher = Pattern.compile("-?\\d+").matcher(valueOfVariableString);
+        String stringForTransferToInt = matcherForString(matcher);
+        return Integer.parseInt(stringForTransferToInt);
+    }
+
+    /**
+     *  Склеивание найденных данных в стрингу
+     */
+    private String matcherForString(Matcher matcher) {
+        String stringForMatching = null;
+        while (matcher.find()) {
+            stringForMatching = matcher.group();
+        }
+        if (stringForMatching == null) {
+            throw new IllegalArgumentException("Элемент не содержит необходимые данные");
+        }
+        return stringForMatching;
     }
 }

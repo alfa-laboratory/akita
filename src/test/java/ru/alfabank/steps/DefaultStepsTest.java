@@ -663,4 +663,96 @@ public class DefaultStepsTest {
         ds.listContainsMoreOrLessElements("List", "более", 3);
     }
 
+    @Test
+    public void testCheckIfListContainsCounterFromVariablePositive(){
+        akitaScenario.setVar("test", "3");
+        ds.checkIfListContainsCounterFromVariable("List", "test");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckIfListContainsCounterFromVariableNegative(){
+        akitaScenario.setVar("test", "10");
+        ds.checkIfListContainsCounterFromVariable("List", "test");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckIfListContainsCounterFromVariableAnotherNegative(){
+        ds.checkIfListContainsCounterFromVariable("List", "test");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckIfListContainsCounterFromVariableOneMoreNegative(){
+        akitaScenario.setVar("test", "3");
+        ds.checkIfListContainsCounterFromVariable("ThisListDoesNotExists", "test");
+    }
+
+    @Test
+    public void testcheckIfListNotContainsCounterFromVariablePositive(){
+        akitaScenario.setVar("test","20");
+        ds.checkIfListNotContainsCounterFromVariable("List","test");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testcheckIfListNotContainsCounterFromVariableNegative(){
+        akitaScenario.setVar("test","3");
+        ds.checkIfListNotContainsCounterFromVariable("List","test");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testcheckIfListNotContainsCounterFromVariableAnotherNegative(){
+        ds.checkIfListNotContainsCounterFromVariable("List","test");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testcheckIfListNotContainsCounterFromVariableOneMoreNegative(){
+        akitaScenario.setVar("test", "10");
+        ds.checkIfListContainsCounterFromVariable("thisListDoesNotExists", "test");
+    }
+
+    @Test
+    public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
+        akitaScenario.setVar("timeout","60000");
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckIfValueFromVariableEqualPropertyVariableNegative(){
+        akitaScenario.setVar("timeout","500");
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckIfValueFromVariableEqualPropertyVariableAnotherNegative(){
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckIfValueFromVariableEqualPropertyVariableOneMoreNegative(){
+        akitaScenario.setVar("timeout","60000");
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","thisPropertyDoesNotexists");
+    }
+
+    @Test
+    public void testCheckIfValueFromVariableNotEqualPropertyVariablePositive(){
+        akitaScenario.setVar("timeout","500");
+        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckIfValueFromVariableNotEqualPropertyVariableNegative(){
+        akitaScenario.setVar("timeout","60000");
+        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckIfValueFromVariableNotEqualPropertyVariableAnotherNegative(){
+        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckIfValueFromVariableNotEqualPropertyVariableOneMoreNegative(){
+        akitaScenario.setVar("timeout","60000");
+        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","thisPropertyDoesNotexists");
+    }
+
 }
