@@ -723,7 +723,7 @@ public class DefaultStepsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCheckIfValueFromVariableEqualPropertyVariableAnotherNegative(){
-        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
+        ds.checkIfValueFromVariableEqualPropertyVariable("thisVariableDoesNotExists","waitingAppearTimeout");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -746,7 +746,7 @@ public class DefaultStepsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCheckIfValueFromVariableNotEqualPropertyVariableAnotherNegative(){
-        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","waitingAppearTimeout");
+        ds.checkIfValueFromVariableNotEqualPropertyVariable("thisVariableDoesNotExists","waitingAppearTimeout");
     }
 
     @Test(expected = IllegalArgumentException.class)
