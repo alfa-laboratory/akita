@@ -125,7 +125,7 @@ public class DefaultSteps {
     public void checkCurrentURLIsNotEquals(String url) {
         String currentUrl = url();
         String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
-        assertThat("Текущий URL совпадает с ожидаемым", currentUrl, is(Matchers.not(expectedUrl)));
+        assertThat("Текущий URL совпадает с ожидаемым", currentUrl, Matchers.not(expectedUrl));
     }
 
     /**
@@ -232,7 +232,7 @@ public class DefaultSteps {
         String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
-                firstValueToCompare, is(Matchers.not(equalTo(secondValueToCompare))));
+                firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
 
     /**
