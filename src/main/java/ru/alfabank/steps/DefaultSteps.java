@@ -904,7 +904,7 @@ public class DefaultSteps {
         List<SelenideElement> list = akitaScenario.getCurrentPage().getElementsList(listName);
         int expectedListSize = getCounterFromString(variableName);
         assertThat("Количество записей в списке " + listName + " не должно быть " + expectedListSize,
-                list.size(), is(Matchers.not(expectedListSize)));
+                list.size(), Matchers.not(expectedListSize));
     }
 
     /**
@@ -922,7 +922,7 @@ public class DefaultSteps {
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" не совпадают$")
     public void checkIfValueFromVariableNotEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " совпадают",
-                akitaScenario.getVar(envVarible), is(Matchers.not(equalTo(loadProperty(propertyVariable)))));
+                akitaScenario.getVar(envVarible), Matchers.not(equalTo(loadProperty(propertyVariable))));
     }
 
     /**
