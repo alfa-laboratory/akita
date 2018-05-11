@@ -85,6 +85,28 @@ public class DefaultStepsTest {
         ds.checkCurrentURL(null);
     }
 
+    @Test(expected = AssertionError.class)
+    public void testCheckCurrentURLAnotherNegative() {
+        String myURL = "https://google.ru/";
+        ds.checkCurrentURL(myURL);
+    }
+
+    @Test
+    public void testCheckCurrentURLIsNotEqualsPositive(){
+        String myURL = "https://google.ru/";
+        ds.checkCurrentURLIsNotEquals(myURL);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckCurrentURLIsNotEqualsNegative(){
+        ds.checkCurrentURLIsNotEquals(akitaScenario.getVar("Page").toString());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testCheckCurrentURLIsNotEqualsAnotherNegative(){
+        ds.checkCurrentURLIsNotEquals(null);
+    }
+
     @Ignore
     @Test
     public void setWindowSizeSimple() {
@@ -123,6 +145,47 @@ public class DefaultStepsTest {
         ds.compareTwoVariables(number1Name, number2Name);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testCompareTwoDigitVarsAnotherNegative() {
+        String number1Name = "number1", number1Value = null;
+        akitaScenario.setVar(number1Name, number1Value);
+
+        String number2Name = "number2", number2Value = null;
+        akitaScenario.setVar(number2Name, number2Value);
+
+        ds.compareTwoVariables(number1Name, number2Name);
+    }
+
+    @Test
+    public void testCheckingTwoVariablesAreNotEqualsPositive(){
+        String variable1Name = "number1"; int variable1Value = 666;
+        akitaScenario.setVar(variable1Name, variable1Value);
+
+        String variable2Name = "number2"; int variable2Value = 123;
+        akitaScenario.setVar(variable2Name, variable2Value);
+        ds.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckingTwoVariablesAreNotEqualsNegative(){
+        String variable1Name = "number1"; int variable1Value = 666;
+        akitaScenario.setVar(variable1Name, variable1Value);
+
+        String variable2Name = "number2"; int variable2Value = 666;
+        akitaScenario.setVar(variable2Name, variable2Value);
+        ds.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckingTwoVariablesAreNotEqualsAnotherNegative(){
+        String variable1Name = "number1", variable1Value = null;
+        akitaScenario.setVar(variable1Name, variable1Value);
+
+        String variable2Name = "number2", variable2Value = null;
+        akitaScenario.setVar(variable2Name, variable2Value);
+        ds.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
+    }
+
     @Test
     public void saveValueToVarPositive() {
         ds.saveValueToVar("testVar", "test");
@@ -147,8 +210,23 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void loadPageSimple() {
+    public void testLoadPagePositive() {
         ds.loadPage("AkitaPageMock");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoadPageNegative() {
+        ds.loadPage("thisPageDoesNotExists");
+    }
+
+    @Test
+    public void testLoadPageFailedPositive(){
+        ds.loadPageFailed("RedirectionPage");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoadPageFailedNegative(){
+        ds.loadPageFailed("thisPageDoesNotExists");
     }
 
     @Test
@@ -644,6 +722,37 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
+        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "3");
+    }
+
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
+        akitaScenario.setVar("variable", "3");
+        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "variable");
+    }
+
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
+        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "var3");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
+        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "4");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherNegative() {
+        ds.listContainsNumberOfElementsOrContainsFromVariable("thisListDoesNotExists", "4");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testListContainsNumberOfElementsOrContainsFromVariableOneMoreNegative() {
+        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "thisVariableDoesNotExists");
+    }
+
+    @Test
     public void testListContainsMoreOrLessElementsLessPositive(){
         ds.listContainsMoreOrLessElements("List", "менее", 4);
     }
@@ -684,29 +793,6 @@ public class DefaultStepsTest {
     public void testCheckIfListContainsCounterFromVariableOneMoreNegative(){
         akitaScenario.setVar("test", "3");
         ds.checkIfListContainsCounterFromVariable("ThisListDoesNotExists", "test");
-    }
-
-    @Test
-    public void testcheckIfListNotContainsCounterFromVariablePositive(){
-        akitaScenario.setVar("test","20");
-        ds.checkIfListNotContainsCounterFromVariable("List","test");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testcheckIfListNotContainsCounterFromVariableNegative(){
-        akitaScenario.setVar("test","3");
-        ds.checkIfListNotContainsCounterFromVariable("List","test");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testcheckIfListNotContainsCounterFromVariableAnotherNegative(){
-        ds.checkIfListNotContainsCounterFromVariable("List","test");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testcheckIfListNotContainsCounterFromVariableOneMoreNegative(){
-        akitaScenario.setVar("test", "10");
-        ds.checkIfListContainsCounterFromVariable("thisListDoesNotExists", "test");
     }
 
     @Test

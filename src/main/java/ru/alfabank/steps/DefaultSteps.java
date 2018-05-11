@@ -117,6 +117,18 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что текущий URL не совпадает с ожидаемым
+     * (берется из property / переменной, если такая переменная не найдена,
+     * то берется переданное значение)
+     */
+    @Тогда("^текущий URL не равен \"([^\"]*)\"$")
+    public void checkCurrentURLIsNotEquals(String url) {
+        String currentUrl = url();
+        String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
+        assertThat("Текущий URL совпадает с ожидаемым", currentUrl, Matchers.not(expectedUrl));
+    }
+
+    /**
      * На странице происходит клик по заданному элементу
      */
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
@@ -183,6 +195,16 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка того, что все элементы, которые описаны в классе страницы с аннотацией @Name,
+     * но без аннотации @Optional, не появились на странице
+     */
+    @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
+    public void loadPageFailed(String nameOfPage) {
+        akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
+        akitaScenario.getCurrentPage().disappeared();
+    }
+
+    /**
      * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
      */
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
@@ -200,6 +222,17 @@ public class DefaultSteps {
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
             firstValueToCompare, equalTo(secondValueToCompare));
+    }
+
+    /**
+     * Проверка неравенства двух переменных из хранилища
+     */
+    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
+    public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
+        assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
+                firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
 
     /**
@@ -864,11 +897,21 @@ public class DefaultSteps {
     /**
      *  Производится проверка соответствия числа элементов списка значению, указанному в шаге
      */
+    @Deprecated
     @Тогда("^в списке \"([^\"]*)\" содержится (\\d+) (?:элемент|элементов|элемента)")
     public void listContainsNumberOfElements(String listName, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         assertTrue(String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() == quantity);
+    }
 
+    /**
+     *  Производится проверка соответствия числа элементов списка значению, указанному в шаге или в переменной
+     */
+    @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное (?:числу|значению из переменной) \"([^\"]*)\"")
+    public void listContainsNumberOfElementsOrContainsFromVariable(String listName, String quantity) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        int numberOfElements = Integer.parseInt(getPropertyOrStringVariableOrValue(quantity));
+        assertTrue(String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() == numberOfElements);
     }
 
     /**
@@ -896,24 +939,12 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что список не содержит количество элементов,
-     * равное сохраненному ранее значению из переменной
-     */
-    @Тогда("^список \"([^\"]*)\" не содержит количество элементов, равное значению в переменной \"([^\"]*)\"$")
-    public void checkIfListNotContainsCounterFromVariable(String listName, String variableName) {
-        List<SelenideElement> list = akitaScenario.getCurrentPage().getElementsList(listName);
-        int expectedListSize = getCounterFromString(variableName);
-        assertThat("Количество записей в списке " + listName + " не должно быть " + expectedListSize,
-                list.size(), Matchers.not(expectedListSize));
-    }
-
-    /**
      * Проверка совпадения значения из переменной и значения и property
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
-                akitaScenario.getVar(envVarible), equalTo(loadProperty(propertyVariable)));
+                (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
     }
 
     /**
@@ -922,7 +953,7 @@ public class DefaultSteps {
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" не совпадают$")
     public void checkIfValueFromVariableNotEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " совпадают",
-                akitaScenario.getVar(envVarible), Matchers.not(equalTo(loadProperty(propertyVariable))));
+                (String) akitaScenario.getVar(envVarible), Matchers.not(equalToIgnoringCase(loadProperty(propertyVariable))));
     }
 
     /**
