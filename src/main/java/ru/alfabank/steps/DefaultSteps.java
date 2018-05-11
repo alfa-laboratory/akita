@@ -927,18 +927,6 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что список содержит количество элементов,
-     * равное сохраненному ранее значению из переменной
-     */
-    @Тогда("^список \"([^\"]*)\" содержит количество элементов, равное значению в переменной \"([^\"]*)\"$")
-    public void checkIfListContainsCounterFromVariable(String listName, String variableName) {
-        List<SelenideElement> list = akitaScenario.getCurrentPage().getElementsList(listName);
-        int expectedListSize = getCounterFromString(variableName);
-        assertEquals("Количество записей в списке " + listName + " должно быть " + expectedListSize,
-                list.size(), expectedListSize);
-    }
-
-    /**
      * Проверка совпадения значения из переменной и значения и property
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")

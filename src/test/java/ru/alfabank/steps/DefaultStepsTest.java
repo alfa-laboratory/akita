@@ -773,29 +773,6 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testCheckIfListContainsCounterFromVariablePositive(){
-        akitaScenario.setVar("test", "3");
-        ds.checkIfListContainsCounterFromVariable("List", "test");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCheckIfListContainsCounterFromVariableNegative(){
-        akitaScenario.setVar("test", "10");
-        ds.checkIfListContainsCounterFromVariable("List", "test");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckIfListContainsCounterFromVariableAnotherNegative(){
-        ds.checkIfListContainsCounterFromVariable("List", "test");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckIfListContainsCounterFromVariableOneMoreNegative(){
-        akitaScenario.setVar("test", "3");
-        ds.checkIfListContainsCounterFromVariable("ThisListDoesNotExists", "test");
-    }
-
-    @Test
     public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
         akitaScenario.setVar("timeout","60000");
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
