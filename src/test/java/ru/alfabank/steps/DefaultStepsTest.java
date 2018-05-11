@@ -380,21 +380,6 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testButtonIsActivePositive() {
-        ds.buttonIsActive("SUPERBUTTON");
-    }
-
-    @Test
-    public void testButtonIsActiveAnotherPositive() {
-        ds.buttonIsActive("Link");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testButtonIsActiveNegative() {
-        ds.buttonIsActive("Кнопка Подписать и отправить");
-    }
-
-    @Test
     public void testFieldIsDisablePositive() {
         ds.fieldIsDisable("DisabledField");
     }
@@ -542,6 +527,16 @@ public class DefaultStepsTest {
     @Test
     public void clickableFieldTest() {
         ds.clickableField("SUPERBUTTON");
+    }
+
+    @Test
+    public void testButtonIsActiveAnotherPositive() {
+        ds.clickableField("Link");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testButtonIsActiveNegative() {
+        ds.clickableField("Кнопка Подписать и отправить");
     }
 
     @Test

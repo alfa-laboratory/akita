@@ -654,15 +654,6 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что кнопка/ссылка доступна для нажатия
-     */
-    @Тогда("^(?:ссылка|кнопка) \"([^\"]*)\" доступна для нажатия$")
-    public void buttonIsActive(String elementName) {
-        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
-        assertFalse(String.format("Элемент [%s] не кликабелен", elementName), element.is(Condition.disabled));
-    }
-
-    /**
      * Проверка, что поле нередактируемо
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен) для редактирования$")
