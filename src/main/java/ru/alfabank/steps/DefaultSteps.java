@@ -22,6 +22,7 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -116,6 +117,18 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что текущий URL не совпадает с ожидаемым
+     * (берется из property / переменной, если такая переменная не найдена,
+     * то берется переданное значение)
+     */
+    @Тогда("^текущий URL не равен \"([^\"]*)\"$")
+    public void checkCurrentURLIsNotEquals(String url) {
+        String currentUrl = url();
+        String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
+        assertThat("Текущий URL совпадает с ожидаемым", currentUrl, Matchers.not(expectedUrl));
+    }
+
+    /**
      * На странице происходит клик по заданному элементу
      */
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
@@ -182,6 +195,16 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка того, что все элементы, которые описаны в классе страницы с аннотацией @Name,
+     * но без аннотации @Optional, не появились на странице
+     */
+    @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
+    public void loadPageFailed(String nameOfPage) {
+        akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
+        akitaScenario.getCurrentPage().disappeared();
+    }
+
+    /**
      * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
      */
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
@@ -199,6 +222,17 @@ public class DefaultSteps {
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
             firstValueToCompare, equalTo(secondValueToCompare));
+    }
+
+    /**
+     * Проверка неравенства двух переменных из хранилища
+     */
+    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
+    public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
+        assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
+                firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
 
     /**
