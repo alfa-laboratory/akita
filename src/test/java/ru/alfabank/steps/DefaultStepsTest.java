@@ -360,23 +360,130 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void buttonIsNotActivePositive() {
+    public void testButtonIsNotActivePositive() {
         ds.buttonIsNotActive("DisabledButton");
     }
 
     @Test
-    public void fieldIsDisablePositive() {
-        ds.fieldIsDisable("DisabledField");
+    public void testButtonIsNotActiveAnotherPositive() {
+        ds.buttonIsNotActive("Кнопка Подписать и отправить");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testButtonIsNotActiveNegative() {
+        ds.buttonIsNotActive("Войти");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testButtonIsNotActiveOneMoreNegative() {
+        ds.buttonIsNotActive("Link");
     }
 
     @Test
-    public void compareListFromUIAndFromVariableTest() {
+    public void testButtonIsActivePositive() {
+        ds.buttonIsActive("SUPERBUTTON");
+    }
+
+    @Test
+    public void testButtonIsActiveAnotherPositive() {
+        ds.buttonIsActive("Link");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testButtonIsActiveNegative() {
+        ds.buttonIsActive("Кнопка Подписать и отправить");
+    }
+
+    @Test
+    public void testFieldIsDisablePositive() {
+        ds.fieldIsDisable("DisabledField");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldIsDisableNegative() {
+        ds.fieldIsDisable("NormalField");
+    }
+
+    @Test
+    public void testFieldIsEnabledPositive() {
+        ds.fieldIsEnabled("NormalField");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldIsEnabledNegative() {
+        ds.fieldIsEnabled("DisabledField");
+    }
+
+    @Test
+    public void testCompareListFromUIAndFromVariablePositive() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One");
         arrayList.add("Two");
         arrayList.add("Three");
         akitaScenario.setVar("qwerty", arrayList);
         ds.compareListFromUIAndFromVariable("List", "qwerty");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCompareListFromUIAndFromVariableNegative() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("Ten");
+        arrayList.add("One");
+        arrayList.add("Two");
+        arrayList.add("Three");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.compareListFromUIAndFromVariable("List", "qwerty");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCompareListFromUIAndFromVariableAnotherNegative() {
+        ds.compareListFromUIAndFromVariable("List", null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCompareListFromUIAndFromVariableOneMoreNegative() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One");
+        arrayList.add("Two");
+        arrayList.add("Three");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.compareListFromUIAndFromVariable(null, "qwerty");
+    }
+
+    @Test
+    public void testCompareListFromPageAndFromVariableNotEqualsPositive() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("Ten");
+        arrayList.add("One");
+        arrayList.add("Two");
+        arrayList.add("Three");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.compareListFromPageAndFromVariableNotEquals("List", "qwerty");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCompareListFromPageAndFromVariableNotEqualsNegative() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One");
+        arrayList.add("Two");
+        arrayList.add("Three");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.compareListFromPageAndFromVariableNotEquals("List", "qwerty");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCompareListFromPageAndFromVariableNotEqualsAnotherNegative() {
+        ds.compareListFromPageAndFromVariableNotEquals("List", null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCompareListFromPageAndFromVariableNotEqualsOneMoreNegative() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One");
+        arrayList.add("Two");
+        arrayList.add("Three");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.compareListFromPageAndFromVariableNotEquals(null, "qwerty");
     }
 
     @Test
@@ -741,4 +848,33 @@ public class DefaultStepsTest {
         ds.listContainsMoreOrLessElements("List", "более", 3);
     }
 
+    @Test
+    public void testCheckElemClassContainsExpectedValuePositive() {
+        ds.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckElemClassContainsExpectedValueNegative() {
+        ds.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckElemClassContainsExpectedValueAnotherNegative() {
+        ds.checkElemClassContainsExpectedValue("Войти", "enabled");
+    }
+
+    @Test
+    public void testCheckElemClassNotContainsExpectedValuePositive() {
+        ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+    }
+
+    @Test
+    public void testCheckElemClassNotContainsExpectedValueAnotherPositive() {
+        ds.checkElemClassNotContainsExpectedValue("Войти", "enabled");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckElemClassNotContainsExpectedValueNegative() {
+        ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+    }
 }

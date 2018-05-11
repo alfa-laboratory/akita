@@ -589,6 +589,17 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что элемент не содержит указанный класс
+     */
+    @Тогда("^элемент \"([^\"]*)\" не содержит класс со значением \"(.*)\"$")
+    public void checkElemClassNotContainsExpectedValue(String elementName, String expectedClassValue) {
+        SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
+        assertThat(String.format("Элемент [%s] содержит класс со значением [%s]", elementName, expectedClassValue),
+                currentElement.getAttribute("class").toLowerCase(),
+                Matchers.not(containsString(getPropertyOrStringVariableOrValue(expectedClassValue).toLowerCase())));
+    }
+
+    /**
      * Выполняется переход в конец страницы
      */
     @И("^совершен переход в конец страницы$")
@@ -643,12 +654,30 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что кнопка/ссылка доступна для нажатия
+     */
+    @Тогда("^(?:ссылка|кнопка) \"([^\"]*)\" доступна для нажатия$")
+    public void buttonIsActive(String elementName) {
+        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
+        assertFalse(String.format("Элемент [%s] не кликабелен", elementName), element.is(Condition.disabled));
+    }
+
+    /**
      * Проверка, что поле нередактируемо
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен) для редактирования$")
     public void fieldIsDisable(String elementName) {
         SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
         assertTrue(String.format("Элемент [%s] доступен для редактирования", elementName), element.is(Condition.disabled));
+    }
+
+    /**
+     * Проверка, что поле редактируемо
+     */
+    @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:доступно|доступен) для редактирования$")
+    public void fieldIsEnabled(String elementName) {
+        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
+        assertFalse(String.format("Элемент [%s] недоступен для редактирования", elementName), element.is(Condition.disabled));
     }
 
     /**
@@ -661,6 +690,18 @@ public class DefaultSteps {
         HashSet<String> expectedList = new HashSet<>((List<String>) akitaScenario.getVar(listVariable));
         HashSet<String> actualList = new HashSet<>(akitaScenario.getCurrentPage().getAnyElementsListTexts(listName));
         assertThat(String.format("Список со страницы [%s] не совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), actualList, equalTo(expectedList));
+    }
+
+    /**
+     * Проверка, что список со страницы не совпадает со списком из переменной
+     * без учёта порядка элементов
+     */
+    @SuppressWarnings("unchecked")
+    @Тогда("^список \"([^\"]*)\" со страницы не совпадает со списком \"([^\"]*)\"$")
+    public void compareListFromPageAndFromVariableNotEquals(String listName, String listVariable) {
+        HashSet<String> expectedList = new HashSet<>((List<String>) akitaScenario.getVar(listVariable));
+        HashSet<String> actualList = new HashSet<>(akitaScenario.getCurrentPage().getAnyElementsListTexts(listName));
+        assertThat(String.format("Список со страницы [%s] совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), actualList, Matchers.not(equalTo(expectedList)));
     }
 
     /**
