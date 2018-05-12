@@ -822,6 +822,20 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что каждый элемент списка не содержит ожидаемый текст
+     */
+    @Тогда("^элементы списка \"([^\"]*)\" не содержат текст \"([^\"]*)\"$")
+    public void checkListElementsNotContainsText(String listName, String expectedValue) {
+        final String value = getPropertyOrValue(expectedValue);
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsListText = listOfElementsFromPage.stream()
+                .map(element -> element.getText().trim().toLowerCase())
+                .collect(toList());
+        assertFalse(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
+                elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
+    }
+
+    /**
      * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины
      */
     @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице)$")
@@ -869,11 +883,22 @@ public class DefaultSteps {
     public void checkListTextsByRegExp(String listName, String pattern) {
         akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
             String str = akitaScenario.getCurrentPage().getAnyElementText(element);
-            Assert.assertTrue(
-                format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName), isTextMatches(str, pattern));
+            assertTrue(format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName),
+                    isTextMatches(str, pattern));
         });
     }
 
+    /**
+     * Проход по списку и проверка текста у элемента на несоответствие формату регулярного выражения
+     */
+    @И("элементы списка \"([^\"]*)\" не соответствуют формату \"([^\"]*)\"$")
+    public void checkListTextsByRegExpNotCorrespond(String listName, String pattern) {
+        akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
+            String str = akitaScenario.getCurrentPage().getAnyElementText(element);
+            assertFalse(format("Текст '%s' из списка '%s' соответствует формату регулярного выражения", str, listName),
+                    isTextMatches(str, pattern));
+        });
+    }
 
     /**
      * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
