@@ -24,6 +24,7 @@ import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -247,12 +248,19 @@ public abstract class AkitaPage extends ElementsContainer {
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
                 .peek(f -> {
                     if (!SelenideElement.class.isAssignableFrom(f.getType())
-                            && !List.class.isAssignableFrom(f.getType())
-                            && !AkitaPage.class.isAssignableFrom(f.getType()))
+                            && !AkitaPage.class.isAssignableFrom(f.getType())) {
+                        if (List.class.isAssignableFrom(f.getType())) {
+                            ParameterizedType listType = (ParameterizedType) f.getGenericType();
+                            Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+                            if (SelenideElement.class.isAssignableFrom(listClass) || AkitaPage.class.isAssignableFrom(listClass)) {
+                                return;
+                            }
+                        }
                         throw new IllegalStateException(
                                 format("Поле с аннотацией @Name должно иметь тип SelenideElement или List<SelenideElement>.\n" +
                                         "Если поле описывает блок, оно должно принадлежать классу, унаследованному от AkitaPage.\n" +
                                         "Найдено поле с типом %s", f.getType()));
+                    }
                 })
                 .collect(toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
     }
