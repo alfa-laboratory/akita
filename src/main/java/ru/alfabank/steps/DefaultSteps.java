@@ -663,15 +663,6 @@ public class DefaultSteps {
     }
 
     /**
-     * Проверка, что поле редактируемо
-     */
-    @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:доступно|доступен) для редактирования$")
-    public void fieldIsEnabled(String elementName) {
-        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
-        assertFalse(String.format("Элемент [%s] недоступен для редактирования", elementName), element.is(Condition.disabled));
-    }
-
-    /**
      * Проверка, что список со страницы совпадает со списком из переменной
      * без учёта порядка элементов
      */
@@ -681,18 +672,6 @@ public class DefaultSteps {
         HashSet<String> expectedList = new HashSet<>((List<String>) akitaScenario.getVar(listVariable));
         HashSet<String> actualList = new HashSet<>(akitaScenario.getCurrentPage().getAnyElementsListTexts(listName));
         assertThat(String.format("Список со страницы [%s] не совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), actualList, equalTo(expectedList));
-    }
-
-    /**
-     * Проверка, что список со страницы не совпадает со списком из переменной
-     * без учёта порядка элементов
-     */
-    @SuppressWarnings("unchecked")
-    @Тогда("^список \"([^\"]*)\" со страницы не совпадает со списком \"([^\"]*)\"$")
-    public void compareListFromPageAndFromVariableNotEquals(String listName, String listVariable) {
-        HashSet<String> expectedList = new HashSet<>((List<String>) akitaScenario.getVar(listVariable));
-        HashSet<String> actualList = new HashSet<>(akitaScenario.getCurrentPage().getAnyElementsListTexts(listName));
-        assertThat(String.format("Список со страницы [%s] совпадает с ожидаемым списком из переменной [%s]", listName, listVariable), actualList, Matchers.not(equalTo(expectedList)));
     }
 
     /**

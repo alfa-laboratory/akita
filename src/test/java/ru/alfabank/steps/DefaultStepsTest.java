@@ -390,16 +390,6 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testFieldIsEnabledPositive() {
-        ds.fieldIsEnabled("NormalField");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testFieldIsEnabledNegative() {
-        ds.fieldIsEnabled("DisabledField");
-    }
-
-    @Test
     public void testCompareListFromUIAndFromVariablePositive() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One");
@@ -433,42 +423,6 @@ public class DefaultStepsTest {
         arrayList.add("Three");
         akitaScenario.setVar("qwerty", arrayList);
         ds.compareListFromUIAndFromVariable(null, "qwerty");
-    }
-
-    @Test
-    public void testCompareListFromPageAndFromVariableNotEqualsPositive() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("Ten");
-        arrayList.add("One");
-        arrayList.add("Two");
-        arrayList.add("Three");
-        akitaScenario.setVar("qwerty", arrayList);
-        ds.compareListFromPageAndFromVariableNotEquals("List", "qwerty");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCompareListFromPageAndFromVariableNotEqualsNegative() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("One");
-        arrayList.add("Two");
-        arrayList.add("Three");
-        akitaScenario.setVar("qwerty", arrayList);
-        ds.compareListFromPageAndFromVariableNotEquals("List", "qwerty");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCompareListFromPageAndFromVariableNotEqualsAnotherNegative() {
-        ds.compareListFromPageAndFromVariableNotEquals("List", null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCompareListFromPageAndFromVariableNotEqualsOneMoreNegative() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("One");
-        arrayList.add("Two");
-        arrayList.add("Three");
-        akitaScenario.setVar("qwerty", arrayList);
-        ds.compareListFromPageAndFromVariableNotEquals(null, "qwerty");
     }
 
     @Test
