@@ -905,7 +905,7 @@ public class DefaultSteps {
     }
 
     /**
-     *  Производится проверка соответствия числа элементов списка значению, указанному в шаге или в переменной
+     *  Производится проверка соответствия числа элементов списка значению из property файла, из переменной сценария или указанному в шаге
      */
     @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное (?:числу|значению из переменной) \"([^\"]*)\"")
     public void listContainsNumberOfElementsOrContainsFromVariable(String listName, String quantity) {
@@ -1034,29 +1034,5 @@ public class DefaultSteps {
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(str);
         return m.matches();
-    }
-
-    /**
-     *  Выдергиваем число из строки
-     */
-    private int getCounterFromString(String variableName) {
-        String valueOfVariableString = (String)akitaScenario.getVar(variableName);
-        Matcher matcher = Pattern.compile("-?\\d+").matcher(valueOfVariableString);
-        String stringForTransferToInt = matcherForString(matcher);
-        return Integer.parseInt(stringForTransferToInt);
-    }
-
-    /**
-     *  Склеивание найденных данных в стрингу
-     */
-    private String matcherForString(Matcher matcher) {
-        String stringForMatching = null;
-        while (matcher.find()) {
-            stringForMatching = matcher.group();
-        }
-        if (stringForMatching == null) {
-            throw new IllegalArgumentException("Элемент не содержит необходимые данные");
-        }
-        return stringForMatching;
     }
 }

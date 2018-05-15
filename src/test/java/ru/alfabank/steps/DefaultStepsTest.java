@@ -742,16 +742,6 @@ public class DefaultStepsTest {
         ds.listContainsNumberOfElementsOrContainsFromVariable("List", "4");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherNegative() {
-        ds.listContainsNumberOfElementsOrContainsFromVariable("thisListDoesNotExists", "4");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testListContainsNumberOfElementsOrContainsFromVariableOneMoreNegative() {
-        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "thisVariableDoesNotExists");
-    }
-
     @Test
     public void testListContainsMoreOrLessElementsLessPositive(){
         ds.listContainsMoreOrLessElements("List", "менее", 4);
@@ -784,17 +774,6 @@ public class DefaultStepsTest {
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckIfValueFromVariableEqualPropertyVariableAnotherNegative(){
-        ds.checkIfValueFromVariableEqualPropertyVariable("thisVariableDoesNotExists","waitingAppearTimeout");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckIfValueFromVariableEqualPropertyVariableOneMoreNegative(){
-        akitaScenario.setVar("timeout","60000");
-        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","thisPropertyDoesNotexists");
-    }
-
     @Test
     public void testCheckIfValueFromVariableNotEqualPropertyVariablePositive(){
         akitaScenario.setVar("timeout","500");
@@ -806,16 +785,4 @@ public class DefaultStepsTest {
         akitaScenario.setVar("timeout","60000");
         ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckIfValueFromVariableNotEqualPropertyVariableAnotherNegative(){
-        ds.checkIfValueFromVariableNotEqualPropertyVariable("thisVariableDoesNotExists","waitingAppearTimeout");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckIfValueFromVariableNotEqualPropertyVariableOneMoreNegative(){
-        akitaScenario.setVar("timeout","60000");
-        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","thisPropertyDoesNotexists");
-    }
-
 }
