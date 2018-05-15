@@ -727,16 +727,6 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testCheckListTextsByRegExpNotCorrespondPositive() {
-        ds.checkListTextsByRegExpNotCorrespond("List", "[0-9]*");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCheckListTextsByRegExpNotCorrespondNegative() {
-        ds.checkListTextsByRegExpNotCorrespond("List", "[A-z]*");
-    }
-
-    @Test
     public void testListContainsNumberOfElementsPositive() {
         ds.listContainsNumberOfElements("List", 3);
     }

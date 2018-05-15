@@ -831,7 +831,7 @@ public class DefaultSteps {
         List<String> elementsListText = listOfElementsFromPage.stream()
                 .map(element -> element.getText().trim().toLowerCase())
                 .collect(toList());
-        assertFalse(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
+        assertFalse(String.format("Элемены списка %s: [%s] содержат текст [%s] ", listName, elementsListText, value),
                 elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
     }
 
@@ -884,18 +884,6 @@ public class DefaultSteps {
         akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
             String str = akitaScenario.getCurrentPage().getAnyElementText(element);
             assertTrue(format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName),
-                    isTextMatches(str, pattern));
-        });
-    }
-
-    /**
-     * Проход по списку и проверка текста у элемента на несоответствие формату регулярного выражения
-     */
-    @И("элементы списка \"([^\"]*)\" не соответствуют формату \"([^\"]*)\"$")
-    public void checkListTextsByRegExpNotCorrespond(String listName, String pattern) {
-        akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
-            String str = akitaScenario.getCurrentPage().getAnyElementText(element);
-            assertFalse(format("Текст '%s' из списка '%s' соответствует формату регулярного выражения", str, listName),
                     isTextMatches(str, pattern));
         });
     }
