@@ -21,6 +21,8 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -115,6 +117,18 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что текущий URL не совпадает с ожидаемым
+     * (берется из property / переменной, если такая переменная не найдена,
+     * то берется переданное значение)
+     */
+    @Тогда("^текущий URL не равен \"([^\"]*)\"$")
+    public void checkCurrentURLIsNotEquals(String url) {
+        String currentUrl = url();
+        String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
+        assertThat("Текущий URL совпадает с ожидаемым", currentUrl, Matchers.not(expectedUrl));
+    }
+
+    /**
      * На странице происходит клик по заданному элементу
      */
     @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
@@ -181,6 +195,16 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка того, что все элементы, которые описаны в классе страницы с аннотацией @Name,
+     * но без аннотации @Optional, не появились на странице
+     */
+    @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
+    public void loadPageFailed(String nameOfPage) {
+        akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
+        akitaScenario.getCurrentPage().disappeared();
+    }
+
+    /**
      * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
      */
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
@@ -198,6 +222,17 @@ public class DefaultSteps {
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
             firstValueToCompare, equalTo(secondValueToCompare));
+    }
+
+    /**
+     * Проверка неравенства двух переменных из хранилища
+     */
+    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
+    public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
+        assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
+                firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
 
     /**
@@ -802,6 +837,32 @@ public class DefaultSteps {
     }
 
     /**
+     * Ввод в поле случайной последовательности цифр задаваемой длины
+     */
+    @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) (?:цифр|цифры)$")
+    public void inputRandomNumSequence(String elementName, int seqLength) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+        String numSeq = RandomStringUtils.randomNumeric(seqLength);
+        valueInput.setValue(numSeq);
+        akitaScenario.write(String.format("В поле [%s] введено значение [%s]", elementName, numSeq));
+    }
+
+    /**
+     * Ввод в поле случайной последовательности цифр задаваемой длины и сохранение этого значения в переменную
+     */
+    @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) (?:цифр|цифры) и сохранено в переменную \"([^\"]*)\"$")
+    public void inputAndSetRandomNumSequence(String elementName, int seqLength, String varName) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+        String numSeq = RandomStringUtils.randomNumeric(seqLength);
+        valueInput.setValue(numSeq);
+        akitaScenario.setVar(varName, numSeq);
+        akitaScenario.write(String.format("В поле [%s] введено значение [%s] и сохранено в переменную [%s]",
+                elementName, numSeq, varName));
+    }
+
+    /**
      * Проход по списку и проверка текста у элемента на соответствие формату регулярного выражения
      */
     @И("элементы списка \"([^\"]*)\" соответствуют формату \"([^\"]*)\"$")
@@ -858,37 +919,49 @@ public class DefaultSteps {
     /**
      *  Скроллит страницу вниз до появления элемента каждые n-секунд.
      */
-    @И("^выполнен скролл каждые (\\d+) (?:секунд|секунды), пока элемент \"([^\"]*)\" не отобразился на странице$")
-    public void scrollWhileElemNotFoundOnPage(long seconds, String elementName) {
-        SelenideElement el = null;
-        for (int i = 0; i < 10 ; i++) {
-            el =  akitaScenario.getCurrentPage().getElement(elementName);
-            if (el.exists()) {
-                break;
+    @И("^скроллить, пока элемент \"([^\"]*)\" не отобразится на странице$")
+    public void scrollWhileElemNotFoundOnPage(String elementName) {
+            SelenideElement el = null;
+            if (atBottom()) {
+                el =  akitaScenario.getCurrentPage().getElement(elementName);
+                assertThat("Элемент " + elementName + " не найден", el.exists());
             }
-            Actions actions = new Actions(getWebDriver());
-            actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
-            actions.keyUp(Keys.CONTROL).perform();
-            sleep(1000 * seconds);
+            while (!atBottom()) {
+                    el =  akitaScenario.getCurrentPage().getElement(elementName);
+                    if (el.exists()) {
+                        break;
+                    }
+                executeJavaScript("return window.scrollTo(0, document.body.scrollHeight);");
+                sleep(1000);
+                }
+            assertThat("Элемент " + elementName + " не найден", el.exists());
         }
-        assertThat("Элемент " + elementName + " не найден", el.exists());
-    }
 
     /**
      *  Скроллит страницу вниз до появления элемента с текстом каждые n-секунд.
      */
-    @И("^выполнен скролл каждые (\\d+) (?:секунд|секунды), пока элемент с текстом \"([^\"]*)\" не отобразился на странице$")
-    public void scrollWhileElemWithTextNotFoundOnPage(long seconds, String expectedValue) {
+    @И("^скроллить, пока элемент с текстом \"([^\"]*)\" не отобразился на странице$")
+    public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
-        for (int i = 0; i < 10 ; i++) {
-            el =  $(By.xpath("//*[text()='" + expectedValue + "']"));
+        if (atBottom()) {
+            el = $(By.xpath("//*[contains(translate(normalize-space(text()), 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '"
+                    + expectedValue
+                    + "') or contains(translate(normalize-space(text()), " +
+                    "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '"
+                    + expectedValue + "')]"));
+            assertThat("Элемент с текстом " + expectedValue + " не найден", el.exists());
+        }
+        while (!atBottom()) {
+            el = $(By.xpath("//*[contains(translate(normalize-space(text()), 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '"
+                    + expectedValue
+                    + "') or contains(translate(normalize-space(text()), " +
+                    "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '"
+                    + expectedValue + "')]"));
             if (el.exists()) {
                 break;
             }
-            Actions actions = new Actions(getWebDriver());
-            actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
-            actions.keyUp(Keys.CONTROL).perform();
-            sleep(1000 * seconds);
+            executeJavaScript("return window.scrollTo(0, document.body.scrollHeight);");
+            sleep(1000);
         }
         assertThat("Элемент с текстом " + expectedValue + " не найден", el.exists());
     }
