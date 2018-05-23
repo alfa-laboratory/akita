@@ -723,23 +723,23 @@ public class DefaultStepsTest {
 
     @Test
     public void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
-        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "3");
+        ds.listContainsNumberFromVariable("List", "3");
     }
 
     @Test
     public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
         akitaScenario.setVar("variable", "3");
-        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "variable");
+        ds.listContainsNumberFromVariable("List", "variable");
     }
 
     @Test
     public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
-        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "var3");
+        ds.listContainsNumberFromVariable("List", "var3");
     }
 
     @Test(expected = AssertionError.class)
     public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
-        ds.listContainsNumberOfElementsOrContainsFromVariable("List", "4");
+        ds.listContainsNumberFromVariable("List", "4");
     }
 
     @Test
@@ -772,17 +772,5 @@ public class DefaultStepsTest {
     public void testCheckIfValueFromVariableEqualPropertyVariableNegative(){
         akitaScenario.setVar("timeout","500");
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
-    }
-
-    @Test
-    public void testCheckIfValueFromVariableNotEqualPropertyVariablePositive(){
-        akitaScenario.setVar("timeout","500");
-        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","waitingAppearTimeout");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCheckIfValueFromVariableNotEqualPropertyVariableNegative(){
-        akitaScenario.setVar("timeout","60000");
-        ds.checkIfValueFromVariableNotEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
 }

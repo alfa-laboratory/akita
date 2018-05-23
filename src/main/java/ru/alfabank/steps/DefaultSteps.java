@@ -897,7 +897,6 @@ public class DefaultSteps {
     /**
      *  Производится проверка соответствия числа элементов списка значению, указанному в шаге
      */
-    @Deprecated
     @Тогда("^в списке \"([^\"]*)\" содержится (\\d+) (?:элемент|элементов|элемента)")
     public void listContainsNumberOfElements(String listName, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
@@ -907,11 +906,10 @@ public class DefaultSteps {
     /**
      *  Производится проверка соответствия числа элементов списка значению из property файла, из переменной сценария или указанному в шаге
      */
-    @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное (?:числу|значению из переменной) \"([^\"]*)\"")
-    public void listContainsNumberOfElementsOrContainsFromVariable(String listName, String quantity) {
-        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+    @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное значению из переменной \"([^\"]*)\"")
+    public void listContainsNumberFromVariable(String listName, String quantity) {
         int numberOfElements = Integer.parseInt(getPropertyOrStringVariableOrValue(quantity));
-        assertTrue(String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() == numberOfElements);
+        listContainsNumberOfElements(listName, numberOfElements);
     }
 
     /**
@@ -933,15 +931,6 @@ public class DefaultSteps {
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
                 (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
-    }
-
-    /**
-     * Проверка несовпадения значения из переменной и значения и property
-     */
-    @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" не совпадают$")
-    public void checkIfValueFromVariableNotEqualPropertyVariable(String envVarible, String propertyVariable) {
-        assertThat("Переменные " + envVarible + " и " + propertyVariable + " совпадают",
-                (String) akitaScenario.getVar(envVarible), Matchers.not(equalToIgnoringCase(loadProperty(propertyVariable))));
     }
 
     /**
