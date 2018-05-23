@@ -370,11 +370,6 @@ public class DefaultStepsTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void testButtonIsNotActiveNegative() {
-        ds.buttonIsNotActive("Войти");
-    }
-
-    @Test(expected = AssertionError.class)
     public void testButtonIsNotActiveOneMoreNegative() {
         ds.buttonIsNotActive("Link");
     }
@@ -408,21 +403,6 @@ public class DefaultStepsTest {
         arrayList.add("Three");
         akitaScenario.setVar("qwerty", arrayList);
         ds.compareListFromUIAndFromVariable("List", "qwerty");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCompareListFromUIAndFromVariableAnotherNegative() {
-        ds.compareListFromUIAndFromVariable("List", null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCompareListFromUIAndFromVariableOneMoreNegative() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("One");
-        arrayList.add("Two");
-        arrayList.add("Three");
-        akitaScenario.setVar("qwerty", arrayList);
-        ds.compareListFromUIAndFromVariable(null, "qwerty");
     }
 
     @Test
@@ -807,19 +787,9 @@ public class DefaultStepsTest {
         ds.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testCheckElemClassContainsExpectedValueAnotherNegative() {
-        ds.checkElemClassContainsExpectedValue("Войти", "enabled");
-    }
-
     @Test
     public void testCheckElemClassNotContainsExpectedValuePositive() {
         ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
-    }
-
-    @Test
-    public void testCheckElemClassNotContainsExpectedValueAnotherPositive() {
-        ds.checkElemClassNotContainsExpectedValue("Войти", "enabled");
     }
 
     @Test(expected = AssertionError.class)
