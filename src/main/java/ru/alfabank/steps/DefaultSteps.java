@@ -922,18 +922,14 @@ public class DefaultSteps {
     @И("^скроллить, пока элемент \"([^\"]*)\" не отобразится на странице$")
     public void scrollWhileElemNotFoundOnPage(String elementName) {
             SelenideElement el = null;
-            if (atBottom()) {
+            do {
                 el =  akitaScenario.getCurrentPage().getElement(elementName);
-                assertThat("Элемент " + elementName + " не найден", el.exists());
-            }
-            while (!atBottom()) {
-                    el =  akitaScenario.getCurrentPage().getElement(elementName);
                     if (el.exists()) {
                         break;
                     }
                 executeJavaScript("return window.scrollTo(0, document.body.scrollHeight);");
                 sleep(1000);
-                }
+                } while (!atBottom());
             assertThat("Элемент " + elementName + " не найден", el.exists());
         }
 
@@ -943,16 +939,9 @@ public class DefaultSteps {
     @И("^скроллить, пока элемент с текстом \"([^\"]*)\" не отобразился на странице$")
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
-        if (atBottom()) {
-            el = $(By.xpath("//*[contains(translate(normalize-space(text()), 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '"
-                    + expectedValue
-                    + "') or contains(translate(normalize-space(text()), " +
-                    "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '"
-                    + expectedValue + "')]"));
-            assertThat("Элемент с текстом " + expectedValue + " не найден", el.exists());
-        }
-        while (!atBottom()) {
-            el = $(By.xpath("//*[contains(translate(normalize-space(text()), 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '"
+         do {
+            el = $(By.xpath("//*[contains(translate(normalize-space(text()), " +
+                    "'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '"
                     + expectedValue
                     + "') or contains(translate(normalize-space(text()), " +
                     "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '"
@@ -960,9 +949,9 @@ public class DefaultSteps {
             if (el.exists()) {
                 break;
             }
-            executeJavaScript("return window.scrollTo(0, document.body.scrollHeight);");
-            sleep(1000);
-        }
+             executeJavaScript("return window.scrollTo(0, document.body.scrollHeight);");
+             sleep(1000);
+            } while (!atBottom());
         assertThat("Элемент с текстом " + expectedValue + " не найден", el.exists());
     }
 
