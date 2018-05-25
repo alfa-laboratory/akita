@@ -370,8 +370,19 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void compareListFromUIAndFromVariableTest() {
+    public void testCompareListFromUIAndFromVariablePositive() {
         ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One");
+        arrayList.add("Two");
+        arrayList.add("Three");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.compareListFromUIAndFromVariable("List", "qwerty");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCompareListFromUIAndFromVariableNegative() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("Ten");
         arrayList.add("One");
         arrayList.add("Two");
         arrayList.add("Three");
@@ -435,6 +446,16 @@ public class DefaultStepsTest {
     @Test
     public void clickableFieldTest() {
         ds.clickableField("SUPERBUTTON");
+    }
+
+    @Test
+    public void testButtonIsActiveAnotherPositive() {
+        ds.clickableField("Link");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testButtonIsActiveNegative() {
+        ds.clickableField("Кнопка Подписать и отправить");
     }
 
     @Test
@@ -787,5 +808,25 @@ public class DefaultStepsTest {
     public void testCheckIfValueFromVariableEqualPropertyVariableNegative(){
         akitaScenario.setVar("timeout","500");
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test
+    public void testCheckElemClassContainsExpectedValuePositive() {
+        ds.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckElemClassContainsExpectedValueNegative() {
+        ds.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+    }
+
+    @Test
+    public void testCheckElemClassNotContainsExpectedValuePositive() {
+        ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+    }
+
+     @Test(expected = AssertionError.class)
+    public void testCheckElemClassNotContainsExpectedValueNegative() {
+        ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
     }
 }
