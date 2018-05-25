@@ -536,18 +536,33 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void checkListElementsContainsTextPositive() {
+    public void testCheckListElementsContainsTextPositive() {
         ds.checkListElementsContainsText("List2", "item");
     }
 
     @Test
-    public void checkListElementsContainsTextPositiveWithProps() {
+    public void testCheckListElementsContainsTextPositiveWithProps() {
         ds.checkListElementsContainsText("List2", "itemValueInProps");
     }
 
     @Test(expected = AssertionError.class)
-    public void checkListElementsContainsTextNegative() {
+    public void testCheckListElementsContainsTextNegative() {
         ds.checkListElementsContainsText("List2", "item1");
+    }
+
+    @Test
+    public void testCheckListElementsNotContainsTextPositive() {
+        ds.checkListElementsNotContainsText("List2", "item1");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListElementsNotContainsTextNegative() {
+        ds.checkListElementsNotContainsText("List2", "item");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListElementsNotContainsTextNegativeWithProps() {
+        ds.checkListElementsNotContainsText("List2", "itemValueInProps");
     }
 
     @Test
@@ -722,6 +737,27 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
+        ds.listContainsNumberFromVariable("List", "3");
+    }
+
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
+        akitaScenario.setVar("variable", "3");
+        ds.listContainsNumberFromVariable("List", "variable");
+    }
+
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
+        ds.listContainsNumberFromVariable("List", "var3");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
+        ds.listContainsNumberFromVariable("List", "4");
+    }
+
+    @Test
     public void testListContainsMoreOrLessElementsLessPositive(){
         ds.listContainsMoreOrLessElements("List", "менее", 4);
     }
@@ -741,4 +777,15 @@ public class DefaultStepsTest {
         ds.listContainsMoreOrLessElements("List", "более", 3);
     }
 
+    @Test
+    public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
+        akitaScenario.setVar("timeout","60000");
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckIfValueFromVariableEqualPropertyVariableNegative(){
+        akitaScenario.setVar("timeout","500");
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
+    }
 }

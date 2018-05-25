@@ -822,6 +822,20 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что каждый элемент списка не содержит ожидаемый текст
+     */
+    @Тогда("^элементы списка \"([^\"]*)\" не содержат текст \"([^\"]*)\"$")
+    public void checkListElementsNotContainsText(String listName, String expectedValue) {
+        final String value = getPropertyOrValue(expectedValue);
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsListText = listOfElementsFromPage.stream()
+                .map(element -> element.getText().trim().toLowerCase())
+                .collect(toList());
+        assertFalse(String.format("Элемены списка %s: [%s] содержат текст [%s] ", listName, elementsListText, value),
+                elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
+    }
+
+    /**
      * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины
      */
     @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице)$")
@@ -869,11 +883,10 @@ public class DefaultSteps {
     public void checkListTextsByRegExp(String listName, String pattern) {
         akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
             String str = akitaScenario.getCurrentPage().getAnyElementText(element);
-            Assert.assertTrue(
-                format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName), isTextMatches(str, pattern));
+            assertTrue(format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName),
+                    isTextMatches(str, pattern));
         });
     }
-
 
     /**
      * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
@@ -901,7 +914,15 @@ public class DefaultSteps {
     public void listContainsNumberOfElements(String listName, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         assertTrue(String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() == quantity);
+    }
 
+    /**
+     *  Производится проверка соответствия числа элементов списка значению из property файла, из переменной сценария или указанному в шаге
+     */
+    @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное значению из переменной \"([^\"]*)\"")
+    public void listContainsNumberFromVariable(String listName, String quantity) {
+        int numberOfElements = Integer.parseInt(getPropertyOrStringVariableOrValue(quantity));
+        listContainsNumberOfElements(listName, numberOfElements);
     }
 
     /**
@@ -914,6 +935,15 @@ public class DefaultSteps {
             assertTrue(String.format("Число элементов списка меньше ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() > quantity);
         } else assertTrue(String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() < quantity);
 
+    }
+
+    /**
+     * Проверка совпадения значения из переменной и значения и property
+     */
+    @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
+    public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
+        assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
+                (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
     }
 
     /**
