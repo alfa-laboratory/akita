@@ -360,44 +360,18 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testButtonIsNotActivePositive() {
+    public void buttonIsNotActivePositive() {
         ds.buttonIsNotActive("DisabledButton");
     }
 
     @Test
-    public void testButtonIsNotActiveAnotherPositive() {
-        ds.buttonIsNotActive("Кнопка Подписать и отправить");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testButtonIsNotActiveOneMoreNegative() {
-        ds.buttonIsNotActive("Link");
-    }
-
-    @Test
-    public void testFieldIsDisablePositive() {
+    public void fieldIsDisablePositive() {
         ds.fieldIsDisable("DisabledField");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testFieldIsDisableNegative() {
-        ds.fieldIsDisable("NormalField");
-    }
-
     @Test
-    public void testCompareListFromUIAndFromVariablePositive() {
+    public void compareListFromUIAndFromVariableTest() {
         ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("One");
-        arrayList.add("Two");
-        arrayList.add("Three");
-        akitaScenario.setVar("qwerty", arrayList);
-        ds.compareListFromUIAndFromVariable("List", "qwerty");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCompareListFromUIAndFromVariableNegative() {
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("Ten");
         arrayList.add("One");
         arrayList.add("Two");
         arrayList.add("Three");
@@ -461,16 +435,6 @@ public class DefaultStepsTest {
     @Test
     public void clickableFieldTest() {
         ds.clickableField("SUPERBUTTON");
-    }
-
-    @Test
-    public void testButtonIsActiveAnotherPositive() {
-        ds.clickableField("Link");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testButtonIsActiveNegative() {
-        ds.clickableField("Кнопка Подписать и отправить");
     }
 
     @Test
@@ -572,18 +536,33 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void checkListElementsContainsTextPositive() {
+    public void testCheckListElementsContainsTextPositive() {
         ds.checkListElementsContainsText("List2", "item");
     }
 
     @Test
-    public void checkListElementsContainsTextPositiveWithProps() {
+    public void testCheckListElementsContainsTextPositiveWithProps() {
         ds.checkListElementsContainsText("List2", "itemValueInProps");
     }
 
     @Test(expected = AssertionError.class)
-    public void checkListElementsContainsTextNegative() {
+    public void testCheckListElementsContainsTextNegative() {
         ds.checkListElementsContainsText("List2", "item1");
+    }
+
+    @Test
+    public void testCheckListElementsNotContainsTextPositive() {
+        ds.checkListElementsNotContainsText("List2", "item1");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListElementsNotContainsTextNegative() {
+        ds.checkListElementsNotContainsText("List2", "item");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListElementsNotContainsTextNegativeWithProps() {
+        ds.checkListElementsNotContainsText("List2", "itemValueInProps");
     }
 
     @Test
@@ -758,6 +737,27 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
+        ds.listContainsNumberFromVariable("List", "3");
+    }
+
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
+        akitaScenario.setVar("variable", "3");
+        ds.listContainsNumberFromVariable("List", "variable");
+    }
+
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
+        ds.listContainsNumberFromVariable("List", "var3");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
+        ds.listContainsNumberFromVariable("List", "4");
+    }
+
+    @Test
     public void testListContainsMoreOrLessElementsLessPositive(){
         ds.listContainsMoreOrLessElements("List", "менее", 4);
     }
@@ -778,22 +778,14 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testCheckElemClassContainsExpectedValuePositive() {
-        ds.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+    public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
+        akitaScenario.setVar("timeout","60000");
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
 
     @Test(expected = AssertionError.class)
-    public void testCheckElemClassContainsExpectedValueNegative() {
-        ds.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
-    }
-
-    @Test
-    public void testCheckElemClassNotContainsExpectedValuePositive() {
-        ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCheckElemClassNotContainsExpectedValueNegative() {
-        ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+    public void testCheckIfValueFromVariableEqualPropertyVariableNegative(){
+        akitaScenario.setVar("timeout","500");
+        ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
 }
