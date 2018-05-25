@@ -589,6 +589,17 @@ public class DefaultSteps {
     }
 
     /**
+     * Проверка, что элемент не содержит указанный класс
+     */
+    @Тогда("^элемент \"([^\"]*)\" не содержит класс со значением \"(.*)\"$")
+    public void checkElemClassNotContainsExpectedValue(String elementName, String expectedClassValue) {
+        SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
+        assertThat(String.format("Элемент [%s] содержит класс со значением [%s]", elementName, expectedClassValue),
+                currentElement.getAttribute("class").toLowerCase(),
+                Matchers.not(containsString(getPropertyOrStringVariableOrValue(expectedClassValue).toLowerCase())));
+    }
+
+    /**
      * Выполняется переход в конец страницы
      */
     @И("^совершен переход в конец страницы$")
