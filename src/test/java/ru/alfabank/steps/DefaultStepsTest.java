@@ -536,18 +536,33 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void checkListElementsContainsTextPositive() {
+    public void testCheckListElementsContainsTextPositive() {
         ds.checkListElementsContainsText("List2", "item");
     }
 
     @Test
-    public void checkListElementsContainsTextPositiveWithProps() {
+    public void testCheckListElementsContainsTextPositiveWithProps() {
         ds.checkListElementsContainsText("List2", "itemValueInProps");
     }
 
     @Test(expected = AssertionError.class)
-    public void checkListElementsContainsTextNegative() {
+    public void testCheckListElementsContainsTextNegative() {
         ds.checkListElementsContainsText("List2", "item1");
+    }
+
+    @Test
+    public void testCheckListElementsNotContainsTextPositive() {
+        ds.checkListElementsNotContainsText("List2", "item1");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListElementsNotContainsTextNegative() {
+        ds.checkListElementsNotContainsText("List2", "item");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckListElementsNotContainsTextNegativeWithProps() {
+        ds.checkListElementsNotContainsText("List2", "itemValueInProps");
     }
 
     @Test
