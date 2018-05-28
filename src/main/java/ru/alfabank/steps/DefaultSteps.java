@@ -974,12 +974,7 @@ public class DefaultSteps {
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
         do {
-            el = $(By.xpath("//*[contains(translate(normalize-space(text()), " +
-                    "'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '"
-                    + expectedValue
-                    + "') or contains(translate(normalize-space(text()), " +
-                    "'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '"
-                    + expectedValue + "')]"));
+            el = $(By.xpath(getTranslateNormalizeSpaceText(expectedValue)));
             if (el.exists()) {
                 break;
             }
@@ -1088,5 +1083,20 @@ public class DefaultSteps {
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(str);
         return m.matches();
+    }
+
+    /**
+     * Возвращает нормализованный(без учета регистра) текст
+     */
+    private String getTranslateNormalizeSpaceText (String expectedText) {
+        StringBuilder text = new StringBuilder();
+        text.append("//*[contains(translate(normalize-space(text()), ");
+        text.append("'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
+        text.append(expectedText);
+        text.append("') or contains(translate(normalize-space(text()), ");
+        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '");
+        text.append(expectedText);
+        text.append("')]");
+        return text.toString();
     }
 }
