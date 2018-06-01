@@ -849,4 +849,14 @@ public class DefaultStepsTest {
     public void testCheckElemClassNotContainsExpectedValueNegative() {
         ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
     }
+
+    @Test
+    public void testScrollPageToElementPositive() {
+        ds.scrollPageToElement("mockTagName");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testScrollPageToElementNegative() {
+        ds.scrollPageToElement("Кнопка Показать ещё");
+    }
 }

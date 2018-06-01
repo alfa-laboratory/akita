@@ -770,8 +770,17 @@ public class DefaultSteps {
     /**
      *  Скроллит экран до появления элемента. Полезно, если сайт длинный и элемент может быть не виден.
      */
+    @Deprecated
     @Тогда("^экран проскроллен до элемента \"([^\"]*)\"")
     public void scrollToElement(String elementName) {
+        akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
+    }
+
+    /**
+     *  Скроллит экран до нужного элемента, имеющегося на странице, но видимого только в нижней/верхней части страницы.
+     */
+    @Тогда("^страница прокручена до элемента \"([^\"]*)\"")
+    public void scrollPageToElement(String elementName) {
         akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
     }
 
@@ -952,7 +961,7 @@ public class DefaultSteps {
      *  Скроллит страницу вниз до появления элемента каждую секунду.
      *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */
-    @И("^скроллить, пока элемент \"([^\"]*)\" не отобразится на странице$")
+    @И("^страница прокручена до появления элемента \"([^\"]*)\"$")
     public void scrollWhileElemNotFoundOnPage(String elementName) {
             SelenideElement el = null;
             do {
@@ -960,17 +969,17 @@ public class DefaultSteps {
                     if (el.exists()) {
                         break;
                     }
-                executeJavaScript("return window.scrollTo(0, document.body.scrollHeight);");
+                executeJavaScript("return window.scrollBy(0, 250);");
                 sleep(1000);
                 } while (!atBottom());
-            assertThat("Элемент " + elementName + " не найден", el.exists());
+            assertThat("Элемент " + elementName + " не найден", el.isDisplayed());
         }
 
     /**
      *  Скроллит страницу вниз до появления элемента с текстом каждую секунду.
      *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */
-    @И("^скроллить, пока элемент с текстом \"([^\"]*)\" не отобразился на странице$")
+    @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
         do {
@@ -978,10 +987,10 @@ public class DefaultSteps {
             if (el.exists()) {
                 break;
             }
-            executeJavaScript("return window.scrollTo(0, document.body.scrollHeight);");
+            executeJavaScript("return window.scrollBy(0, 250);");
             sleep(1000);
         } while (!atBottom());
-        assertThat("Элемент с текстом " + expectedValue + " не найден", el.exists());
+        assertThat("Элемент с текстом " + expectedValue + " не найден", el.isDisplayed());
     }
 
     /*
