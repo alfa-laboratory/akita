@@ -481,10 +481,10 @@ public class DefaultSteps {
     /**
      * Сохранение значения элемента в переменную
      */
-    @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
+    @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void storeElementValueInVariable(String elementName, String variableName) {
         akitaScenario.setVar(variableName, akitaScenario.getCurrentPage().getAnyElementText(elementName));
-        akitaScenario.write("Значение сохраненное в переменную: " + akitaScenario.getCurrentPage().getAnyElementText(elementName));
+        akitaScenario.write("Значение [" + akitaScenario.getCurrentPage().getAnyElementText(elementName) + "] сохранено в переменную [" + variableName + "]");
     }
 
     /**
