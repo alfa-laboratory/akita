@@ -355,7 +355,9 @@ public class DefaultSteps {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(nameOfField);
-        valueInput.doubleClick().sendKeys(Keys.DELETE);
+        do {
+            valueInput.doubleClick().sendKeys(Keys.DELETE);
+        } while (valueInput.getValue().length() != 0);
     }
 
     /**
