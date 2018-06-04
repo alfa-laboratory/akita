@@ -770,8 +770,17 @@ public class DefaultSteps {
     /**
      *  Скроллит экран до появления элемента. Полезно, если сайт длинный и элемент может быть не виден.
      */
+    @Deprecated
     @Тогда("^экран проскроллен до элемента \"([^\"]*)\"")
     public void scrollToElement(String elementName) {
+        akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
+    }
+
+    /**
+     *  Скроллит экран до нужного элемента, имеющегося на странице, но видимого только в нижней/верхней части страницы.
+     */
+    @Тогда("^страница прокручена до элемента \"([^\"]*)\"")
+    public void scrollPageToElement(String elementName) {
         akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
     }
 
@@ -949,6 +958,42 @@ public class DefaultSteps {
     }
 
     /**
+     *  Скроллит страницу вниз до появления элемента каждую секунду.
+     *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
+     */
+    @И("^страница прокручена до появления элемента \"([^\"]*)\"$")
+    public void scrollWhileElemNotFoundOnPage(String elementName) {
+            SelenideElement el = null;
+            do {
+                el =  akitaScenario.getCurrentPage().getElement(elementName);
+                    if (el.exists()) {
+                        break;
+                    }
+                executeJavaScript("return window.scrollBy(0, 250);");
+                sleep(1000);
+                } while (!atBottom());
+            assertThat("Элемент " + elementName + " не найден", el.isDisplayed());
+        }
+
+    /**
+     *  Скроллит страницу вниз до появления элемента с текстом каждую секунду.
+     *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
+     */
+    @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
+    public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
+        SelenideElement el = null;
+        do {
+            el = $(By.xpath(getTranslateNormalizeSpaceText(expectedValue)));
+            if (el.exists()) {
+                break;
+            }
+            executeJavaScript("return window.scrollBy(0, 250);");
+            sleep(1000);
+        } while (!atBottom());
+        assertThat("Элемент с текстом " + expectedValue + " не найден", el.isDisplayed());
+    }
+
+    /*
      * Проверка совпадения значения из переменной и значения и property
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
@@ -1047,5 +1092,20 @@ public class DefaultSteps {
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(str);
         return m.matches();
+    }
+
+    /**
+     * Возвращает нормализованный(без учета регистра) текст
+     */
+    private String getTranslateNormalizeSpaceText (String expectedText) {
+        StringBuilder text = new StringBuilder();
+        text.append("//*[contains(translate(normalize-space(text()), ");
+        text.append("'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
+        text.append(expectedText);
+        text.append("') or contains(translate(normalize-space(text()), ");
+        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '");
+        text.append(expectedText);
+        text.append("')]");
+        return text.toString();
     }
 }

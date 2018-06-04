@@ -799,6 +799,26 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testScrollWhileElemNotFoundOnPagePositive() {
+        ds.scrollWhileElemNotFoundOnPage("mockTagName");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testScrollWhileElemNotFoundOnPageNegative() {
+        ds.scrollWhileElemNotFoundOnPage("Кнопка Показать ещё");
+    }
+
+    @Test
+    public void testScrollWhileElemWithTextNotFoundOnPagePositive() {
+        ds.scrollWhileElemWithTextNotFoundOnPage("Serious testing page");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testScrollWhileElemWithTextNotFoundOnPageNegative() {
+        ds.scrollWhileElemWithTextNotFoundOnPage("Not serious testing page");
+    }
+
+    @Test
     public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
         akitaScenario.setVar("timeout","60000");
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
@@ -825,8 +845,18 @@ public class DefaultStepsTest {
         ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
     }
 
-     @Test(expected = AssertionError.class)
+    @Test(expected = AssertionError.class)
     public void testCheckElemClassNotContainsExpectedValueNegative() {
         ds.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+    }
+
+    @Test
+    public void testScrollPageToElementPositive() {
+        ds.scrollPageToElement("mockTagName");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testScrollPageToElementNegative() {
+        ds.scrollPageToElement("Кнопка Показать ещё");
     }
 }
