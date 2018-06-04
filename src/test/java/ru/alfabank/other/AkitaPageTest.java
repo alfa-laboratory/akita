@@ -126,7 +126,7 @@ public class AkitaPageTest {
 
     @Test
     public void getAnyElementTextPositive() {
-        assertThat(page.getAnyElementText("TextField"), equalTo("text"));
+        assertThat(page.getAnyElementText("TextField"), equalTo("text1 text2 text3"));
     }
 
     @Test
