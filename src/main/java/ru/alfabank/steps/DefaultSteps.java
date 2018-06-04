@@ -960,6 +960,31 @@ public class DefaultSteps {
     }
 
     /**
+     * Ввод в поле случайной последовательности из целых и дробных цифр задаваемой длины с последующим сохранением этого значения в переменную
+     */
+    @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) целых, (\\d+) дробных цифр и они сохранены в переменную \"([^\"]*)\"$")
+    public void setRandomNumSequenceWithIntAndFract(String fieldName, int seqIntLength, int seqFractLength , String saveToVariableName) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
+        cleanField(fieldName);
+        String numIntSeq = RandomStringUtils.randomNumeric(seqIntLength);
+        String numFractSeq = RandomStringUtils.randomNumeric(seqFractLength);
+        valueInput.setValue(numIntSeq + "," + numFractSeq);
+        akitaScenario.setVar(saveToVariableName, numIntSeq + "," + numFractSeq);
+    }
+
+    /**
+     * Ввод в поле случайной последовательности из целых и дробных цифр задаваемой длины
+     */
+    @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) целых и (\\d+) дробных цифр$")
+    public void inputRandomNumSequenceWithIntAndFract(String fieldName, int seqIntLength, int seqFractLength) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
+        cleanField(fieldName);
+        String numIntSeq = RandomStringUtils.randomNumeric(seqIntLength);
+        String numFractSeq = RandomStringUtils.randomNumeric(seqFractLength);
+        valueInput.setValue(numIntSeq + "," + numFractSeq);
+    }
+
+    /**
      *  Скроллит страницу вниз до появления элемента каждую секунду.
      *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */

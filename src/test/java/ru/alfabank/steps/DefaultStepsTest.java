@@ -859,4 +859,43 @@ public class DefaultStepsTest {
     public void testScrollPageToElementNegative() {
         ds.scrollPageToElement("Кнопка Показать ещё");
     }
+
+    @Test
+    public void testInputRandomNumSequenceWithIntAndFractPositive() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", 4, 2);
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField").length(),
+                equalTo(7));
+    }
+
+    @Test(expected = AssertionError.class)
+    public  void testInputRandomNumSequenceWithIntAndFractNegative() {
+        ds.inputRandomNumSequenceWithIntAndFract("GoodButton", 4, 2);
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("GoodButton").length(),
+                equalTo(7));
+    }
+
+    @Test
+    public void testSetRandomNumSequenceWithIntAndFractPositive() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 3, 3, "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
+    public void testSetRandomNumSequenceWithIntAndFractOverrideVariable() {
+        akitaScenario.setVar("test", "Lathin");
+        akitaScenario.write(String.format("11111111111 [%s]", akitaScenario.getVar("test")));
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 2, 2, "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
 }
