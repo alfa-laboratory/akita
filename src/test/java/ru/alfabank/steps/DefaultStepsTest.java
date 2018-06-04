@@ -403,7 +403,7 @@ public class DefaultStepsTest {
         assertThat(akitaScenario.getEnvironment()
                 .getPage("AkitaPageMock")
                 .getAnyElementText("TextField"),
-            equalTo("textSuper"));
+            equalTo("text1 text2 text3Super"));
     }
 
     @Test
@@ -412,7 +412,7 @@ public class DefaultStepsTest {
         assertThat(akitaScenario.getEnvironment()
                 .getPage("AkitaPageMock")
                 .getAnyElementText("TextField"),
-            equalTo("textitem"));
+            equalTo("text1 text2 text3item"));
     }
 
     @Test
