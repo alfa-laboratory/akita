@@ -355,7 +355,9 @@ public class DefaultSteps {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(nameOfField);
-        valueInput.doubleClick().sendKeys(Keys.DELETE);
+        do {
+            valueInput.doubleClick().sendKeys(Keys.DELETE);
+        } while (valueInput.getValue().length() != 0);
     }
 
     /**
@@ -481,10 +483,10 @@ public class DefaultSteps {
     /**
      * Сохранение значения элемента в переменную
      */
-    @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"")
+    @Когда("^значение (?:элемента|поля) \"([^\"]*)\" сохранено в переменную \"([^\"]*)\"$")
     public void storeElementValueInVariable(String elementName, String variableName) {
         akitaScenario.setVar(variableName, akitaScenario.getCurrentPage().getAnyElementText(elementName));
-        akitaScenario.write("Значение сохраненное в переменную: " + akitaScenario.getCurrentPage().getAnyElementText(elementName));
+        akitaScenario.write("Значение [" + akitaScenario.getCurrentPage().getAnyElementText(elementName) + "] сохранено в переменную [" + variableName + "]");
     }
 
     /**
