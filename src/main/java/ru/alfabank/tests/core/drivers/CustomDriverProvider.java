@@ -159,7 +159,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
         capabilities = getCapabilitiesWithCustomFileDownloadFolder(capabilities);
         capabilities.setBrowserName(CHROME);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "60.0"));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
         return capabilities;
     }
 
@@ -172,7 +172,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Firefox Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setBrowserName(FIREFOX);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "57.0"));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
         return capabilities;
     }
 
@@ -185,7 +185,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Opera Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.operaBlink();
         capabilities.setBrowserName(OPERA);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "46.0"));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
         return capabilities;
     }
 
