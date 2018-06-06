@@ -27,6 +27,7 @@ import java.util.List;
 @Getter
 @Name("AkitaPageMock")
 public class AkitaPageMock extends AkitaPage {
+
     @FindBy(id = "mockId")
     @Name("mockId")
     public SelenideElement mockId;
@@ -121,4 +122,13 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(className = "searchBlock")
     @Name("SearchBlock")
     public SearchFieldMock searchField;
+
+    @Optional
+    @FindBy(xpath = "//span[text()='Показать ещё']")
+    @Name("Кнопка Показать ещё")
+    public SelenideElement buttonShowMore;
+
+    @FindBy(xpath = "//*[text()='Подписать и отправить']/parent::button")
+    @Name("Кнопка Подписать и отправить")
+    public SelenideElement signAndSendToBankButton;
 }
