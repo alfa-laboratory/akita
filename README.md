@@ -192,7 +192,7 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 ```ru.alfabank.steps.DefaultApiSteps```
 Шаги для тестирования API, доступные по умолчанию в каждом новом проекте
 
-```ru.alfabank.steps.DefaultSteps```
+```ru.alfabank.steps.defaultSteps```
 Шаги для тестирования UI, доступные по умолчанию в каждом новом проекте
 
 ```ru.alfabank.steps.InitialSetupSteps```

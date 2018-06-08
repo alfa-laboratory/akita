@@ -41,7 +41,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
 public class DefaultStepsTest {
-    private static DefaultSteps ds;
+    private static DefaultSteps1 ds;
     private static AkitaScenario akitaScenario;
     private static DefaultManageBrowserSteps dmbs;
 
@@ -50,7 +50,7 @@ public class DefaultStepsTest {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
-        ds = new DefaultSteps();
+        ds = new DefaultSteps1();
         dmbs = new DefaultManageBrowserSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();

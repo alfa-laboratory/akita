@@ -23,6 +23,9 @@ import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static java.util.Objects.isNull;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.tryLoadProperty;
+
 /**
  * Главный класс, отвечающий за сопровождение тестовых шагов
  */
@@ -54,6 +57,26 @@ public final class AkitaScenario {
 
     public static void sleep(int seconds) {
         Selenide.sleep(TimeUnit.MILLISECONDS.convert(seconds, TimeUnit.SECONDS));
+    }
+
+    public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
+        String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
+        String variableValue = (String) this.tryGetVar(propertyNameOrVariableNameOrValue);
+
+        boolean propertyCheck = checkResult(propertyValue, "Переменная " + propertyNameOrVariableNameOrValue + " из property файла");
+        boolean variableCheck = checkResult(variableValue, "Переменная сценария " + propertyNameOrVariableNameOrValue);
+
+        return propertyCheck ? propertyValue : (variableCheck ? variableValue : propertyNameOrVariableNameOrValue);
+    }
+
+    private boolean checkResult(String result, String message) {
+        if (isNull(result)) {
+            log.warn(message + " не найдена");
+            return false;
+        }
+        log.info(message + " = " + result);
+        this.write(message + " = " + result);
+        return true;
     }
 
     /**

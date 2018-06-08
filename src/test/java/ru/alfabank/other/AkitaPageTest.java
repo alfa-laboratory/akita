@@ -28,7 +28,7 @@ import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import ru.alfabank.steps.DefaultSteps;
+import ru.alfabank.steps.DefaultSteps1;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -46,7 +46,7 @@ public class AkitaPageTest {
     public static void setup() {
         akitaPageMock = new AkitaPageMock();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        DefaultSteps ds = new DefaultSteps();
+        DefaultSteps1 ds = new DefaultSteps1();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";

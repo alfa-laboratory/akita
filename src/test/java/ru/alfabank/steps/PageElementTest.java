@@ -31,7 +31,7 @@ import static org.junit.Assert.assertFalse;
 
 public class PageElementTest {
 
-    private static DefaultSteps ds;
+    private static DefaultSteps1 ds;
     private static DefaultPageElementSteps dpes;
     private static AkitaScenario akitaScenario;
 
@@ -40,7 +40,7 @@ public class PageElementTest {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
-        ds = new DefaultSteps();
+        ds = new DefaultSteps1();
         dpes = new DefaultPageElementSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
