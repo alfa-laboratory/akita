@@ -17,7 +17,9 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
+import org.hamcrest.core.IsEqual;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Cookie;

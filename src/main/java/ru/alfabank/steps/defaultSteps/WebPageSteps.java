@@ -3,7 +3,10 @@ package ru.alfabank.steps.defaultSteps;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.java.ru.*;
+import cucumber.api.java.ru.Если;
+import cucumber.api.java.ru.И;
+import cucumber.api.java.ru.Когда;
+import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
@@ -21,18 +24,14 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.url;
 import static java.util.Objects.isNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 
 /**
- * Шаги для работы с вэб-страницей, браузером, переменными и property-файлами, доступные по умолчанию в каждом новом проекте.
+ * Шаги для работы с вэб-страницей, переменными и property-файлами, доступные по умолчанию в каждом новом проекте.
  *
  * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
  * Каждая страница, с которой предполагается взаимодействие, должна быть описана в соответствующем классе,
@@ -273,7 +272,7 @@ public class WebPageSteps {
      * Любое Java-выражение, возвращающие boolean
      */
     @Тогда("^верно, что \"([^\"]*)\"$")
-    public void expressionExpression(String expression) {
+    public void expressionIsTrue(String expression) {
         akitaScenario.getVars().evaluate("assert(" + expression + ")");
     }
 
@@ -427,7 +426,7 @@ public class WebPageSteps {
     }
 
     /**
-     * Возвращает нормализованный(без учета регистра) текст
+     * Возвращает нормализованный (без учета регистра) текст
      */
     private String getTranslateNormalizeSpaceText(String expectedText) {
         StringBuilder text = new StringBuilder();

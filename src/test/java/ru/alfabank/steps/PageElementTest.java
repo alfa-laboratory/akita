@@ -24,6 +24,7 @@ import org.junit.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import ru.alfabank.steps.defaultSteps.WebPageSteps;
 
 import java.io.File;
 
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertFalse;
 
 public class PageElementTest {
 
-    private static DefaultSteps1 ds;
+    private static WebPageSteps wps;
     private static DefaultPageElementSteps dpes;
     private static AkitaScenario akitaScenario;
 
@@ -40,7 +41,7 @@ public class PageElementTest {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
-        ds = new DefaultSteps1();
+        wps = new WebPageSteps();
         dpes = new DefaultPageElementSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
@@ -49,7 +50,7 @@ public class PageElementTest {
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        wps.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
