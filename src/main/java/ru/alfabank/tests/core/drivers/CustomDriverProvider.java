@@ -63,6 +63,8 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static String REMOTE_URL = "remoteUrl";
     public final static String WINDOW_WIDTH = "width";
     public final static String WINDOW_HEIGHT = "height";
+    public final static String RESOLUTION = "resolution";
+
     private BrowserMobProxy proxy = new BrowserMobProxyServer();
 
     @Override
@@ -157,9 +159,10 @@ public class CustomDriverProvider implements WebDriverProvider {
     private DesiredCapabilities getChromeDriverCapabilities() {
         log.info("---------------Chrome Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-        capabilities = getCapabilitiesWithCustomFileDownloadFolder(capabilities);
         capabilities.setBrowserName(CHROME);
         capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
+        capabilities.setCapability(RESOLUTION, String.format("[%s]x[%s]",
+                loadSystemPropertyOrDefault(WINDOW_WIDTH,1920), loadSystemPropertyOrDefault(WINDOW_HEIGHT,1080)));
         return capabilities;
     }
 
@@ -173,6 +176,8 @@ public class CustomDriverProvider implements WebDriverProvider {
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setBrowserName(FIREFOX);
         capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
+        capabilities.setCapability(RESOLUTION, String.format("[%s]x[%s]",
+                loadSystemPropertyOrDefault(WINDOW_WIDTH,1920), loadSystemPropertyOrDefault(WINDOW_HEIGHT,1080)));
         return capabilities;
     }
 
@@ -186,6 +191,8 @@ public class CustomDriverProvider implements WebDriverProvider {
         DesiredCapabilities capabilities = DesiredCapabilities.operaBlink();
         capabilities.setBrowserName(OPERA);
         capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
+        capabilities.setCapability(RESOLUTION, String.format("[%s]x[%s]",
+                loadSystemPropertyOrDefault(WINDOW_WIDTH,1920), loadSystemPropertyOrDefault(WINDOW_HEIGHT,1080)));
         return capabilities;
     }
 
