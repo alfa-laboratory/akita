@@ -1010,7 +1010,7 @@ public class DefaultSteps {
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
         do {
-            el = $(By.xpath(getPropertyOrStringVariableOrValue(getTranslateNormalizeSpaceText(expectedValue))));
+            el = $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(expectedValue))));
             if (el.exists()) {
                 break;
             }
