@@ -218,8 +218,8 @@ public class DefaultSteps {
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compareTwoVariables(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
-        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
+        String firstValueToCompare = removeSpacesFromValue(akitaScenario.getVar(firstVariableName).toString());
+        String secondValueToCompare = removeSpacesFromValue(akitaScenario.getVar(secondVariableName).toString());
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
             firstValueToCompare, equalTo(secondValueToCompare));
     }
@@ -229,8 +229,8 @@ public class DefaultSteps {
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
     public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
-        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
+        String firstValueToCompare = removeSpacesFromValue(akitaScenario.getVar(firstVariableName).toString());
+        String secondValueToCompare = removeSpacesFromValue(akitaScenario.getVar(secondVariableName).toString());
         assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
                 firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
@@ -1176,5 +1176,12 @@ public class DefaultSteps {
         Matcher matcher = Pattern.compile("-?\\d+").matcher(variableName);
         String stringForTransferToInt = getStringMatching(matcher);
         return Integer.parseInt(stringForTransferToInt);
+    }
+
+    /**
+     * Удаляет все пробелы из текста
+     */
+    private String removeSpacesFromValue(String variableName) {
+        return variableName.replaceAll("\\s+", "");
     }
 }

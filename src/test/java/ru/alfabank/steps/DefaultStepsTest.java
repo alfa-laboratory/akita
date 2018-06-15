@@ -145,6 +145,17 @@ public class DefaultStepsTest {
         ds.compareTwoVariables(number1Name, number2Name);
     }
 
+    @Test
+    public void compareTwoAccountNumbers() {
+        String number1Name = "number1", number1Value = "40802 840 6 0000 0000032";
+        akitaScenario.setVar(number1Name, number1Value);
+
+        String number2Name = "number2", number2Value = "40802840600000000032";
+        akitaScenario.setVar(number2Name, number2Value);
+
+        ds.compareTwoVariables(number1Name, number2Name);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testCompareTwoDigitVarsAnotherNegative() {
         String number1Name = "number1", number1Value = null;
