@@ -540,6 +540,28 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void selectElementNumberFromListAndSaveToVarMinBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(1, "List", "varName");
+        assertThat(akitaScenario.tryGetVar("varName"), equalTo("Three"));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void selectElementNumberFromListAndSaveToVarUnderMinBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(0, "List","varName");
+    }
+
+    @Test()
+    public void selectElementNumberFromListAndSaveToVarMaxBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(3, "List","varName");
+        assertThat(akitaScenario.tryGetVar("varName"), equalTo("Two"));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void selectElementNumberFromListAndSaveToVarOverMaxBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(4, "List","varName");
+    }
+
+    @Test
     public void selectRandomElementFromListPositive() {
         ds.selectRandomElementFromList("List");
     }
@@ -771,6 +793,11 @@ public class DefaultStepsTest {
     @Test
     public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
         ds.listContainsNumberFromVariable("List", "var3");
+    }
+
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() {
+        ds.listContainsNumberFromVariable("List", "Проверка комплаенса 3");
     }
 
     @Test(expected = AssertionError.class)

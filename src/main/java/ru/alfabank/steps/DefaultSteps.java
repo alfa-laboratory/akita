@@ -829,6 +829,25 @@ public class DefaultSteps {
     }
 
     /**
+     * Выбор n-го элемента из списка со страницы и сохранение его значения в переменную
+     * Нумерация элементов начинается с 1
+     */
+    @Тогда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\" и его значение сохранено в переменную \"([^\"]*)\"$")
+    public void selectElementNumberFromListAndSaveToVar(Integer elementNumber, String listName, String varName) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        SelenideElement elementToSelect;
+        Integer selectedElementNumber = elementNumber - 1;
+        if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
+            throw new IndexOutOfBoundsException(
+                    String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
+                            listName, elementNumber, listOfElementsFromPage.size()));
+        }
+        elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
+        elementToSelect.shouldBe(Condition.visible).click();
+        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(elementToSelect).trim());
+    }
+
+    /**
      * Проверка, что каждый элемент списка содержит ожидаемый текст
      * Не чувствителен к регистру
      */
@@ -943,7 +962,7 @@ public class DefaultSteps {
      */
     @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное значению из переменной \"([^\"]*)\"")
     public void listContainsNumberFromVariable(String listName, String quantity) {
-        int numberOfElements = Integer.parseInt(getPropertyOrStringVariableOrValue(quantity));
+        int numberOfElements = getCounterFromString(getPropertyOrStringVariableOrValue(quantity));
         listContainsNumberOfElements(listName, numberOfElements);
     }
 
@@ -1134,5 +1153,28 @@ public class DefaultSteps {
         text.append(expectedText);
         text.append("')]");
         return text.toString();
+    }
+
+    /**
+     * Склеивание найденных данных в стрингу
+     */
+    private String getStringMatching(Matcher matcher) {
+        String stringForMatching = null;
+        while (matcher.find()) {
+            stringForMatching = matcher.group();
+        }
+        if (stringForMatching == null) {
+            throw new IllegalArgumentException("Класс/элемент не содержит необходимые данные");
+        }
+        return stringForMatching;
+    }
+
+    /**
+     * Выдергиваем число из строки
+     */
+    private int getCounterFromString(String variableName) {
+        Matcher matcher = Pattern.compile("-?\\d+").matcher(variableName);
+        String stringForTransferToInt = getStringMatching(matcher);
+        return Integer.parseInt(stringForTransferToInt);
     }
 }
