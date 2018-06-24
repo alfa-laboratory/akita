@@ -52,8 +52,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 project.ext {
-    cucumberVersion = '2.4.0'
-    selenideVersion = '4.11.4'
+    cucumberVersion = '3.0.2'
+    selenideVersion = '4.12.1'
 }
 
 dependencies {

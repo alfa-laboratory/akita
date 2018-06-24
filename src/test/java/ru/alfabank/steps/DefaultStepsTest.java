@@ -32,8 +32,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codeborne.selenide.Selenide.executeJavaScript;
-import static com.codeborne.selenide.Selenide.sleep;
+import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
@@ -243,6 +242,7 @@ public class DefaultStepsTest {
         ds.checkIfListContainsValueFromField("list", "mockTagName");
     }
 
+    @Ignore
     @Test(expected = ElementShouldNot.class)
     public void blockDisappearedSimple() {
         ds.blockDisappeared("AkitaPageMock");
@@ -664,6 +664,42 @@ public class DefaultStepsTest {
             equalTo(7));
     }
 
+    @Test(expected = AssertionError.class)
+    public void testSetRandomCharSequenceNegative() {
+        ds.setRandomCharSequence("DisabledField", 7, "латинице");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("DisabledField").length(),
+                equalTo(7));
+    }
+
+    @Test
+    public void testSetRandomCharSequenceAndSaveToVarCyrillic() {
+        ds.setRandomCharSequenceAndSaveToVar("NormalField", 4, "кириллице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
+    public void testSetRandomCharSequenceAndSaveToVarLathin() {
+        ds.setRandomCharSequenceAndSaveToVar("NormalField", 7, "латинице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testSetRandomCharSequenceAndSaveToVarNegative() {
+        ds.setRandomCharSequenceAndSaveToVar("DisabledField", 7, "латинице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("DisabledField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
     @Test
     public void testInputRandomNumSequencePositive() {
         ds.inputRandomNumSequence("NormalField",4);
@@ -674,7 +710,7 @@ public class DefaultStepsTest {
     }
 
     @Test(expected = AssertionError.class)
-    public  void testInputRandomNumSequenceNegative() {
+    public void testInputRandomNumSequenceNegative() {
         ds.inputRandomNumSequence("GoodButton", 4);
         assertThat(akitaScenario.getEnvironment()
                  .getPage("AkitaPageMock")
@@ -712,6 +748,15 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testSwitchToTheTabWithTitle() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("RedirectionPage");
+        dmbs.checkPageTitle("RedirectionPage");
+        dmbs.switchToTheTabWithTitle("Title");
+        dmbs.checkPageTitle("Title");
+    }
+
+    @Test
     public void testCheckPageTitleSuccess() {
         dmbs.checkPageTitle("Title");
     }
@@ -719,6 +764,28 @@ public class DefaultStepsTest {
     @Test(expected = AssertionError.class)
     public void testCheckPageTitleFailure() {
         dmbs.checkPageTitle("NoTitle");
+    }
+
+    @Test
+    public void testCheckPageTitleEqualPropertyVariablePositive() {
+        dmbs.checkPageTitleEqualPropertyVariable("titleFromProperty");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckPageTitleEqualPropertyVariableNegative() {
+        dmbs.checkPageTitleEqualPropertyVariable("testVar");
+    }
+
+    @Test
+    public void savePageTitleToVariablePositive() {
+        dmbs.savePageTitleToVariable("TitleVariable");
+        assertThat(akitaScenario.getVar("TitleVariable"), equalTo("Title"));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void savePageTitleToVariableNegative() {
+        dmbs.savePageTitleToVariable("TitleVariable");
+        assertThat(akitaScenario.getVar("TitleVariable"), equalTo("NotTitle"));
     }
 
     @Test
