@@ -120,7 +120,7 @@ public class DefaultManageBrowserSteps {
      *  Производится сохранение заголовка страницы в переменную
      */
     @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
-    public void savePageTitleToVariable(String variableName) throws NullPointerException {
+    public void savePageTitleToVariable(String variableName) {
         String titleName = getWebDriver().getTitle().trim();
         akitaScenario.setVar(variableName, titleName);
         akitaScenario.write("Значение заголовка страницы сохранено в переменную [" + variableName + "]");
