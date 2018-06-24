@@ -24,7 +24,8 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.Set;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.clearBrowserCookies;
+import static com.codeborne.selenide.Selenide.switchTo;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;

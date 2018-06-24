@@ -32,7 +32,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.executeJavaScript;
+import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
@@ -242,7 +243,6 @@ public class DefaultStepsTest {
         ds.checkIfListContainsValueFromField("list", "mockTagName");
     }
 
-    @Ignore
     @Test(expected = ElementShouldNot.class)
     public void blockDisappearedSimple() {
         ds.blockDisappeared("AkitaPageMock");
