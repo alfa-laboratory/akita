@@ -37,7 +37,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
  */
 @Slf4j
 public class DefaultManageBrowserSteps {
-    private static DefaultSteps ds;
+
     private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
