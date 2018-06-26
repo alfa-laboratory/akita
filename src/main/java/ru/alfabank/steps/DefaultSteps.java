@@ -23,7 +23,6 @@ import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -153,7 +152,7 @@ public class DefaultSteps {
      * заданного количества секунд
      */
     @Тогда("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
-    public void testElementAppeared(String elementName, int seconds) {
+    public void elementAppeared(String elementName, int seconds) {
         akitaScenario.getCurrentPage().waitElementsUntil(
             Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
         );
@@ -616,7 +615,7 @@ public class DefaultSteps {
      * указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
-    public void testActualValueContainsSubstring(String elementName, String expectedValue) {
+    public void actualValueContainsSubstring(String elementName, String expectedValue) {
         expectedValue = getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
@@ -630,7 +629,7 @@ public class DefaultSteps {
      * Не чувствителен к регистру
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит внутренний текст \"(.*)\"$")
-    public void testFieldContainsInnerText(String fieldName, String expectedText) {
+    public void fieldContainsInnerText(String fieldName, String expectedText) {
         expectedText = getPropertyOrStringVariableOrValue(expectedText);
         String field = akitaScenario.getCurrentPage().getElement(fieldName).innerText().trim().toLowerCase();
         assertThat(String.format("Поле [%s] не содержит текст [%s]", fieldName, expectedText), field, containsString(expectedText.toLowerCase()));
@@ -759,7 +758,7 @@ public class DefaultSteps {
      * После выполнения проверки файл удаляется
      */
     @Тогда("^файл \"(.*)\" загрузился в папку /Downloads$")
-    public void testFileDownloaded(String fileName) {
+    public void fileDownloaded(String fileName) {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull("Ошибка поиска файла", expectedFiles);
@@ -1002,6 +1001,22 @@ public class DefaultSteps {
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
                 (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
+    }
+
+    /*
+     * Выполняется нажатие на кнопку и подгружается указанный файл
+     * Файл должен находиться по пути "src/main/resources"
+     */
+    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
+    public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
+        try {
+            File file = akitaScenario.getCurrentPage().getElement(buttonName).uploadFromClasspath(fileName);
+            assertTrue(file.exists());
+            assertEquals(fileName, file.getName());
+        }
+        catch (IllegalArgumentException exception) {
+            akitaScenario.write("Файл отсутствует по пути src/main/resources");
+        }
     }
 
     /**

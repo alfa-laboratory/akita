@@ -16,12 +16,14 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.ex.ElementNotFound;
 import com.codeborne.selenide.ex.ElementShouldNot;
 import cucumber.api.Scenario;
 import org.hamcrest.core.IsEqual;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebDriverException;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -192,6 +194,12 @@ public class DefaultStepsTest {
         assertThat(akitaScenario.getVar("test"), equalTo("customTestValue"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void saveValueToVarNegative() {
+        ds.saveValueToVar("NotProperty", "test");
+        assertThat(akitaScenario.getVar("test"), equalTo("customTestValue"));
+    }
+
     @Test
     public void clickOnElementPositive() {
         ds.clickOnElement("GoodButton");
@@ -199,9 +207,19 @@ public class DefaultStepsTest {
             equalTo(false));
     }
 
+    @Test(expected = ElementNotFound.class)
+    public void clickOnElementNegative() {
+        ds.clickOnElement("Кнопка Показать ещё");
+    }
+
     @Test
     public void elemIsPresentedOnPagePositive() {
         ds.elemIsPresentedOnPage("mockTagName");
+    }
+
+    @Test(expected = ElementNotFound.class)
+    public void elemIsPresentedOnPageNegative() {
+        ds.elemIsPresentedOnPage("Кнопка Показать ещё");
     }
 
     @Test
@@ -235,12 +253,26 @@ public class DefaultStepsTest {
         ds.compareFieldAndVariable("mockTagName", "test");
     }
 
+    @Test(expected = AssertionError.class)
+    public void compareFieldAndVariableNegative() {
+        akitaScenario.setVar("test", "Serious testing page");
+        ds.compareFieldAndVariable("NormalField", "test");
+    }
+
     @Test
     public void checkIfListContainsValueFromFieldPositive() {
         List<String> list = new ArrayList<>();
         list.add("Serious testing page");
         akitaScenario.setVar("list", list);
         ds.checkIfListContainsValueFromField("list", "mockTagName");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void checkIfListContainsValueFromFieldNegative() {
+        List<String> list = new ArrayList<>();
+        list.add("Serious testing page");
+        akitaScenario.setVar("list", list);
+        ds.checkIfListContainsValueFromField("list", "mockName");
     }
 
     @Test(expected = ElementShouldNot.class)
@@ -285,8 +317,14 @@ public class DefaultStepsTest {
         ds.fieldInputIsEmpty("NormalField");
     }
 
+    @Test(expected = AssertionError.class)
+    public void fieldInputIsEmptyNegative() {
+        ds.setFieldValue("NormalField", "text");
+        ds.fieldInputIsEmpty("NormalField");
+    }
+
     @Test
-    public void checkIfListConsistsOfTableElementsTest() {
+    public void testCheckIfListConsistsOfTableElementsPositive() {
         ArrayList<String> types = new ArrayList<>();
         types.add("One");
         types.add("Two");
@@ -294,14 +332,36 @@ public class DefaultStepsTest {
         ds.checkIfListConsistsOfTableElements("List", types);
     }
 
+    @Test(expected = AssertionError.class)
+    public void testCheckIfListConsistsOfTableElementsNegative() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One");
+        types.add("Two");
+        types.add("Null");
+        ds.checkIfListConsistsOfTableElements("List", types);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckIfListConsistsOfTableElementsMoreNegative() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One");
+        types.add("Two");
+        ds.checkIfListConsistsOfTableElements("List", types);
+    }
+
     @Test
-    public void checkIfSelectedListElementMatchesValueTest() {
+    public void testCheckIfSelectedListElementMatchesValuePositive() {
         ds.checkIfSelectedListElementMatchesValue("List", "One");
     }
 
     @Test
-    public void checkIfSelectedListElementMatchesValueWithProps() {
+    public void testCheckIfSelectedListElementMatchesValuePositiveWithProps() {
         ds.checkIfSelectedListElementMatchesValue("List", "oneValueInProps");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckIfSelectedListElementMatchesValueNegative() {
+        ds.checkIfSelectedListElementMatchesValue("List", "Null");
     }
 
     @Test
@@ -329,6 +389,11 @@ public class DefaultStepsTest {
         ds.expressionExpression("\"test\".equals(\"test\")");
     }
 
+    @Test(expected = AssertionError.class)
+    public void expressionExpressionNegative() {
+        ds.expressionExpression("\"test\".equals(\"null\")");
+    }
+
     @Test
     public void urlClickAndCheckRedirectionPositive() {
         ds.urlClickAndCheckRedirection("RedirectionPage", "Link");
@@ -339,34 +404,59 @@ public class DefaultStepsTest {
         ds.elementIsNotVisible("HiddenDiv");
     }
 
+    @Test(expected = AssertionError.class)
+    public void elementIsNotVisibleNegative() {
+        ds.elementIsNotVisible("SUPERBUTTON");
+    }
+
     @Test
-    public void checkElemContainsAtrWithValuePositive() {
+    public void testCheckElemContainsAtrWithValuePositive() {
         ds.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testCheckElemContainsAtrWithValueNegative() {
+        ds.checkElemContainsAtrWithValue("SUPERBUTTON", "disabled", "true");
     }
 
     @Test
     public void testFieldContainsInnerTextPositive() {
-        ds.testFieldContainsInnerText("innerTextP", "inner text");
+        ds.fieldContainsInnerText("innerTextP", "inner text");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldContainsInnerTextNegative() {
+        ds.fieldContainsInnerText("innerTextP", "null");
     }
 
     @Test
     public void testActualValueContainsSubstringPositive() {
-        ds.testActualValueContainsSubstring("TextField", "xt");
+        ds.actualValueContainsSubstring("TextField", "xt");
     }
 
     @Test
     public void testActualValueContainsSubstringPositiveWithProps() {
-        ds.testActualValueContainsSubstring("TextField", "textValueInProps");
+        ds.actualValueContainsSubstring("TextField", "textValueInProps");
     }
 
     @Test
-    public void buttonIsNotActivePositive() {
+    public void testButtonIsNotActivePositive() {
         ds.buttonIsNotActive("DisabledButton");
     }
 
+    @Test(expected = AssertionError.class)
+    public void testButtonIsNotActiveNegative() {
+        ds.buttonIsNotActive("Войти");
+    }
+
     @Test
-    public void fieldIsDisablePositive() {
+    public void testFieldIsDisablePositive() {
         ds.fieldIsDisable("DisabledField");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldIsDisableNegative() {
+        ds.fieldIsDisable("TextField");
     }
 
     @Test
@@ -483,15 +573,25 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void elementDisapperaredAndAppearedComplex() {
-        ds.testElementAppeared("ul", 1);
+    public void testElementDisapperaredAndAppearedComplex() {
+        ds.elementAppeared("ul", 1);
         ds.clickOnElement("SUPERBUTTON");
         ds.elemDisappered("ul");
     }
 
+    @Test(expected = AssertionError.class)
+    public void testElementDisapperaredNegative() {
+        ds.elemDisappered("ul");
+    }
+
     @Test
-    public void goToUrl() {
+    public void goToUrlPositive() {
         ds.goToUrl((String) akitaScenario.getVar("RedirectionPage"));
+    }
+
+    @Test(expected = WebDriverException.class)
+    public void goToUrlNegative() {
+        ds.goToUrl("null");
     }
 
     @Test
@@ -587,11 +687,28 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void checkIfListInnerTextConsistsOfTableElements() {
+    public void checkIfListInnerTextConsistsOfTableElementsPositive() {
         ArrayList<String> types = new ArrayList<>();
         types.add("One 1");
         types.add("Two 2");
         types.add("Three 3");
+        ds.checkIfListInnerTextConsistsOfTableElements("List3", types);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void checkIfListInnerTextConsistsOfTableElementsNegative() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One 1");
+        types.add("Two 2");
+        types.add("Null");
+        ds.checkIfListInnerTextConsistsOfTableElements("List3", types);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void checkIfListInnerTextConsistsOfTableElementsMoreNegative() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One 1");
+        types.add("Two 2");
         ds.checkIfListInnerTextConsistsOfTableElements("List3", types);
     }
 
@@ -612,6 +729,16 @@ public class DefaultStepsTest {
         arrayList.add("Two 2");
         arrayList.add("Three 3");
         arrayList.add("One 1");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListInnerTextCorrespondsToListFromVariableNegative() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One 1");
+        arrayList.add("Two 2");
+        arrayList.add("Null");
         akitaScenario.setVar("qwerty", arrayList);
         ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
     }
@@ -820,7 +947,7 @@ public class DefaultStepsTest {
 
     @Test
     public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
-        akitaScenario.setVar("timeout","60000");
+        akitaScenario.setVar("timeout","5000");
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
 
@@ -858,5 +985,20 @@ public class DefaultStepsTest {
     @Test(expected = AssertionError.class)
     public void testScrollPageToElementNegative() {
         ds.scrollPageToElement("Кнопка Показать ещё");
+    }
+
+    @Test
+    public void testClickOnButtonAndUploadFilePositive() {
+        ds.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "example.pdf");
+    }
+
+    @Test
+    public void testClickOnButtonAndUploadFileCatchException() {
+        ds.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "file_not_exist.pdf");
+    }
+
+    @Test
+    public void testClickOnButtonAndUploadFileMorePositive() {
+        ds.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "файл-с-русским-названием.txt");
     }
 }
