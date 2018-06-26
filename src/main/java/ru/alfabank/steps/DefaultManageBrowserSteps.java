@@ -126,6 +126,14 @@ public class DefaultManageBrowserSteps {
         akitaScenario.write("Значение заголовка страницы сохранено в переменную [" + variableName + "]");
     }
 
+    /**
+     *  Производится закрытие текущей вкладки
+     */
+    @И("выполнено закрытие текущей вкладки")
+    public void closeCurrentTab() {
+        getWebDriver().close();
+    }
+
     private String nextWindowHandle() {
         String currentWindowHandle = getWebDriver().getWindowHandle();
         Set<String> windowHandles = getWebDriver().getWindowHandles();

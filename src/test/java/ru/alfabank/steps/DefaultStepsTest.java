@@ -926,4 +926,12 @@ public class DefaultStepsTest {
     public void testScrollPageToElementNegative() {
         ds.scrollPageToElement("Кнопка Показать ещё");
     }
+
+    @Test
+    public void testCloseCurrentTab() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("RedirectionPage");
+        dmbs.closeCurrentTab();
+        dmbs.switchToTheTabWithTitle("Title");
+    }
 }
