@@ -947,7 +947,7 @@ public class DefaultStepsTest {
 
     @Test
     public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
-        akitaScenario.setVar("timeout","5000");
+        akitaScenario.setVar("timeout","1000");
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
 
