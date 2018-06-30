@@ -1005,12 +1005,12 @@ public class DefaultSteps {
 
     /*
      * Выполняется нажатие на кнопку и подгружается указанный файл
-     * Файл должен находиться по пути "src/main/resources"
+     * По умолчанию шаг ищет файл по пути "src/main/resources", однако можно указать любой путь до файла в проекте
      */
     @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
     public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
         try {
-            File file = akitaScenario.getCurrentPage().getElement(buttonName).uploadFromClasspath(fileName);
+            File file = akitaScenario.getCurrentPage().getElement(buttonName).uploadFromClasspath(loadValueFromFileOrPropertyOrDefault(fileName));
             assertTrue(file.exists());
             assertEquals(fileName, file.getName());
         }
