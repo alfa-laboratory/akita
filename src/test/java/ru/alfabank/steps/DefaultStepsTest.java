@@ -996,9 +996,4 @@ public class DefaultStepsTest {
     public void testClickOnButtonAndUploadFileCatchException() {
         ds.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "file_not_exist.pdf");
     }
-
-    @Test
-    public void testClickOnButtonAndUploadFileMorePositive() {
-        ds.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "файл-с-русским-названием.txt");
-    }
 }

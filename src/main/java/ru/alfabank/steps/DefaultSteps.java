@@ -34,6 +34,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.nio.file.NoSuchFileException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1005,17 +1006,18 @@ public class DefaultSteps {
 
     /*
      * Выполняется нажатие на кнопку и подгружается указанный файл
+     * Селектор кнопки должны быть строго на input элемента
      * По умолчанию шаг ищет файл по пути "src/main/resources", однако можно указать любой путь до файла в проекте
      */
     @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
     public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
         try {
-            File file = akitaScenario.getCurrentPage().getElement(buttonName).uploadFromClasspath(loadValueFromFileOrPropertyOrDefault(fileName));
+            File file = $(akitaScenario.getCurrentPage().getElement(buttonName)).uploadFromClasspath(loadValueFromFileOrPropertyOrDefault(fileName));
             assertTrue(file.exists());
             assertEquals(fileName, file.getName());
         }
         catch (IllegalArgumentException exception) {
-            akitaScenario.write("Файл отсутствует по пути src/main/resources");
+            akitaScenario.write("Файл отсутствует по заданному пути или в папке src/main/resources");
         }
     }
 
