@@ -107,6 +107,10 @@ public class CustomDriverProvider implements WebDriverProvider {
             capabilities = getOperaDriverCapabilities();
             return LOCAL.equalsIgnoreCase(remoteUrl) ? new OperaDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--window-size=1300,1000");
+        DesiredCapabilities cap = DesiredCapabilities.chrome();
+        cap.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
         ChromeOptions chromeOpt = new ChromeOptions();
         if (!options[0].equals("")) chromeOpt.addArguments(options);
