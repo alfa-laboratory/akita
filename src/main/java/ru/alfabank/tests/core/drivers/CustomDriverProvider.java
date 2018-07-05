@@ -25,7 +25,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -49,7 +51,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1000 -Dheight=500
  * Если параметр remoteUrl не указан - тесты будут запущены локально в заданном браузере последней версии
  * Если указан параметр remoteUrl и browser, но версия браузера не указана,
- * по умолчанию для chrome будет установлена версия 60.0 и для firefox версия 57.0
+ * по умолчанию для chrome будет установлена версия latest и для firefox версия latest
  * Если браузер не указан - по умолчанию будет запущен chrome
  * По умолчанию размер окна браузера при remote запуске равен 1920x1080
  * Предусмотрена возможность запуска в режиме мобильного браузера (-Dbrowser=mobile)
@@ -63,7 +65,8 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static String REMOTE_URL = "remoteUrl";
     public final static String WINDOW_WIDTH = "width";
     public final static String WINDOW_HEIGHT = "height";
-    public final static String RESOLUTION = "resolution";
+    public final static String VERSION_LATEST = "latest";
+    public final static String LOCAL = "local";
     public final static int DEFAULT_WIDTH = 1920;
     public final static int DEFAULT_HEIGHT = 1080;
 
@@ -72,31 +75,49 @@ public class CustomDriverProvider implements WebDriverProvider {
     @Override
     public WebDriver createDriver(DesiredCapabilities capabilities) {
         String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, CHROME);
-        String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, "local");
+        String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, LOCAL);
+        String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
         BlackList blackList = new BlackList();
 
         if (FIREFOX.equalsIgnoreCase(expectedBrowser)) {
+            FirefoxOptions firefoxOptions = new FirefoxOptions();
+            if (!options[0].equals("")) firefoxOptions.addArguments(options);
+            FirefoxDriver firefoxDriver = new FirefoxDriver(firefoxOptions);
+
+            firefoxDriver.manage().window().setSize(new Dimension(loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
+                    loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+
             capabilities = getFirefoxDriverCapabilities();
-            return "local".equalsIgnoreCase(remoteUrl) ? new FirefoxDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? firefoxDriver : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (MOBILE_DRIVER.equalsIgnoreCase(expectedBrowser)) {
             capabilities.setCapability(ChromeOptions.CAPABILITY, getMobileChromeOptions());
-            return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions()) : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions()) : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (OPERA.equalsIgnoreCase(expectedBrowser)) {
+            OperaOptions operaOptions = new OperaOptions();
+            if (!options[0].equals("")) operaOptions.addArguments(options);
+            OperaDriver operaDriver = new OperaDriver(operaOptions);
+
+            operaDriver.manage().window().setSize(new Dimension(loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
+                    loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+
             capabilities = getOperaDriverCapabilities();
-            return "local".equalsIgnoreCase(remoteUrl) ? new OperaDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? new OperaDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
+
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--window-size=1300,1000");
-        DesiredCapabilities cap = DesiredCapabilities.chrome();
-        cap.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+        if (!options[0].equals("")) chromeOptions.addArguments(options);
+        ChromeDriver chromeDriver = new ChromeDriver(chromeOptions);
+
+        chromeDriver.manage().window().setSize(new Dimension(loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
+                        loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(BROWSER_VERSION));
         capabilities = getChromeDriverCapabilities();
-        return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver(chromeOptions) : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
+        return LOCAL.equalsIgnoreCase(remoteUrl) ? chromeDriver : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
     }
 
     /**
@@ -153,7 +174,6 @@ public class CustomDriverProvider implements WebDriverProvider {
         Map<String, String> mobileEmulation = new HashMap<>();
         mobileEmulation.put("deviceName", mobileDeviceName);
         chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
-
         return chromeOptions;
     }
 
@@ -166,9 +186,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Chrome Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
         capabilities.setBrowserName(CHROME);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
-        capabilities.setCapability(RESOLUTION, String.format("%sx%s",
-                loadSystemPropertyOrDefault(WINDOW_WIDTH,DEFAULT_WIDTH), loadSystemPropertyOrDefault(WINDOW_HEIGHT,DEFAULT_HEIGHT)));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, VERSION_LATEST));
         return capabilities;
     }
 
@@ -181,9 +199,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Firefox Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setBrowserName(FIREFOX);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
-        capabilities.setCapability(RESOLUTION, String.format("%sx%s",
-                loadSystemPropertyOrDefault(WINDOW_WIDTH,DEFAULT_WIDTH), loadSystemPropertyOrDefault(WINDOW_HEIGHT,DEFAULT_HEIGHT)));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, VERSION_LATEST));
         return capabilities;
     }
 
@@ -196,9 +212,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Opera Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.operaBlink();
         capabilities.setBrowserName(OPERA);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
-        capabilities.setCapability(RESOLUTION, String.format("%sx%s",
-                loadSystemPropertyOrDefault(WINDOW_WIDTH,DEFAULT_WIDTH), loadSystemPropertyOrDefault(WINDOW_HEIGHT,DEFAULT_HEIGHT)));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, VERSION_LATEST));
         return capabilities;
     }
 
