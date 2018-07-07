@@ -1005,20 +1005,20 @@ public class DefaultSteps {
     }
 
     /*
-     * Выполняется нажатие на кнопку и подгружается указанный файл
+     * Выполняется нажатие на кнопку и подгружается указанный файл из property
      * Селектор кнопки должны быть строго на input элемента
-     * По умолчанию шаг ищет файл по пути "src/main/resources", однако можно указать любой путь до файла в проекте
+     * В property обязательно должна быть объявлена переменная uploadFilesPath, в которой указаывается путь до файла
+     * Например, uploadFilesPath = src/test/resources/
+     * Кроме объявления пути в property объявлется переменная, в которой указывается наименование
+     * Например, pdf = example.pdf
      */
-    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
+    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл из property \"([^\"]*)\"$")
     public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
-        try {
-            File file = $(akitaScenario.getCurrentPage().getElement(buttonName)).uploadFromClasspath(loadValueFromFileOrPropertyOrDefault(fileName));
-            assertTrue(file.exists());
-            assertEquals(fileName, file.getName());
-        }
-        catch (IllegalArgumentException exception) {
-            akitaScenario.write("Файл отсутствует по заданному пути или в папке src/main/resources");
-        }
+        String filepath = loadProperty("uploadFilesPath") + loadProperty(fileName);
+        File attachmentFile = new File(filepath);
+        if (!attachmentFile.exists())
+            throw new RuntimeException("По пути \"" + filepath + "\" файл " + fileName + " не найден!");
+        akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
     }
 
     /**
