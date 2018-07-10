@@ -105,7 +105,7 @@ public class CustomDriverProvider implements WebDriverProvider {
                     loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
 
             capabilities = getOperaDriverCapabilities();
-            return LOCAL.equalsIgnoreCase(remoteUrl) ? new OperaDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? operaDriver : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
 
         ChromeOptions chromeOptions = new ChromeOptions();
