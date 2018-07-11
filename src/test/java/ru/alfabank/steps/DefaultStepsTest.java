@@ -664,15 +664,6 @@ public class DefaultStepsTest {
             equalTo(7));
     }
 
-    @Test(expected = AssertionError.class)
-    public void testSetRandomCharSequenceNegative() {
-        ds.setRandomCharSequence("DisabledField", 7, "латинице");
-        assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("DisabledField").length(),
-                equalTo(7));
-    }
-
     @Test
     public void testSetRandomCharSequenceAndSaveToVarCyrillic() {
         ds.setRandomCharSequenceAndSaveToVar("NormalField", 4, "кириллице", "test");
@@ -688,15 +679,6 @@ public class DefaultStepsTest {
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField"),
-                equalTo(akitaScenario.getVar("test")));
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testSetRandomCharSequenceAndSaveToVarNegative() {
-        ds.setRandomCharSequenceAndSaveToVar("DisabledField", 7, "латинице", "test");
-        assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("DisabledField"),
                 equalTo(akitaScenario.getVar("test")));
     }
 
@@ -742,7 +724,7 @@ public class DefaultStepsTest {
     public void testSwitchToTheNextTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         dmbs.switchToTheNextTab();
-        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("RedirectionPage"));
+        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
         dmbs.switchToTheNextTab();
         Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
     }
@@ -750,8 +732,8 @@ public class DefaultStepsTest {
     @Test
     public void testSwitchToTheTabWithTitle() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
-        dmbs.switchToTheTabWithTitle("RedirectionPage");
-        dmbs.checkPageTitle("RedirectionPage");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
+        dmbs.checkPageTitle("Page with redirection");
         dmbs.switchToTheTabWithTitle("Title");
         dmbs.checkPageTitle("Title");
     }
@@ -767,25 +749,14 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testCheckPageTitleEqualPropertyVariablePositive() {
-        dmbs.checkPageTitleEqualPropertyVariable("titleFromProperty");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCheckPageTitleEqualPropertyVariableNegative() {
-        dmbs.checkPageTitleEqualPropertyVariable("testVar");
+    public void testCheckPageTitlePositive() {
+        dmbs.checkPageTitle("titleFromProperty");
     }
 
     @Test
     public void savePageTitleToVariablePositive() {
         dmbs.savePageTitleToVariable("TitleVariable");
         assertThat(akitaScenario.getVar("TitleVariable"), equalTo("Title"));
-    }
-
-    @Test(expected = AssertionError.class)
-    public void savePageTitleToVariableNegative() {
-        dmbs.savePageTitleToVariable("TitleVariable");
-        assertThat(akitaScenario.getVar("TitleVariable"), equalTo("NotTitle"));
     }
 
     @Test
@@ -930,7 +901,7 @@ public class DefaultStepsTest {
     @Test
     public void testCloseCurrentTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
-        dmbs.switchToTheTabWithTitle("RedirectionPage");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
         dmbs.closeCurrentTab();
         dmbs.switchToTheTabWithTitle("Title");
     }

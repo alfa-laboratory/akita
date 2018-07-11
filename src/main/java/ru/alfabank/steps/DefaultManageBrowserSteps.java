@@ -30,7 +30,6 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
  * Шаги для работы с cookies
@@ -38,6 +37,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 @Slf4j
 public class DefaultManageBrowserSteps {
 
+    private DefaultSteps ds = new DefaultSteps();
     private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
@@ -98,22 +98,14 @@ public class DefaultManageBrowserSteps {
 
     /**
      *  Производится сравнение заголовка страницы со значением, указанным в шаге
+     *  (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
     public void checkPageTitle(String pageTitleName) {
+        pageTitleName = ds.getPropertyOrStringVariableOrValue(pageTitleName);
         String currentTitle = getWebDriver().getTitle().trim();
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
-            pageTitleName, equalToIgnoringCase(currentTitle));
-    }
-
-    /**
-     *  Производится сравнение заголовка страницы со значением из property
-     */
-    @Тогда("^заголовок страницы совпадает со значением из property файла \"([^\"]*)\"$")
-    public void checkPageTitleEqualPropertyVariable(String pageTitleName) {
-        String currentTitle = getWebDriver().getTitle().trim();
-        assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
-                loadProperty(pageTitleName), equalToIgnoringCase(currentTitle));
+                pageTitleName, equalToIgnoringCase(currentTitle));
     }
 
     /**
@@ -123,7 +115,7 @@ public class DefaultManageBrowserSteps {
     public void savePageTitleToVariable(String variableName) {
         String titleName = getWebDriver().getTitle().trim();
         akitaScenario.setVar(variableName, titleName);
-        akitaScenario.write("Значение заголовка страницы сохранено в переменную [" + variableName + "]");
+        akitaScenario.write("Значение заголовка страницы [" + titleName + "] сохранено в переменную [" + variableName + "]");
     }
 
     /**
