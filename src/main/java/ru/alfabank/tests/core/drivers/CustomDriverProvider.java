@@ -63,6 +63,10 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static String REMOTE_URL = "remoteUrl";
     public final static String WINDOW_WIDTH = "width";
     public final static String WINDOW_HEIGHT = "height";
+    public final static String RESOLUTION = "resolution";
+    public final static int DEFAULT_WIDTH = 1920;
+    public final static int DEFAULT_HEIGHT = 1080;
+
     private BrowserMobProxy proxy = new BrowserMobProxyServer();
 
     @Override
@@ -85,10 +89,14 @@ public class CustomDriverProvider implements WebDriverProvider {
             capabilities = getOperaDriverCapabilities();
             return "local".equalsIgnoreCase(remoteUrl) ? new OperaDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
         }
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--window-size=1300,1000");
+        DesiredCapabilities cap = DesiredCapabilities.chrome();
+        cap.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(BROWSER_VERSION));
         capabilities = getChromeDriverCapabilities();
-        return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver() : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
+        return "local".equalsIgnoreCase(remoteUrl) ? new ChromeDriver(chromeOptions) : getRemoteDriver(capabilities, remoteUrl, blackList.getBlacklistEntries());
     }
 
     /**
@@ -100,8 +108,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      */
     private WebDriver getRemoteDriver(DesiredCapabilities capabilities, String remoteUrl) {
         log.info("---------------run Selenoid Remote Driver---------------------");
-        Integer browserWidth = loadSystemPropertyOrDefault(WINDOW_WIDTH, 1920);
-        Integer browserHeight = loadSystemPropertyOrDefault(WINDOW_HEIGHT, 1080);
+        Integer browserWidth = loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH);
+        Integer browserHeight = loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT);
         capabilities.setCapability("enableVNC", true);
         try {
             RemoteWebDriver driver = new RemoteWebDriver(
@@ -157,9 +165,10 @@ public class CustomDriverProvider implements WebDriverProvider {
     private DesiredCapabilities getChromeDriverCapabilities() {
         log.info("---------------Chrome Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-        capabilities = getCapabilitiesWithCustomFileDownloadFolder(capabilities);
         capabilities.setBrowserName(CHROME);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "60.0"));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
+        capabilities.setCapability(RESOLUTION, String.format("%sx%s",
+                loadSystemPropertyOrDefault(WINDOW_WIDTH,DEFAULT_WIDTH), loadSystemPropertyOrDefault(WINDOW_HEIGHT,DEFAULT_HEIGHT)));
         return capabilities;
     }
 
@@ -172,7 +181,9 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Firefox Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         capabilities.setBrowserName(FIREFOX);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "57.0"));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
+        capabilities.setCapability(RESOLUTION, String.format("%sx%s",
+                loadSystemPropertyOrDefault(WINDOW_WIDTH,DEFAULT_WIDTH), loadSystemPropertyOrDefault(WINDOW_HEIGHT,DEFAULT_HEIGHT)));
         return capabilities;
     }
 
@@ -185,7 +196,9 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Opera Driver---------------------");
         DesiredCapabilities capabilities = DesiredCapabilities.operaBlink();
         capabilities.setBrowserName(OPERA);
-        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "46.0"));
+        capabilities.setVersion(loadSystemPropertyOrDefault(BROWSER_VERSION, "latest"));
+        capabilities.setCapability(RESOLUTION, String.format("%sx%s",
+                loadSystemPropertyOrDefault(WINDOW_WIDTH,DEFAULT_WIDTH), loadSystemPropertyOrDefault(WINDOW_HEIGHT,DEFAULT_HEIGHT)));
         return capabilities;
     }
 
