@@ -153,7 +153,7 @@ public class DefaultSteps {
      * заданного количества секунд
      */
     @Тогда("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
-    public void elementAppeared(String elementName, int seconds) {
+    public void testElementAppeared(String elementName, int seconds) {
         akitaScenario.getCurrentPage().waitElementsUntil(
             Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
         );
@@ -616,7 +616,7 @@ public class DefaultSteps {
      * указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
-    public void actualValueContainsSubstring(String elementName, String expectedValue) {
+    public void testActualValueContainsSubstring(String elementName, String expectedValue) {
         expectedValue = getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
@@ -630,7 +630,7 @@ public class DefaultSteps {
      * Не чувствителен к регистру
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит внутренний текст \"(.*)\"$")
-    public void fieldContainsInnerText(String fieldName, String expectedText) {
+    public void testFieldContainsInnerText(String fieldName, String expectedText) {
         expectedText = getPropertyOrStringVariableOrValue(expectedText);
         String field = akitaScenario.getCurrentPage().getElement(fieldName).innerText().trim().toLowerCase();
         assertThat(String.format("Поле [%s] не содержит текст [%s]", fieldName, expectedText), field, containsString(expectedText.toLowerCase()));
@@ -759,7 +759,7 @@ public class DefaultSteps {
      * После выполнения проверки файл удаляется
      */
     @Тогда("^файл \"(.*)\" загрузился в папку /Downloads$")
-    public void fileDownloaded(String fileName) {
+    public void testFileDownloaded(String fileName) {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull("Ошибка поиска файла", expectedFiles);
@@ -1005,19 +1005,14 @@ public class DefaultSteps {
     }
 
     /*
-     * Выполняется нажатие на кнопку и подгружается указанный файл из property
+     * Выполняется нажатие на кнопку и подгружается указанный файл
      * Селектор кнопки должны быть строго на input элемента
-     * В property обязательно должна быть объявлена переменная uploadFilesPath, в которой указаывается путь до файла
-     * Например, uploadFilesPath = src/test/resources/
-     * Кроме объявления пути в property объявлется переменная, в которой указывается наименование
-     * Например, pdf = example.pdf
+     * Можно указать путь до файла. Например, src/test/resources/example.pdf
      */
-    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл из property \"([^\"]*)\"$")
+    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
     public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
-        String filepath = loadProperty("uploadFilesPath") + loadProperty(fileName);
-        File attachmentFile = new File(filepath);
-        if (!attachmentFile.exists())
-            throw new RuntimeException("По пути \"" + filepath + "\" файл " + fileName + " не найден!");
+        String file = loadValueFromFileOrPropertyOrDefault(fileName);
+        File attachmentFile = new File(file);
         akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
     }
 
