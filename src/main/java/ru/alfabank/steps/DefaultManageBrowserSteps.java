@@ -24,9 +24,12 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import java.util.Set;
 
 import static com.codeborne.selenide.Selenide.clearBrowserCookies;
+import static com.codeborne.selenide.Selenide.clearBrowserLocalStorage;
+import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+import static org.junit.Assert.assertEquals;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 /**
@@ -92,6 +95,32 @@ public class DefaultManageBrowserSteps {
         String currentTitle = getWebDriver().getTitle().trim();
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
             pageTitleName, equalToIgnoringCase(currentTitle));
+    }
+
+    /**
+     * Производится очистка local storage браузера
+     */
+    @Когда("^выполнена очистка local storage$")
+    public void clearLocalStorage() {
+        clearBrowserLocalStorage();
+        assertEquals(0L, getLocalStorageLength());
+    }
+
+    /**
+     * В local storage добавляется ключ с указанным значением
+     */
+    @Когда("^в local storage добавлена переменная \"([^\"]*)\" со значением \"([^\"]*)\"$")
+    public void addItemWithValueToLocalStorage(String itemName, String value) {
+        String itemLocalStorage = resolveVars(itemName);
+        String valueLocalStorage = resolveVars(value);
+        executeJavaScript("localStorage.setItem(\'" + itemLocalStorage + "\', \'" + valueLocalStorage + "\');");
+    }
+
+    /**
+     * Возвращает размер local storage
+     */
+    public long getLocalStorageLength() {
+        return (Long) executeJavaScript("return localStorage.length;");
     }
 
     private String nextWindowHandle() {

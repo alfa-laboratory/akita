@@ -38,6 +38,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
 public class DefaultStepsTest {
@@ -858,5 +859,20 @@ public class DefaultStepsTest {
     @Test(expected = AssertionError.class)
     public void testScrollPageToElementNegative() {
         ds.scrollPageToElement("Кнопка Показать ещё");
+    }
+
+    @Test
+    public void testClearLocalStoragePositive() {
+        String variable = "number1", value = "1234567890";
+        dmbs.addItemWithValueToLocalStorage(variable, value);
+        assertEquals(1L, dmbs.getLocalStorageLength());
+        dmbs.clearLocalStorage();
+        assertEquals(0L, dmbs.getLocalStorageLength());
+    }
+
+    @Test
+    public void testAddItemWithValueToLocalStoragePositive() {
+        dmbs.addItemWithValueToLocalStorage("key", "value");
+        assertEquals(1L, dmbs.getLocalStorageLength());
     }
 }
