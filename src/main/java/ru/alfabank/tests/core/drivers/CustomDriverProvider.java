@@ -27,11 +27,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.safari.SafariOptions;
 import ru.alfabank.tests.core.helpers.BlackList;
 
 import java.net.MalformedURLException;
@@ -89,6 +93,14 @@ public class CustomDriverProvider implements WebDriverProvider {
 
         if (OPERA.equalsIgnoreCase(expectedBrowser)) {
             return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver() : getRemoteDriver(getOperaDriverOptions(), remoteUrl, blackList.getBlacklistEntries());
+        }
+
+        if (SAFARI.equalsIgnoreCase(expectedBrowser)) {
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver() : getRemoteDriver(getSafariDriverOptions(), remoteUrl, blackList.getBlacklistEntries());
+        }
+
+        if (INTERNET_EXPLORER.equalsIgnoreCase(expectedBrowser)) {
+            return createIEDriver();
         }
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(CapabilityType.BROWSER_VERSION));
@@ -149,39 +161,63 @@ public class CustomDriverProvider implements WebDriverProvider {
     }
 
     /**
-     * Задает capabilities для запуска Chrome драйвера
+     * Задает options для запуска Chrome драйвера
      *
      * @return
      */
     private ChromeOptions getChromeDriverOptions() {
         log.info("---------------Chrome Driver---------------------");
         ChromeOptions chromeOptions = !options[0].equals("") ? new ChromeOptions().addArguments(options) : new ChromeOptions();
-        chromeOptions.setCapability(CapabilityType.BROWSER_VERSION, VERSION_LATEST);
+        chromeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
         return chromeOptions;
     }
 
     /**
-     * Задает capabilities для запуска Firefox драйвера
+     * Задает options для запуска Firefox драйвера
      *
      * @return
      */
     private FirefoxOptions getFirefoxDriverOptions() {
         log.info("---------------Firefox Driver---------------------");
         FirefoxOptions firefoxOptions = !options[0].equals("") ? new FirefoxOptions().addArguments(options) : new FirefoxOptions();
-        firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION, VERSION_LATEST);
+        firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
         return firefoxOptions;
     }
 
     /**
-     * Задает capabilities для запуска Opera драйвера
+     * Задает options для запуска Opera драйвера
      *
      * @return
      */
     private OperaOptions getOperaDriverOptions() {
         log.info("---------------Opera Driver---------------------");
         OperaOptions operaOptions = !options[0].equals("") ? new OperaOptions().addArguments(options) : new OperaOptions();
-        operaOptions.setCapability(CapabilityType.BROWSER_VERSION, VERSION_LATEST);
+        operaOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
         return operaOptions;
+    }
+
+    /**
+     * Задает options для запуска IE драйвера
+     *
+     * @return
+     */
+    private InternetExplorerOptions getIEDriverOptions(){
+        log.info("---------------IE Driver---------------------");
+        InternetExplorerOptions internetExplorerOptions = !options[0].equals("") ? new InternetExplorerOptions().addCommandSwitches(options) : new InternetExplorerOptions();
+        internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        return internetExplorerOptions;
+    }
+
+    /**
+     * Задает options для запуска Safari драйвера
+     *
+     * @return
+     */
+    private SafariOptions getSafariDriverOptions(){
+        log.info("---------------Safari Driver---------------------");
+        SafariOptions safariOptions = new SafariOptions();
+        safariOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        return safariOptions;
     }
 
     /**
@@ -205,6 +241,18 @@ public class CustomDriverProvider implements WebDriverProvider {
         OperaDriver operaDriver = new OperaDriver(getOperaDriverOptions());
         operaDriver.manage().window().setSize(setDimension());
         return operaDriver;
+    }
+
+    private WebDriver createIEDriver(){
+        InternetExplorerDriver internetExplorerDriver = new InternetExplorerDriver(getIEDriverOptions());
+        internetExplorerDriver.manage().window().setSize(setDimension());
+        return internetExplorerDriver;
+    }
+
+    private WebDriver createSafariDriver(){
+        SafariDriver safariDriver = new SafariDriver(getSafariDriverOptions());
+        safariDriver.manage().window().setSize(setDimension());
+        return safariDriver;
     }
 
     /**
