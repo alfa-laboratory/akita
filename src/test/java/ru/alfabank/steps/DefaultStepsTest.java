@@ -867,7 +867,6 @@ public class DefaultStepsTest {
         dmbs.addItemWithValueToLocalStorage(variable, value);
         assertEquals(1L, dmbs.getLocalStorageLength());
         dmbs.clearLocalStorage();
-        assertEquals(0L, dmbs.getLocalStorageLength());
     }
 
     @Test
