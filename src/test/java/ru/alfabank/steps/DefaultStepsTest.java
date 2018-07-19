@@ -392,7 +392,7 @@ public class DefaultStepsTest {
 
     @Test
     public void openReadOnlyFormPositive() {
-        ds.goToSelectedPageByLinkFromPropertyFile("RedirectionPage",
+        ds.goToSelectedPageByLink("RedirectionPage",
             akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
