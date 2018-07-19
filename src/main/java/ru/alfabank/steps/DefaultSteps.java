@@ -46,8 +46,7 @@ import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.codeborne.selenide.WebDriverRunner.url;
+import static com.codeborne.selenide.WebDriverRunner.*;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -191,7 +190,10 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().appeared();
+        if(isIE()) {
+            akitaScenario.getCurrentPage().ieAppeared();
+        }
+        else akitaScenario.getCurrentPage().appeared();
     }
 
     /**
@@ -201,7 +203,10 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
     public void loadPageFailed(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().disappeared();
+        if(isIE()){
+            akitaScenario.getCurrentPage().ieDisappeared();
+        }
+        else akitaScenario.getCurrentPage().disappeared();
     }
 
     /**
@@ -285,7 +290,10 @@ public class DefaultSteps {
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
-        akitaScenario.getPage(nameOfPage).disappeared();
+        if (isIE()){
+            akitaScenario.getPage(nameOfPage).ieDisappeared();
+        }
+        else akitaScenario.getPage(nameOfPage).disappeared();
     }
 
     /**

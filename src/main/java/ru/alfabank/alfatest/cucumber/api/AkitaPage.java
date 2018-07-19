@@ -180,6 +180,48 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
+     * Обертка над AkitaPage.isAppearedInIe
+     * Ex: AkitaPage.ieAppeared().doSomething();
+     * Используется при работе с IE
+     */
+    public final AkitaPage ieAppeared() {
+        isAppearedInIe();
+        return this;
+    }
+
+    /**
+     * Обертка над AkitaPage.isDisappearedInIe
+     * Ex: AkitaPage.ieDisappeared().doSomething();
+     * Используется при работе с IE
+     */
+    public final AkitaPage ieDisappeared() {
+        isDisappearedInIe();
+        return this;
+    }
+
+    /**
+     * Проверка появления всех элементов страницы, не помеченных аннотацией "Optional".
+     * Вместо parallelStream используется stream из-за медленной работы IE
+     */
+    protected void isAppearedInIe() {
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
+        getPrimaryElements().stream().forEach(elem ->
+                elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+        eachForm(AkitaPage::isAppearedInIe);
+    }
+
+    /**
+     * Проверка, что все элементы страницы, не помеченные аннотацией "Optional", исчезли
+     * Вместо parallelStream используется stream из-за медленной работы IE
+     */
+    protected void isDisappearedInIe() {
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
+        getPrimaryElements().stream().forEach(elem ->
+                elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
+    }
+
+
+    /**
      * Обертка над Selenide.waitUntil для произвольного количества элементов
      *
      * @param condition Selenide.Condition
