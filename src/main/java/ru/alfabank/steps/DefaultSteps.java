@@ -263,21 +263,6 @@ public class DefaultSteps {
      * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
-     * Deprecated
-     */
-    @Deprecated
-    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке из property файла \"([^\"]*)\"$")
-    public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
-        String address = loadProperty(urlOrName, resolveVars(urlOrName));
-        akitaScenario.write(" url = " + address);
-        open(address);
-        loadPage(pageName);
-    }
-
-    /**
-     * Выполняется переход по заданной ссылке.
-     * Шаг содержит проверку, что после перехода загружена заданная страница.
-     * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по ссылке \"([^\"]*)\"$")
     public void goToSelectedPageByLink(String pageName, String urlOrName) {
@@ -368,19 +353,6 @@ public class DefaultSteps {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
             akitaScenario.getCurrentPage().getAnyElementText(fieldName),
             isEmptyOrNullString());
-    }
-
-    /**
-     * Устанавливает размеры окна браузера
-     * Deprecated
-     */
-    @Deprecated
-    @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
-    public void setWindowSize(String widthRaw, String heightRaw) {
-        int width = Integer.valueOf(widthRaw);
-        int height = Integer.valueOf(heightRaw);
-        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
-        akitaScenario.write("Установлены размеры окна браузера: ширина " + widthRaw + " высота" + heightRaw);
     }
 
     /**
@@ -767,15 +739,6 @@ public class DefaultSteps {
         assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
             expectedFiles.length == 1);
         deleteFiles(expectedFiles);
-    }
-
-    /**
-     *  Скроллит экран до появления элемента. Полезно, если сайт длинный и элемент может быть не виден.
-     */
-    @Deprecated
-    @Тогда("^экран проскроллен до элемента \"([^\"]*)\"")
-    public void scrollToElement(String elementName) {
-        akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
     }
 
     /**
