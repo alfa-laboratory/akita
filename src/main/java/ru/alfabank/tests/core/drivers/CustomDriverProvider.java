@@ -52,7 +52,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * Параметры запуска можно задавать, как системные переменные.
  *
  * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера:
- * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1000 -Dheight=500
+ * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800 -Doptions=--load-extension=my-custom-extension
  * Если параметр remoteUrl не указан - тесты будут запущены локально в заданном браузере последней версии.
  * Все необходимые опции можно прописывать в переменную options, разделяя их пробелом.
  * Если указан параметр remoteUrl и browser, но версия браузера не указана,
@@ -84,27 +84,27 @@ public class CustomDriverProvider implements WebDriverProvider {
         BlackList blackList = new BlackList();
 
         if (FIREFOX.equalsIgnoreCase(expectedBrowser)) {
-            return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver() : getRemoteDriver(getFirefoxDriverOptions(), remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver(capabilities) : getRemoteDriver(getFirefoxDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (MOBILE_DRIVER.equalsIgnoreCase(expectedBrowser)) {
-            return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions()) : getRemoteDriver(getMobileChromeOptions(), remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions(capabilities)) : getRemoteDriver(getMobileChromeOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (OPERA.equalsIgnoreCase(expectedBrowser)) {
-            return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver() : getRemoteDriver(getOperaDriverOptions(), remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(capabilities) : getRemoteDriver(getOperaDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (SAFARI.equalsIgnoreCase(expectedBrowser)) {
-            return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver() : getRemoteDriver(getSafariDriverOptions(), remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver(capabilities) : getRemoteDriver(getSafariDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (INTERNET_EXPLORER.equalsIgnoreCase(expectedBrowser)) {
-            return createIEDriver();
+            return createIEDriver(capabilities);
         }
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(CapabilityType.BROWSER_VERSION));
-        return LOCAL.equalsIgnoreCase(remoteUrl) ? createChromeDriver() : getRemoteDriver(getChromeDriverOptions(), remoteUrl, blackList.getBlacklistEntries());
+        return LOCAL.equalsIgnoreCase(remoteUrl) ? createChromeDriver(capabilities) : getRemoteDriver(getChromeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
     }
 
     /**
@@ -112,7 +112,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      * @param capabilities - capabilities для установленного браузера
      * @param remoteUrl    - url для запуска тестов, например http://remoteIP:4444/wd/hub
-     * @return
+     * @return WebDriver
      */
     private WebDriver getRemoteDriver(MutableCapabilities capabilities, String remoteUrl) {
         log.info("---------------run Selenoid Remote Driver---------------------");
@@ -130,12 +130,13 @@ public class CustomDriverProvider implements WebDriverProvider {
     }
 
     /** Задает capabilities для запуска Remote драйвера для Selenoid
-     * со списком регулярных выражений соответствующих URL, которые добавляются в Blacklist
+     * со списком соответствующих URL, которые добавляются в Blacklist
+     * URL для добавления в Blacklist могут быть указаны в формате регулярных выражений
      *
      * @param capabilities
      * @param remoteUrl
      * @param blacklistEntries - список url для добавления в Blacklist
-     * @return
+     * @return WebDriver
      */
     private WebDriver getRemoteDriver(MutableCapabilities capabilities, String remoteUrl, List<BlacklistEntry> blacklistEntries) {
         proxy.setBlacklist(blacklistEntries);
@@ -148,7 +149,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      *@return ChromeOptions
      */
-    private ChromeOptions getMobileChromeOptions() {
+    private ChromeOptions getMobileChromeOptions(DesiredCapabilities capabilities) {
         log.info("---------------run CustomMobileDriver---------------------");
         String mobileDeviceName = loadSystemPropertyOrDefault("device", "Nexus 5");
         ChromeOptions chromeOptions = new ChromeOptions().addArguments("disable-extensions",
@@ -157,106 +158,136 @@ public class CustomDriverProvider implements WebDriverProvider {
         Map<String, String> mobileEmulation = new HashMap<>();
         mobileEmulation.put("deviceName", mobileDeviceName);
         chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
+        chromeOptions.merge(capabilities);
         return chromeOptions;
     }
 
     /**
      * Задает options для запуска Chrome драйвера
-     *
-     * @return
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     * @return ChromeOptions
      */
-    private ChromeOptions getChromeDriverOptions() {
+    private ChromeOptions getChromeDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------Chrome Driver---------------------");
         ChromeOptions chromeOptions = !options[0].equals("") ? new ChromeOptions().addArguments(options) : new ChromeOptions();
         chromeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        chromeOptions.merge(capabilities);
         return chromeOptions;
     }
 
     /**
      * Задает options для запуска Firefox драйвера
-     *
-     * @return
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     * @return FirefoxOptions
      */
-    private FirefoxOptions getFirefoxDriverOptions() {
+    private FirefoxOptions getFirefoxDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------Firefox Driver---------------------");
         FirefoxOptions firefoxOptions = !options[0].equals("") ? new FirefoxOptions().addArguments(options) : new FirefoxOptions();
         firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        firefoxOptions.merge(capabilities);
         return firefoxOptions;
     }
 
     /**
      * Задает options для запуска Opera драйвера
-     *
-     * @return
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     * @return operaOptions
      */
-    private OperaOptions getOperaDriverOptions() {
+    private OperaOptions getOperaDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------Opera Driver---------------------");
         OperaOptions operaOptions = !options[0].equals("") ? new OperaOptions().addArguments(options) : new OperaOptions();
         operaOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        operaOptions.merge(capabilities);
         return operaOptions;
     }
 
     /**
      * Задает options для запуска IE драйвера
-     *
-     * @return
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     * @return internetExplorerOptions
      */
-    private InternetExplorerOptions getIEDriverOptions(){
+    private InternetExplorerOptions getIEDriverOptions(DesiredCapabilities capabilities){
         log.info("---------------IE Driver---------------------");
         InternetExplorerOptions internetExplorerOptions = !options[0].equals("") ? new InternetExplorerOptions().addCommandSwitches(options) : new InternetExplorerOptions();
         internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        internetExplorerOptions.merge(capabilities);
         return internetExplorerOptions;
     }
 
     /**
      * Задает options для запуска Safari драйвера
-     *
-     * @return
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     * @return SafariOptions
      */
-    private SafariOptions getSafariDriverOptions(){
+    private SafariOptions getSafariDriverOptions(DesiredCapabilities capabilities){
         log.info("---------------Safari Driver---------------------");
         SafariOptions safariOptions = new SafariOptions();
         safariOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        safariOptions.merge(capabilities);
         return safariOptions;
     }
 
     /**
-     * Создает WebDriver
+     * Создает экземпляр ChromeDriver с переданными capabilities и window dimensions
      *
-     * @return
+     * @return WebDriver
      */
-    private WebDriver createChromeDriver(){
-        ChromeDriver chromeDriver = new ChromeDriver(getChromeDriverOptions());
+    private WebDriver createChromeDriver(DesiredCapabilities capabilities){
+        ChromeDriver chromeDriver = new ChromeDriver(getChromeDriverOptions(capabilities));
         chromeDriver.manage().window().setSize(setDimension());
         return chromeDriver;
     }
 
-    private WebDriver createFirefoxDriver(){
-        FirefoxDriver firefoxDriver = new FirefoxDriver(getFirefoxDriverOptions());
+    /**
+     * Создает экземпляр FirefoxDriver с переданными capabilities и window dimensions
+     *
+     * @return WebDriver
+     */
+    private WebDriver createFirefoxDriver(DesiredCapabilities capabilities){
+        FirefoxDriver firefoxDriver = new FirefoxDriver(getFirefoxDriverOptions(capabilities));
         firefoxDriver.manage().window().setSize(setDimension());
         return firefoxDriver;
     }
 
-    private WebDriver createOperaDriver(){
-        OperaDriver operaDriver = new OperaDriver(getOperaDriverOptions());
+    /**
+     * Создает экземпляр OperaDriver с переданными capabilities и window dimensions
+     *
+     * @return WebDriver
+     */
+    private WebDriver createOperaDriver(DesiredCapabilities capabilities){
+        OperaDriver operaDriver = new OperaDriver(getOperaDriverOptions(capabilities));
         operaDriver.manage().window().setSize(setDimension());
         return operaDriver;
     }
 
-    private WebDriver createIEDriver(){
-        InternetExplorerDriver internetExplorerDriver = new InternetExplorerDriver(getIEDriverOptions());
+    /**
+     * Создает экземпляр InternetExplorerDriver с переданными capabilities и window dimensions
+     *
+     * @return WebDriver
+     */
+    private WebDriver createIEDriver(DesiredCapabilities capabilities){
+        InternetExplorerDriver internetExplorerDriver = new InternetExplorerDriver(getIEDriverOptions(capabilities));
         internetExplorerDriver.manage().window().setSize(setDimension());
         return internetExplorerDriver;
     }
 
-    private WebDriver createSafariDriver(){
-        SafariDriver safariDriver = new SafariDriver(getSafariDriverOptions());
+    /**
+     * Создает экземпляр SafariDriver с переданными capabilities и window dimensions
+     *
+     * @return WebDriver
+     */
+    private WebDriver createSafariDriver(DesiredCapabilities capabilities){
+        SafariDriver safariDriver = new SafariDriver(getSafariDriverOptions(capabilities));
         safariDriver.manage().window().setSize(setDimension());
         return safariDriver;
     }
 
     /**
-     * Задает настройки разрешения
+     * Задает настройки разрешения окна браузера
+     * Пользовательские значения ширины и высоты окна браузера можно задать, обозначив параметры
+     * -Dwidth и -Dheight при старте тестов.
+     * Например: ./gradlew test -Dbrowser=chrome -Dwidth=1200 -Dheight=800
+     * Если пользовательские значения ширины и высоты окна браузера не указаны, используются дефолтные 1920x1080
      */
     private Dimension setDimension(){
         return new Dimension(loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
