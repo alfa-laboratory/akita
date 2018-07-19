@@ -180,19 +180,29 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
-     * Функции для работы в IE из за медленной работы браузера паралельный стрин отробатывает с ошибкой
+     * Обертка над AkitaPage.isAppearedInIe
+     * Ex: AkitaPage.ieAppeared().doSomething();
+     * Используется при работе с IE
      */
     public final AkitaPage ieAppeared() {
         isAppearedInIe();
         return this;
     }
 
+    /**
+     * Обертка над AkitaPage.isDisappearedInIe
+     * Ex: AkitaPage.ieDisappeared().doSomething();
+     * Используется при работе с IE
+     */
     public final AkitaPage ieDisappeared() {
         isDisappearedInIe();
         return this;
     }
 
-
+    /**
+     * Проверка появления всех элементов страницы, не помеченных аннотацией "Optional".
+     * Вместо parallelStream используется stream из-за медленной работы IE
+     */
     protected void isAppearedInIe() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().stream().forEach(elem ->
@@ -200,6 +210,10 @@ public abstract class AkitaPage extends ElementsContainer {
         eachForm(AkitaPage::isAppearedInIe);
     }
 
+    /**
+     * Проверка, что все элементы страницы, не помеченные аннотацией "Optional", исчезли
+     * Вместо parallelStream используется stream из-за медленной работы IE
+     */
     protected void isDisappearedInIe() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().stream().forEach(elem ->
