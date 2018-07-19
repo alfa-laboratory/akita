@@ -180,6 +180,34 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
+     * Функции для работы в IE из за медленной работы браузера паралельный стрин отробатывает с ошибкой
+     */
+    public final AkitaPage ieAppeared() {
+        isAppearedInIe();
+        return this;
+    }
+
+    public final AkitaPage ieDisappeared() {
+        isDisappearedInIe();
+        return this;
+    }
+
+
+    protected void isAppearedInIe() {
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
+        getPrimaryElements().stream().forEach(elem ->
+                elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+        eachForm(AkitaPage::isAppearedInIe);
+    }
+
+    protected void isDisappearedInIe() {
+        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
+        getPrimaryElements().stream().forEach(elem ->
+                elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
+    }
+
+
+    /**
      * Обертка над Selenide.waitUntil для произвольного количества элементов
      *
      * @param condition Selenide.Condition
