@@ -52,7 +52,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * Параметры запуска можно задавать, как системные переменные.
  *
  * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера:
- * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1000 -Dheight=500
+ * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800 -Doptions=--load-extension=my-custom-extension
  * Если параметр remoteUrl не указан - тесты будут запущены локально в заданном браузере последней версии.
  * Все необходимые опции можно прописывать в переменную options, разделяя их пробелом.
  * Если указан параметр remoteUrl и browser, но версия браузера не указана,
