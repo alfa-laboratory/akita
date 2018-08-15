@@ -171,6 +171,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Chrome Driver---------------------");
         ChromeOptions chromeOptions = !options[0].equals("") ? new ChromeOptions().addArguments(options) : new ChromeOptions();
         chromeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        chromeOptions.setHeadless(true); // TODO: WIP сделать кастомный headless драйвер
         chromeOptions.merge(capabilities);
         return chromeOptions;
     }
