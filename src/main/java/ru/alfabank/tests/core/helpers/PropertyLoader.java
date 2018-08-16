@@ -79,6 +79,24 @@ public class PropertyLoader {
     }
 
     /**
+     * Возвращает Boolean значение системного свойства
+     * (из доступных для данной JVM) по его названию,
+     * в случае, если оно не найдено, вернется значение по умолчанию
+     *
+     * @param propertyName название свойства
+     * @param defaultValue Boolean значение по умолчанию
+     * @return Integer значение свойства по названию или значение по умолчанию
+     */
+    public static Boolean loadSystemPropertyOrDefault(String propertyName, Boolean defaultValue) {
+        try {
+            return Boolean.parseBoolean(System.getProperty(propertyName, defaultValue.toString()).trim());
+        } catch (NumberFormatException ex) {
+            log.error("Could not parse value to Boolean ", ex.getMessage());
+            return defaultValue;
+        }
+    }
+
+    /**
      * Возвращает свойство по его названию из property-файла
      *
      * @param propertyName название свойства
