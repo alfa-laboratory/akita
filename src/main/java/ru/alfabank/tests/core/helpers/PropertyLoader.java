@@ -88,12 +88,7 @@ public class PropertyLoader {
      * @return Integer значение свойства по названию или значение по умолчанию
      */
     public static Boolean loadSystemPropertyOrDefault(String propertyName, Boolean defaultValue) {
-        try {
-            return Boolean.parseBoolean(System.getProperty(propertyName, defaultValue.toString()).trim());
-        } catch (NumberFormatException ex) {
-            log.error("Could not parse value to Boolean ", ex.getMessage());
-            return defaultValue;
-        }
+        return Boolean.parseBoolean(System.getProperty(propertyName, defaultValue.toString()).trim());
     }
 
     /**
