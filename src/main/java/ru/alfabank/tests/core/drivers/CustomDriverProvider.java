@@ -63,12 +63,14 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * По умолчанию размер окна браузера при remote запуске равен 1920x1080
  * Предусмотрена возможность запуска в режиме мобильного браузера (-Dbrowser=mobile)
  * С указанием устройства, на котором будем эмулироваться запуск мобильного chrome браузера (-Ddevice=iPhone 6)
+ * Если указан параметр headless, то браузеры firefox и chrome будут запускаться без GUI (-Dheadless=true)
  */
 @Slf4j
 public class CustomDriverProvider implements WebDriverProvider {
     public final static String MOBILE_DRIVER = "mobile";
     public final static String BROWSER = "browser";
     public final static String REMOTE_URL = "remoteUrl";
+    public final static String HEADLESS = "headless";
     public final static String WINDOW_WIDTH = "width";
     public final static String WINDOW_HEIGHT = "height";
     public final static String VERSION_LATEST = "latest";
@@ -177,6 +179,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Chrome Driver---------------------");
         ChromeOptions chromeOptions = !options[0].equals("") ? new ChromeOptions().addArguments(options) : new ChromeOptions();
         chromeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        chromeOptions.setHeadless(loadSystemPropertyOrDefault(HEADLESS, false));
         chromeOptions.merge(capabilities);
         return chromeOptions;
     }
@@ -190,6 +193,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Firefox Driver---------------------");
         FirefoxOptions firefoxOptions = !options[0].equals("") ? new FirefoxOptions().addArguments(options) : new FirefoxOptions();
         firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        firefoxOptions.setHeadless(loadSystemPropertyOrDefault(HEADLESS, false));
         firefoxOptions.merge(capabilities);
         return firefoxOptions;
     }
