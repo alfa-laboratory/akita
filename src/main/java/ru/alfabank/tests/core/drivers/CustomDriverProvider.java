@@ -25,6 +25,8 @@ import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -100,7 +102,11 @@ public class CustomDriverProvider implements WebDriverProvider {
         }
 
         if (INTERNET_EXPLORER.equalsIgnoreCase(expectedBrowser)) {
-            return createIEDriver(capabilities);
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+        }
+
+        if (EDGE.equalsIgnoreCase(expectedBrowser)) {
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createEdgeDriver(capabilities) : getRemoteDriver(getEdgeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(CapabilityType.BROWSER_VERSION));
@@ -210,8 +216,25 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------IE Driver---------------------");
         InternetExplorerOptions internetExplorerOptions = !options[0].equals("") ? new InternetExplorerOptions().addCommandSwitches(options) : new InternetExplorerOptions();
         internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        internetExplorerOptions.setCapability("ie.usePerProcessProxy", "true");
+        internetExplorerOptions.setCapability("requireWindowFocus", "false");
+        internetExplorerOptions.setCapability("ie.browserCommandLineSwitches", "-private");
+        internetExplorerOptions.setCapability("ie.ensureCleanSession", "true");
         internetExplorerOptions.merge(capabilities);
         return internetExplorerOptions;
+    }
+
+    /**
+     * Задает options для запуска Edge драйвера
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     * @return edgeOptions
+     */
+    private EdgeOptions getEdgeDriverOptions(DesiredCapabilities capabilities){
+        log.info("---------------Edge Driver---------------------");
+        EdgeOptions edgeOptions = new EdgeOptions();
+        edgeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        edgeOptions.merge(capabilities);
+        return edgeOptions;
     }
 
     /**
@@ -269,6 +292,17 @@ public class CustomDriverProvider implements WebDriverProvider {
         InternetExplorerDriver internetExplorerDriver = new InternetExplorerDriver(getIEDriverOptions(capabilities));
         internetExplorerDriver.manage().window().setSize(setDimension());
         return internetExplorerDriver;
+    }
+
+    /**
+     * Создает экземпляр EdgeDriver с переданными capabilities и window dimensions
+     *
+     * @return WebDriver
+     */
+    private WebDriver createEdgeDriver(DesiredCapabilities capabilities){
+        EdgeDriver edgeDriver = new EdgeDriver(getEdgeDriverOptions(capabilities));
+        edgeDriver.manage().window().setSize(setDimension());
+        return edgeDriver;
     }
 
     /**
