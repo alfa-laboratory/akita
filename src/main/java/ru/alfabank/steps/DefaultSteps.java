@@ -23,7 +23,6 @@ import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -695,7 +694,7 @@ public class DefaultSteps {
      */
     @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
     public void findElement(String text) {
-        $(By.xpath("//*[text()='" + getPropertyOrStringVariableOrValue(text) + "']")).click();
+        $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(text)))).click();
     }
 
     /**
@@ -844,6 +843,22 @@ public class DefaultSteps {
     }
 
     /**
+     * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины и сохранение этого значения в переменную
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице) и сохранено в переменную \"([^\"]*)\"$")
+    public void setRandomCharSequenceAndSaveToVar(String elementName, int seqLength, String lang, String varName) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+
+        if (lang.equals("кириллице")) lang = "ru";
+        else lang = "en";
+        String charSeq = getRandCharSequence(seqLength, lang);
+        valueInput.setValue(charSeq);
+        akitaScenario.setVar(varName, charSeq);
+        akitaScenario.write("Строка случайных символов равна :" + charSeq);
+    }
+
+    /**
      * Ввод в поле случайной последовательности цифр задаваемой длины
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) (?:цифр|цифры)$")
@@ -967,7 +982,7 @@ public class DefaultSteps {
     }
 
     /*
-     * Проверка совпадения значения из переменной и значения и property
+     * Проверка совпадения значения из переменной и значения из property
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
@@ -1070,7 +1085,7 @@ public class DefaultSteps {
     /**
      * Возвращает нормализованный(без учета регистра) текст
      */
-    private String getTranslateNormalizeSpaceText (String expectedText) {
+    public String getTranslateNormalizeSpaceText (String expectedText) {
         StringBuilder text = new StringBuilder();
         text.append("//*[contains(translate(normalize-space(text()), ");
         text.append("'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
