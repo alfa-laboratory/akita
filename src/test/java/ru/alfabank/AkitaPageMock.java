@@ -131,4 +131,8 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(xpath = "//*[text()='Подписать и отправить']/parent::button")
     @Name("Кнопка Подписать и отправить")
     public SelenideElement signAndSendToBankButton;
+
+    @FindBy(name = "mixedButton")
+    @Name("Кнопка с англо-русским названием")
+    public SelenideElement mixLangButton;
 }
