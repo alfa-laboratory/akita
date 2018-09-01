@@ -1083,16 +1083,14 @@ public class DefaultSteps {
     }
 
     /**
-     * Возвращает нормализованный(без учета регистра) текст
+     * Возвращает локатор для поиска по нормализованному(без учета регистра) тексту
      */
     public String getTranslateNormalizeSpaceText (String expectedText) {
         StringBuilder text = new StringBuilder();
         text.append("//*[contains(translate(normalize-space(text()), ");
-        text.append("'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
-        text.append(expectedText);
-        text.append("') or contains(translate(normalize-space(text()), ");
-        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '");
-        text.append(expectedText);
+        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', ");
+        text.append("'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
+        text.append(expectedText.toLowerCase());
         text.append("')]");
         return text.toString();
     }

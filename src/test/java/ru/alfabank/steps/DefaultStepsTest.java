@@ -38,6 +38,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
 public class DefaultStepsTest {
@@ -423,6 +424,29 @@ public class DefaultStepsTest {
             equalTo(akitaScenario.getVar("RedirectionPage")));
     }
 
+    @Test
+    public void findElementMixedLanguagePositive() {
+        ds.findElement("EnGliSh? РуСсКий.");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
+
+    @Test
+    public void findElementMixedLanguagePartialRuPositive() {
+        ds.findElement("РуСсКий.");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
+
+    @Test
+    public void findElementMixedLanguagePartialEnPositive() {
+        ds.findElement("EnGliSh");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
     @Test
     public void currentDatePositive() {
         ds.currentDate("NormalField", "dd.MM.yyyy");
