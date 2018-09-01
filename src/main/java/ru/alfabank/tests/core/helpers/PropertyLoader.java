@@ -88,7 +88,9 @@ public class PropertyLoader {
      * @return Integer значение свойства по названию или значение по умолчанию
      */
     public static Boolean loadSystemPropertyOrDefault(String propertyName, Boolean defaultValue) {
-        return Boolean.parseBoolean(System.getProperty(propertyName, defaultValue.toString()).trim());
+        String def = defaultValue.toString();
+        String property = loadProperty(propertyName, def);
+        return Boolean.parseBoolean(property.trim());
     }
 
     /**
