@@ -135,4 +135,8 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(css = "#multi-file-upload-form .file")
     @Name("Кнопка загрузки файлов")
     public SelenideElement uploadButton;
+
+    @FindBy(name = "mixedButton")
+    @Name("Кнопка с англо-русским названием")
+    public SelenideElement mixLangButton;
 }

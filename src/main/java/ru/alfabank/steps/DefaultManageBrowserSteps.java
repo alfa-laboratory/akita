@@ -15,6 +15,7 @@
  */
 package ru.alfabank.steps;
 
+import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import java.util.Set;
 
 import static com.codeborne.selenide.Selenide.clearBrowserCookies;
+import static com.codeborne.selenide.Selenide.switchTo;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
@@ -35,7 +37,8 @@ import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 @Slf4j
 public class DefaultManageBrowserSteps {
 
-    private AkitaScenario akitascenario = AkitaScenario.getInstance();
+    private DefaultSteps ds = new DefaultSteps();
+    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
      * Удаляем все cookies
@@ -52,7 +55,7 @@ public class DefaultManageBrowserSteps {
     public void saveCookieToVar(String nameCookie, String cookieVar){
         String cookieName = resolveVars(nameCookie);
         Cookie var = getWebDriver().manage().getCookieNamed(cookieName);
-        akitascenario.setVar(cookieVar, var);
+        akitaScenario.setVar(cookieVar, var);
     }
 
     /**
@@ -61,7 +64,7 @@ public class DefaultManageBrowserSteps {
     @Когда("^cookies сохранены в переменную \"([^\"]*)\"$")
     public void saveAllCookies(String variableName){
         Set cookies = getWebDriver().manage().getCookies();
-        akitascenario.setVar(variableName, cookies);
+        akitaScenario.setVar(variableName, cookies);
     }
 
     /**
@@ -81,17 +84,46 @@ public class DefaultManageBrowserSteps {
     public void switchToTheNextTab() {
         String nextWindowHandle = nextWindowHandle();
         getWebDriver().switchTo().window(nextWindowHandle);
-        akitascenario.write("Текущая вкладка " + nextWindowHandle);
+        akitaScenario.write("Текущая вкладка " + nextWindowHandle);
+    }
+
+    /**
+     *  Переключение на вкладку браузера с заголовком
+     */
+    @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
+    public void switchToTheTabWithTitle(String title) {
+        switchTo().window(title);
+        checkPageTitle(title);
     }
 
     /**
      *  Производится сравнение заголовка страницы со значением, указанным в шаге
+     *  (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
     public void checkPageTitle(String pageTitleName) {
+        pageTitleName = ds.getPropertyOrStringVariableOrValue(pageTitleName);
         String currentTitle = getWebDriver().getTitle().trim();
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
-            pageTitleName, equalToIgnoringCase(currentTitle));
+                pageTitleName, equalToIgnoringCase(currentTitle));
+    }
+
+    /**
+     *  Производится сохранение заголовка страницы в переменную
+     */
+    @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
+    public void savePageTitleToVariable(String variableName) {
+        String titleName = getWebDriver().getTitle().trim();
+        akitaScenario.setVar(variableName, titleName);
+        akitaScenario.write("Значение заголовка страницы [" + titleName + "] сохранено в переменную [" + variableName + "]");
+    }
+
+    /**
+     *  Производится закрытие текущей вкладки
+     */
+    @И("выполнено закрытие текущей вкладки")
+    public void closeCurrentTab() {
+        getWebDriver().close();
     }
 
     private String nextWindowHandle() {

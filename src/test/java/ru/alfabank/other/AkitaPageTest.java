@@ -53,7 +53,7 @@ public class AkitaPageTest {
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
         page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
-        ds.goToSelectedPageByLinkFromPropertyFile("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass
