@@ -39,6 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.is;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
 public class DefaultStepsTest {
@@ -393,7 +394,7 @@ public class DefaultStepsTest {
 
     @Test
     public void openReadOnlyFormPositive() {
-        ds.goToSelectedPageByLinkFromPropertyFile("RedirectionPage",
+        ds.goToSelectedPageByLink("RedirectionPage",
             akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
@@ -424,6 +425,29 @@ public class DefaultStepsTest {
             equalTo(akitaScenario.getVar("RedirectionPage")));
     }
 
+    @Test
+    public void findElementMixedLanguagePositive() {
+        ds.findElement("EnGliSh? РуСсКий.");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
+
+    @Test
+    public void findElementMixedLanguagePartialRuPositive() {
+        ds.findElement("РуСсКий.");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
+
+    @Test
+    public void findElementMixedLanguagePartialEnPositive() {
+        ds.findElement("EnGliSh");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
     @Test
     public void currentDatePositive() {
         ds.currentDate("NormalField", "dd.MM.yyyy");
@@ -666,6 +690,24 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testSetRandomCharSequenceAndSaveToVarCyrillic() {
+        ds.setRandomCharSequenceAndSaveToVar("NormalField", 4, "кириллице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
+    public void testSetRandomCharSequenceAndSaveToVarLathin() {
+        ds.setRandomCharSequenceAndSaveToVar("NormalField", 7, "латинице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
     public void testInputRandomNumSequencePositive() {
         ds.inputRandomNumSequence("NormalField",4);
         assertThat(akitaScenario.getEnvironment()
@@ -675,7 +717,7 @@ public class DefaultStepsTest {
     }
 
     @Test(expected = AssertionError.class)
-    public  void testInputRandomNumSequenceNegative() {
+    public void testInputRandomNumSequenceNegative() {
         ds.inputRandomNumSequence("GoodButton", 4);
         assertThat(akitaScenario.getEnvironment()
                  .getPage("AkitaPageMock")
@@ -707,9 +749,18 @@ public class DefaultStepsTest {
     public void testSwitchToTheNextTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         dmbs.switchToTheNextTab();
-        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("RedirectionPage"));
+        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
         dmbs.switchToTheNextTab();
         Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
+    }
+
+    @Test
+    public void testSwitchToTheTabWithTitle() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
+        dmbs.checkPageTitle("Page with redirection");
+        dmbs.switchToTheTabWithTitle("Title");
+        dmbs.checkPageTitle("Title");
     }
 
     @Test
@@ -720,6 +771,17 @@ public class DefaultStepsTest {
     @Test(expected = AssertionError.class)
     public void testCheckPageTitleFailure() {
         dmbs.checkPageTitle("NoTitle");
+    }
+
+    @Test
+    public void testCheckPageTitlePositive() {
+        dmbs.checkPageTitle("titleFromProperty");
+    }
+
+    @Test
+    public void savePageTitleToVariablePositive() {
+        dmbs.savePageTitleToVariable("TitleVariable");
+        assertThat(akitaScenario.getVar("TitleVariable"), equalTo("Title"));
     }
 
     @Test
@@ -873,5 +935,13 @@ public class DefaultStepsTest {
     public void testAddItemWithValueToLocalStoragePositive() {
         dmbs.addItemWithValueToLocalStorage("key", "value");
         assertEquals(1L, dmbs.getLocalStorageLength());
+    }
+
+    @Test
+    public void testCloseCurrentTab() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
+        dmbs.closeCurrentTab();
+        dmbs.switchToTheTabWithTitle("Title");
     }
 }

@@ -23,7 +23,6 @@ import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -46,8 +45,7 @@ import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.codeborne.selenide.WebDriverRunner.url;
+import static com.codeborne.selenide.WebDriverRunner.*;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -191,7 +189,10 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().appeared();
+        if(isIE()) {
+            akitaScenario.getCurrentPage().ieAppeared();
+        }
+        else akitaScenario.getCurrentPage().appeared();
     }
 
     /**
@@ -201,7 +202,10 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
     public void loadPageFailed(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().disappeared();
+        if(isIE()){
+            akitaScenario.getCurrentPage().ieDisappeared();
+        }
+        else akitaScenario.getCurrentPage().disappeared();
     }
 
     /**
@@ -263,21 +267,6 @@ public class DefaultSteps {
      * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
-     * Deprecated
-     */
-    @Deprecated
-    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке из property файла \"([^\"]*)\"$")
-    public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
-        String address = loadProperty(urlOrName, resolveVars(urlOrName));
-        akitaScenario.write(" url = " + address);
-        open(address);
-        loadPage(pageName);
-    }
-
-    /**
-     * Выполняется переход по заданной ссылке.
-     * Шаг содержит проверку, что после перехода загружена заданная страница.
-     * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по ссылке \"([^\"]*)\"$")
     public void goToSelectedPageByLink(String pageName, String urlOrName) {
@@ -300,7 +289,10 @@ public class DefaultSteps {
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
-        akitaScenario.getPage(nameOfPage).disappeared();
+        if (isIE()){
+            akitaScenario.getPage(nameOfPage).ieDisappeared();
+        }
+        else akitaScenario.getPage(nameOfPage).disappeared();
     }
 
     /**
@@ -368,19 +360,6 @@ public class DefaultSteps {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
             akitaScenario.getCurrentPage().getAnyElementText(fieldName),
             isEmptyOrNullString());
-    }
-
-    /**
-     * Устанавливает размеры окна браузера
-     * Deprecated
-     */
-    @Deprecated
-    @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
-    public void setWindowSize(String widthRaw, String heightRaw) {
-        int width = Integer.valueOf(widthRaw);
-        int height = Integer.valueOf(heightRaw);
-        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
-        akitaScenario.write("Установлены размеры окна браузера: ширина " + widthRaw + " высота" + heightRaw);
     }
 
     /**
@@ -715,7 +694,7 @@ public class DefaultSteps {
      */
     @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
     public void findElement(String text) {
-        $(By.xpath("//*[text()='" + getPropertyOrStringVariableOrValue(text) + "']")).click();
+        $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(text)))).click();
     }
 
     /**
@@ -767,15 +746,6 @@ public class DefaultSteps {
         assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
             expectedFiles.length == 1);
         deleteFiles(expectedFiles);
-    }
-
-    /**
-     *  Скроллит экран до появления элемента. Полезно, если сайт длинный и элемент может быть не виден.
-     */
-    @Deprecated
-    @Тогда("^экран проскроллен до элемента \"([^\"]*)\"")
-    public void scrollToElement(String elementName) {
-        akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
     }
 
     /**
@@ -869,6 +839,22 @@ public class DefaultSteps {
         else lang = "en";
         String charSeq = getRandCharSequence(seqLength, lang);
         valueInput.setValue(charSeq);
+        akitaScenario.write("Строка случайных символов равна :" + charSeq);
+    }
+
+    /**
+     * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины и сохранение этого значения в переменную
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице) и сохранено в переменную \"([^\"]*)\"$")
+    public void setRandomCharSequenceAndSaveToVar(String elementName, int seqLength, String lang, String varName) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+
+        if (lang.equals("кириллице")) lang = "ru";
+        else lang = "en";
+        String charSeq = getRandCharSequence(seqLength, lang);
+        valueInput.setValue(charSeq);
+        akitaScenario.setVar(varName, charSeq);
         akitaScenario.write("Строка случайных символов равна :" + charSeq);
     }
 
@@ -996,7 +982,7 @@ public class DefaultSteps {
     }
 
     /*
-     * Проверка совпадения значения из переменной и значения и property
+     * Проверка совпадения значения из переменной и значения из property
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
@@ -1097,16 +1083,14 @@ public class DefaultSteps {
     }
 
     /**
-     * Возвращает нормализованный(без учета регистра) текст
+     * Возвращает локатор для поиска по нормализованному(без учета регистра) тексту
      */
-    private String getTranslateNormalizeSpaceText (String expectedText) {
+    public String getTranslateNormalizeSpaceText (String expectedText) {
         StringBuilder text = new StringBuilder();
         text.append("//*[contains(translate(normalize-space(text()), ");
-        text.append("'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
-        text.append(expectedText);
-        text.append("') or contains(translate(normalize-space(text()), ");
-        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '");
-        text.append(expectedText);
+        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', ");
+        text.append("'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
+        text.append(expectedText.toLowerCase());
         text.append("')]");
         return text.toString();
     }
