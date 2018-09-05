@@ -163,6 +163,24 @@ public class InputFieldStepsTest {
             equalTo(7));
     }
 
+
+    @Test
+    public void testSetRandomCharSequenceAndSaveToVarCyrillic() {
+        ifs.setRandomCharSequenceAndSaveToVar("NormalField", 4, "кириллице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField"),
+            equalTo(akitaScenario.getVar("test")));
+    }
+    @Test
+    public void testSetRandomCharSequenceAndSaveToVarLathin() {
+        ifs.setRandomCharSequenceAndSaveToVar("NormalField", 7, "латинице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField"),
+            equalTo(akitaScenario.getVar("test")));
+    }
+
     @Test
     public void testInputRandomNumSequencePositive() {
         ifs.inputRandomNumSequence("NormalField",4);

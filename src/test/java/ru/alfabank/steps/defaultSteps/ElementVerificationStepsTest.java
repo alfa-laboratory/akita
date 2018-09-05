@@ -27,13 +27,12 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
 
-import static com.codeborne.selenide.Selenide.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class ElementStepsTest {
+public class ElementVerificationStepsTest {
 
-    private static ElementSteps es;
+    private static ElementVerificationSteps evs;
     private static AkitaScenario akitaScenario;
 
     @BeforeClass
@@ -41,7 +40,7 @@ public class ElementStepsTest {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
-        es = new ElementSteps();
+        evs = new ElementVerificationSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
@@ -70,126 +69,89 @@ public class ElementStepsTest {
     @Test
     public void storeFieldValueInVariablePositive() {
         String varName = "mockId";
-        es.storeElementValueInVariable(varName, varName);
+        evs.storeElementValueInVariable(varName, varName);
         assertThat(akitaScenario.getVar(varName), equalTo("Serious testing page"));
     }
 
     @Test
-    public void clickOnElementPositive() {
-        es.clickOnElement("GoodButton");
-        assertThat(akitaScenario.getPage("AkitaPageMock").getElement("GoodButton").isEnabled(),
-            equalTo(false));
-    }
-
-    @Test
     public void elemIsPresentedOnPagePositive() {
-        es.elemIsPresentedOnPage("mockTagName");
+        evs.elemIsPresentedOnPage("mockTagName");
     }
 
     @Test
     public void compareFieldAndVariablePositive() {
         akitaScenario.setVar("test", "Serious testing page");
-        es.compareFieldAndVariable("mockTagName", "test");
+        evs.compareFieldAndVariable("mockTagName", "test");
     }
 
     @Test
     public void elementIsNotVisiblePositive() {
-        es.elementIsNotVisible("HiddenDiv");
+        evs.elementIsNotVisible("HiddenDiv");
     }
 
     @Test
     public void checkElemContainsAtrWithValuePositive() {
-        es.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
+        evs.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
     }
 
     @Test
     public void testFieldContainsInnerTextPositive() {
-        es.testFieldContainsInnerText("innerTextP", "inner text");
+        evs.testFieldContainsInnerText("innerTextP", "inner text");
     }
 
     @Test
     public void testActualValueContainsSubstringPositive() {
-        es.testActualValueContainsSubstring("TextField", "xt");
+        evs.testActualValueContainsSubstring("TextField", "xt");
     }
 
     @Test
     public void testActualValueContainsSubstringPositiveWithProps() {
-        es.testActualValueContainsSubstring("TextField", "textValueInProps");
-    }
-
-    @Test
-    public void buttonIsNotActivePositive() {
-        es.buttonIsNotActive("DisabledButton");
-    }
-
-    @Test
-    public void fieldIsDisablePositive() {
-        es.fieldIsDisable("DisabledField");
-    }
-
-    @Test
-    public void findElementPositive() {
-        es.findElement("LINK");
-        sleep(500);
-        assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
-            equalTo(akitaScenario.getVar("RedirectionPage")));
-    }
-
-    @Test
-    public void elementHoverTest() {
-        es.elementHover("NormalField");
+        evs.testActualValueContainsSubstring("TextField", "textValueInProps");
     }
 
     @Test
     public void clickableFieldTest() {
-        es.clickableField("SUPERBUTTON");
+        evs.clickableField("SUPERBUTTON");
     }
 
     @Test
     public void testButtonIsActiveAnotherPositive() {
-        es.clickableField("Link");
+        evs.clickableField("Link");
     }
 
     @Test(expected = AssertionError.class)
     public void testButtonIsActiveNegative() {
-        es.clickableField("Кнопка Подписать и отправить");
-    }
-
-    @Test
-    public void elementDisapperaredAndAppearedComplex() {
-        es.testElementAppeared("ul", 1);
-        es.clickOnElement("SUPERBUTTON");
-        es.elemDisappered("ul");
+        evs.clickableField("Кнопка Подписать и отправить");
     }
 
     @Test
     public void compareValInFieldAndFromStepTest() {
-        es.compareValInFieldAndFromStep("ul", "Serious testing page");
+        evs.compareValInFieldAndFromStep("ul", "Serious testing page");
     }
 
     @Test
     public void compareValInFieldAndFromStepTestWithProps() {
-        es.compareValInFieldAndFromStep("ul", "testingPageTextProps");
+        evs.compareValInFieldAndFromStep("ul", "testingPageTextProps");
     }
 
     @Test
     public void testCheckElemClassContainsExpectedValuePositive() {
-        es.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+        evs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
     }
 
     @Test(expected = AssertionError.class)
     public void testCheckElemClassContainsExpectedValueNegative() {
-        es.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+        evs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
     }
 
     @Test
     public void testCheckElemClassNotContainsExpectedValuePositive() {
-        es.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+        evs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
     }
 
     @Test(expected = AssertionError.class)
     public void testCheckElemClassNotContainsExpectedValueNegative() {
-        es.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+        evs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
     }
 
 }

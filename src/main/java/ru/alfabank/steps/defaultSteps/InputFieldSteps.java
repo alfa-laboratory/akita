@@ -35,17 +35,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertEquals;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 
 /**
  * Шаги для тестирования полей ввода, доступные по умолчанию в каждом новом проекте.
- *
- * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
- * Каждая страница, с которой предполагается взаимодействие, должна быть описана в соответствующем классе,
- * наследующем AkitaPage. Для каждого элемента следует задать имя на русском, через аннотацию @Name, чтобы искать
- * можно было именно по русскому описанию, а не по селектору. Селекторы следует хранить только в классе страницы,
- * не в степах, в степах - взаимодействие по русскому названию элемента.
  */
 
 @Slf4j
@@ -173,6 +166,21 @@ public class InputFieldSteps {
         else lang = "en";
         String charSeq = getRandCharSequence(seqLength, lang);
         valueInput.setValue(charSeq);
+        akitaScenario.write("Строка случайных символов равна :" + charSeq);
+    }
+
+    /**
+     * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины и сохранение этого значения в переменную
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице) и сохранено в переменную \"([^\"]*)\"$")
+    public void setRandomCharSequenceAndSaveToVar(String elementName, int seqLength, String lang, String varName) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+        if (lang.equals("кириллице")) lang = "ru";
+        else lang = "en";
+        String charSeq = getRandCharSequence(seqLength, lang);
+        valueInput.setValue(charSeq);
+        akitaScenario.setVar(varName, charSeq);
         akitaScenario.write("Строка случайных символов равна :" + charSeq);
     }
 

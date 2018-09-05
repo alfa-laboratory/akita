@@ -39,8 +39,9 @@ public class WebPageStepsTest {
 
     private static WebPageSteps wps;
     private static AkitaScenario akitaScenario;
-    private static ElementSteps es;
+    private static ElementVerificationSteps evs;
     private static DefaultManageBrowserSteps dmbs;
+    private static ElementInteractionSteps eis;
 
     @BeforeClass
     public static void setup() {
@@ -48,7 +49,8 @@ public class WebPageStepsTest {
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         wps = new WebPageSteps();
-        es = new ElementSteps();
+        evs = new ElementVerificationSteps();
+        eis = new ElementInteractionSteps();
         dmbs = new DefaultManageBrowserSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
@@ -299,12 +301,12 @@ public class WebPageStepsTest {
 
     @Test
     public void testScrollWhileElemWithTextNotFoundOnPagePositive() {
-        wps.scrollWhileElemWithTextNotFoundOnPage("Serious testing page");
+        eis.scrollWhileElemWithTextNotFoundOnPage("Serious testing page");
     }
 
     @Test(expected = AssertionError.class)
     public void testScrollWhileElemWithTextNotFoundOnPageNegative() {
-        wps.scrollWhileElemWithTextNotFoundOnPage("Not serious testing page");
+        eis.scrollWhileElemWithTextNotFoundOnPage("Not serious testing page");
     }
 
     @Test
@@ -332,7 +334,7 @@ public class WebPageStepsTest {
     @Test
     public void testTestScript() {
         wps.executeJsScript("HIDEnSHOW()");
-        es.elementIsNotVisible("ul");
+        evs.elementIsNotVisible("ul");
     }
 
 
@@ -340,7 +342,7 @@ public class WebPageStepsTest {
     public void testSwitchToTheNextTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         dmbs.switchToTheNextTab();
-        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("RedirectionPage"));
+        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
         dmbs.switchToTheNextTab();
         Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
     }
@@ -355,5 +357,33 @@ public class WebPageStepsTest {
         dmbs.checkPageTitle("NoTitle");
     }
 
+
+    @Test
+    public void testSwitchToTheTabWithTitle() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
+        dmbs.checkPageTitle("Page with redirection");
+        dmbs.switchToTheTabWithTitle("Title");
+        dmbs.checkPageTitle("Title");
+    }
+
+    @Test
+    public void testCheckPageTitlePositive() {
+        dmbs.checkPageTitle("titleFromProperty");
+    }
+
+    @Test
+    public void savePageTitleToVariablePositive() {
+        dmbs.savePageTitleToVariable("TitleVariable");
+        Assert.assertThat(akitaScenario.getVar("TitleVariable"), IsEqual.equalTo("Title"));
+    }
+
+    @Test
+    public void testCloseCurrentTab() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
+        dmbs.closeCurrentTab();
+        dmbs.switchToTheTabWithTitle("Title");
+    }
 
 }

@@ -17,14 +17,12 @@ package ru.alfabank.steps.defaultSteps;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
@@ -35,8 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.codeborne.selenide.WebDriverRunner.url;
+import static com.codeborne.selenide.WebDriverRunner.*;
 import static java.util.Objects.isNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -47,12 +44,6 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
  * Шаги для работы с вэб-страницей, переменными и property-файлами, доступные по умолчанию в каждом новом проекте.
- *
- * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
- * Каждая страница, с которой предполагается взаимодействие, должна быть описана в соответствующем классе,
- * наследующем AkitaPage. Для каждого элемента следует задать имя на русском, через аннотацию @Name, чтобы искать
- * можно было именно по русскому описанию, а не по селектору. Селекторы следует хранить только в классе страницы,
- * не в степах, в степах - взаимодействие по русскому названию элемента.
  */
 
 @Slf4j
@@ -67,10 +58,12 @@ public class WebPageSteps {
      * в течение WAITING_APPEAR_TIMEOUT, которое равно значению свойства "waitingAppearTimeout"
      * из application.properties. Если свойство не найдено, время таймаута равно 8 секундам
      */
-    @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().appeared();
+        if(isIE()) {
+            akitaScenario.getCurrentPage().ieAppeared();
+        }
+        else akitaScenario.getCurrentPage().appeared();
     }
 
     /**
@@ -80,7 +73,10 @@ public class WebPageSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
     public void loadPageFailed(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().disappeared();
+        if(isIE()){
+            akitaScenario.getCurrentPage().ieDisappeared();
+        }
+        else akitaScenario.getCurrentPage().disappeared();
     }
 
     /**
@@ -197,7 +193,10 @@ public class WebPageSteps {
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
-        akitaScenario.getPage(nameOfPage).disappeared();
+        if (isIE()){
+            akitaScenario.getPage(nameOfPage).ieDisappeared();
+        }
+        else akitaScenario.getPage(nameOfPage).disappeared();
     }
 
     /**
@@ -346,24 +345,6 @@ public class WebPageSteps {
     }
 
     /**
-     * Скроллит страницу вниз до появления элемента с текстом каждую секунду.
-     * Если достигнут футер страницы и элемент не найден - выбрасывается exception.
-     */
-    @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
-    public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
-        SelenideElement el = null;
-        do {
-            el = $(By.xpath(getTranslateNormalizeSpaceText(expectedValue)));
-            if (el.exists()) {
-                break;
-            }
-            executeJavaScript("return window.scrollBy(0, 250);");
-            sleep(1000);
-        } while (!atBottom());
-        assertThat("Элемент с текстом " + expectedValue + " не найден", el.isDisplayed());
-    }
-
-    /**
      * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
      * Скрипт можно передать как аргумент метода или значение из application.properties
      */
@@ -402,21 +383,6 @@ public class WebPageSteps {
         for (File file : filesToDelete) {
             file.delete();
         }
-    }
-
-    /**
-     * Возвращает нормализованный (без учета регистра) текст
-     */
-    private String getTranslateNormalizeSpaceText(String expectedText) {
-        StringBuilder text = new StringBuilder();
-        text.append("//*[contains(translate(normalize-space(text()), ");
-        text.append("'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
-        text.append(expectedText);
-        text.append("') or contains(translate(normalize-space(text()), ");
-        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '");
-        text.append(expectedText);
-        text.append("')]");
-        return text.toString();
     }
 
 

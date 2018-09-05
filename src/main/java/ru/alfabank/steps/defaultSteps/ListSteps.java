@@ -32,9 +32,7 @@ import java.util.regex.Pattern;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
@@ -43,12 +41,6 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
  * Шаги для тестирования списков элементов, доступные по умолчанию в каждом новом проекте.
- *
- * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
- * Каждая страница, с которой предполагается взаимодействие, должна быть описана в соответствующем классе,
- * наследующем AkitaPage. Для каждого элемента следует задать имя на русском, через аннотацию @Name, чтобы искать
- * можно было именно по русскому описанию, а не по селектору. Селекторы следует хранить только в классе страницы,
- * не в степах, в степах - взаимодействие по русскому названию элемента.
  */
 
 @Slf4j

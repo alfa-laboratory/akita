@@ -21,6 +21,7 @@ import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Cookie;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import ru.alfabank.steps.defaultSteps.WebPageSteps;
 
 import java.util.Set;
 
@@ -37,7 +38,7 @@ import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 @Slf4j
 public class DefaultManageBrowserSteps {
 
-    private DefaultSteps ds = new DefaultSteps();
+    private WebPageSteps wps = new WebPageSteps();
     private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
@@ -102,7 +103,7 @@ public class DefaultManageBrowserSteps {
      */
     @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
     public void checkPageTitle(String pageTitleName) {
-        pageTitleName = ds.getPropertyOrStringVariableOrValue(pageTitleName);
+        pageTitleName = wps.getPropertyOrStringVariableOrValue(pageTitleName);
         String currentTitle = getWebDriver().getTitle().trim();
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
                 pageTitleName, equalToIgnoringCase(currentTitle));

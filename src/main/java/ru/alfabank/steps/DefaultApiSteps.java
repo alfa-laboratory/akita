@@ -32,7 +32,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
 /**
  * Шаги для тестирования API, доступные по умолчанию в каждом новом проекте

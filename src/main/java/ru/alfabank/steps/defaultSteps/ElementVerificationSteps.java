@@ -1,65 +1,30 @@
-/**
- * Copyright 2017 Alfa Laboratory
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ru.alfabank.steps.defaultSteps;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.openqa.selenium.By;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static com.codeborne.selenide.Condition.not;
-import static com.codeborne.selenide.Selenide.$;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertTrue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
-
 /**
- * Шаги для тестирования элеменотв страницы, доступные по умолчанию в каждом новом проекте.
- *
- * В akitaScenario используется хранилище переменных. Для сохранения/изъятия переменных используются методы setVar/getVar
- * Каждая страница, с которой предполагается взаимодействие, должна быть описана в соответствующем классе,
- * наследующем AkitaPage. Для каждого элемента следует задать имя на русском, через аннотацию @Name, чтобы искать
- * можно было именно по русскому описанию, а не по селектору. Селекторы следует хранить только в классе страницы,
- * не в степах, в степах - взаимодействие по русскому названию элемента.
+ * Шаги для тестирования элементов страницы, доступные по умолчанию в каждом новом проекте.
  */
 
 @Slf4j
-public class ElementSteps {
+public class ElementVerificationSteps {
 
     private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
-
-    /**
-     * На странице происходит клик по заданному элементу
-     */
-    @И("^выполнено нажатие на (?:кнопку|поле|блок) \"([^\"]*)\"$")
-    public void clickOnElement(String elementName) {
-        akitaScenario.getCurrentPage().getElement(elementName).click();
-    }
 
     /**
      * Проверка появления элемента(не списка) на странице в течение DEFAULT_TIMEOUT.
@@ -113,15 +78,6 @@ public class ElementSteps {
     public void storeElementValueInVariable(String elementName, String variableName) {
         akitaScenario.setVar(variableName, akitaScenario.getCurrentPage().getAnyElementText(elementName));
         akitaScenario.write("Значение [" + akitaScenario.getCurrentPage().getAnyElementText(elementName) + "] сохранено в переменную [" + variableName + "]");
-    }
-
-    /**
-     * Выполняется наведение курсора на элемент
-     */
-    @Когда("^выполнен ховер на (?:поле|элемент) \"([^\"]*)\"$")
-    public void elementHover(String elementName) {
-        SelenideElement field = akitaScenario.getCurrentPage().getElement(elementName);
-        field.hover();
     }
 
     /**
@@ -214,32 +170,6 @@ public class ElementSteps {
         expectedValue = akitaScenario.getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Значение поля [%s] не равно ожидаемому [%s]", elementName, expectedValue), actualValue, equalTo(expectedValue));
-    }
-
-    /**
-     * Проверка, что кнопка/ссылка недоступна для нажатия
-     */
-    @Тогда("^(?:ссылка|кнопка) \"([^\"]*)\" недоступна для нажатия$")
-    public void buttonIsNotActive(String elementName) {
-        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
-        assertTrue(String.format("Элемент [%s] кликабелен", elementName), element.is(Condition.disabled));
-    }
-
-    /**
-     * Проверка, что поле нередактируемо
-     */
-    @Тогда("^(?:поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен) для редактирования$")
-    public void fieldIsDisable(String elementName) {
-        SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
-        assertTrue(String.format("Элемент [%s] доступен для редактирования", elementName), element.is(Condition.disabled));
-    }
-
-    /**
-     * Нажатие на элемент по его тексту (в приоритете: из property, из переменной сценария, значение аргумента)
-     */
-    @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
-    public void findElement(String text) {
-        $(By.xpath("//*[text()='" + akitaScenario.getPropertyOrStringVariableOrValue(text) + "']")).click();
     }
 
 }

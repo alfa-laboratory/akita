@@ -17,9 +17,7 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.hamcrest.core.IsEqual;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Cookie;
@@ -48,9 +46,9 @@ public class DefaultManageBrowserStepsTest {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        dmbs = new DefaultManageBrowserSteps();
         webDriver = mock(WebDriver.class);
         WebDriverRunner.setWebDriver(webDriver);
-        dmbs = new DefaultManageBrowserSteps();
         when(webDriver.manage()).thenReturn(mock(Options.class));
     }
 
