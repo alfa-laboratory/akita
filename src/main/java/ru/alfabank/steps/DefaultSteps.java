@@ -698,7 +698,7 @@ public class DefaultSteps {
      */
     @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
     public void findElement(String text) {
-        $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(text.toLowerCase())))).click();
+        $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(text)))).click();
     }
 
     /**
