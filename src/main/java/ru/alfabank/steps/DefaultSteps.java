@@ -951,7 +951,7 @@ public class DefaultSteps {
      *  Производится проверка соответствия числа элементов списка значению из property файла, из переменной сценария или указанному в шаге
      */
     @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное значению из переменной \"([^\"]*)\"")
-    public void listContainsNumberFromVariable(String listName, String quantity) throws ParseException {
+    public void listContainsNumberFromVariable(String listName, String quantity) {
         int numberOfElements = getCounterFromString(getPropertyOrStringVariableOrValue(quantity));
         listContainsNumberOfElements(listName, numberOfElements);
     }

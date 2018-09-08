@@ -845,28 +845,28 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() throws ParseException {
+    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
         ds.listContainsNumberFromVariable("List", "3");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() throws ParseException {
+    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
         akitaScenario.setVar("variable", "3");
         ds.listContainsNumberFromVariable("List", "variable");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() throws ParseException {
+    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
         ds.listContainsNumberFromVariable("List", "var3");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() throws ParseException {
+    public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() {
         ds.listContainsNumberFromVariable("List", "Проверка комплаенса 3");
     }
 
     @Test(expected = AssertionError.class)
-    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() throws ParseException {
+    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
         ds.listContainsNumberFromVariable("List", "4");
     }
 
