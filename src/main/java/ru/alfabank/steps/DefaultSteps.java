@@ -23,7 +23,6 @@ import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -35,19 +34,22 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.codeborne.selenide.WebDriverRunner.url;
+import static com.codeborne.selenide.WebDriverRunner.*;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -191,7 +193,10 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().appeared();
+        if(isIE()) {
+            akitaScenario.getCurrentPage().ieAppeared();
+        }
+        else akitaScenario.getCurrentPage().appeared();
     }
 
     /**
@@ -201,7 +206,10 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
     public void loadPageFailed(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        akitaScenario.getCurrentPage().disappeared();
+        if(isIE()){
+            akitaScenario.getCurrentPage().ieDisappeared();
+        }
+        else akitaScenario.getCurrentPage().disappeared();
     }
 
     /**
@@ -218,8 +226,8 @@ public class DefaultSteps {
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compareTwoVariables(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = removeSpacesFromValue(akitaScenario.getVar(firstVariableName).toString());
-        String secondValueToCompare = removeSpacesFromValue(akitaScenario.getVar(secondVariableName).toString());
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString().trim();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString().trim();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
             firstValueToCompare, equalTo(secondValueToCompare));
     }
@@ -229,8 +237,8 @@ public class DefaultSteps {
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
     public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = removeSpacesFromValue(akitaScenario.getVar(firstVariableName).toString());
-        String secondValueToCompare = removeSpacesFromValue(akitaScenario.getVar(secondVariableName).toString());
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString().trim();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString().trim();
         assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
                 firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
@@ -263,21 +271,6 @@ public class DefaultSteps {
      * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
-     * Deprecated
-     */
-    @Deprecated
-    @И("^совершен переход на страницу \"([^\"]*)\" по ссылке из property файла \"([^\"]*)\"$")
-    public void goToSelectedPageByLinkFromPropertyFile(String pageName, String urlOrName) {
-        String address = loadProperty(urlOrName, resolveVars(urlOrName));
-        akitaScenario.write(" url = " + address);
-        open(address);
-        loadPage(pageName);
-    }
-
-    /**
-     * Выполняется переход по заданной ссылке.
-     * Шаг содержит проверку, что после перехода загружена заданная страница.
-     * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по ссылке \"([^\"]*)\"$")
     public void goToSelectedPageByLink(String pageName, String urlOrName) {
@@ -300,7 +293,10 @@ public class DefaultSteps {
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
-        akitaScenario.getPage(nameOfPage).disappeared();
+        if (isIE()){
+            akitaScenario.getPage(nameOfPage).ieDisappeared();
+        }
+        else akitaScenario.getPage(nameOfPage).disappeared();
     }
 
     /**
@@ -368,19 +364,6 @@ public class DefaultSteps {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
             akitaScenario.getCurrentPage().getAnyElementText(fieldName),
             isEmptyOrNullString());
-    }
-
-    /**
-     * Устанавливает размеры окна браузера
-     * Deprecated
-     */
-    @Deprecated
-    @И("^установить разрешение экрана \"([^\"]*)\" ширина и \"([^\"]*)\" высота$")
-    public void setWindowSize(String widthRaw, String heightRaw) {
-        int width = Integer.valueOf(widthRaw);
-        int height = Integer.valueOf(heightRaw);
-        WebDriverRunner.getWebDriver().manage().window().setSize(new Dimension(width, height));
-        akitaScenario.write("Установлены размеры окна браузера: ширина " + widthRaw + " высота" + heightRaw);
     }
 
     /**
@@ -715,7 +698,7 @@ public class DefaultSteps {
      */
     @И("^выполнено нажатие на элемент с текстом \"(.*)\"$")
     public void findElement(String text) {
-        $(By.xpath("//*[text()='" + getPropertyOrStringVariableOrValue(text) + "']")).click();
+        $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(text.toLowerCase())))).click();
     }
 
     /**
@@ -767,15 +750,6 @@ public class DefaultSteps {
         assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
             expectedFiles.length == 1);
         deleteFiles(expectedFiles);
-    }
-
-    /**
-     *  Скроллит экран до появления элемента. Полезно, если сайт длинный и элемент может быть не виден.
-     */
-    @Deprecated
-    @Тогда("^экран проскроллен до элемента \"([^\"]*)\"")
-    public void scrollToElement(String elementName) {
-        akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
     }
 
     /**
@@ -892,6 +866,22 @@ public class DefaultSteps {
     }
 
     /**
+     * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины и сохранение этого значения в переменную
+     */
+    @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице) и сохранено в переменную \"([^\"]*)\"$")
+    public void setRandomCharSequenceAndSaveToVar(String elementName, int seqLength, String lang, String varName) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
+        cleanField(elementName);
+
+        if (lang.equals("кириллице")) lang = "ru";
+        else lang = "en";
+        String charSeq = getRandCharSequence(seqLength, lang);
+        valueInput.setValue(charSeq);
+        akitaScenario.setVar(varName, charSeq);
+        akitaScenario.write("Строка случайных символов равна :" + charSeq);
+    }
+
+    /**
      * Ввод в поле случайной последовательности цифр задаваемой длины
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) (?:цифр|цифры)$")
@@ -961,7 +951,7 @@ public class DefaultSteps {
      *  Производится проверка соответствия числа элементов списка значению из property файла, из переменной сценария или указанному в шаге
      */
     @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное значению из переменной \"([^\"]*)\"")
-    public void listContainsNumberFromVariable(String listName, String quantity) {
+    public void listContainsNumberFromVariable(String listName, String quantity) throws ParseException {
         int numberOfElements = getCounterFromString(getPropertyOrStringVariableOrValue(quantity));
         listContainsNumberOfElements(listName, numberOfElements);
     }
@@ -979,28 +969,31 @@ public class DefaultSteps {
     }
 
     /**
-     * Ввод в поле случайной последовательности из целых и дробных цифр задаваемой длины с последующим сохранением этого значения в переменную
+     * Ввод в поле случайного дробного числа в заданном диапазоне и формате с последующим сохранением этого значения в переменную
+     * Пример формата ввода: ###.##
      */
-    @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) целых, (\\d+) дробных цифр и они сохранены в переменную \"([^\"]*)\"$")
-    public void setRandomNumSequenceWithIntAndFract(String fieldName, int seqIntLength, int seqFractLength , String saveToVariableName) {
+    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и оно сохранено в переменную \"([^\"]*)\"$")
+    public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         cleanField(fieldName);
-        String numIntSeq = RandomStringUtils.randomNumeric(seqIntLength);
-        String numFractSeq = RandomStringUtils.randomNumeric(seqFractLength);
-        valueInput.setValue(numIntSeq + "," + numFractSeq);
-        akitaScenario.setVar(saveToVariableName, numIntSeq + "," + numFractSeq);
+        double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
+        valueInput.setValue(new DecimalFormat(outputFormat).format(finalValue));
+        akitaScenario.setVar(saveToVariableName, new DecimalFormat(outputFormat).format(finalValue));
+        akitaScenario.write(String.format("В поле [%s] введено значение [%s] и сохранено в переменную [%s]",
+                fieldName, new DecimalFormat(outputFormat).format(finalValue), saveToVariableName));
     }
 
     /**
-     * Ввод в поле случайной последовательности из целых и дробных цифр задаваемой длины
+     * Ввод в поле случайного дробного числа в заданном диапазоне и формате
+     * Пример формата ввода: ###.##
      */
-    @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) целых и (\\d+) дробных цифр$")
-    public void inputRandomNumSequenceWithIntAndFract(String fieldName, int seqIntLength, int seqFractLength) {
+    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\"$")
+    public void inputRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         cleanField(fieldName);
-        String numIntSeq = RandomStringUtils.randomNumeric(seqIntLength);
-        String numFractSeq = RandomStringUtils.randomNumeric(seqFractLength);
-        valueInput.setValue(numIntSeq + "," + numFractSeq);
+        double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
+        valueInput.setValue(new DecimalFormat(outputFormat).format(finalValue));
+        akitaScenario.write(String.format("В поле [%s] введено значение [%s]", fieldName, new DecimalFormat(outputFormat).format(finalValue)));
     }
 
     /**
@@ -1040,7 +1033,7 @@ public class DefaultSteps {
     }
 
     /*
-     * Проверка совпадения значения из переменной и значения и property
+     * Проверка совпадения значения из переменной и значения из property
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
@@ -1141,16 +1134,14 @@ public class DefaultSteps {
     }
 
     /**
-     * Возвращает нормализованный(без учета регистра) текст
+     * Возвращает локатор для поиска по нормализованному(без учета регистра) тексту
      */
-    private String getTranslateNormalizeSpaceText (String expectedText) {
+    public String getTranslateNormalizeSpaceText (String expectedText) {
         StringBuilder text = new StringBuilder();
         text.append("//*[contains(translate(normalize-space(text()), ");
-        text.append("'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', 'абвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
-        text.append(expectedText);
-        text.append("') or contains(translate(normalize-space(text()), ");
-        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '");
-        text.append(expectedText);
+        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', ");
+        text.append("'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
+        text.append(expectedText.toLowerCase());
         text.append("')]");
         return text.toString();
     }

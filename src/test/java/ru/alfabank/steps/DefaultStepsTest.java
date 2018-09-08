@@ -29,6 +29,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,8 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
 
 public class DefaultStepsTest {
@@ -140,17 +143,6 @@ public class DefaultStepsTest {
         akitaScenario.setVar(number1Name, number1Value);
 
         String number2Name = "number2", number2Value = "1234567890.97531";
-        akitaScenario.setVar(number2Name, number2Value);
-
-        ds.compareTwoVariables(number1Name, number2Name);
-    }
-
-    @Test
-    public void compareTwoAccountNumbers() {
-        String number1Name = "number1", number1Value = "40802 840 6 0000 0000032";
-        akitaScenario.setVar(number1Name, number1Value);
-
-        String number2Name = "number2", number2Value = "40802840600000000032";
         akitaScenario.setVar(number2Name, number2Value);
 
         ds.compareTwoVariables(number1Name, number2Name);
@@ -403,7 +395,7 @@ public class DefaultStepsTest {
 
     @Test
     public void openReadOnlyFormPositive() {
-        ds.goToSelectedPageByLinkFromPropertyFile("RedirectionPage",
+        ds.goToSelectedPageByLink("RedirectionPage",
             akitaScenario.getVar("RedirectionPage").toString());
         ds.openReadOnlyForm();
     }
@@ -432,6 +424,30 @@ public class DefaultStepsTest {
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
             equalTo(akitaScenario.getVar("RedirectionPage")));
+    }
+
+    @Test
+    public void findElementMixedLanguagePositive() {
+        ds.findElement("EnGliSh? РуСсКий.");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
+
+    @Test
+    public void findElementMixedLanguagePartialRuPositive() {
+        ds.findElement("РуСсКий.");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
+    }
+
+    @Test
+    public void findElementMixedLanguagePartialEnPositive() {
+        ds.findElement("EnGliSh");
+        sleep(500);
+        assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
+                .isEnabled(), is(false));
     }
 
     @Test
@@ -698,6 +714,24 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testSetRandomCharSequenceAndSaveToVarCyrillic() {
+        ds.setRandomCharSequenceAndSaveToVar("NormalField", 4, "кириллице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
+    public void testSetRandomCharSequenceAndSaveToVarLathin() {
+        ds.setRandomCharSequenceAndSaveToVar("NormalField", 7, "латинице", "test");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField"),
+                equalTo(akitaScenario.getVar("test")));
+    }
+
+    @Test
     public void testInputRandomNumSequencePositive() {
         ds.inputRandomNumSequence("NormalField",4);
         assertThat(akitaScenario.getEnvironment()
@@ -707,7 +741,7 @@ public class DefaultStepsTest {
     }
 
     @Test(expected = AssertionError.class)
-    public  void testInputRandomNumSequenceNegative() {
+    public void testInputRandomNumSequenceNegative() {
         ds.inputRandomNumSequence("GoodButton", 4);
         assertThat(akitaScenario.getEnvironment()
                  .getPage("AkitaPageMock")
@@ -739,9 +773,18 @@ public class DefaultStepsTest {
     public void testSwitchToTheNextTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         dmbs.switchToTheNextTab();
-        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("RedirectionPage"));
+        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
         dmbs.switchToTheNextTab();
         Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
+    }
+
+    @Test
+    public void testSwitchToTheTabWithTitle() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
+        dmbs.checkPageTitle("Page with redirection");
+        dmbs.switchToTheTabWithTitle("Title");
+        dmbs.checkPageTitle("Title");
     }
 
     @Test
@@ -752,6 +795,17 @@ public class DefaultStepsTest {
     @Test(expected = AssertionError.class)
     public void testCheckPageTitleFailure() {
         dmbs.checkPageTitle("NoTitle");
+    }
+
+    @Test
+    public void testCheckPageTitlePositive() {
+        dmbs.checkPageTitle("titleFromProperty");
+    }
+
+    @Test
+    public void savePageTitleToVariablePositive() {
+        dmbs.savePageTitleToVariable("TitleVariable");
+        assertThat(akitaScenario.getVar("TitleVariable"), equalTo("Title"));
     }
 
     @Test
@@ -791,28 +845,28 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
+    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() throws ParseException {
         ds.listContainsNumberFromVariable("List", "3");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
+    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() throws ParseException {
         akitaScenario.setVar("variable", "3");
         ds.listContainsNumberFromVariable("List", "variable");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
+    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() throws ParseException {
         ds.listContainsNumberFromVariable("List", "var3");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() {
+    public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() throws ParseException {
         ds.listContainsNumberFromVariable("List", "Проверка комплаенса 3");
     }
 
     @Test(expected = AssertionError.class)
-    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
+    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() throws ParseException {
         ds.listContainsNumberFromVariable("List", "4");
     }
 
@@ -900,40 +954,69 @@ public class DefaultStepsTest {
 
     @Test
     public void testInputRandomNumSequenceWithIntAndFractPositive() {
-        ds.inputRandomNumSequenceWithIntAndFract("NormalField", 4, 2);
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", 10, 99, ".#");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+                equalTo(4));
+    }
+
+    @Test
+    public void testInputRandomNumSequenceWithIntAndFractMorePositive() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", -9999, -1000, "####");
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
                         .getAnyElementText("NormalField").length(),
-                equalTo(7));
+                equalTo(5));
     }
 
-    @Test(expected = AssertionError.class)
-    public  void testInputRandomNumSequenceWithIntAndFractNegative() {
-        ds.inputRandomNumSequenceWithIntAndFract("GoodButton", 4, 2);
-        assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("GoodButton").length(),
-                equalTo(7));
+    @Test(expected = IllegalArgumentException.class)
+    public void testInputRandomNumSequenceWithIntAndFractNegative() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", -1, -9, "####");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInputRandomNumSequenceWithIntAndFractMoreNegative() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", 10, 20, "####,");
     }
 
     @Test
     public void testSetRandomNumSequenceWithIntAndFractPositive() {
-        ds.setRandomNumSequenceWithIntAndFract("NormalField", 3, 3, "test");
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 100, 999, "###.###", "test");
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
-                        .getAnyElementText("NormalField"),
-                equalTo(akitaScenario.getVar("test")));
+                        .getAnyElementText("NormalField").length(),
+                equalTo(7));
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("NormalField").length(),
+                equalTo(akitaScenario.getVar("test").toString().length()));
     }
 
     @Test
-    public void testSetRandomNumSequenceWithIntAndFractOverrideVariable() {
-        akitaScenario.setVar("test", "Lathin");
-        akitaScenario.write(String.format("11111111111 [%s]", akitaScenario.getVar("test")));
-        ds.setRandomNumSequenceWithIntAndFract("NormalField", 2, 2, "test");
+    public void testSetRandomNumSequenceWithIntAndFractMorePositive() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", -99, 99, "###,###", "test");
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
-                        .getAnyElementText("NormalField"),
-                equalTo(akitaScenario.getVar("test")));
+                        .getAnyElementText("NormalField").length(),
+                equalTo(akitaScenario.getVar("test").toString().length()));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetRandomNumSequenceWithIntAndFractNegative() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 9999, 1000, "####", "test");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetRandomNumSequenceWithIntAndFractMoreNegative() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 5, 10, "####,", "test");
+    }
+
+    @Test
+    public void testCloseCurrentTab() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        dmbs.switchToTheTabWithTitle("Page with redirection");
+        dmbs.closeCurrentTab();
+        dmbs.switchToTheTabWithTitle("Title");
+    }
 }
