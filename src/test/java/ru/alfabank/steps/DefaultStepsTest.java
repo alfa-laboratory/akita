@@ -288,7 +288,7 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testCheckIfListConsistsOfTableElementsPositive() {
+    public void checkIfListConsistsOfTableElementsTest() {
         ArrayList<String> types = new ArrayList<>();
         types.add("One");
         types.add("Two");
@@ -297,12 +297,12 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testCheckIfSelectedListElementMatchesValuePositive() {
+    public void checkIfSelectedListElementMatchesValueTest() {
         ds.checkIfSelectedListElementMatchesValue("List", "One");
     }
 
     @Test
-    public void testCheckIfSelectedListElementMatchesValuePositiveWithProps() {
+    public void checkIfSelectedListElementMatchesValueWithProps() {
         ds.checkIfSelectedListElementMatchesValue("List", "oneValueInProps");
     }
 
@@ -342,7 +342,7 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testCheckElemContainsAtrWithValuePositive() {
+    public void checkElemContainsAtrWithValuePositive() {
         ds.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
     }
 
@@ -362,7 +362,7 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testButtonIsNotActivePositive() {
+    public void buttonIsNotActivePositive() {
         ds.buttonIsNotActive("DisabledButton");
     }
 
@@ -372,7 +372,7 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testFieldIsDisablePositive() {
+    public void fieldIsDisablePositive() {
         ds.fieldIsDisable("DisabledField");
     }
 
@@ -518,14 +518,14 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testElementDisapperaredAndAppearedComplex() {
+    public void elementDisapperaredAndAppearedComplex() {
         ds.testElementAppeared("ul", 1);
         ds.clickOnElement("SUPERBUTTON");
         ds.elemDisappered("ul");
     }
 
     @Test
-    public void goToUrlPositive() {
+    public void goToUrl() {
         ds.goToUrl((String) akitaScenario.getVar("RedirectionPage"));
     }
 
@@ -627,7 +627,7 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void checkIfListInnerTextConsistsOfTableElementsPositive() {
+    public void checkIfListInnerTextConsistsOfTableElements() {
         ArrayList<String> types = new ArrayList<>();
         types.add("One 1");
         types.add("Two 2");
