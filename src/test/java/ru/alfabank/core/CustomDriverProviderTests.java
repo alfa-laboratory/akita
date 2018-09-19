@@ -15,6 +15,7 @@
  */
 package ru.alfabank.core;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -35,6 +36,7 @@ public class CustomDriverProviderTests {
         currentDriver.quit();
     }
 
+    @Ignore
     @Test
     public void createFirefoxDriverTest() {
         System.setProperty("browser", "firefox");
