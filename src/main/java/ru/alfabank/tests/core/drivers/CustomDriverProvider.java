@@ -180,7 +180,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Chrome Driver---------------------");
         ChromeOptions chromeOptions = !options[0].equals("") ? new ChromeOptions().addArguments(options) : new ChromeOptions();
         chromeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
-        chromeOptions.setHeadless(loadSystemPropertyOrDefault(HEADLESS, false));
+        chromeOptions.setHeadless(getHeadless());
         chromeOptions.merge(capabilities);
         return chromeOptions;
     }
@@ -193,8 +193,8 @@ public class CustomDriverProvider implements WebDriverProvider {
     private FirefoxOptions getFirefoxDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------Firefox Driver---------------------");
         FirefoxOptions firefoxOptions = !options[0].equals("") ? new FirefoxOptions().addArguments(options) : new FirefoxOptions();
-        firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
-        firefoxOptions.setHeadless(loadSystemPropertyOrDefault(HEADLESS, false));
+        capabilities.setVersion(loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        firefoxOptions.setHeadless(getHeadless());
         firefoxOptions.merge(capabilities);
         return firefoxOptions;
     }
@@ -332,4 +332,17 @@ public class CustomDriverProvider implements WebDriverProvider {
         return new Dimension(loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
                 loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
     }
+
+    /**
+     * Читает значение параметра headless из application.properties
+     * и selenide.headless из системных пропертей
+     * @return значение параметра headless или false, если он отсутствует
+     */
+    private Boolean getHeadless() {
+        Boolean isHeadlessApp = loadSystemPropertyOrDefault(HEADLESS, false);
+        Boolean isHeadlessSys = Boolean.parseBoolean(System.getProperty("selenide." + HEADLESS, "false"));
+        return isHeadlessApp || isHeadlessSys;
+    }
+
+
 }
