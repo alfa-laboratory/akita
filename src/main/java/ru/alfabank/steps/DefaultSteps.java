@@ -964,14 +964,14 @@ public class DefaultSteps {
         }
 
     /**
-     *  Скроллит страницу вниз до появления элемента с текстом каждую секунду.
+     *  Скроллит страницу вниз до появления элемента с текстом из property файла, из переменной сценария или указанному в шаге каждую секунду.
      *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */
     @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
         do {
-            el = $(By.xpath(getTranslateNormalizeSpaceText(expectedValue)));
+            el = $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(expectedValue))));
             if (el.exists()) {
                 break;
             }
