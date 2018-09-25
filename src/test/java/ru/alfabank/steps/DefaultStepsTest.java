@@ -529,11 +529,6 @@ public class DefaultStepsTest {
         ds.goToUrl((String) akitaScenario.getVar("RedirectionPage"));
     }
 
-    @Test(expected = WebDriverException.class)
-    public void goToUrlNegative() {
-        ds.goToUrl("null");
-    }
-
     @Test
     public void compareValInFieldAndFromStepTest() {
         ds.compareValInFieldAndFromStep("ul", "Serious testing page");
