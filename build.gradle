@@ -53,7 +53,7 @@ targetCompatibility = 1.8
 
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '4.14.1'
+    selenideVersion = '4.12.3'
 }
 
 dependencies {
@@ -70,9 +70,9 @@ dependencies {
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
 
-    testCompile "org.mockito:mockito-core:2.13.0"
-    testCompile "org.mockito:mockito-inline:2.13.0"
-    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
+    testCompile "org.mockito:mockito-core:2.19.0"
+    testCompile "org.mockito:mockito-inline:2.19.0"
+    testCompile "com.github.tomakehurst:wiremock:2.18.0"
 }
 
 compileJava.options.encoding = 'UTF-8'

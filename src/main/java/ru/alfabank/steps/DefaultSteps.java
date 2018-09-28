@@ -990,6 +990,18 @@ public class DefaultSteps {
                 (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
     }
 
+    /*
+     * Выполняется нажатие на кнопку и подгружается указанный файл
+     * Селектор кнопки должны быть строго на input элемента
+     * Можно указать путь до файла. Например, src/test/resources/example.pdf
+     */
+    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
+    public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
+        String file = loadValueFromFileOrPropertyOrDefault(fileName);
+        File attachmentFile = new File(file);
+        akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
+    }
+
     /**
      * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
      * если и оно отсутствует, то возвращает значение переданной на вход переменной
