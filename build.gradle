@@ -5,15 +5,15 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.2"
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
 
-        classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
-        classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
-        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.3.0'
-        classpath 'com.netflix.nebula:nebula-publishing-plugin:4.9.1'
+        classpath 'com.netflix.nebula:nebula-release-plugin:8.0.1'
+        classpath 'com.netflix.nebula:gradle-info-plugin:4.0.2'
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:4.0.1'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:9.0.2'
     }
 }
 
@@ -140,6 +140,7 @@ bintrayUpload.onlyIf {
   //  !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
 }
 
+enableFeaturePreview('STABLE_PUBLISHING')
 
 jacocoTestReport {
     reports {
