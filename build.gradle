@@ -47,7 +47,6 @@ apply plugin: 'nebula.javadoc-jar'
 group = 'ru.alfabank.tests'
 
 description = """light testing framework Akita"""
-version = '3.5.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
