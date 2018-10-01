@@ -5,15 +5,15 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.2"
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
 
-        classpath 'com.netflix.nebula:nebula-release-plugin:8.0.1'
-        classpath 'com.netflix.nebula:gradle-info-plugin:4.0.2'
-        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:4.0.1'
-        classpath 'com.netflix.nebula:nebula-publishing-plugin:9.0.2'
+        classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
+        classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.3.0'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:4.9.1'
     }
 }
 
@@ -45,7 +45,6 @@ apply plugin: 'nebula.source-jar'
 apply plugin: 'nebula.javadoc-jar'
 
 group = 'ru.alfabank.tests'
-version = '3.5.2'
 
 description = """light testing framework Akita"""
 
@@ -54,7 +53,7 @@ targetCompatibility = 1.8
 
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '4.12.3'
+    selenideVersion = '4.12.1'
 }
 
 dependencies {
@@ -66,14 +65,14 @@ dependencies {
     compile group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
     compile group: 'io.cucumber', name: 'cucumber-core', version: cucumberVersion
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
-    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.2'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
 
-    testCompile "org.mockito:mockito-core:2.19.0"
-    testCompile "org.mockito:mockito-inline:2.19.0"
-    testCompile "com.github.tomakehurst:wiremock:2.18.0"
+    testCompile "org.mockito:mockito-core:2.13.0"
+    testCompile "org.mockito:mockito-inline:2.13.0"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -104,7 +103,7 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-    publications = ['nebula']
+    publications = ['maven']
     dryRun = false
     publish = true
     pkg {
@@ -129,7 +128,7 @@ bintray {
 
 test {
     maxParallelForks = 1
-    ignoreFailures = true
+    ignoreFailures = false
 
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=chrome"
@@ -139,6 +138,7 @@ test {
 bintrayUpload.onlyIf {
     !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
 }
+
 
 jacocoTestReport {
     reports {
@@ -150,6 +150,6 @@ jacocoTestReport {
 
 license {
     header rootProject.file('HEADER')
-    exclude("body.json")
+    exclude ("body.json")
     strictCheck false
 }
