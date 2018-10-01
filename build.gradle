@@ -140,8 +140,6 @@ bintrayUpload.onlyIf {
   //  !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
 }
 
-enableFeaturePreview('STABLE_PUBLISHING')
-
 jacocoTestReport {
     reports {
         xml.enabled true
