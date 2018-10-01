@@ -104,7 +104,7 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-    publications = ['maven']
+    publications = ['nebula']
     dryRun = false
     publish = true
     pkg {
