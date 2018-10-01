@@ -149,6 +149,6 @@ jacocoTestReport {
 
 license {
     header rootProject.file('HEADER')
-    exclude ("body.json")
+    exclude("body.json")
     strictCheck false
 }
