@@ -45,9 +45,9 @@ apply plugin: 'nebula.source-jar'
 apply plugin: 'nebula.javadoc-jar'
 
 group = 'ru.alfabank.tests'
+version = '3.5.2'
 
 description = """light testing framework Akita"""
-version = '3.5.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -120,8 +120,8 @@ bintray {
         publicDownloadNumbers = true
         attributes = [:]
         version {
-            name = '3.5.2'
-            vcsTag = '3.5.2'
+            name = project.version
+            vcsTag = project.version
             attributes = [:]
         }
     }
@@ -137,7 +137,7 @@ test {
 }
 
 bintrayUpload.onlyIf {
-    //  !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
+    !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
 }
 
 jacocoTestReport {
