@@ -45,6 +45,7 @@ apply plugin: 'nebula.source-jar'
 apply plugin: 'nebula.javadoc-jar'
 
 group = 'ru.alfabank.tests'
+version = '3.5.2'
 
 description = """light testing framework Akita"""
 
@@ -53,7 +54,7 @@ targetCompatibility = 1.8
 
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '4.12.1'
+    selenideVersion = '4.11.4'
 }
 
 dependencies {
@@ -103,7 +104,7 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-    publications = ['maven']
+    publications = ['nebula']
     dryRun = false
     publish = true
     pkg {
@@ -128,7 +129,7 @@ bintray {
 
 test {
     maxParallelForks = 1
-    ignoreFailures = false
+    ignoreFailures = true
 
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=chrome"
