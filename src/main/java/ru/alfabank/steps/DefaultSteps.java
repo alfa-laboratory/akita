@@ -964,14 +964,14 @@ public class DefaultSteps {
         }
 
     /**
-     *  Скроллит страницу вниз до появления элемента с текстом каждую секунду.
+     *  Скроллит страницу вниз до появления элемента с текстом из property файла, из переменной сценария или указанному в шаге каждую секунду.
      *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */
     @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
         do {
-            el = $(By.xpath(getTranslateNormalizeSpaceText(expectedValue)));
+            el = $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(expectedValue))));
             if (el.exists()) {
                 break;
             }
@@ -988,6 +988,18 @@ public class DefaultSteps {
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
                 (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
+    }
+
+    /*
+     * Выполняется нажатие на кнопку и подгружается указанный файл
+     * Селектор кнопки должны быть строго на input элемента
+     * Можно указать путь до файла. Например, src/test/resources/example.pdf
+     */
+    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
+    public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
+        String file = loadValueFromFileOrPropertyOrDefault(fileName);
+        File attachmentFile = new File(file);
+        akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
     }
 
     /**

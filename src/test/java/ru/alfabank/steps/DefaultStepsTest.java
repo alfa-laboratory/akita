@@ -22,6 +22,7 @@ import org.hamcrest.core.IsEqual;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebDriverException;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -366,9 +367,19 @@ public class DefaultStepsTest {
         ds.buttonIsNotActive("DisabledButton");
     }
 
+    @Test(expected = AssertionError.class)
+    public void testButtonIsNotActiveNegative() {
+        ds.buttonIsNotActive("Войти");
+    }
+
     @Test
     public void fieldIsDisablePositive() {
         ds.fieldIsDisable("DisabledField");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testFieldIsDisableNegative() {
+        ds.fieldIsDisable("TextField");
     }
 
     @Test
@@ -620,6 +631,15 @@ public class DefaultStepsTest {
         ds.checkIfListInnerTextConsistsOfTableElements("List3", types);
     }
 
+    @Test(expected = AssertionError.class)
+    public void checkIfListInnerTextConsistsOfTableElementsNegative() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("One 1");
+        types.add("Two 2");
+        types.add("Null");
+        ds.checkIfListInnerTextConsistsOfTableElements("List3", types);
+    }
+
     @Test()
     public void testListInnerTextCorrespondsToListFromVariable() {
         ArrayList<String> arrayList = new ArrayList<>();
@@ -637,6 +657,16 @@ public class DefaultStepsTest {
         arrayList.add("Two 2");
         arrayList.add("Three 3");
         arrayList.add("One 1");
+        akitaScenario.setVar("qwerty", arrayList);
+        ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testListInnerTextCorrespondsToListFromVariableNegative() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("One 1");
+        arrayList.add("Two 2");
+        arrayList.add("Null");
         akitaScenario.setVar("qwerty", arrayList);
         ds.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
     }
@@ -883,7 +913,7 @@ public class DefaultStepsTest {
 
     @Test
     public void testCheckIfValueFromVariableEqualPropertyVariablePositive(){
-        akitaScenario.setVar("timeout","60000");
+        akitaScenario.setVar("timeout","1000");
         ds.checkIfValueFromVariableEqualPropertyVariable("timeout","waitingAppearTimeout");
     }
 
@@ -935,6 +965,12 @@ public class DefaultStepsTest {
     public void testAddItemWithValueToLocalStoragePositive() {
         dmbs.addItemWithValueToLocalStorage("key", "value");
         assertEquals(1L, dmbs.getLocalStorageLength());
+        dmbs.clearLocalStorage();
+    }
+
+    @Test
+    public void testClickOnButtonAndUploadFilePositive() {
+        ds.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "src/test/resources/example.pdf");
     }
 
     @Test
