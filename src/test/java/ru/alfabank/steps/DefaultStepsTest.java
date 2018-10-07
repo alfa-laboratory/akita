@@ -612,8 +612,6 @@ public class DefaultStepsTest {
                 equalTo("Two"), equalTo("Three")));
     }
 
-    ;
-
     @Test(expected = IllegalArgumentException.class)
     public void selectRandomElementFromListAndSaveVarNegative() {
         ds.selectRandomElementFromListAndSaveVar("NormalField", "test");
