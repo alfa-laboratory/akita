@@ -223,8 +223,8 @@ public class DefaultSteps {
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
     public void compareTwoVariables(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString().trim();
-        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString().trim();
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
             firstValueToCompare, equalTo(secondValueToCompare));
     }
@@ -234,8 +234,8 @@ public class DefaultSteps {
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
     public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString().trim();
-        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString().trim();
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
                 firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
@@ -1012,7 +1012,7 @@ public class DefaultSteps {
         }
 
     /**
-     *  Скроллит страницу вниз до появления элемента с текстом каждую секунду.
+     *  Скроллит страницу вниз до появления элемента с текстом из property файла, из переменной сценария или указанному в шаге каждую секунду.
      *  Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */
     @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
@@ -1036,6 +1036,18 @@ public class DefaultSteps {
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
                 (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
+    }
+
+    /*
+     * Выполняется нажатие на кнопку и подгружается указанный файл
+     * Селектор кнопки должны быть строго на input элемента
+     * Можно указать путь до файла. Например, src/test/resources/example.pdf
+     */
+    @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
+    public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
+        String file = loadValueFromFileOrPropertyOrDefault(fileName);
+        File attachmentFile = new File(file);
+        akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
     }
 
     /**
@@ -1144,26 +1156,10 @@ public class DefaultSteps {
     }
 
     /**
-     * Склеивание найденных данных в стрингу
-     */
-    private String getStringMatching(Matcher matcher) {
-        String stringForMatching = null;
-        while (matcher.find()) {
-            stringForMatching = matcher.group();
-        }
-        if (stringForMatching == null) {
-            throw new IllegalArgumentException("Класс/элемент не содержит необходимые данные");
-        }
-        return stringForMatching;
-    }
-
-    /**
      * Выдергиваем число из строки
      */
     private int getCounterFromString(String variableName) {
-        Matcher matcher = Pattern.compile("-?\\d+").matcher(variableName);
-        String stringForTransferToInt = getStringMatching(matcher);
-        return Integer.parseInt(stringForTransferToInt);
+        return Integer.parseInt(variableName.replaceAll("[^0-9]",""));
     }
 
     /**

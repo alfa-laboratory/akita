@@ -231,6 +231,7 @@ https://github.com/alfa-laboratory/akita-testing-template
 ## Контакты
 [Telegram](https://t.me/akitaQA)
 
+
 Используемые зависимости:
 --------------------------
 > nebula-release-plugin - Apache License Version 2.0
