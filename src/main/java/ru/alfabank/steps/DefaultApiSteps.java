@@ -15,6 +15,10 @@
  */
 package ru.alfabank.steps;
 
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.ReadContext;
+import cucumber.api.DataTable;
 import cucumber.api.java.ru.И;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
@@ -23,16 +27,14 @@ import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Шаги для тестирования API, доступные по умолчанию в каждом новом проекте
@@ -80,6 +82,131 @@ public class DefaultApiSteps {
     }
 
     /**
+     * В json строке, сохраннённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
+     * Полученные значения сравниваются с ожидаемыми значением во втором и последующих столбцах таблицы.
+     * Шаг работает со строками, числами, с литералами true, false и null. А также с массивами, состоящими из этих элементов.
+     * При сравнении массива значений в таблице в первом столбце указывается jsonpath к массиву,
+     * а в последующих столбцах значения содержащиеся в массиве.
+     */
+    @И("^в json строке из переменной \"([^\"]*)\" значения найденные по jsonpath в таблице равны значениям$")
+    public void checkValuesInJsonAsString(String jsonVar, DataTable dataTable) {
+        String json = (String) akitaScenario.getVar(jsonVar);
+        ReadContext ctx = JsonPath.parse(json);
+        boolean error = false;
+        for (List<String> row : dataTable.raw()){
+            String jsonPath = row.get(0);
+            //Если jsonpath содержит одно значение
+            if (row.size() == 2) {
+                String expectedValue = row.get(1);
+                String actualValue;
+                try {
+                    actualValue = ctx.read(jsonPath, String.class);
+                    actualValue = actualValue != null ? actualValue : "null";
+                } catch (PathNotFoundException e) {
+                    akitaScenario.write("В json'e не найдено значение по указанному jsonPath " + jsonPath);
+                    error = true;
+                    continue;
+                }
+                if (!expectedValue.equals(actualValue)) {
+                    akitaScenario.write("JsonPath - \"" + jsonPath + "\", ожидаемое значение - \"" + expectedValue + "\",  фактическое значение элемента - \"" + actualValue + "\"");
+                    error = true;
+                }
+            }
+            //Если jsonpath содержит массив значений
+            else if (row.size() > 2) {
+                List<Object> actualListValueObject;
+                List<String> actualListValue = new ArrayList<>();
+                List<String> expectedListValue = new ArrayList<>(row);
+                expectedListValue.remove(0);  //Удаляем из списка jsopath, остаются только искомые значения
+                try {
+                    actualListValueObject = ctx.read(jsonPath);
+                    actualListValueObject.forEach(object -> actualListValue.add(object != null ? object.toString() : "null"));
+                } catch (PathNotFoundException e) {
+                    System.out.println("В json'e не найдено значение по указанному jsonPath " + jsonPath);
+                    error = true;
+                    continue;
+                }
+                if (actualListValue.size() != expectedListValue.size()) {
+                    error = true;
+                    akitaScenario.write("Разное количество элементов");
+                    continue;
+                }
+                if (actualListValue.stream().filter(value -> !expectedListValue.contains(value)).count() != 0) {
+                    akitaScenario.write("JsonPath - \"" + jsonPath + "\", ожидаемое значение - \"" + expectedListValue + "\",  фактическое значение элемента - \"" + actualListValue + "\"");
+                    error = true;
+                }
+            }
+            else {
+                akitaScenario.write("В таблице должно быть больше одного столбца");
+                error = true;
+            }
+        }
+        if (error)
+            throw new RuntimeException("Ожидаемые и фактические значения в json не совпадают");
+    }
+
+    /**
+     * В json строке, сохраннённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
+     * Полученные значения сохраняются в переменных. Названия переменных указываются во втором и последующих столбцах таблицы.
+     * Шаг работает со строками, числами, с литералами true, false и null. А также с массивами, состоящими из этих элементов.
+     * При сравнении массива значений в таблице в первом столбце указывается jsonpath к массиву,
+     * а в последующих столбцах названия переменных в которые сохраняются значения из массива.
+     */
+    @И("^в json строке из переменной \"([^\"]*)\" значения найденные по jsonpath в таблице сохранены в переменные$")
+    public void getValuesFromJsonAsString(String jsonVar, DataTable dataTable) {
+        String json = (String) akitaScenario.getVar(jsonVar);
+        ReadContext ctx = JsonPath.parse(json);
+        boolean error = false;
+        //Если jsonpath содержит одно значение
+        for (List<String> row : dataTable.raw()){
+            String jsonPath = row.get(0);
+            if (row.size() == 2) {
+                String varName = row.get(1);
+                String value;
+                try {
+                    value = ctx.read(jsonPath, String.class);
+                    value = value != null ? value : "null";
+                } catch (PathNotFoundException e) {
+                    akitaScenario.write("В json'e не найдено значение по указанному jsonPath " + jsonPath);
+                    error = true;
+                    continue;
+                }
+                akitaScenario.setVar(varName, value);
+            }
+            //Если jsonpath содержит массив значений
+            else if (row.size() > 2) {
+                List<Object> listValueObject;
+                List<String> listValue = new ArrayList<>();
+                List<String> listVarName = new ArrayList<>(row);
+                listVarName.remove(0); //Удаляем из списка jsopath, остаются только названия переменных
+                try {
+                    listValueObject = ctx.read(jsonPath);
+                    listValueObject.forEach(object -> listValue.add(object != null ? object.toString() : "null"));
+                } catch (PathNotFoundException e) {
+                    akitaScenario.write("В json'e не найдено значение по указанному jsonPath " + jsonPath);
+                    error = true;
+                    continue;
+                }
+                if (listValue.size() != listVarName.size()) {
+                    error = true;
+                    akitaScenario.write("JsonPath - \"" + jsonPath + "\", количество элементов в массиве - \"" + listValue.size() + "\",  количество наименований переменных из таблицы - \"" + listVarName.size() + "\"");
+                    continue;
+                }
+                for (int i = 0; i <= listValue.size() - 1; i++) {
+                    akitaScenario.setVar(listVarName.get(i), listValue.get(i));
+                }
+            }
+            else {
+                akitaScenario.write("В таблице должно быть больше одного столбца");
+                error = true;
+            }
+        }
+        if (error)
+            throw new RuntimeException("Ожидаемые и фактические значения в json не совпадают");
+    }
+
+
+    /**
      * Создание запроса
      *
      * @param paramsTable массив с параметрами
@@ -99,7 +226,7 @@ public class DefaultApiSteps {
                     request.header(name, value);
                     break;
                 case BODY:
-                    request.body(loadValueFromFileOrPropertyOrDefault(value));
+                    request.body(loadValueFromFileOrPropertyOrVariableOrDefault(value));
                     break;
                 default:
                     throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), name));

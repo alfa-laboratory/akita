@@ -19,6 +19,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
+import cucumber.api.DataTable;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -34,6 +35,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -902,7 +906,7 @@ public class DefaultSteps {
      */
     @Когда("^выполнен js-скрипт \"([^\"]*)\"")
     public void executeJsScript(String scriptName) {
-        String content = loadValueFromFileOrPropertyOrDefault(scriptName);
+        String content = loadValueFromFileOrPropertyOrVariableOrDefault(scriptName);
         Selenide.executeJavaScript(content);
     }
 
@@ -997,9 +1001,43 @@ public class DefaultSteps {
      */
     @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
     public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
-        String file = loadValueFromFileOrPropertyOrDefault(fileName);
+        String file = loadValueFromFileOrPropertyOrVariableOrDefault(fileName);
         File attachmentFile = new File(file);
         akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
+    }
+
+    /*
+     * Выполняется чтение файла с шаблоном и заполнение его значениями из таблицыю
+     */
+    @И("^шаблон \"([^\"]*)\" заполнен данными из таблицы и сохранён в переменную \"([^\"]*)\"$")
+    public void fillTemplate(String fileName, String varName, DataTable table) {
+        String template = readFileAsString(fileName);
+        boolean error = false;
+        for (List<String> list : table.raw()) {
+            String regexp = list.get(0);
+            String replacement = list.get(1);
+            if (template.contains(regexp)) {
+                template = template.replace(regexp, replacement);
+            }
+            else {
+                akitaScenario.write("В шаблоне не найден элемент " + regexp);
+                error = true;
+            }
+        }
+        if (error == true)
+            throw new RuntimeException("В шаблоне не найдены требуемые регулярные выражения");
+        akitaScenario.setVar(varName, template);
+    }
+
+    public static String readFileAsString(String filePath) {
+        String string;
+        try {
+            string = new String(Files.readAllBytes(Paths.get(filePath)),"UTF-8");
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return string;
     }
 
     /**

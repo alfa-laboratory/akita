@@ -217,7 +217,7 @@ public class PropertyLoader {
      * @param valueToFind - ключ к значению в application.properties, путь к файлу c нужным значением, значение как String
      * @return значение как String
      */
-    public static String loadValueFromFileOrPropertyOrDefault(String valueToFind) {
+    public static String loadValueFromFileOrPropertyOrVariableOrDefault(String valueToFind) {
         String pathAsString = StringUtils.EMPTY;
         String propertyValue = tryLoadProperty(valueToFind);
         if (StringUtils.isNotBlank(propertyValue)) {
@@ -231,10 +231,13 @@ public class PropertyLoader {
             AkitaScenario.getInstance().write("Значение из файла " + valueToFind + " = " + fileValue);
             return fileValue;
         } catch (IOException | InvalidPathException e) {
-            AkitaScenario.getInstance().write("Значение не найдено по пути " + pathAsString
-                + ". Будет исользовано значение по умолчанию " + valueToFind);
-            return valueToFind;
+
+            AkitaScenario.getInstance().write("Значение не найдено по пути " + pathAsString);
         }
+        if (AkitaScenario.getInstance().getVar(valueToFind) != null)
+            return (String) AkitaScenario.getInstance().getVar(valueToFind);
+        AkitaScenario.getInstance().write("Значение не найдено в хранилище. Будет исользовано значение по умолчанию " + valueToFind);
+        return valueToFind;
     }
 }
 
