@@ -68,6 +68,7 @@ dependencies {
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+    compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
 
     testCompile "org.mockito:mockito-core:2.13.0"
     testCompile "org.mockito:mockito-inline:2.13.0"
@@ -102,7 +103,7 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-    publications = ['maven']
+    publications = ['nebula']
     dryRun = false
     publish = true
     pkg {
