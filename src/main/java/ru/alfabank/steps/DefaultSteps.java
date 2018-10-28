@@ -1007,37 +1007,26 @@ public class DefaultSteps {
     }
 
     /*
-     * Выполняется чтение файла с шаблоном и заполнение его значениями из таблицыю
+     * Выполняется чтение файла с шаблоном и заполнение его значениями из таблицы
      */
     @И("^шаблон \"([^\"]*)\" заполнен данными из таблицы и сохранён в переменную \"([^\"]*)\"$")
-    public void fillTemplate(String fileName, String varName, DataTable table) {
-        String template = readFileAsString(fileName);
+    public void fillTemplate(String templateName, String varName, DataTable table) {
+        String template = loadValueFromFileOrPropertyOrVariableOrDefault(templateName);
         boolean error = false;
         for (List<String> list : table.raw()) {
             String regexp = list.get(0);
             String replacement = list.get(1);
             if (template.contains(regexp)) {
-                template = template.replace(regexp, replacement);
+                template = template.replaceAll(regexp, replacement);
             }
             else {
                 akitaScenario.write("В шаблоне не найден элемент " + regexp);
                 error = true;
             }
         }
-        if (error == true)
+        if (error)
             throw new RuntimeException("В шаблоне не найдены требуемые регулярные выражения");
         akitaScenario.setVar(varName, template);
-    }
-
-    public static String readFileAsString(String filePath) {
-        String string;
-        try {
-            string = new String(Files.readAllBytes(Paths.get(filePath)),"UTF-8");
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return string;
     }
 
     /**

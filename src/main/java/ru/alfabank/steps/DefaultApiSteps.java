@@ -88,9 +88,9 @@ public class DefaultApiSteps {
      * При сравнении массива значений в таблице в первом столбце указывается jsonpath к массиву,
      * а в последующих столбцах значения содержащиеся в массиве.
      */
-    @И("^в json строке из переменной \"([^\"]*)\" значения найденные по jsonpath в таблице равны значениям$")
+    @И("^в json строке \"([^\"]*)\" значения найденные по jsonpath равны значениям в таблице$")
     public void checkValuesInJsonAsString(String jsonVar, DataTable dataTable) {
-        String json = (String) akitaScenario.getVar(jsonVar);
+        String json = loadValueFromFileOrPropertyOrVariableOrDefault(jsonVar);
         ReadContext ctx = JsonPath.parse(json);
         boolean error = false;
         for (List<String> row : dataTable.raw()){
@@ -101,12 +101,12 @@ public class DefaultApiSteps {
                 String actualValue;
                 try {
                     actualValue = ctx.read(jsonPath, String.class);
-                    actualValue = actualValue != null ? actualValue : "null";
                 } catch (PathNotFoundException e) {
                     akitaScenario.write("В json'e не найдено значение по указанному jsonPath " + jsonPath);
                     error = true;
                     continue;
                 }
+                actualValue = actualValue != null ? actualValue : "null";
                 if (!expectedValue.equals(actualValue)) {
                     akitaScenario.write("JsonPath - \"" + jsonPath + "\", ожидаемое значение - \"" + expectedValue + "\",  фактическое значение элемента - \"" + actualValue + "\"");
                     error = true;
@@ -117,15 +117,15 @@ public class DefaultApiSteps {
                 List<Object> actualListValueObject;
                 List<String> actualListValue = new ArrayList<>();
                 List<String> expectedListValue = new ArrayList<>(row);
-                expectedListValue.remove(0);  //Удаляем из списка jsopath, остаются только искомые значения
+                expectedListValue.remove(0);  //Удаляем из списка jsonpath, остаются только искомые значения
                 try {
                     actualListValueObject = ctx.read(jsonPath);
-                    actualListValueObject.forEach(object -> actualListValue.add(object != null ? object.toString() : "null"));
                 } catch (PathNotFoundException e) {
                     System.out.println("В json'e не найдено значение по указанному jsonPath " + jsonPath);
                     error = true;
                     continue;
                 }
+                actualListValueObject.forEach(object -> actualListValue.add(object != null ? object.toString() : "null"));
                 if (actualListValue.size() != expectedListValue.size()) {
                     error = true;
                     akitaScenario.write("Разное количество элементов");
@@ -152,9 +152,9 @@ public class DefaultApiSteps {
      * При сравнении массива значений в таблице в первом столбце указывается jsonpath к массиву,
      * а в последующих столбцах названия переменных в которые сохраняются значения из массива.
      */
-    @И("^в json строке из переменной \"([^\"]*)\" значения найденные по jsonpath в таблице сохранены в переменные$")
+    @И("^в json строке \"([^\"]*)\" значения найденные по jsonpath в таблице сохранены в переменные$")
     public void getValuesFromJsonAsString(String jsonVar, DataTable dataTable) {
-        String json = (String) akitaScenario.getVar(jsonVar);
+        String json = loadValueFromFileOrPropertyOrVariableOrDefault(jsonVar);
         ReadContext ctx = JsonPath.parse(json);
         boolean error = false;
         //Если jsonpath содержит одно значение
@@ -165,12 +165,12 @@ public class DefaultApiSteps {
                 String value;
                 try {
                     value = ctx.read(jsonPath, String.class);
-                    value = value != null ? value : "null";
                 } catch (PathNotFoundException e) {
                     akitaScenario.write("В json'e не найдено значение по указанному jsonPath " + jsonPath);
                     error = true;
                     continue;
                 }
+                value = value != null ? value : "null";
                 akitaScenario.setVar(varName, value);
             }
             //Если jsonpath содержит массив значений
@@ -178,15 +178,15 @@ public class DefaultApiSteps {
                 List<Object> listValueObject;
                 List<String> listValue = new ArrayList<>();
                 List<String> listVarName = new ArrayList<>(row);
-                listVarName.remove(0); //Удаляем из списка jsopath, остаются только названия переменных
+                listVarName.remove(0); //Удаляем из списка jsonpath, остаются только названия переменных
                 try {
                     listValueObject = ctx.read(jsonPath);
-                    listValueObject.forEach(object -> listValue.add(object != null ? object.toString() : "null"));
                 } catch (PathNotFoundException e) {
                     akitaScenario.write("В json'e не найдено значение по указанному jsonPath " + jsonPath);
                     error = true;
                     continue;
                 }
+                listValueObject.forEach(object -> listValue.add(object != null ? object.toString() : "null"));
                 if (listValue.size() != listVarName.size()) {
                     error = true;
                     akitaScenario.write("JsonPath - \"" + jsonPath + "\", количество элементов в массиве - \"" + listValue.size() + "\",  количество наименований переменных из таблицы - \"" + listVarName.size() + "\"");
