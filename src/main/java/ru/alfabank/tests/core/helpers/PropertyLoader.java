@@ -233,7 +233,7 @@ public class PropertyLoader {
         } catch (IOException | InvalidPathException e) {
             AkitaScenario.getInstance().write("Значение не найдено по пути " + pathAsString);
         }
-        if (AkitaScenario.getInstance().getVar(valueToFind) != null)
+        if (AkitaScenario.getInstance().tryGetVar(valueToFind) != null)
             return (String) AkitaScenario.getInstance().getVar(valueToFind);
         AkitaScenario.getInstance().write("Значение не найдено в хранилище. Будет исользовано значение по умолчанию " + valueToFind);
         return valueToFind;

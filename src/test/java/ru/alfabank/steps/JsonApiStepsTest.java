@@ -47,7 +47,7 @@ public class JsonApiStepsTest {
     }
 
     @Test
-    public void shouldCheckValuesInJsonAsString() throws Exception {
+    public void shouldCheckValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object2.number", "0.003"));
         List<String> row2 = new ArrayList<>(Arrays.asList("$.object2.string", "stringValue"));
         List<String> row3 = new ArrayList<>(Arrays.asList("$.object2.boolean", "true"));
@@ -63,7 +63,7 @@ public class JsonApiStepsTest {
     }
 
     @Test
-    public void shouldCheckArray1ValuesInJsonAsString() throws Exception {
+    public void shouldCheckArray1ValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "0.003", "-3579.09"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
@@ -72,7 +72,7 @@ public class JsonApiStepsTest {
     }
 
     @Test
-    public void shouldCheckArray2ValuesInJsonAsString() throws Exception {
+    public void shouldCheckArray2ValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object1.array", "stringInArray", "0.003", "true", "false", "null"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
@@ -82,7 +82,7 @@ public class JsonApiStepsTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void shouldThrowRuntimeExceptionIfValuesNotMatchWhenCheckValuesInJsonAsString() throws Exception {
+    public void shouldThrowRuntimeExceptionIfValuesNotMatchWhenCheckValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "0.003", "12345"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
@@ -102,8 +102,7 @@ public class JsonApiStepsTest {
     }
 
     @Test
-    public void shouldGetValuesInJsonAsString() throws Exception {
-        //
+    public void shouldGetValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object2.number", "numberValue"));
         List<String> row2 = new ArrayList<>(Arrays.asList("$.object2.string", "stringValue"));
         List<String> row3 = new ArrayList<>(Arrays.asList("$.object2.boolean", "booleanValue"));
@@ -124,7 +123,7 @@ public class JsonApiStepsTest {
     }
 
     @Test
-    public void shouldGetArrayValuesInJsonAsString() throws Exception {
+    public void shouldGetArrayValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "number1", "number2"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
@@ -137,7 +136,7 @@ public class JsonApiStepsTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void shouldThrowRuntimeExceptionIfPathNotFoundWhenGetValuesInJsonAsString() throws Exception {
+    public void shouldThrowRuntimeExceptionIfPathNotFoundWhenGetValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object3.dsfbfsb", "number1"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
