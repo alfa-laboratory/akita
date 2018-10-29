@@ -18,7 +18,6 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -347,8 +346,9 @@ public class DefaultSteps {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(nameOfField);
+        Keys removeKey = isIE() ? Keys.BACK_SPACE : Keys.DELETE;
         do {
-            valueInput.doubleClick().sendKeys(Keys.DELETE);
+            valueInput.doubleClick().sendKeys(removeKey);
         } while (valueInput.getValue().length() != 0);
     }
 
