@@ -15,6 +15,7 @@
  */
 package ru.alfabank.core;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -27,10 +28,22 @@ public class CustomDriverProviderTests {
 
     @Test
     public void createChromeDriverTest() {
+        System.setProperty("browser", "chrome");
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
         currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
         assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.chrome.ChromeDriver"));
+        currentDriver.quit();
+    }
+
+    @Ignore
+    @Test
+    public void createFirefoxDriverTest() {
+        System.setProperty("browser", "firefox");
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.firefox.FirefoxDriver"));
         currentDriver.quit();
     }
 }

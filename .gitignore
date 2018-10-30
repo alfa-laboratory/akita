@@ -31,3 +31,5 @@ local.properties
 *.settings
 
 gradle.properties
+out/
+.DS_Store

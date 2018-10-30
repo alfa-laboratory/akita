@@ -27,6 +27,7 @@ import java.util.List;
 @Getter
 @Name("AkitaPageMock")
 public class AkitaPageMock extends AkitaPage {
+
     @FindBy(id = "mockId")
     @Name("mockId")
     public SelenideElement mockId;
@@ -122,9 +123,25 @@ public class AkitaPageMock extends AkitaPage {
     @Name("SearchBlock")
     public SearchFieldMock searchField;
 
+    @Optional
+    @FindBy(xpath = "//span[text()='Показать ещё']")
+    @Name("Кнопка Показать ещё")
+    public SelenideElement buttonShowMore;
+
+    @FindBy(xpath = "//*[text()='Подписать и отправить']/parent::button")
+    @Name("Кнопка Подписать и отправить")
+    public SelenideElement signAndSendToBankButton;
+
+    @FindBy(css = "#multi-file-upload-form .file")
+    @Name("Кнопка загрузки файлов")
+    public SelenideElement uploadButton;
+
+    @FindBy(name = "mixedButton")
+    @Name("Кнопка с англо-русским названием")
+    public SelenideElement mixLangButton;
+
     @FindBy(id = "t1")
     @Name("AkitaTable")
     @Optional
     public AkitaTableMock akitaTableMock;
-
 }
