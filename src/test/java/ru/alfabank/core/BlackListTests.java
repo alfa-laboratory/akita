@@ -19,12 +19,9 @@ package ru.alfabank.core;
 import net.lightbody.bmp.proxy.BlacklistEntry;
 import org.junit.Before;
 import org.junit.Test;
-import ru.alfabank.AkitaTableRow;
-import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.BlackListManager;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
