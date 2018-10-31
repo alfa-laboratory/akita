@@ -61,15 +61,6 @@ public class BlackListTests {
         assertThat(newEntries, samePropertyValuesAs(blackList.getBlacklistEntries()));
     }
 
-    @Test
-    public void testAn(){
-        Field[] fields = AkitaTableRow.class.getFields();
-        for (Field field : fields) {
-            System.out.println(field.getAnnotation(Name.class).value());
-        }
-
-    }
-
     @Before
     public void initBlackList() {
         new BlackListManager("blacklist").fillBlackList(defaultBlacklistEntries);
