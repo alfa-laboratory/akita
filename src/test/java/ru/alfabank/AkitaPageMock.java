@@ -139,4 +139,9 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(name = "mixedButton")
     @Name("Кнопка с англо-русским названием")
     public SelenideElement mixLangButton;
+
+    @FindBy(id = "t1")
+    @Name("AkitaTable")
+    @Optional
+    public AkitaTableMock akitaTableMock;
 }
