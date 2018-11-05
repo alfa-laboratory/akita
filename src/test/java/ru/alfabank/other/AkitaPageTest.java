@@ -66,6 +66,17 @@ public class AkitaPageTest {
         assertThat(page.getBlock("SearchBlock"), is(notNullValue()));
     }
 
+    @Test
+    public void getBlockElementsPositive() {
+        List<SelenideElement> selenideElements = page.getBlockElements("SearchBlock");
+        assertThat(selenideElements, is(notNullValue()));
+    }
+
+    @Test
+    public void getBlockElementPositive() {
+        assertThat(page.getBlockElement("SearchBlock", "SearchButton"), is(notNullValue()));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void getBlockNegative() {
         page.getBlock("Not exact Block");
