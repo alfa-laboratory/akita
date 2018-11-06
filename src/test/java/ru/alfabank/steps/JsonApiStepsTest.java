@@ -16,6 +16,8 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import cucumber.api.DataTable;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -49,7 +51,7 @@ public class JsonApiStepsTest {
     @Test
     public void shouldCheckValuesInJsonAsString() {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object2.number", "0.003"));
-        List<String> row2 = new ArrayList<>(Arrays.asList("$.object2.string", "stringValue"));
+        List<String> row2 = new ArrayList<>(Arrays.asList("$.object2.string", "\"stringValue\""));
         List<String> row3 = new ArrayList<>(Arrays.asList("$.object2.boolean", "true"));
         List<String> row4 = new ArrayList<>(Arrays.asList("$.object2.nullName", "null"));
         List<List<String>> allLists= new ArrayList<>();
@@ -63,8 +65,17 @@ public class JsonApiStepsTest {
     }
 
     @Test
+    public void shouldCheckObjectValuesInJsonAsString() {
+        List<String> row1 = new ArrayList<>(Arrays.asList("$.object1", "   { \"innerObject\":\n {\"str\": \"qwer\"}, \"array\" : [\"stringInArray\",   0.003, true, false, null] }"));
+        List<List<String>> allLists= new ArrayList<>();
+        allLists.add(row1);
+        DataTable dataTable = dataTableFromLists(allLists);
+        api.checkValuesInJsonAsString("strJson", dataTable);
+    }
+
+    @Test
     public void shouldCheckArray1ValuesInJsonAsString() {
-        List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "0.003", "-3579.09"));
+        List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "[0.003, -3579.09]"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
         DataTable dataTable = dataTableFromLists(allLists);
@@ -73,7 +84,7 @@ public class JsonApiStepsTest {
 
     @Test
     public void shouldCheckArray2ValuesInJsonAsString() {
-        List<String> row1 = new ArrayList<>(Arrays.asList("$.object1.array", "stringInArray", "0.003", "true", "false", "null"));
+        List<String> row1 = new ArrayList<>(Arrays.asList("$.object1.array", "[\"stringInArray\",0.003,true,false,null]"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
         DataTable dataTable = dataTableFromLists(allLists);
@@ -83,7 +94,7 @@ public class JsonApiStepsTest {
 
     @Test(expected = RuntimeException.class)
     public void shouldThrowRuntimeExceptionIfValuesNotMatchWhenCheckValuesInJsonAsString() {
-        List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "0.003", "12345"));
+        List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "[0.003, -3579.09, 4]"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
         DataTable dataTable = dataTableFromLists(allLists);
@@ -116,23 +127,34 @@ public class JsonApiStepsTest {
 
         api.getValuesFromJsonAsString("strJson", dataTable);
 
-        Assert.assertEquals("0.003", (String) akitaScenario.getVar("numberValue"));
-        Assert.assertEquals("stringValue", (String) akitaScenario.getVar("stringValue"));
-        Assert.assertEquals("true", (String) akitaScenario.getVar("booleanValue"));
-        Assert.assertEquals("null", (String) akitaScenario.getVar("nullValue"));
+        Assert.assertEquals(createJsonElementAndReturnString("0.003"), akitaScenario.getVar("numberValue"));
+        Assert.assertEquals(createJsonElementAndReturnString("stringValue"), akitaScenario.getVar("stringValue"));
+        Assert.assertEquals(createJsonElementAndReturnString("true"), akitaScenario.getVar("booleanValue"));
+        Assert.assertEquals(createJsonElementAndReturnString("null"), akitaScenario.getVar("nullValue"));
     }
 
     @Test
-    public void shouldGetArrayValuesInJsonAsString() {
-        List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "number1", "number2"));
+    public void shouldGetArray1ValuesInJsonAsString() {
+        List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "numbers"));
         List<List<String>> allLists= new ArrayList<>();
         allLists.add(row1);
         DataTable dataTable = dataTableFromLists(allLists);
 
         api.getValuesFromJsonAsString("strJson", dataTable);
 
-        Assert.assertEquals("0.003", (String) akitaScenario.getVar("number1"));
-        Assert.assertEquals("-3579.09", (String) akitaScenario.getVar("number2"));
+        Assert.assertEquals(createJsonElementAndReturnString("[0.003,\n -3579.09]"), akitaScenario.getVar("numbers"));
+    }
+
+    @Test
+    public void shouldGetArray2ValuesInJsonAsString() {
+        List<String> row1 = new ArrayList<>(Arrays.asList("$.object1.array", "array"));
+        List<List<String>> allLists= new ArrayList<>();
+        allLists.add(row1);
+        DataTable dataTable = dataTableFromLists(allLists);
+
+        api.getValuesFromJsonAsString("strJson", dataTable);
+
+        Assert.assertEquals(createJsonElementAndReturnString("[\"stringInArray\",0.003,true,   false,null]"), akitaScenario.getVar("array"));
     }
 
     @Test(expected = RuntimeException.class)
@@ -143,6 +165,12 @@ public class JsonApiStepsTest {
         DataTable dataTable = dataTableFromLists(allLists);
 
         api.getValuesFromJsonAsString("strJson", dataTable);
+    }
+
+    private String createJsonElementAndReturnString(String element) {
+        JsonParser parser = new JsonParser();
+        JsonElement jsonElement = parser.parse(element);
+        return jsonElement.toString();
     }
 
 }
