@@ -26,6 +26,7 @@ import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import cucumber.api.DataTable;
 import cucumber.api.java.ru.И;
+import cucumber.api.java.ru.Тогда;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
@@ -90,14 +91,14 @@ public class DefaultApiSteps {
     /**
      * В json строке, сохраннённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
      * Полученные значения сравниваются с ожидаемым значением во втором столбце таблицы.
-     * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, с литералы true, false и null.
+     * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, литералы true, false и null.
      */
-    @И("^в json строке \"([^\"]*)\" значения найденные по jsonpath равны значениям в таблице$")
+    @Тогда("^в json (?:строке|файле) \"([^\"]*)\" значения, найденные по jsonpath, равны значениям из таблицы$")
     public void checkValuesInJsonAsString(String jsonVar, DataTable dataTable) {
         String strJson = loadValueFromFileOrPropertyOrVariableOrDefault(jsonVar);
         Gson gsonObject = new Gson();
         JsonParser parser = new JsonParser();
-        ReadContext ctx = JsonPath.parse(strJson, new Configuration.ConfigurationBuilder().jsonProvider(new GsonJsonProvider()).mappingProvider(new GsonMappingProvider()).build());
+        ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
         for (List<String> row : dataTable.raw()){
             String jsonPath = row.get(0);
@@ -121,13 +122,13 @@ public class DefaultApiSteps {
     /**
      * В json строке, сохраннённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
      * Полученные значения сохраняются в переменных. Название переменной указывается во втором столбце таблицы.
-     * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, с литералы true, false и null.
+     * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, литералы true, false и null.
      */
-    @И("^в json строке \"([^\"]*)\" значения найденные по jsonpath в таблице сохранены в переменные$")
+    @Тогда("^значения из json (?:строки|файла) \"([^\"]*)\", найденные по jsonpath из таблицы, сохранены в переменные$")
     public void getValuesFromJsonAsString(String jsonVar, DataTable dataTable) {
         String strJson = loadValueFromFileOrPropertyOrVariableOrDefault(jsonVar);
         Gson gsonObject = new Gson();
-        ReadContext ctx = JsonPath.parse(strJson, new Configuration.ConfigurationBuilder().jsonProvider(new GsonJsonProvider()).mappingProvider(new GsonMappingProvider()).build());
+        ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
         for (List<String> row : dataTable.raw()){
             String jsonPath = row.get(0);
@@ -144,6 +145,13 @@ public class DefaultApiSteps {
         }
         if (error)
             throw new RuntimeException("В json не найдено значение по заданному jsonpath");
+    }
+
+    private Configuration createJsonPathConfiguration() {
+        return new Configuration.ConfigurationBuilder()
+                .jsonProvider(new GsonJsonProvider())
+                .mappingProvider(new GsonMappingProvider())
+                .build();
     }
 
     /**
