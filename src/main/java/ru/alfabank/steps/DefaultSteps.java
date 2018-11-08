@@ -35,9 +35,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -351,8 +348,9 @@ public class DefaultSteps {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleanField(String nameOfField) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(nameOfField);
+        Keys removeKey = isIE() ? Keys.BACK_SPACE : Keys.DELETE;
         do {
-            valueInput.doubleClick().sendKeys(Keys.DELETE);
+            valueInput.doubleClick().sendKeys(removeKey);
         } while (valueInput.getValue().length() != 0);
     }
 

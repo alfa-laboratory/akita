@@ -28,6 +28,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import java.io.File;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class PageElementTest {
 
@@ -61,5 +62,17 @@ public class PageElementTest {
     public void clickOnElementInBlockPositiveTest() {
         dpes.clickOnElementInBlock("SearchButton", "SearchBlock");
         assertFalse(akitaScenario.getPage("SearchBlock").getElement("SearchButton").isEnabled());
+    }
+
+    @Test
+    public void getElementsListInBlockPositiveTest() {
+        dpes.getElementsList("AkitaTable", "Rows", "ListTable");
+        assertNotNull(akitaScenario.getVar("ListTable"));
+    }
+
+    @Test
+    public void getListElementsTextInBlockPositiveTest() {
+        dpes.getListElementsText("AkitaTable", "Rows", "ListTable");
+        assertNotNull(akitaScenario.getVar("ListTable"));
     }
 }
