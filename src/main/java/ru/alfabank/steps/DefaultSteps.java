@@ -18,6 +18,8 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
+import cucumber.api.DataTable;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -902,7 +904,7 @@ public class DefaultSteps {
      */
     @Когда("^выполнен js-скрипт \"([^\"]*)\"")
     public void executeJsScript(String scriptName) {
-        String content = loadValueFromFileOrPropertyOrDefault(scriptName);
+        String content = loadValueFromFileOrPropertyOrVariableOrDefault(scriptName);
         Selenide.executeJavaScript(content);
     }
 
@@ -997,9 +999,32 @@ public class DefaultSteps {
      */
     @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
     public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
-        String file = loadValueFromFileOrPropertyOrDefault(fileName);
+        String file = loadValueFromFileOrPropertyOrVariableOrDefault(fileName);
         File attachmentFile = new File(file);
         akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
+    }
+
+    /*
+     * Выполняется чтение файла с шаблоном и заполнение его значениями из таблицы
+     */
+    @И("^шаблон \"([^\"]*)\" заполнен данными из таблицы и сохранён в переменную \"([^\"]*)\"$")
+    public void fillTemplate(String templateName, String varName, DataTable table) {
+        String template = loadValueFromFileOrPropertyOrVariableOrDefault(templateName);
+        boolean error = false;
+        for (List<String> list : table.raw()) {
+            String regexp = list.get(0);
+            String replacement = list.get(1);
+            if (template.contains(regexp)) {
+                template = template.replaceAll(regexp, replacement);
+            }
+            else {
+                akitaScenario.write("В шаблоне не найден элемент " + regexp);
+                error = true;
+            }
+        }
+        if (error)
+            throw new RuntimeException("В шаблоне не найдены требуемые регулярные выражения");
+        akitaScenario.setVar(varName, template);
     }
 
     /**
