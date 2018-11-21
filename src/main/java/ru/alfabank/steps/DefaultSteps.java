@@ -24,9 +24,8 @@ import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
-import org.openqa.selenium.By;
+import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
@@ -981,6 +980,15 @@ public class DefaultSteps {
             sleep(1000);
         } while (!atBottom());
         assertThat("Элемент с текстом " + expectedValue + " не найден", el.isDisplayed());
+    }
+
+    /**
+     * Метод осуществляет снятие скриншота и прикрепление его к cucumber отчету.
+     */
+    @И("^снят скриншот текущей страницы$")
+    public void takeScreenshot() {
+        final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
+        AkitaScenario.getInstance().getScenario().embed(screenshot, "image/png");
     }
 
     /*
