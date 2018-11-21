@@ -1,12 +1,12 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,6 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.DataTable;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
@@ -142,7 +141,7 @@ public class DefaultSteps {
     @Тогда("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-            Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
+                Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
@@ -153,7 +152,7 @@ public class DefaultSteps {
     @Тогда("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
     public void testElementAppeared(String elementName, int seconds) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-            Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
+                Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
@@ -165,7 +164,7 @@ public class DefaultSteps {
     @Тогда("^список \"([^\"]*)\" отображается на странице$")
     public void listIsPresentedOnPage(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-            Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElementsList(elementName)
+                Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElementsList(elementName)
         );
     }
 
@@ -177,7 +176,7 @@ public class DefaultSteps {
     @Тогда("^ожидается исчезновение элемента \"([^\"]*)\"")
     public void elemDisappered(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-            Condition.disappears, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
+                Condition.disappears, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
     }
 
     /**
@@ -189,10 +188,9 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
     public void loadPage(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        if(isIE()) {
+        if (isIE()) {
             akitaScenario.getCurrentPage().ieAppeared();
-        }
-        else akitaScenario.getCurrentPage().appeared();
+        } else akitaScenario.getCurrentPage().appeared();
     }
 
     /**
@@ -202,10 +200,9 @@ public class DefaultSteps {
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
     public void loadPageFailed(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
-        if(isIE()){
+        if (isIE()) {
             akitaScenario.getCurrentPage().ieDisappeared();
-        }
-        else akitaScenario.getCurrentPage().disappeared();
+        } else akitaScenario.getCurrentPage().disappeared();
     }
 
     /**
@@ -225,7 +222,7 @@ public class DefaultSteps {
         String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
-            firstValueToCompare, equalTo(secondValueToCompare));
+                firstValueToCompare, equalTo(secondValueToCompare));
     }
 
     /**
@@ -247,7 +244,7 @@ public class DefaultSteps {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         String expectedValue = akitaScenario.getVar(variableName).toString();
         assertThat(String.format("Значение поля [%s] не совпадает со значением из переменной [%s]", elementName, variableName),
-            actualValue, equalTo(expectedValue));
+                actualValue, equalTo(expectedValue));
     }
 
     /**
@@ -260,7 +257,7 @@ public class DefaultSteps {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
         assertTrue(String.format("Список из переменной [%s] не содержит значение поля [%s]", variableListName, elementName),
-            listFromVariable.contains(actualValue));
+                listFromVariable.contains(actualValue));
     }
 
     /**
@@ -289,10 +286,9 @@ public class DefaultSteps {
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
     public void blockDisappeared(String nameOfPage) {
-        if (isIE()){
+        if (isIE()) {
             akitaScenario.getPage(nameOfPage).ieDisappeared();
-        }
-        else akitaScenario.getPage(nameOfPage).disappeared();
+        } else akitaScenario.getPage(nameOfPage).disappeared();
     }
 
     /**
@@ -315,8 +311,8 @@ public class DefaultSteps {
     @И("^выполнено нажатие на сочетание клавиш из таблицы$")
     public void pressKeyCombination(List<String> keyNames) {
         Iterable<CharSequence> listKeys = keyNames.stream()
-            .map(this::getKeyOrCharacter)
-            .collect(Collectors.toList());
+                .map(this::getKeyOrCharacter)
+                .collect(Collectors.toList());
         String combination = Keys.chord(listKeys);
         switchTo().activeElement().sendKeys(combination);
     }
@@ -359,8 +355,8 @@ public class DefaultSteps {
     @Тогда("^поле \"([^\"]*)\" пусто$")
     public void fieldInputIsEmpty(String fieldName) {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
-            akitaScenario.getCurrentPage().getAnyElementText(fieldName),
-            isEmptyOrNullString());
+                akitaScenario.getCurrentPage().getAnyElementText(fieldName),
+                isEmptyOrNullString());
     }
 
     /**
@@ -404,7 +400,7 @@ public class DefaultSteps {
         int numberOfTypes = actualValues.size();
         assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
         assertTrue(String.format("Значения элементов в списке %s: %s не совпадают с ожидаемыми значениями из таблицы %s", listName, actualValues, textTable),
-            actualValues.containsAll(textTable));
+                actualValues.containsAll(textTable));
     }
 
     /**
@@ -416,13 +412,13 @@ public class DefaultSteps {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsText = listOfElementsFromPage.stream()
-            .map(element -> element.getText().trim())
-            .collect(toList());
+                .map(element -> element.getText().trim())
+                .collect(toList());
         listOfElementsFromPage.stream()
-            .filter(element -> element.getText().trim().equalsIgnoreCase(value))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
-            .click();
+                .filter(element -> element.getText().trim().equalsIgnoreCase(value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
+                .click();
     }
 
     /**
@@ -435,13 +431,13 @@ public class DefaultSteps {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
-            .map(element -> element.getText().trim().toLowerCase())
-            .collect(toList());
+                .map(element -> element.getText().trim().toLowerCase())
+                .collect(toList());
         listOfElementsFromPage.stream()
-            .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
-            .click();
+                .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
+                .click();
     }
 
     /**
@@ -455,9 +451,9 @@ public class DefaultSteps {
         List<String> expectedList = new ArrayList<>((List<String>) akitaScenario.getVar(listVariable));
         List<String> actualList = new ArrayList<>(akitaScenario.getCurrentPage().getAnyElementsListInnerTexts(listName));
         assertThat(String.format("Количество элементов списка %s = %s, ожидаемое значение = %s", listName, actualList.size(), expectedList.size()), actualList,
-            hasSize(expectedList.size()));
+                hasSize(expectedList.size()));
         assertThat(String.format("Список со страницы %s: %s не совпадает с ожидаемым списком из переменной %s:%s", listName, actualList, listVariable, expectedList)
-            , actualList, containsInAnyOrder(expectedList.toArray()));
+                , actualList, containsInAnyOrder(expectedList.toArray()));
     }
 
     /**
@@ -530,7 +526,7 @@ public class DefaultSteps {
     @Тогда("^(?:поле|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
     public void elementIsNotVisible(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-            not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
+                not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
         );
     }
 
@@ -552,7 +548,7 @@ public class DefaultSteps {
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         String currentAtrValue = currentElement.attr(attribute);
         assertThat(String.format("Элемент [%s] не содержит атрибут [%s] со значением [%s]", elementName, attribute, expectedAttributeValue)
-            , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
+                , currentAtrValue, equalToIgnoringCase(expectedAttributeValue));
     }
 
     /**
@@ -567,7 +563,7 @@ public class DefaultSteps {
         expectedClassValue = getPropertyOrStringVariableOrValue(expectedClassValue);
         String currentClassValue = currentElement.getAttribute("class");
         assertThat(String.format("Элемент [%s] не содержит класс со значением [%s]", elementName, expectedClassValue)
-            , currentClassValue.toLowerCase(), containsString(expectedClassValue.toLowerCase()));
+                , currentClassValue.toLowerCase(), containsString(expectedClassValue.toLowerCase()));
     }
 
     /**
@@ -671,8 +667,8 @@ public class DefaultSteps {
 
     private List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {
         return $$(cssSelector).stream()
-            .filter(SelenideElement::isDisplayed)
-            .collect(Collectors.toList());
+                .filter(SelenideElement::isDisplayed)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -745,7 +741,7 @@ public class DefaultSteps {
         assertNotNull("Ошибка поиска файла", expectedFiles);
         assertFalse("Файл не загрузился", expectedFiles.length == 0);
         assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
-            expectedFiles.length == 1);
+                expectedFiles.length == 1);
         deleteFiles(expectedFiles);
     }
 
@@ -764,7 +760,7 @@ public class DefaultSteps {
     public void selectRandomElementFromList(String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
-            .shouldBe(Condition.visible).click();
+                .shouldBe(Condition.visible).click();
         akitaScenario.write("Выбран случайный элемент: " + listOfElementsFromPage);
     }
 
@@ -792,8 +788,8 @@ public class DefaultSteps {
         Integer selectedElementNumber = elementNumber - 1;
         if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
             throw new IndexOutOfBoundsException(
-                String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
-                    listName, elementNumber, listOfElementsFromPage.size()));
+                    String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
+                            listName, elementNumber, listOfElementsFromPage.size()));
         }
         elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
         elementToSelect.shouldBe(Condition.visible).click();
@@ -808,10 +804,10 @@ public class DefaultSteps {
         final String value = getPropertyOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
-            .map(element -> element.getText().trim().toLowerCase())
-            .collect(toList());
+                .map(element -> element.getText().trim().toLowerCase())
+                .collect(toList());
         assertTrue(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
-            elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
+                elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
     }
 
     /**
@@ -942,7 +938,8 @@ public class DefaultSteps {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         if ("более".equals(moreOrLess)) {
             assertTrue(String.format("Число элементов списка меньше ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() > quantity);
-        } else assertTrue(String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() < quantity);
+        } else
+            assertTrue(String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() < quantity);
 
     }
 
@@ -952,17 +949,17 @@ public class DefaultSteps {
      */
     @И("^страница прокручена до появления элемента \"([^\"]*)\"$")
     public void scrollWhileElemNotFoundOnPage(String elementName) {
-            SelenideElement el = null;
-            do {
-                el =  akitaScenario.getCurrentPage().getElement(elementName);
-                    if (el.exists()) {
-                        break;
-                    }
-                executeJavaScript("return window.scrollBy(0, 250);");
-                sleep(1000);
-                } while (!atBottom());
-            assertThat("Элемент " + elementName + " не найден", el.isDisplayed());
-        }
+        SelenideElement el = null;
+        do {
+            el = akitaScenario.getCurrentPage().getElement(elementName);
+            if (el.exists()) {
+                break;
+            }
+            executeJavaScript("return window.scrollBy(0, 250);");
+            sleep(1000);
+        } while (!atBottom());
+        assertThat("Элемент " + elementName + " не найден", el.isDisplayed());
+    }
 
     /**
      *  Скроллит страницу вниз до появления элемента с текстом из property файла, из переменной сценария или указанному в шаге каждую секунду.
@@ -1024,8 +1021,7 @@ public class DefaultSteps {
             String replacement = list.get(1);
             if (template.contains(regexp)) {
                 template = template.replaceAll(regexp, replacement);
-            }
-            else {
+            } else {
                 akitaScenario.write("В шаблоне не найден элемент " + regexp);
                 error = true;
             }
@@ -1056,7 +1052,7 @@ public class DefaultSteps {
             log.warn(message + " не найдена");
             return false;
         }
-        log.info(message + " = " +  result);
+        log.info(message + " = " + result);
         akitaScenario.write(message + " = " + result);
         return true;
     }
@@ -1130,7 +1126,7 @@ public class DefaultSteps {
     /**
      * Возвращает локатор для поиска по нормализованному(без учета регистра) тексту
      */
-    public String getTranslateNormalizeSpaceText (String expectedText) {
+    public String getTranslateNormalizeSpaceText(String expectedText) {
         StringBuilder text = new StringBuilder();
         text.append("//*[contains(translate(normalize-space(text()), ");
         text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', ");
