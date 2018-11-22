@@ -114,6 +114,28 @@ public class ApiStepsTest {
     }
 
     @Test
+    public void sendHttpRequestFromFileWithVarsPost() throws java.lang.Exception {
+        String body = "{\"person\": {\"name\": \"Jack\", \"age\": 35}, \"object\": {\"var1\": 1}}";
+        String bodyFileName = "/src/test/resources/bodyWithParams.json";
+
+        stubFor(post(urlEqualTo("/post/resource"))
+                .withRequestBody(WireMock.equalTo(body))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY")));
+
+        List<RequestParam> params = Collections.singletonList(
+                RequestParam.builder()
+                        .name("body")
+                        .type(RequestParamType.BODY)
+                        .value(bodyFileName)
+                        .build());
+        api.sendHttpRequestSaveResponse("POST", "/post/resource", "RESPONSE_POST_BODY", params);
+        assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+    }
+
+    @Test
     public void sendHttpRequestSaveResponseTest() throws java.lang.Exception {
         stubFor(post(urlEqualTo("/post/saveWithTable"))
             .willReturn(aResponse()
