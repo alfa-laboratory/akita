@@ -53,6 +53,34 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
+     * Получение списка блоков со страницы по имени (аннотированного "Name")
+     */
+    @SuppressWarnings("unchecked")
+    public List<AkitaPage> getBlocksList(String listName) {
+        Object value = namedElements.get(listName);
+        if (!(value instanceof List)) {
+            throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
+        }
+        Stream<Object> s = ((List) value).stream();
+        return s.map(AkitaPage::castToAkitaPage).collect(toList());
+    }
+
+    /**
+     * Получение списка из элементов блока со страницы по имени (аннотированного "Name")
+     */
+    public List<SelenideElement> getBlockElements(String blockName) {
+        return getBlock(blockName).namedElements.entrySet().stream()
+                .map(x -> ((SelenideElement) x.getValue())).collect(toList());
+    }
+
+    /**
+     * Получение элемента блока со страницы по имени (аннотированного "Name")
+     */
+    public SelenideElement getBlockElement(String blockName, String elementName) {
+        return ((SelenideElement) getBlock(blockName).namedElements.get(elementName));
+    }
+
+    /**
      * Получение элемента со страницы по имени (аннотированного "Name")
      */
     public SelenideElement getElement(String elementName) {
@@ -278,6 +306,12 @@ public abstract class AkitaPage extends ElementsContainer {
         return null;
     }
 
+    private static AkitaPage castToAkitaPage(Object object) {
+        if (object instanceof AkitaPage) {
+            return (AkitaPage) object;
+        }
+        return null;
+    }
     /**
      * Список всех элементов страницы
      */

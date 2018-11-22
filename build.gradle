@@ -8,7 +8,7 @@ buildscript {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 
         classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
         classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
@@ -69,6 +69,7 @@ dependencies {
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 
     testCompile "org.mockito:mockito-core:2.13.0"
     testCompile "org.mockito:mockito-inline:2.13.0"
