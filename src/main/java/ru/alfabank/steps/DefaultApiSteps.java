@@ -199,9 +199,9 @@ public class DefaultApiSteps {
     private void getBodyAndSaveToVariable(String variableName, Response response) {
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             akitaScenario.setVar(variableName, response.getBody().asString());
-            akitaScenario.write("Тело ответа : \n" + response.getBody().asString());
+            akitaScenario.write("Тело ответа : \n" + response.getBody().prettyPrint());
         } else {
-            fail("Некорректный ответ на запрос: " + response.getBody().asString());
+            fail("Некорректный ответ на запрос: " + response.getBody());
         }
     }
 
