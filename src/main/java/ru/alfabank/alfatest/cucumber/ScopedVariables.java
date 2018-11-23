@@ -115,10 +115,11 @@ public class ScopedVariables {
         while (m.find()) {
             String varName = m.group(1);
             String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
-            if (value == null)
-                throw new IllegalArgumentException(
-                    "Значение " + varName +
-                        " не было найдено ни в application.properties, ни в environment переменной");
+            if (value == null) {
+                AkitaScenario.getInstance().write(
+                        "Значение " + varName +
+                                " не было найдено ни в application.properties, ни в environment переменной");
+            }
             newString = m.replaceFirst(value);
             if (isJSONValid(newString)) return newString;
             m = p.matcher(newString);

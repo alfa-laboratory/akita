@@ -35,6 +35,7 @@ import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
@@ -132,10 +133,12 @@ public class CustomDriverProvider implements WebDriverProvider {
         capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
             loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
         try {
-            return new RemoteWebDriver(
-                URI.create(remoteUrl).toURL(),
-                capabilities
+            RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
+                    URI.create(remoteUrl).toURL(),
+                    capabilities
             );
+            remoteWebDriver.setFileDetector(new LocalFileDetector());
+            return remoteWebDriver;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

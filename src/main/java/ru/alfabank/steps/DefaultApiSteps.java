@@ -164,8 +164,8 @@ public class DefaultApiSteps {
         String body = null;
         RequestSpecification request = given();
         for (RequestParam requestParam : paramsTable) {
-            String value = resolveJsonVars(requestParam.getValue());
             String name = requestParam.getName();
+            String value = requestParam.getValue();
             switch (requestParam.getType()) {
                 case PARAMETER:
                     request.param(name, value);
@@ -174,7 +174,9 @@ public class DefaultApiSteps {
                     request.header(name, value);
                     break;
                 case BODY:
-                    request.body(loadValueFromFileOrPropertyOrVariableOrDefault(value));
+                    value = loadValueFromFileOrPropertyOrVariableOrDefault(value);
+                    body = resolveJsonVars(value);
+                    request.body(body);
                     break;
                 default:
                     throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), name));
