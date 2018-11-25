@@ -15,9 +15,12 @@
  */
 package ru.alfabank.steps;
 
+import com.codeborne.selenide.SelenideElement;
 import cucumber.api.java.ru.И;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+
+import java.util.stream.Collectors;
 
 /**
  * Шаги для работы с блоками со страницы, доступные по умолчанию в каждом новом проекте
@@ -33,5 +36,21 @@ public class DefaultPageElementSteps {
     @И("^выполнено нажатие на (?:кнопку|поле) \"([^\"]*)\" в блоке \"([^\"]*)\"$")
     public void clickOnElementInBlock(String elementName, String blockName) {
         akitaScenario.getCurrentPage().getBlock(blockName).getElement(elementName).click();
+    }
+
+    @И("^в блоке \"([^\"]*)\" найден список элементов\"([^\"]*)\" и сохранен в переменную \"([^\"]*)\"$")
+    public void getElementsList(String blockName, String listName, String varName) {
+        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getBlock(blockName).getElementsList(listName));
+    }
+
+    @И("^в блоке \"([^\"]*)\" найден список элементов\"([^\"]*)\" и сохранен текст в переменную \"([^\"]*)\"$")
+    public void getListElementsText(String blockName, String listName, String varName) {
+        akitaScenario.setVar(varName,
+                akitaScenario.getCurrentPage()
+                        .getBlock(blockName)
+                        .getElementsList(listName)
+                        .stream()
+                        .map(SelenideElement::getText)
+                        .collect(Collectors.toList()));
     }
 }
