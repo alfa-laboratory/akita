@@ -28,6 +28,7 @@ import cucumber.api.DataTable;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import io.restassured.http.Method;
+import io.restassured.internal.support.Prettifier;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import io.restassured.specification.RequestSpecification;
@@ -199,9 +200,9 @@ public class DefaultApiSteps {
     private void getBodyAndSaveToVariable(String variableName, Response response) {
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             akitaScenario.setVar(variableName, response.getBody().asString());
-            akitaScenario.write("Тело ответа : \n" + response.getBody().prettyPrint());
+            akitaScenario.write("Тело ответа : \n" + new Prettifier().getPrettifiedBodyIfPossible(response, response));
         } else {
-            fail("Некорректный ответ на запрос: " + response.getBody());
+            fail("Некорректный ответ на запрос: " + new Prettifier().getPrettifiedBodyIfPossible(response, response));
         }
     }
 
