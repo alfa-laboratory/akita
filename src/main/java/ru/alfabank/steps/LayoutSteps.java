@@ -45,7 +45,7 @@ public class LayoutSteps {
      *             Этот путь можно переопределить, задав системную переменную specsDir
      */
 
-    @Тогда("(?:страница соответствует|соответствует|блок соответствует) ожидаемой спецификации \"([^\"]*)\"")
+    @Тогда("(?:страница|блок) соответствует ожидаемой спецификации \"([^\"]*)\"")
     public void compareCurrentPageWithBase(String spec) {
         checkLayoutAccordingToSpec(spec, null);
     }
@@ -59,7 +59,7 @@ public class LayoutSteps {
      * @param tag - название тэга в galen спецификации (например @on desktop),
      *           для которого описан дизайн конкретных элементов.
      */
-    @Тогда("(?:страница соответствует|соответствует|блок соответствует) спецификации \"([^\"]*)\" для экрана \"(\\D+)\"")
+    @Тогда("(?:страница|блок) соответствует спецификации \"([^\"]*)\" для экрана \"(\\D+)\"")
     public void compareCurrentPageWithBase(String spec, String tag) {
         List<String> tags = new ArrayList<>();
         tags.add(tag);
