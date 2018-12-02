@@ -28,18 +28,21 @@ import cucumber.api.DataTable;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import io.restassured.http.Method;
+import io.restassured.internal.support.Prettifier;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSender;
 import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +103,7 @@ public class DefaultApiSteps {
         JsonParser parser = new JsonParser();
         ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
-        for (List<String> row : dataTable.raw()){
+        for (List<String> row : dataTable.raw()) {
             String jsonPath = row.get(0);
             JsonElement actualJsonElement;
             try {
@@ -130,7 +133,7 @@ public class DefaultApiSteps {
         Gson gsonObject = new Gson();
         ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
-        for (List<String> row : dataTable.raw()){
+        for (List<String> row : dataTable.raw()) {
             String jsonPath = row.get(0);
             String varName = row.get(1);
             JsonElement jsonElement;
@@ -149,9 +152,9 @@ public class DefaultApiSteps {
 
     private Configuration createJsonPathConfiguration() {
         return new Configuration.ConfigurationBuilder()
-                .jsonProvider(new GsonJsonProvider())
-                .mappingProvider(new GsonMappingProvider())
-                .build();
+            .jsonProvider(new GsonJsonProvider())
+            .mappingProvider(new GsonMappingProvider())
+            .build();
     }
 
     /**
@@ -197,9 +200,9 @@ public class DefaultApiSteps {
     private void getBodyAndSaveToVariable(String variableName, Response response) {
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             akitaScenario.setVar(variableName, response.getBody().asString());
-            if (log.isDebugEnabled()) akitaScenario.write("Тело ответа : \n" + response.getBody().asString());
+            akitaScenario.write("Тело ответа : \n" + new Prettifier().getPrettifiedBodyIfPossible(response, response));
         } else {
-            fail("Некорректный ответ на запрос: " + response.getBody().asString());
+            fail("Некорректный ответ на запрос: " + new Prettifier().getPrettifiedBodyIfPossible(response, response));
         }
     }
 
