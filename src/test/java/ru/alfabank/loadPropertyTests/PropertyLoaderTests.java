@@ -28,7 +28,6 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 public class PropertyLoaderTests {
@@ -111,7 +110,7 @@ public class PropertyLoaderTests {
     @Test
     public void getJsonStringType() {
         String expectedValue = "{\"accounts\": []}";
-        String actualValue = resolveJsonVars(expectedValue);
+        String actualValue = resolveVars(expectedValue);
         assertThat(actualValue, is(expectedValue));
     }
 }
