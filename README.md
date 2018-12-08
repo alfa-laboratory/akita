@@ -226,7 +226,7 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 ```ru.alfabank.tests.core.drivers.CustomDriverProvider```
 Провайдер кастомного драйвера
 
-## Матаги-кэн в помощь
+## Testing Template 
 https://github.com/alfa-laboratory/akita-testing-template
 ## Контакты
 [Telegram](https://t.me/akitaQA)
