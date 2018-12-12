@@ -23,12 +23,14 @@ import cucumber.api.java.Before;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.TakesScreenshot;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.hasWebDriverStarted;
+import static com.codeborne.selenide.WebDriverRunner.setProxy;
 import static ru.alfabank.tests.core.drivers.CustomDriverProvider.REMOTE_URL;
 
 @Slf4j
@@ -36,6 +38,18 @@ public class InitialSetupSteps {
 
     @Delegate
     AkitaScenario akitaScenario = AkitaScenario.getInstance();
+
+    /**
+     * Создает настойки прокси для запуска драйвера
+     */
+    @Before(order = 1)
+    public void setDriverProxy() {
+        if (!Strings.isNullOrEmpty(System.getProperty("proxy"))) {
+            Proxy proxy = new Proxy().setHttpProxy(System.getProperty("proxy"));
+            setProxy(proxy);
+            log.info("Проставлена прокси: " + proxy);
+        }
+    }
 
     /**
      * Создает окружение(среду) для запуска сценария
