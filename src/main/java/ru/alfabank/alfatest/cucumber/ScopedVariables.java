@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -95,6 +96,8 @@ public class ScopedVariables {
         }
         if (newString.isEmpty()) {
             newString = inputString;
+        } else {
+            AkitaScenario.getInstance().write(format("Значение переменной %s = %s", inputString, newString));
         }
         return newString;
     }
@@ -115,10 +118,11 @@ public class ScopedVariables {
         while (m.find()) {
             String varName = m.group(1);
             String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
-            if (value == null)
-                throw new IllegalArgumentException(
+            if (value == null) {
+                AkitaScenario.getInstance().write(
                     "Значение " + varName +
                         " не было найдено ни в application.properties, ни в environment переменной");
+            }
             newString = m.replaceFirst(value);
             if (isJSONValid(newString)) return newString;
             m = p.matcher(newString);

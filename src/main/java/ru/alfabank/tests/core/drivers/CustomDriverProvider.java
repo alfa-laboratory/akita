@@ -35,6 +35,7 @@ import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
@@ -107,6 +108,10 @@ public class CustomDriverProvider implements WebDriverProvider {
             return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
+        if (IE.equalsIgnoreCase(expectedBrowser)) {
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+        }
+
         if (EDGE.equalsIgnoreCase(expectedBrowser)) {
             return LOCAL.equalsIgnoreCase(remoteUrl) ? createEdgeDriver(capabilities) : getRemoteDriver(getEdgeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
@@ -126,12 +131,14 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------run Selenoid Remote Driver---------------------");
         capabilities.setCapability("enableVNC", true);
         capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
-                loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+            loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
         try {
-            return new RemoteWebDriver(
-                URI.create(remoteUrl).toURL(),
-                capabilities
+            RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
+                    URI.create(remoteUrl).toURL(),
+                    capabilities
             );
+            remoteWebDriver.setFileDetector(new LocalFileDetector());
+            return remoteWebDriver;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -216,7 +223,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
      * @return internetExplorerOptions
      */
-    private InternetExplorerOptions getIEDriverOptions(DesiredCapabilities capabilities){
+    private InternetExplorerOptions getIEDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------IE Driver---------------------");
         InternetExplorerOptions internetExplorerOptions = !options[0].equals("") ? new InternetExplorerOptions().addCommandSwitches(options) : new InternetExplorerOptions();
         internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
@@ -233,7 +240,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
      * @return edgeOptions
      */
-    private EdgeOptions getEdgeDriverOptions(DesiredCapabilities capabilities){
+    private EdgeOptions getEdgeDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------Edge Driver---------------------");
         EdgeOptions edgeOptions = new EdgeOptions();
         edgeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
@@ -246,7 +253,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
      * @return SafariOptions
      */
-    private SafariOptions getSafariDriverOptions(DesiredCapabilities capabilities){
+    private SafariOptions getSafariDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------Safari Driver---------------------");
         SafariOptions safariOptions = new SafariOptions();
         safariOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
@@ -259,7 +266,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      * @return WebDriver
      */
-    private WebDriver createChromeDriver(DesiredCapabilities capabilities){
+    private WebDriver createChromeDriver(DesiredCapabilities capabilities) {
         ChromeDriver chromeDriver = new ChromeDriver(getChromeDriverOptions(capabilities));
         chromeDriver.manage().window().setSize(setDimension());
         return chromeDriver;
@@ -270,7 +277,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      * @return WebDriver
      */
-    private WebDriver createFirefoxDriver(DesiredCapabilities capabilities){
+    private WebDriver createFirefoxDriver(DesiredCapabilities capabilities) {
         FirefoxDriver firefoxDriver = new FirefoxDriver(getFirefoxDriverOptions(capabilities));
         firefoxDriver.manage().window().setSize(setDimension());
         return firefoxDriver;
@@ -281,7 +288,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      * @return WebDriver
      */
-    private WebDriver createOperaDriver(DesiredCapabilities capabilities){
+    private WebDriver createOperaDriver(DesiredCapabilities capabilities) {
         OperaDriver operaDriver = new OperaDriver(getOperaDriverOptions(capabilities));
         operaDriver.manage().window().setSize(setDimension());
         return operaDriver;
@@ -292,7 +299,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      * @return WebDriver
      */
-    private WebDriver createIEDriver(DesiredCapabilities capabilities){
+    private WebDriver createIEDriver(DesiredCapabilities capabilities) {
         InternetExplorerDriver internetExplorerDriver = new InternetExplorerDriver(getIEDriverOptions(capabilities));
         internetExplorerDriver.manage().window().setSize(setDimension());
         return internetExplorerDriver;
@@ -303,7 +310,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      * @return WebDriver
      */
-    private WebDriver createEdgeDriver(DesiredCapabilities capabilities){
+    private WebDriver createEdgeDriver(DesiredCapabilities capabilities) {
         EdgeDriver edgeDriver = new EdgeDriver(getEdgeDriverOptions(capabilities));
         edgeDriver.manage().window().setSize(setDimension());
         return edgeDriver;
@@ -314,7 +321,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      *
      * @return WebDriver
      */
-    private WebDriver createSafariDriver(DesiredCapabilities capabilities){
+    private WebDriver createSafariDriver(DesiredCapabilities capabilities) {
         SafariDriver safariDriver = new SafariDriver(getSafariDriverOptions(capabilities));
         safariDriver.manage().window().setSize(setDimension());
         return safariDriver;
@@ -327,9 +334,9 @@ public class CustomDriverProvider implements WebDriverProvider {
      * Например: ./gradlew test -Dbrowser=chrome -Dwidth=1200 -Dheight=800
      * Если пользовательские значения ширины и высоты окна браузера не указаны, используются дефолтные 1920x1080
      */
-    private Dimension setDimension(){
+    private Dimension setDimension() {
         return new Dimension(loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
-                loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
+            loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
     }
 
     /**
