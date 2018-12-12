@@ -17,6 +17,7 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.ex.ElementShouldNot;
+import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import org.hamcrest.core.IsEqual;
 import org.junit.*;
@@ -30,16 +31,16 @@ import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
+import static org.hamcrest.Matchers.*;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
+import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
 
 public class DefaultStepsTest {
     private static DefaultSteps ds;
@@ -840,8 +841,14 @@ public class DefaultStepsTest {
     }
 
     @Test
-    public void testStringOrLoadFilePropertyOrDefault2() {
-        assertThat(loadValueFromFileOrPropertyOrDefault("testScript"), equalTo("alert('privet');"));
+    public void testPropertyWhenLoadValueFromFileOrPropertyOrVariableOrDefault2() {
+        assertThat(loadValueFromFileOrPropertyOrVariableOrDefault("testScript"), equalTo("alert('privet');"));
+    }
+
+    @Test
+    public void testVariableWhenLoadValueFromFileOrPropertyOrVariableOrDefault3() {
+        akitaScenario.setVar("varName", "testVariable");
+        assertThat("testVariable", equalTo(loadValueFromFileOrPropertyOrVariableOrDefault("varName")));
     }
 
     @Test
@@ -1054,5 +1061,20 @@ public class DefaultStepsTest {
         dmbs.switchToTheTabWithTitle("Page with redirection");
         dmbs.closeCurrentTab();
         dmbs.switchToTheTabWithTitle("Title");
+    }
+
+    @Test
+    public void testfillTemplate() {
+        String templateName = "strTemplate";
+        String varName = "varName";
+        List<String> row1 = new ArrayList<>(Arrays.asList("_name_", "Jack"));
+        List<String> row2 = new ArrayList<>(Arrays.asList("_age_", "35"));
+        List<List<String>> allLists = new ArrayList<>();
+        allLists.add(row1);
+        allLists.add(row2);
+        DataTable dataTable = dataTableFromLists(allLists);
+
+        ds.fillTemplate(templateName, varName, dataTable);
+        Assert.assertEquals("{\"name\": \"Jack\", \"age\": 35}", (String) akitaScenario.getVar(varName));
     }
 }
