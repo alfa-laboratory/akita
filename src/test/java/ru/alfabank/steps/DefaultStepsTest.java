@@ -993,4 +993,14 @@ public class DefaultStepsTest {
         Assert.assertEquals("{\"name\": \"Jack\", \"age\": 35}", (String) akitaScenario.getVar(varName));
     }
 
+    @Test
+    public void testLinkShouldHaveText(){
+        String text = "/RedirectionPage";
+        akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getElement("Link")
+                .click();
+        ds.linkShouldHaveText(text);
+    }
+
 }
