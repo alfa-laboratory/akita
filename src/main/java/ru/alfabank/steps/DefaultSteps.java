@@ -970,10 +970,8 @@ public class DefaultSteps {
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и сохранено в переменную \"([^\"]*)\"$")
     public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
-        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
-        cleanField(fieldName);
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
-        valueInput.setValue(new DecimalFormat(outputFormat).format(finalValue));
+        setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.setVar(saveToVariableName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.write(String.format("В поле [%s] введено значение [%s] и сохранено в переменную [%s]",
                 fieldName, new DecimalFormat(outputFormat).format(finalValue), saveToVariableName));
@@ -985,10 +983,8 @@ public class DefaultSteps {
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\"$")
     public void inputRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat) {
-        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
-        cleanField(fieldName);
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
-        valueInput.setValue(new DecimalFormat(outputFormat).format(finalValue));
+        setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.write(String.format("В поле [%s] введено значение [%s]", fieldName, new DecimalFormat(outputFormat).format(finalValue)));
     }
 
