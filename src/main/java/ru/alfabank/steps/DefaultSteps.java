@@ -18,11 +18,13 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.DataTable;
 import cucumber.api.java.ru.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.Actions;
@@ -1076,6 +1078,16 @@ public class DefaultSteps {
         if (error)
             throw new RuntimeException("В шаблоне не найдены требуемые регулярные выражения");
         akitaScenario.setVar(varName, template);
+    }
+
+    /**
+     * Проверка наличия нужного текста в ссылке страницы
+     * @param text - передавайемый в метод текст, который должен содержаться в ссылке
+     */
+    @И("^ссылка страницы содержит текст \"([^\"]*)\"$")
+    public void linkShouldHaveText(String text) {
+        String currentUrl = WebDriverRunner.url();
+        Assert.assertThat(currentUrl, containsString(text));
     }
 
     /**
