@@ -235,7 +235,7 @@ public class DefaultSteps {
         String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
         assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
-                firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
+            firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
     }
 
     /**
@@ -968,7 +968,7 @@ public class DefaultSteps {
      * Ввод в поле случайного дробного числа в заданном диапазоне и формате с последующим сохранением этого значения в переменную
      * Пример формата ввода: ###.##
      */
-    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и оно сохранено в переменную \"([^\"]*)\"$")
+    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и сохранено в переменную \"([^\"]*)\"$")
     public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         cleanField(fieldName);
