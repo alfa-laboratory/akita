@@ -96,7 +96,7 @@ public class ScopedVariablesTest {
         String inputJsonString = "{\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"{bodyWithParams1}\", \"age\": {bodyWithParams2}}, " +
                 "\"object\": {\"var1\": 1}, " +
-                "\"length\": {resolve.Variable-1_2}}";
+                "\"length\": {resolve.Переменная-1_2}}";
         String expectedJsonString = "{\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"Jack\", \"age\": 35}, " +
                 "\"object\": {\"var1\": 1}, " +
@@ -121,7 +121,7 @@ public class ScopedVariablesTest {
                 "\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"{bodyWithParams1}\", \"age\": {bodyWithParams2}}, " +
                 "\"object\": {\"var1\": 1}, " +
-                "\"length\": {resolve.Variable-1_2}}";
+                "\"length\": {resolve.Переменная-1_2}}";
         ScopedVariables.resolveVars(inputJsonString);
     }
 

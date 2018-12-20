@@ -35,7 +35,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
  */
 public class ScopedVariables {
 
-    public static final String VARIABLE_NAME_PATTERN = "[{]([\\w]+[\\w.-]+[\\w]+)[}]";
+    public static final String VARIABLE_NAME_PATTERN = "[{]([\\wа-яА-Я]+[\\wа-яА-Я.-]+[\\wа-яА-Я]+)[}]";
 
     private Map<String, Object> variables = Maps.newHashMap();
 
