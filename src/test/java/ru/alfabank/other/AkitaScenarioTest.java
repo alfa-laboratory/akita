@@ -23,7 +23,11 @@ import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import ru.alfabank.steps.DefaultSteps;
 
+import java.io.File;
+
+import static com.codeborne.selenide.Selenide.open;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -66,7 +70,17 @@ public class AkitaScenarioTest {
 
     @Test
     public void putGetPagesPositive() {
-        assertThat(akitaScenario.getPage("Title"), is(notNullValue()));
+        AkitaScenario akitaScenario = AkitaScenario.getInstance();
+        DefaultSteps ds = new DefaultSteps();
+        Scenario scenario = new StubScenario();
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        String inputFilePath = "src/test/resources/AkitaPageMock.html";
+        String url = new File(inputFilePath).getAbsolutePath();
+        akitaScenario.setVar("Page", "file://" + url);
+        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        akitaScenario.setCurrentPage(akitaScenario.getPage("AkitaPageMock"));
+        assertThat(akitaScenario.getPage("AkitaPageMock"), is(notNullValue()));
+        close();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -88,8 +102,17 @@ public class AkitaScenarioTest {
 
     @Test
     public void getCurrentPagePositive() {
-        akitaScenario.setCurrentPage(akitaScenario.getPage("Title"));
+        AkitaScenario akitaScenario = AkitaScenario.getInstance();
+        DefaultSteps ds = new DefaultSteps();
+        Scenario scenario = new StubScenario();
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        String inputFilePath = "src/test/resources/AkitaPageMock.html";
+        String url = new File(inputFilePath).getAbsolutePath();
+        akitaScenario.setVar("Page", "file://" + url);
+        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        akitaScenario.setCurrentPage(akitaScenario.getPage("AkitaPageMock"));
         assertThat(akitaScenario.getCurrentPage(), is(notNullValue()));
+        close();
     }
 
     @Test(expected = IllegalArgumentException.class)
