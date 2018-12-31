@@ -569,7 +569,7 @@ public class DefaultStepsTest {
         ds.selectElementNumberFromList(0, "List");
     }
 
-    @Test()
+    @Test
     public void selectElementNumberFromListMaxBorder() {
         ds.selectElementNumberFromList(3, "List");
     }
@@ -577,6 +577,28 @@ public class DefaultStepsTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void selectElementNumberFromListOverMaxBorder() {
         ds.selectElementNumberFromList(4, "List");
+    }
+
+    @Test
+    public void selectElementNumberFromListAndSaveToVarMinBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(1, "List", "varName");
+        assertThat(akitaScenario.tryGetVar("varName"), equalTo("Three"));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void selectElementNumberFromListAndSaveToVarUnderMinBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(0, "List", "varName");
+    }
+
+    @Test
+    public void selectElementNumberFromListAndSaveToVarMaxBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(3, "List", "varName");
+        assertThat(akitaScenario.tryGetVar("varName"), equalTo("Two"));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void selectElementNumberFromListAndSaveToVarOverMaxBorder() {
+        ds.selectElementNumberFromListAndSaveToVar(4, "List", "varName");
     }
 
     @Test
@@ -590,8 +612,6 @@ public class DefaultStepsTest {
         assertThat(akitaScenario.tryGetVar("test"), anyOf(equalTo("One"),
             equalTo("Two"), equalTo("Three")));
     }
-
-    ;
 
     @Test(expected = IllegalArgumentException.class)
     public void selectRandomElementFromListAndSaveVarNegative() {
@@ -646,7 +666,7 @@ public class DefaultStepsTest {
         ds.checkIfListInnerTextConsistsOfTableElements("List3", types);
     }
 
-    @Test()
+    @Test
     public void testListInnerTextCorrespondsToListFromVariable() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One 1");
@@ -878,6 +898,11 @@ public class DefaultStepsTest {
         ds.listContainsNumberFromVariable("List", "var3");
     }
 
+    @Test
+    public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() {
+        ds.listContainsNumberFromVariable("List", "Проверка комплаенса 3");
+    }
+
     @Test(expected = AssertionError.class)
     public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
         ds.listContainsNumberFromVariable("List", "4");
@@ -966,6 +991,66 @@ public class DefaultStepsTest {
     }
 
     @Test
+    public void testInputRandomNumSequenceWithIntAndFractPositive() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", 10, 99, ".#");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(4));
+    }
+
+    @Test
+    public void testInputRandomNumSequenceWithIntAndFractMorePositive() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", -9999, -1000, "####");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(5));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInputRandomNumSequenceWithIntAndFractNegative() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", -1, -9, "####");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInputRandomNumSequenceWithIntAndFractMoreNegative() {
+        ds.inputRandomNumSequenceWithIntAndFract("NormalField", 10, 20, "####,");
+    }
+
+    @Test
+    public void testSetRandomNumSequenceWithIntAndFractPositive() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 100, 999, "###.###", "test");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(7));
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(akitaScenario.getVar("test").toString().length()));
+    }
+
+    @Test
+    public void testSetRandomNumSequenceWithIntAndFractMorePositive() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", -99, 99, "###,###", "test");
+        assertThat(akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getAnyElementText("NormalField").length(),
+            equalTo(akitaScenario.getVar("test").toString().length()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetRandomNumSequenceWithIntAndFractNegative() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 9999, 1000, "####", "test");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetRandomNumSequenceWithIntAndFractMoreNegative() {
+        ds.setRandomNumSequenceWithIntAndFract("NormalField", 5, 10, "####,", "test");
+    }
+
+    @Test
     public void testClickOnButtonAndUploadFilePositive() {
         ds.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "src/test/resources/example.pdf");
     }
@@ -992,5 +1077,4 @@ public class DefaultStepsTest {
         ds.fillTemplate(templateName, varName, dataTable);
         Assert.assertEquals("{\"name\": \"Jack\", \"age\": 35}", (String) akitaScenario.getVar(varName));
     }
-
 }
