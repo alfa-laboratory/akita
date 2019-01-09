@@ -44,12 +44,44 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     private static final String WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS = "8000";
 
+    public AkitaPage() {
+        super();
+    }
+
     /**
      * Получение блока со страницы по имени (аннотированного "Name")
      */
     public AkitaPage getBlock(String blockName) {
         return (AkitaPage) java.util.Optional.ofNullable(namedElements.get(blockName))
                 .orElseThrow(() -> new IllegalArgumentException("Блок " + blockName + " не описан на странице " + this.getClass().getName()));
+    }
+
+    /**
+     * Получение списка блоков со страницы по имени (аннотированного "Name")
+     */
+    @SuppressWarnings("unchecked")
+    public List<AkitaPage> getBlocksList(String listName) {
+        Object value = namedElements.get(listName);
+        if (!(value instanceof List)) {
+            throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
+        }
+        Stream<Object> s = ((List) value).stream();
+        return s.map(AkitaPage::castToAkitaPage).collect(toList());
+    }
+
+    /**
+     * Получение списка из элементов блока со страницы по имени (аннотированного "Name")
+     */
+    public List<SelenideElement> getBlockElements(String blockName) {
+        return getBlock(blockName).namedElements.entrySet().stream()
+                .map(x -> ((SelenideElement) x.getValue())).collect(toList());
+    }
+
+    /**
+     * Получение элемента блока со страницы по имени (аннотированного "Name")
+     */
+    public SelenideElement getBlockElement(String blockName, String elementName) {
+        return ((SelenideElement) getBlock(blockName).namedElements.get(elementName));
     }
 
     /**
@@ -164,7 +196,7 @@ public abstract class AkitaPage extends ElementsContainer {
                 .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
                 .forEach(f -> {
                     if (AkitaPage.class.isAssignableFrom(f.getType())){
-                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType());
+                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType()).initialize();
                         func.accept(akitaPage);
                     }
                 });
@@ -278,6 +310,12 @@ public abstract class AkitaPage extends ElementsContainer {
         return null;
     }
 
+    private static AkitaPage castToAkitaPage(Object object) {
+        if (object instanceof AkitaPage) {
+            return (AkitaPage) object;
+        }
+        return null;
+    }
     /**
      * Список всех элементов страницы
      */

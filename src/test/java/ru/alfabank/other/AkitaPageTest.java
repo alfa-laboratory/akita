@@ -52,8 +52,8 @@ public class AkitaPageTest {
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
         ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
     }
 
     @AfterClass
@@ -64,6 +64,17 @@ public class AkitaPageTest {
     @Test
     public void getBlockPositive() {
         assertThat(page.getBlock("SearchBlock"), is(notNullValue()));
+    }
+
+    @Test
+    public void getBlockElementsPositive() {
+        List<SelenideElement> selenideElements = page.getBlockElements("SearchBlock");
+        assertThat(selenideElements, is(notNullValue()));
+    }
+
+    @Test
+    public void getBlockElementPositive() {
+        assertThat(page.getBlockElement("SearchBlock", "SearchButton"), is(notNullValue()));
     }
 
     @Test(expected = IllegalArgumentException.class)

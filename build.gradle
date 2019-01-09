@@ -8,7 +8,7 @@ buildscript {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 
         classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
         classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
@@ -47,18 +47,17 @@ apply plugin: 'nebula.javadoc-jar'
 group = 'ru.alfabank.tests'
 
 description = """light testing framework Akita"""
-project.version = '3.5.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '4.12.3'
+    selenideVersion = '5.1.0'
 }
 
 dependencies {
-    compile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
     compile group: 'junit', name: 'junit', version: '4.12'
@@ -70,10 +69,11 @@ dependencies {
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 
-    testCompile "org.mockito:mockito-core:2.19.0"
-    testCompile "org.mockito:mockito-inline:2.19.0"
-    testCompile "com.github.tomakehurst:wiremock:2.18.0"
+    testCompile "org.mockito:mockito-core:2.13.0"
+    testCompile "org.mockito:mockito-inline:2.13.0"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -104,7 +104,7 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-    publications = ['maven']
+    publications = ['nebula']
     dryRun = false
     publish = true
     pkg {
@@ -120,8 +120,8 @@ bintray {
         publicDownloadNumbers = true
         attributes = [:]
         version {
-            name = '3.5.2'
-            vcsTag = '3.5.2'
+            name = project.version
+            vcsTag = project.version
             attributes = [:]
         }
     }
@@ -129,7 +129,7 @@ bintray {
 
 test {
     maxParallelForks = 1
-    ignoreFailures = true
+    ignoreFailures = false
 
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=chrome"
@@ -137,7 +137,7 @@ test {
 }
 
 bintrayUpload.onlyIf {
-  //  !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
+    !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
 }
 
 
@@ -152,5 +152,6 @@ jacocoTestReport {
 license {
     header rootProject.file('HEADER')
     exclude ("body.json")
+    exclude ("bodyWithParams.json")
     strictCheck false
 }

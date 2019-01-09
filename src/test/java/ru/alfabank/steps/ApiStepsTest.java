@@ -36,9 +36,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrDefault;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
 
 public class ApiStepsTest {
@@ -114,6 +113,28 @@ public class ApiStepsTest {
     }
 
     @Test
+    public void sendHttpRequestFromFileWithVarsPost() throws java.lang.Exception {
+        String body = "{\"person\": {\"name\": \"Jack\", \"age\": 35}, \"object\": {\"var1\": 1}}";
+        String bodyFileName = "/src/test/resources/bodyWithParams.json";
+
+        stubFor(post(urlEqualTo("/post/resource"))
+            .withRequestBody(WireMock.equalTo(body))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "text/xml")
+                .withBody("TEST_BODY")));
+
+        List<RequestParam> params = Collections.singletonList(
+            RequestParam.builder()
+                .name("body")
+                .type(RequestParamType.BODY)
+                .value(bodyFileName)
+                .build());
+        api.sendHttpRequestSaveResponse("POST", "/post/resource", "RESPONSE_POST_BODY", params);
+        assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
+    }
+
+    @Test
     public void sendHttpRequestSaveResponseTest() throws java.lang.Exception {
         stubFor(post(urlEqualTo("/post/saveWithTable"))
             .willReturn(aResponse()
@@ -178,21 +199,21 @@ public class ApiStepsTest {
     @Test()
     public void shouldNotFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"value\": \"true\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars(expectedBodyValue));
+        String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars(expectedBodyValue));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
     public void shouldFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"asn\": \"1\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars("/src/test/resources/body.json"));
+        String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars("/src/test/resources/body.json"));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
     public void shouldFindBodyByPropertyKey() throws Exception {
         String expectedBodyValue = "{\"property\":\"body\"}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars("bodyValue"));
+        String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars("bodyValue"));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
@@ -201,7 +222,7 @@ public class ApiStepsTest {
         akitaScenario.setVar("var1", "\"1\"");
         String defaultBodyValue = "{\"a\":{var1}, \"b\": {\"c\": {var2}}}";
         String expectedBodyValue = "{\"a\":\"1\", \"b\": {\"c\": \"2\"}}";
-        String actualBodyValue = loadValueFromFileOrPropertyOrDefault(resolveJsonVars(defaultBodyValue));
+        String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars(defaultBodyValue));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 }

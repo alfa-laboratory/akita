@@ -21,10 +21,13 @@ import groovy.lang.GroovyShell;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.String.format;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -32,7 +35,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
  */
 public class ScopedVariables {
 
-    public static final String CURVE_BRACES_PATTERN = "\\{([^{}]+)\\}";
+    public static final String VARIABLE_NAME_PATTERN = "[{]([\\wа-яА-Я]+[\\wа-яА-Я.-]+[\\wа-яА-Я]+)[}]";
+
     private Map<String, Object> variables = Maps.newHashMap();
 
     /**
@@ -60,7 +64,7 @@ public class ScopedVariables {
      * @param textToReplaceIn строка, в которой необходимо выполнить замену (не модифицируется)
      */
     public String replaceVariables(String textToReplaceIn) {
-        Pattern p = Pattern.compile(CURVE_BRACES_PATTERN);
+        Pattern p = Pattern.compile(VARIABLE_NAME_PATTERN);
         Matcher m = p.matcher(textToReplaceIn);
         StringBuffer buffer = new StringBuffer();
         while (m.find()) {
@@ -80,51 +84,27 @@ public class ScopedVariables {
      * @return новая строка
      */
     public static String resolveVars(String inputString) {
-        Pattern p = Pattern.compile(CURVE_BRACES_PATTERN);
+        Pattern p = Pattern.compile(VARIABLE_NAME_PATTERN);
         Matcher m = p.matcher(inputString);
         String newString = "";
+        List<String> unresolvedVariables = new ArrayList<>();
         while (m.find()) {
             String varName = m.group(1);
             String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
-            if (value == null)
-                throw new IllegalArgumentException(
-                    "Значение " + varName +
-                        " не было найдено ни в application.properties, ни в environment переменной");
+            if (value == null) {
+                unresolvedVariables.add(varName);
+                value = varName;
+            }
             newString = m.replaceFirst(value);
             m = p.matcher(newString);
+        }
+        if (!unresolvedVariables.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Значения " + unresolvedVariables +
+                " не были найдены ни в application.properties, ни в environment переменной");
         }
         if (newString.isEmpty()) {
             newString = inputString;
-        }
-        return newString;
-    }
-
-
-    /**
-     * Производит поиск параметров в переданном строкой json.
-     * В случае нахождения параметра - заменяет его значение на значение из properties или хранилища переменных
-     *
-     * @param inputJsonAsString заданная строка
-     * @return новая строка
-     */
-    public static String resolveJsonVars(String inputJsonAsString) {
-        if (isJSONValid(inputJsonAsString)) return inputJsonAsString;
-        Pattern p = Pattern.compile(CURVE_BRACES_PATTERN);
-        Matcher m = p.matcher(inputJsonAsString);
-        String newString = "";
-        while (m.find()) {
-            String varName = m.group(1);
-            String value = loadProperty(varName, (String) AkitaScenario.getInstance().tryGetVar(varName));
-            if (value == null)
-                throw new IllegalArgumentException(
-                    "Значение " + varName +
-                        " не было найдено ни в application.properties, ни в environment переменной");
-            newString = m.replaceFirst(value);
-            if (isJSONValid(newString)) return newString;
-            m = p.matcher(newString);
-        }
-        if (newString.isEmpty()) {
-            newString = inputJsonAsString;
         }
         return newString;
     }

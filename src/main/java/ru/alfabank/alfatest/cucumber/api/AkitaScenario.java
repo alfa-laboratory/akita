@@ -148,8 +148,8 @@ public final class AkitaScenario {
      * @param clazz                   - класс страницы, которую необходимо получить
      * @param checkIfElementsAppeared - флаг, определяющий проверку отображения элементов на странице
      */
-    public <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
-        return Pages.getPage(clazz, checkIfElementsAppeared);
+    public <T extends AkitaPage> AkitaPage getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
+        return Pages.getPage(clazz, checkIfElementsAppeared).initialize();
     }
 
     /**

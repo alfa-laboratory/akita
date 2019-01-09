@@ -16,17 +16,18 @@
 package ru.alfabank.loadPropertyTests;
 
 import com.codeborne.selenide.WebDriverRunner;
+import cucumber.api.Scenario;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveJsonVars;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 public class PropertyLoaderTests {
@@ -38,7 +39,8 @@ public class PropertyLoaderTests {
 
     @Before
     public void prepare() {
-        akitaScenario.setEnvironment(new AkitaEnvironment());
+        Scenario scenario = new StubScenario();
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     @AfterClass
@@ -108,7 +110,7 @@ public class PropertyLoaderTests {
     @Test
     public void getJsonStringType() {
         String expectedValue = "{\"accounts\": []}";
-        String actualValue = resolveJsonVars(expectedValue);
+        String actualValue = resolveVars(expectedValue);
         assertThat(actualValue, is(expectedValue));
     }
 }
