@@ -15,6 +15,7 @@
  */
 package ru.alfabank.alfatest.cucumber.api;
 
+import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.Selenide;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
@@ -73,18 +74,18 @@ public final class Pages {
      * Получение страницы из "pages" по имени
      */
     public AkitaPage get(String pageName) {
-        return Selenide.page(getPageFromPagesByName(pageName)).initialize();
+        return Selenide.page(getPageMapInstanceInternal().get(pageName)).initialize();
     }
 
     /**
      * Получение страницы по классу
      */
     @SuppressWarnings("unchecked")
-    public <T extends AkitaPage> T get(Class<T> clazz, String pageName) {
-        AkitaPage page = Selenide.page(Selenide.page(getPageFromPagesByName(pageName))).initialize();
+    public <T extends AkitaPage> T get(Class<T> clazz, String name) {
+        AkitaPage page = Selenide.page(getPageMapInstanceInternal().get(name)).initialize();
 
         if (!clazz.isInstance(page)) {
-            throw new IllegalStateException(pageName + " page is not a instance of " + clazz + ". Named page is a " + page);
+            throw new IllegalStateException(name + " page is not a instance of " + clazz + ". Named page is a " + page);
         }
         return (T) page;
     }

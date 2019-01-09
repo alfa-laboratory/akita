@@ -118,18 +118,18 @@ public class ApiStepsTest {
         String bodyFileName = "/src/test/resources/bodyWithParams.json";
 
         stubFor(post(urlEqualTo("/post/resource"))
-            .withRequestBody(WireMock.equalTo(body))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBody("TEST_BODY")));
+                .withRequestBody(WireMock.equalTo(body))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY")));
 
         List<RequestParam> params = Collections.singletonList(
-            RequestParam.builder()
-                .name("body")
-                .type(RequestParamType.BODY)
-                .value(bodyFileName)
-                .build());
+                RequestParam.builder()
+                        .name("body")
+                        .type(RequestParamType.BODY)
+                        .value(bodyFileName)
+                        .build());
         api.sendHttpRequestSaveResponse("POST", "/post/resource", "RESPONSE_POST_BODY", params);
         assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }

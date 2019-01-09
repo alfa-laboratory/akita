@@ -45,6 +45,7 @@ apply plugin: 'nebula.source-jar'
 apply plugin: 'nebula.javadoc-jar'
 
 group = 'ru.alfabank.tests'
+version = '3.5.2'
 
 description = """light testing framework Akita"""
 
