@@ -74,7 +74,7 @@ public final class Pages {
      * Получение страницы из "pages" по имени
      */
     public AkitaPage get(String pageName) {
-        return Selenide.page(getPageMapInstanceInternal().get(pageName)).initialize();
+        return Selenide.page(getPageFromPagesByName(pageName)).initialize();
     }
 
     /**
@@ -82,7 +82,7 @@ public final class Pages {
      */
     @SuppressWarnings("unchecked")
     public <T extends AkitaPage> T get(Class<T> clazz, String name) {
-        AkitaPage page = Selenide.page(getPageMapInstanceInternal().get(name)).initialize();
+        AkitaPage page = Selenide.page(getPageFromPagesByName(name)).initialize();
 
         if (!clazz.isInstance(page)) {
             throw new IllegalStateException(name + " page is not a instance of " + clazz + ". Named page is a " + page);
