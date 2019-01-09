@@ -15,9 +15,12 @@
  */
 package ru.alfabank.alfatest.cucumber.api;
 
+import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.Selenide;
 import com.google.common.collect.Maps;
+import lombok.SneakyThrows;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -46,7 +49,7 @@ public final class Pages {
      */
     public AkitaPage getCurrentPage() {
         if (currentPage == null) throw new IllegalStateException("Текущая страница не задана");
-        return currentPage;
+        return currentPage.initialize();
     }
 
     /**
@@ -71,7 +74,7 @@ public final class Pages {
      * Получение страницы из "pages" по имени
      */
     public AkitaPage get(String pageName) {
-        return getPageMapInstanceInternal().get(pageName);
+        return Selenide.page(getPageFromPagesByName(pageName)).initialize();
     }
 
     /**
@@ -79,15 +82,23 @@ public final class Pages {
      */
     @SuppressWarnings("unchecked")
     public <T extends AkitaPage> T get(Class<T> clazz, String name) {
-        AkitaPage page = getPageMapInstanceInternal().get(name);
+        AkitaPage page = Selenide.page(getPageFromPagesByName(name)).initialize();
+
         if (!clazz.isInstance(page)) {
             throw new IllegalStateException(name + " page is not a instance of " + clazz + ". Named page is a " + page);
         }
         return (T) page;
     }
 
-    private Map<String, ? extends AkitaPage> getPageMapInstanceInternal() {
+    private Map<String, AkitaPage> getPageMapInstanceInternal() {
         return pages;
+    }
+
+    private AkitaPage getPageFromPagesByName(String pageName) throws IllegalArgumentException {
+        AkitaPage page = getPageMapInstanceInternal().get(pageName);
+        if (page == null)
+            throw new IllegalArgumentException(pageName + " page is not declared in a list of available pages");
+        return page;
     }
 
     /**
@@ -105,7 +116,7 @@ public final class Pages {
     public static <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
         T page = Selenide.page(clazz);
         if (checkIfElementsAppeared) {
-            page.isAppeared();
+            page.initialize().isAppeared();
         }
         return page;
     }
@@ -113,7 +124,13 @@ public final class Pages {
     /**
      * Добавление страницы в "pages" по классу
      */
-    public void put(String pageName, Class<? extends AkitaPage> clazz) {
-        pages.put(pageName, Selenide.page(clazz).initialize());
+    @SneakyThrows
+    public void put(String pageName, Class<? extends AkitaPage> page) {
+        if (page == null)
+            throw new IllegalArgumentException("Была передана пустая страница");
+        Constructor<? extends AkitaPage> constructor = page.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        AkitaPage p = page.newInstance();
+        pages.put(pageName, p);
     }
 }
