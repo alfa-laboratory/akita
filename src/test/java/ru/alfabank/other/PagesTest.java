@@ -15,11 +15,18 @@
  */
 package ru.alfabank.other;
 
+import cucumber.api.Scenario;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ru.alfabank.AkitaPageMock;
+import ru.alfabank.StubScenario;
+import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.alfatest.cucumber.api.Pages;
+import ru.alfabank.steps.DefaultSteps;
+
+import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -32,6 +39,15 @@ public class PagesTest {
     public static void init() {
         pages = new Pages();
         akitaPageMock = new AkitaPageMock();
+
+        AkitaScenario akitaScenario = AkitaScenario.getInstance();
+        DefaultSteps ds = new DefaultSteps();
+        Scenario scenario = new StubScenario();
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        String inputFilePath = "src/test/resources/AkitaPageMock.html";
+        String url = new File(inputFilePath).getAbsolutePath();
+        akitaScenario.setVar("Page", "file://" + url);
+        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test
@@ -58,8 +74,8 @@ public class PagesTest {
         pages.put("Test", nullPage);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void getNegative() {
-        assertThat(pages.get("WRONG_KEY"), is(nullValue()));
+        pages.get("WRONG_KEY_TO_GET_PAGE");
     }
 }

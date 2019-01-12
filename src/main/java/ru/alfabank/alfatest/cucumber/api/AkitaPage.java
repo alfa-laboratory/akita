@@ -44,6 +44,10 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     private static final String WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS = "8000";
 
+    public AkitaPage() {
+        super();
+    }
+
     /**
      * Получение блока со страницы по имени (аннотированного "Name")
      */
@@ -192,7 +196,7 @@ public abstract class AkitaPage extends ElementsContainer {
                 .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
                 .forEach(f -> {
                     if (AkitaPage.class.isAssignableFrom(f.getType())){
-                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType());
+                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType()).initialize();
                         func.accept(akitaPage);
                     }
                 });

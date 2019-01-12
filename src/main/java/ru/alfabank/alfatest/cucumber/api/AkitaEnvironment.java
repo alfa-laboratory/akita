@@ -16,6 +16,7 @@
 package ru.alfabank.alfatest.cucumber.api;
 
 import cucumber.api.Scenario;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
@@ -56,6 +57,7 @@ public class AkitaEnvironment {
      * добавляя ссылки на эти классы в поле "pages"
      */
     @SuppressWarnings("unchecked")
+    @SneakyThrows
     private void initPages() {
         new AnnotationScanner().getClassesAnnotatedWith(Name.class)
                 .stream()

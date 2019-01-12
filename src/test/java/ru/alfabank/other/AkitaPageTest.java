@@ -52,8 +52,8 @@ public class AkitaPageTest {
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
         ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
     }
 
     @AfterClass
