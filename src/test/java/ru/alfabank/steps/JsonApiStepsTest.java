@@ -26,20 +26,21 @@ import org.junit.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
+
 public class JsonApiStepsTest {
-    private static DefaultApiSteps api;
+    private static ApiSteps api;
     private static AkitaScenario akitaScenario;
 
     @BeforeClass
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
-        api = new DefaultApiSteps();
+        api = new ApiSteps();
         akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
     }
 

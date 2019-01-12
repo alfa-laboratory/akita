@@ -28,9 +28,7 @@ import org.openqa.selenium.TakesScreenshot;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.codeborne.selenide.WebDriverRunner.hasWebDriverStarted;
-import static com.codeborne.selenide.WebDriverRunner.setProxy;
+import static com.codeborne.selenide.WebDriverRunner.*;
 import static ru.alfabank.tests.core.drivers.CustomDriverProvider.REMOTE_URL;
 
 @Slf4j

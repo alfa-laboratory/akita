@@ -42,13 +42,13 @@ import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
 
 public class ApiStepsTest {
 
-    private static DefaultApiSteps api;
+    private static ApiSteps api;
     private static AkitaScenario akitaScenario;
 
     @BeforeClass
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
-        api = new DefaultApiSteps();
+        api = new ApiSteps();
         akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
     }
 
@@ -67,7 +67,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestGET() throws java.lang.Exception {
+    public void sendHttpRequestGET() throws Exception {
         stubFor(get(urlEqualTo("/get/resource"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -78,7 +78,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestPost() throws java.lang.Exception {
+    public void sendHttpRequestPost() throws Exception {
         stubFor(post(urlEqualTo("/post/resource"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -89,7 +89,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestWithVarsPost() throws java.lang.Exception {
+    public void sendHttpRequestWithVarsPost() throws Exception {
         String body = "testBodyValue";
         String bodyVarName = "testBodyName";
         akitaScenario.setVar(bodyVarName, body);
@@ -113,7 +113,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestFromFileWithVarsPost() throws java.lang.Exception {
+    public void sendHttpRequestFromFileWithVarsPost() throws Exception {
         String body = "{\"person\": {\"name\": \"Jack\", \"age\": 35}, \"object\": {\"var1\": 1}}";
         String bodyFileName = "/src/test/resources/bodyWithParams.json";
 
@@ -135,7 +135,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestSaveResponseTest() throws java.lang.Exception {
+    public void sendHttpRequestSaveResponseTest() throws Exception {
         stubFor(post(urlEqualTo("/post/saveWithTable"))
             .willReturn(aResponse()
                 .withStatus(201)
@@ -160,7 +160,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void checkResponseCodeTest() throws java.lang.Exception {
+    public void checkResponseCodeTest() throws Exception {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=test"))
             .willReturn(aResponse()
                 .withStatus(404)

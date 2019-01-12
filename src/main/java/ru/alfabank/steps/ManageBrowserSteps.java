@@ -19,6 +19,7 @@ import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.text.IsEqualIgnoringCase;
 import org.openqa.selenium.Cookie;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
@@ -28,16 +29,15 @@ import static com.codeborne.selenide.Selenide.clearBrowserCookies;
 import static com.codeborne.selenide.Selenide.switchTo;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 /**
  * Шаги для работы с cookies
  */
-@Slf4j
-public class DefaultManageBrowserSteps {
 
-    private DefaultSteps ds = new DefaultSteps();
+@Slf4j
+public class ManageBrowserSteps extends BaseMethods {
+
     private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
@@ -102,10 +102,10 @@ public class DefaultManageBrowserSteps {
      */
     @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
     public void checkPageTitle(String pageTitleName) {
-        pageTitleName = ds.getPropertyOrStringVariableOrValue(pageTitleName);
+        pageTitleName = getPropertyOrStringVariableOrValue(pageTitleName);
         String currentTitle = getWebDriver().getTitle().trim();
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
-                pageTitleName, equalToIgnoringCase(currentTitle));
+                pageTitleName, IsEqualIgnoringCase.equalToIgnoringCase(currentTitle));
     }
 
     /**
@@ -124,14 +124,6 @@ public class DefaultManageBrowserSteps {
     @И("выполнено закрытие текущей вкладки")
     public void closeCurrentTab() {
         getWebDriver().close();
-    }
-
-    private String nextWindowHandle() {
-        String currentWindowHandle = getWebDriver().getWindowHandle();
-        Set<String> windowHandles = getWebDriver().getWindowHandles();
-        windowHandles.remove(currentWindowHandle);
-
-        return windowHandles.iterator().next();
     }
 
 }

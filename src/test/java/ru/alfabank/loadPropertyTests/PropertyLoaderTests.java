@@ -17,6 +17,7 @@ package ru.alfabank.loadPropertyTests;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -27,8 +28,10 @@ import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 public class PropertyLoaderTests {
     private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
@@ -113,4 +116,16 @@ public class PropertyLoaderTests {
         String actualValue = resolveVars(expectedValue);
         assertThat(actualValue, is(expectedValue));
     }
+
+    @Test
+    public void testPropertyWhenLoadValueFromFileOrPropertyOrVariableOrDefault2() {
+        MatcherAssert.assertThat(loadValueFromFileOrPropertyOrVariableOrDefault("testScript"), equalTo("alert('privet');"));
+    }
+
+    @Test
+    public void testVariableWhenLoadValueFromFileOrPropertyOrVariableOrDefault3() {
+        akitaScenario.setVar("varName", "testVariable");
+        MatcherAssert.assertThat("testVariable", equalTo(loadValueFromFileOrPropertyOrVariableOrDefault("varName")));
+    }
+
 }

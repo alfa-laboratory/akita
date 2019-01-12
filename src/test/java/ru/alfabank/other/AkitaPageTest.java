@@ -28,7 +28,7 @@ import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import ru.alfabank.steps.DefaultSteps;
+import ru.alfabank.steps.WebPageInteractionSteps;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -41,19 +41,20 @@ import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByNam
 public class AkitaPageTest {
     private static AkitaPageMock akitaPageMock;
     private static AkitaPage page;
+    private static WebPageInteractionSteps wpis;
 
     @BeforeClass
     public static void setup() {
+        wpis = new WebPageInteractionSteps();
         akitaPageMock = new AkitaPageMock();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        DefaultSteps ds = new DefaultSteps();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
         page = akitaScenario.getEnvironment().getPage("AkitaPageMock");
+        wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterClass

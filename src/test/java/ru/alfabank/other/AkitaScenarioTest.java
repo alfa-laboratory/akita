@@ -20,14 +20,14 @@ import cucumber.api.Scenario;
 import org.junit.*;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
+import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import ru.alfabank.steps.DefaultSteps;
+import ru.alfabank.steps.WebPageInteractionSteps;
 
 import java.io.File;
 
-import static com.codeborne.selenide.Selenide.open;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
@@ -70,13 +70,13 @@ public class AkitaScenarioTest {
     @Test
     public void putGetPagesPositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        DefaultSteps ds = new DefaultSteps();
+        WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
         akitaScenario.setCurrentPage(akitaScenario.getPage("AkitaPageMock"));
         assertThat(akitaScenario.getPage("AkitaPageMock"), is(notNullValue()));
         close();
@@ -102,13 +102,13 @@ public class AkitaScenarioTest {
     @Test
     public void getCurrentPagePositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        DefaultSteps ds = new DefaultSteps();
+        WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
         akitaScenario.setCurrentPage(akitaScenario.getPage("AkitaPageMock"));
         assertThat(akitaScenario.getCurrentPage(), is(notNullValue()));
         close();
@@ -124,4 +124,13 @@ public class AkitaScenarioTest {
         Scenario actualScenario = akitaScenario.getScenario();
         Assert.assertEquals("My scenario", actualScenario.getName());
     }
+    @Test
+    public void getVarsTest() {
+        akitaScenario.setVar("1", "1");
+        akitaScenario.setVar("2", "2");
+        ScopedVariables scopedVariables = akitaScenario.getVars();
+        assertThat((String) scopedVariables.get("1") + (String) scopedVariables.get("2"),
+                equalTo("12"));
+    }
+
 }
