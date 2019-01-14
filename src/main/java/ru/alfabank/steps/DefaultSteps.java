@@ -1087,7 +1087,7 @@ public class DefaultSteps {
     @И("^ссылка страницы содержит текст \"([^\"]*)\"$")
     public void linkShouldHaveText(String text) {
         String currentUrl = WebDriverRunner.url();
-        Assert.assertThat(currentUrl, containsString(text));
+        Assert.assertThat(currentUrl, containsStringIgnoringCase(text));
     }
 
     /**
