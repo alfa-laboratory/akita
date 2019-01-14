@@ -36,17 +36,13 @@ public class InputFieldStepsTest {
 
     private static AkitaScenario akitaScenario;
     private static InputInteractionSteps iis;
-    private static InputVerificationSteps ivs;
     private static WebPageInteractionSteps wpis;
-
-
 
     @BeforeClass
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
-        ivs = new InputVerificationSteps();
         iis = new InputInteractionSteps();
         wpis = new WebPageInteractionSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
@@ -110,11 +106,6 @@ public class InputFieldStepsTest {
                         .getPage("AkitaPageMock")
                         .getAnyElementText("TextField"),
                 equalTo(""));
-    }
-
-    @Test
-    public void fieldInputIsEmptyPositive() {
-        ivs.fieldInputIsEmpty("NormalField");
     }
 
     @Test
@@ -264,6 +255,5 @@ public class InputFieldStepsTest {
     public void testSetRandomNumSequenceWithIntAndFractMoreNegative() {
         iis.setRandomNumSequenceWithIntAndFract("NormalField", 5, 10, "####,", "test");
     }
-
 
 }

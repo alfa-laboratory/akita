@@ -1,0 +1,202 @@
+package ru.alfabank.steps;
+
+import com.codeborne.selenide.Selenide;
+import cucumber.api.DataTable;
+import cucumber.api.java.ru.И;
+import cucumber.api.java.ru.Когда;
+import cucumber.api.java.ru.Тогда;
+import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.Matchers;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.codeborne.selenide.Selenide.sleep;
+import static com.codeborne.selenide.Selenide.switchTo;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
+
+/**
+ * Шаги для тестирования взаимодействия с внешним окружением (устройствами, файлами, property и т.д.)
+ */
+
+@Slf4j
+public class RoundUpSteps extends BaseMethods {
+
+    /**
+     * Значение заданной переменной из application.properties сохраняется в переменную в akitaScenario
+     * для дальнейшего использования
+     */
+    @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
+    public void saveValueToVar(String propertyVariableName, String variableName) {
+        propertyVariableName = loadProperty(propertyVariableName);
+        akitaScenario.setVar(variableName, propertyVariableName);
+        akitaScenario.write("Значение сохраненной переменной " + propertyVariableName);
+    }
+
+    /**
+     * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
+     */
+    @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
+    public void setVariable(String variableName, String value) {
+        value = getPropertyOrValue(value);
+        akitaScenario.setVar(variableName, value);
+    }
+
+    /**
+     * Ожидание в течение заданного количества секунд
+     */
+    @Когда("^выполнено ожидание в течение (\\d+) (?:секунд|секунды)")
+    public void waitForSeconds(long seconds) {
+        sleep(1000 * seconds);
+    }
+
+    /**
+     * Эмулирует нажатие клавиш на клавиатуре
+     */
+    @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
+    public void pushButtonOnKeyboard(String buttonName) {
+        Keys key = Keys.valueOf(buttonName.toUpperCase());
+        switchTo().activeElement().sendKeys(key);
+    }
+
+    /**
+     * Эмулирует нажатие сочетания клавиш на клавиатуре.
+     * Допустим, чтобы эмулировать нажатие на Ctrl+A, в таблице должны быть следующие значения
+     * | CONTROL |
+     * | a       |
+     *
+     * @param keyNames название клавиши
+     */
+    @И("^выполнено нажатие на сочетание клавиш из таблицы$")
+    public void pressKeyCombination(List<String> keyNames) {
+        Iterable<CharSequence> listKeys = keyNames.stream()
+                .map(this::getKeyOrCharacter)
+                .collect(Collectors.toList());
+        String combination = Keys.chord(listKeys);
+        switchTo().activeElement().sendKeys(combination);
+    }
+
+    private CharSequence getKeyOrCharacter(String key) {
+        try {
+            return Keys.valueOf(key.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return key;
+        }
+    }
+
+     /**
+     * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
+     * Скрипт можно передать как аргумент метода или значение из application.properties
+     */
+    @Когда("^выполнен js-скрипт \"([^\"]*)\"")
+    public void executeJsScript(String scriptName) {
+        String content = loadValueFromFileOrPropertyOrVariableOrDefault(scriptName);
+        Selenide.executeJavaScript(content);
+    }
+
+    /**
+     * Метод осуществляет снятие скриншота и прикрепление его к cucumber отчету.
+     *
+     */
+    @И("^снят скриншот текущей страницы$")
+    public void takeScreenshot() {
+        final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
+        AkitaScenario.getInstance().getScenario().embed(screenshot, "image/png");
+    }
+
+    /**
+     * Выполняется чтение файла с шаблоном и заполнение его значениями из таблицы
+     */
+    @И("^шаблон \"([^\"]*)\" заполнен данными из таблицы и сохранён в переменную \"([^\"]*)\"$")
+    public void fillTemplate(String templateName, String varName, DataTable table) {
+        String template = loadValueFromFileOrPropertyOrVariableOrDefault(templateName);
+        boolean error = false;
+        for (List<String> list : table.raw()) {
+            String regexp = list.get(0);
+            String replacement = list.get(1);
+            if (template.contains(regexp)) {
+                template = template.replaceAll(regexp, replacement);
+            } else {
+                akitaScenario.write("В шаблоне не найден элемент " + regexp);
+                error = true;
+            }
+        }
+        if (error)
+            throw new RuntimeException("В шаблоне не найдены требуемые регулярные выражения");
+        akitaScenario.setVar(varName, template);
+    }
+
+    /**
+     * Проверка равенства двух переменных из хранилища
+     */
+    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
+    public void compareTwoVariables(String firstVariableName, String secondVariableName) {
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
+        assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
+                firstValueToCompare, equalTo(secondValueToCompare));
+    }
+
+    /**
+     * Проверка неравенства двух переменных из хранилища
+     */
+    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
+    public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
+        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
+        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
+        assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
+                firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
+    }
+
+    /**
+     * Выполняется поиск нужного файла в папке /Downloads
+     * Поиск осуществляется по содержанию ожидаемого текста в названии файла. Можно передавать регулярное выражение.
+     * После выполнения проверки файл удаляется
+     */
+    @Тогда("^файл \"(.*)\" загрузился в папку /Downloads$")
+    public void testFileDownloaded(String fileName) {
+        File downloads = getDownloadsDir();
+        File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
+        assertNotNull("Ошибка поиска файла", expectedFiles);
+        assertFalse("Файл не загрузился", expectedFiles.length == 0);
+        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
+                expectedFiles.length == 1);
+        deleteFiles(expectedFiles);
+    }
+
+    /**
+     * Проверка совпадения значения из переменной и значения из property
+     */
+    @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
+    public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
+        assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
+                (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
+    }
+
+    /**
+     * Проверка выражения на истинность
+     * выражение из property, из переменной сценария или значение аргумента
+     * Например, string1.equals(string2)
+     * OR string.equals("string")
+     * Любое Java-выражение, возвращающие boolean
+     */
+    @Тогда("^верно, что \"([^\"]*)\"$")
+    public void expressionExpression(String expression) {
+        akitaScenario.getVars().evaluate("assert(" + expression + ")");
+    }
+
+}

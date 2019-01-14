@@ -20,6 +20,10 @@ import cucumber.api.java.ru.Тогда;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Шаги для тестирования скриншотов (Galen Framework)
+ */
+
 public class LayoutSteps extends BaseMethods {
 
     /**

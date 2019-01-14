@@ -225,15 +225,13 @@ public class ElementStepsTest {
     }
 
     @Test
-    public void clickOnElementInBlockPositiveTest() {
-        elis.clickOnElementInBlock("SearchButton", "SearchBlock");
-        assertFalse(akitaScenario.getPage("SearchBlock").getElement("SearchButton").isEnabled());
-    }
-
-    @Test
     public void testCheckFieldsize() {
         elvs.checkFieldSymbolsCount("ul", 20);
     }
 
+    @Test
+    public void fieldInputIsEmptyPositive() {
+        elvs.fieldInputIsEmpty("NormalField");
+    }
 
 }

@@ -37,13 +37,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
  * Шаги для тестирования полей ввода, доступные по умолчанию в каждом новом проекте
  */
 
-
 @Slf4j
 public class InputInteractionSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
-
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
      * Устанавливается значение (в приоритете: из property, из переменной сценария, значение аргумента) в заданное поле.

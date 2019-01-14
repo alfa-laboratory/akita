@@ -37,12 +37,9 @@ public class BaseMethodsTest {
     private static AkitaScenario akitaScenario;
     private static BaseMethods bm;
     private static WebPageInteractionSteps wpis;
-    private static ManageBrowserSteps dmbs;
-
 
     @BeforeClass
     public static void setup() {
-        dmbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));

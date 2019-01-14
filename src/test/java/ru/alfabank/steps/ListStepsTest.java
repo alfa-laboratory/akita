@@ -42,9 +42,6 @@ public class ListStepsTest {
     private static ListInteractionSteps lis;
     private static ListVerificationSteps lvs;
 
-
-
-
     @BeforeClass
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
@@ -237,9 +234,6 @@ public class ListStepsTest {
                 equalTo("Two"), equalTo("Three")));
     }
 
-    ;
-
-
     @Test(expected = AssertionError.class)
     public void testCheckListElementsNotContainsTextNegativeWithProps() {
         lvs.checkListElementsNotContainsText("List2", "itemValueInProps");
@@ -316,18 +310,6 @@ public class ListStepsTest {
     }
 
     @Test
-    public void getElementsListInBlockPositiveTest() {
-        lis.getElementsList("AkitaTable", "Rows", "ListTable");
-        assertNotNull(akitaScenario.getVar("ListTable"));
-    }
-
-    @Test
-    public void getListElementsTextInBlockPositiveTest() {
-        lis.getListElementsText("AkitaTable", "Rows", "ListTable");
-        assertNotNull(akitaScenario.getVar("ListTable"));
-    }
-
-    @Test
     public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() {
         lvs.listContainsNumberFromVariable("List", "Проверка комплаенса 3");
     }
@@ -353,7 +335,5 @@ public class ListStepsTest {
     public void selectElementNumberFromListAndSaveToVarOverMaxBorder() {
         lis.selectElementNumberFromListAndSaveToVar(4, "List", "varName");
     }
-
-
 
 }

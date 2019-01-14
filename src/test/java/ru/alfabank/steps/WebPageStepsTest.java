@@ -40,7 +40,6 @@ public class WebPageStepsTest {
     private static WebPageInteractionSteps wpis;
     private static AkitaScenario akitaScenario;
     private static WebPageVerificationSteps wpvs;
-    private static ElementsVerificationSteps elis;
     private static InputInteractionSteps iis;
 
 
@@ -51,7 +50,6 @@ public class WebPageStepsTest {
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         wpis = new WebPageInteractionSteps();
         wpvs = new WebPageVerificationSteps();
-        elis = new ElementsVerificationSteps();
         iis = new InputInteractionSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
@@ -108,88 +106,6 @@ public class WebPageStepsTest {
         wpvs.checkCurrentURLIsNotEquals(null);
     }
 
-    @Ignore
-    @Test
-    public void setWindowSizeSimple() {
-        Dimension expectedDimension = new Dimension(800, 600);
-        wpis.setBrowserWindowSize(800, 600);
-        Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
-        assertThat(expectedDimension, equalTo(actualDimension));
-    }
-
-    @Test(expected = AssertionError.class)
-    public void compareTwoDigitVarsNegative() {
-        String number1Name = "number1", number1Value = "1234567890";
-        akitaScenario.setVar(number1Name, number1Value);
-
-        String number2Name = "number2", number2Value = "1234567894";
-        akitaScenario.setVar(number2Name, number2Value);
-
-        wpvs.compareTwoVariables(number1Name, number2Name);
-    }
-
-    @Test
-    public void compareTwoDigitVars() {
-        String number1Name = "number1", number1Value = "1234567890.97531";
-        akitaScenario.setVar(number1Name, number1Value);
-
-        String number2Name = "number2", number2Value = "1234567890.97531";
-        akitaScenario.setVar(number2Name, number2Value);
-
-        wpvs.compareTwoVariables(number1Name, number2Name);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCompareTwoDigitVarsAnotherNegative() {
-        String number1Name = "number1", number1Value = null;
-        akitaScenario.setVar(number1Name, number1Value);
-
-        String number2Name = "number2", number2Value = null;
-        akitaScenario.setVar(number2Name, number2Value);
-
-        wpvs.compareTwoVariables(number1Name, number2Name);
-    }
-
-    @Test
-    public void testCheckingTwoVariablesAreNotEqualsPositive() {
-        String variable1Name = "number1";
-        int variable1Value = 666;
-        akitaScenario.setVar(variable1Name, variable1Value);
-
-        String variable2Name = "number2";
-        int variable2Value = 123;
-        akitaScenario.setVar(variable2Name, variable2Value);
-        wpvs.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCheckingTwoVariablesAreNotEqualsNegative() {
-        String variable1Name = "number1";
-        int variable1Value = 666;
-        akitaScenario.setVar(variable1Name, variable1Value);
-
-        String variable2Name = "number2";
-        int variable2Value = 666;
-        akitaScenario.setVar(variable2Name, variable2Value);
-        wpvs.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckingTwoVariablesAreNotEqualsAnotherNegative() {
-        String variable1Name = "number1", variable1Value = null;
-        akitaScenario.setVar(variable1Name, variable1Value);
-
-        String variable2Name = "number2", variable2Value = null;
-        akitaScenario.setVar(variable2Name, variable2Value);
-        wpvs.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
-    }
-
-    @Test
-    public void saveValueToVarPositive() {
-        wpis.saveValueToVar("testVar", "test");
-        assertThat(akitaScenario.getVar("test"), equalTo("customTestValue"));
-    }
-
     @Test
     public void testLoadPagePositive() {
         wpis.loadPage("AkitaPageMock");
@@ -221,18 +137,6 @@ public class WebPageStepsTest {
     }
 
     @Test
-    public void testCheckIfValueFromVariableEqualPropertyVariablePositive() {
-        akitaScenario.setVar("timeout", "1000");
-        wpvs.checkIfValueFromVariableEqualPropertyVariable("timeout", "waitingAppearTimeout");
-    }
-
-    @Test(expected = AssertionError.class)
-    public void testCheckIfValueFromVariableEqualPropertyVariableNegative() {
-        akitaScenario.setVar("timeout", "500");
-        wpvs.checkIfValueFromVariableEqualPropertyVariable("timeout", "waitingAppearTimeout");
-    }
-
-    @Test
     public void testScrollWhileElemNotFoundOnPagePositive() {
         wpis.scrollWhileElemNotFoundOnPage("mockTagName");
     }
@@ -252,45 +156,14 @@ public class WebPageStepsTest {
         wpis.scrollWhileElemWithTextNotFoundOnPage("Not serious testing page");
     }
 
-    @Test
-    public void testfillTemplate() {
-        String templateName = "strTemplate";
-        String varName = "varName";
-        List<String> row1 = new ArrayList<>(Arrays.asList("_name_", "Jack"));
-        List<String> row2 = new ArrayList<>(Arrays.asList("_age_", "35"));
-        List<List<String>> allLists = new ArrayList<>();
-        allLists.add(row1);
-        allLists.add(row2);
-        DataTable dataTable = dataTableFromLists(allLists);
-
-        wpis.fillTemplate(templateName, varName, dataTable);
-        Assert.assertEquals("{\"name\": \"Jack\", \"age\": 35}", (String) akitaScenario.getVar(varName));
-    }
-
     @Test(expected = ElementShouldNot.class)
     public void blockDisappearedSimple() {
         wpvs.blockDisappeared("AkitaPageMock");
     }
 
     @Test
-    public void pushButtonOnKeyboardSimple() {
-        wpis.pushButtonOnKeyboard("alt");
-    }
-
-    @Test
     public void goToUrl() {
         wpis.goToUrl((String) akitaScenario.getVar("RedirectionPage"));
-    }
-
-    @Test
-    public void setVariableTest() {
-        wpis.setVariable("ul", "Serious testing page");
-        assertThat(akitaScenario.getVar("ul"), equalTo("Serious testing page"));
-    }
-
-    @Test
-    public void expressionExpressionPositive() {
-        wpvs.expressionExpression("\"test\".equals(\"test\")");
     }
 
     @Test
@@ -329,12 +202,5 @@ public class WebPageStepsTest {
     public void loginByUserDataPositive() {
         wpis.loginByUserData("testUser");
     }
-
-    @Test
-    public void testTestScript() {
-        wpis.executeJsScript("HIDEnSHOW()");
-        elis.elementIsNotVisible("ul");
-    }
-
 
 }

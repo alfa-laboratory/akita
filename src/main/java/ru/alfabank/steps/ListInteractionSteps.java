@@ -34,13 +34,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
  * Шаги для тестирования списков элементов, доступные по умолчанию в каждом новом проекте
  */
 
-
 @Slf4j
 public class ListInteractionSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
-
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
      * Выбор из списка со страницы элемента с заданным значением
@@ -119,28 +114,6 @@ public class ListInteractionSteps extends BaseMethods {
         listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
                 .shouldBe(Condition.visible).click();
         akitaScenario.write("Выбран случайный элемент: " + listOfElementsFromPage);
-    }
-
-    /**
-     * Поиск списка в блоке и сохранение всех значений выбранного списка в переменную
-     */
-    @И("^в блоке \"([^\"]*)\" найден список элементов\"([^\"]*)\" и сохранен текст в переменную \"([^\"]*)\"$")
-    public void getListElementsText(String blockName, String listName, String varName) {
-        akitaScenario.setVar(varName,
-                akitaScenario.getCurrentPage()
-                        .getBlock(blockName)
-                        .getElementsList(listName)
-                        .stream()
-                        .map(SelenideElement::getText)
-                        .collect(Collectors.toList()));
-    }
-
-    /**
-     * Поиск списка в блоке и сохранение всех элементов выбранного списка в переменную
-     */
-    @И("^в блоке \"([^\"]*)\" найден список элементов\"([^\"]*)\" и сохранен в переменную \"([^\"]*)\"$")
-    public void getElementsList(String blockName, String listName, String varName) {
-        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getBlock(blockName).getElementsList(listName));
     }
 
     /**

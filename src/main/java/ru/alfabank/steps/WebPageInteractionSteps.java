@@ -42,24 +42,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
  * Шаги для работы с вэб-страницей, переменными и property-файлами, доступные по умолчанию в каждом новом проекте
  */
 
-
 @Slf4j
 public class WebPageInteractionSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
-
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
-
-    /**
-     * Значение заданной переменной из application.properties сохраняется в переменную в akitaScenario
-     * для дальнейшего использования
-     */
-    @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
-    public void saveValueToVar(String propertyVariableName, String variableName) {
-        propertyVariableName = loadProperty(propertyVariableName);
-        akitaScenario.setVar(variableName, propertyVariableName);
-        akitaScenario.write("Значение сохраненной переменной " + propertyVariableName);
-    }
 
     /**
      * Выполняется обновление страницы
@@ -84,15 +68,6 @@ public class WebPageInteractionSteps extends BaseMethods {
     }
 
     /**
-     * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
-     */
-    @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
-    public void setVariable(String variableName, String value) {
-        value = getPropertyOrValue(value);
-        akitaScenario.setVar(variableName, value);
-    }
-
-    /**
      * Выполняется переход по заданной ссылке.
      * Шаг содержит проверку, что после перехода загружена заданная страница.
      * Ссылка может передаваться как строка, так и как ключ из application.properties
@@ -103,65 +78,6 @@ public class WebPageInteractionSteps extends BaseMethods {
         akitaScenario.write(" url = " + address);
         open(address);
         loadPage(pageName);
-    }
-
-    /**
-     * Ожидание в течение заданного количества секунд
-     */
-    @Когда("^выполнено ожидание в течение (\\d+) (?:секунд|секунды)")
-    public void waitForSeconds(long seconds) {
-        sleep(1000 * seconds);
-    }
-
-    /**
-     * Эмулирует нажатие клавиш на клавиатуре
-     */
-    @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
-    public void pushButtonOnKeyboard(String buttonName) {
-        Keys key = Keys.valueOf(buttonName.toUpperCase());
-        switchTo().activeElement().sendKeys(key);
-    }
-
-    /**
-     * Эмулирует нажатие сочетания клавиш на клавиатуре.
-     * Допустим, чтобы эмулировать нажатие на Ctrl+A, в таблице должны быть следующие значения
-     * | CONTROL |
-     * | a       |
-     *
-     * @param keyNames название клавиши
-     */
-    @И("^выполнено нажатие на сочетание клавиш из таблицы$")
-    public void pressKeyCombination(List<String> keyNames) {
-        Iterable<CharSequence> listKeys = keyNames.stream()
-                .map(this::getKeyOrCharacter)
-                .collect(Collectors.toList());
-        String combination = Keys.chord(listKeys);
-        switchTo().activeElement().sendKeys(combination);
-    }
-
-    private CharSequence getKeyOrCharacter(String key) {
-        try {
-            return Keys.valueOf(key.toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            return key;
-        }
-    }
-
-    /**
-     * Устанавливает размеры окна браузера
-     */
-    @И("^установлено разрешение экрана (\\d+) х (\\d+)$")
-    public void setBrowserWindowSize(int width, int height) {
-        getWebDriver().manage().window().setSize(new Dimension(width, height));
-        akitaScenario.write("Установлены размеры окна браузера: ширина " + width + " высота" + height);
-    }
-
-    /**
-     * Разворачивает окно с браузером на весь экран
-     */
-    @Если("^окно развернуто на весь экран$")
-    public void expandWindowToFullScreen() {
-        getWebDriver().manage().window().maximize();
     }
 
     /**
@@ -216,15 +132,6 @@ public class WebPageInteractionSteps extends BaseMethods {
         akitaScenario.getCurrentPage().getElement(elementName).scrollTo();
     }
 
-    /**
-     * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
-     * Скрипт можно передать как аргумент метода или значение из application.properties
-     */
-    @Когда("^выполнен js-скрипт \"([^\"]*)\"")
-    public void executeJsScript(String scriptName) {
-        String content = loadValueFromFileOrPropertyOrVariableOrDefault(scriptName);
-        Selenide.executeJavaScript(content);
-    }
 
     /**
      * Скроллит страницу вниз до появления элемента каждую секунду.
@@ -260,37 +167,6 @@ public class WebPageInteractionSteps extends BaseMethods {
             sleep(1000);
         } while (!atBottom());
         assertThat("Элемент с текстом " + expectedValue + " не найден", el.isDisplayed());
-    }
-
-    /**
-     * Метод осуществляет снятие скриншота и прикрепление его к cucumber отчету.
-     */
-    @И("^снят скриншот текущей страницы$")
-    public void takeScreenshot() {
-        final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
-        AkitaScenario.getInstance().getScenario().embed(screenshot, "image/png");
-    }
-
-    /**
-    * Выполняется чтение файла с шаблоном и заполнение его значениями из таблицы
-    */
-    @И("^шаблон \"([^\"]*)\" заполнен данными из таблицы и сохранён в переменную \"([^\"]*)\"$")
-    public void fillTemplate(String templateName, String varName, DataTable table) {
-        String template = loadValueFromFileOrPropertyOrVariableOrDefault(templateName);
-        boolean error = false;
-        for (List<String> list : table.raw()) {
-            String regexp = list.get(0);
-            String replacement = list.get(1);
-            if (template.contains(regexp)) {
-                template = template.replaceAll(regexp, replacement);
-            } else {
-                akitaScenario.write("В шаблоне не найден элемент " + regexp);
-                error = true;
-            }
-        }
-        if (error)
-            throw new RuntimeException("В шаблоне не найдены требуемые регулярные выражения");
-        akitaScenario.setVar(varName, template);
     }
 
 }

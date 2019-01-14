@@ -40,12 +40,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
  * Шаги для тестирования списков элементов, доступные по умолчанию в каждом новом проекте
  */
 
-
 @Slf4j
 public class ListVerificationSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
      * Проверка появления списка на странице в течение DEFAULT_TIMEOUT.

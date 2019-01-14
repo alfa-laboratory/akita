@@ -58,13 +58,13 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 @Slf4j
 public class BaseMethods {
 
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    protected AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
+    protected static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 15000);
 
-    public static final String SPECS_DIR_PATH = loadSystemPropertyOrDefault("specsDir",
+    protected static final String SPECS_DIR_PATH = loadSystemPropertyOrDefault("specsDir",
             System.getProperty("user.dir") + "/src/test/resources/specs/");
-    public static final String IMG_DIFF_PATH = loadSystemPropertyOrDefault("imgDiff",
+    protected static final String IMG_DIFF_PATH = loadSystemPropertyOrDefault("imgDiff",
             System.getProperty("user.dir") + "/build/results-img/");
 
 

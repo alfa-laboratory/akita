@@ -21,6 +21,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
 import org.junit.*;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -30,15 +31,15 @@ import java.io.File;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 
 public class ManageBrowserStepsTest {
 
     private static ManageBrowserSteps dmbs;
-    private static WebDriver webDriver;
     private static AkitaScenario akitaScenario;
     public static WebPageInteractionSteps wpis;
-
 
     @BeforeClass
     public static void setup() {
@@ -60,12 +61,10 @@ public class ManageBrowserStepsTest {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-
     @AfterClass
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
-
 
     @Test
     public void testCloseCurrentTab() {
@@ -112,6 +111,15 @@ public class ManageBrowserStepsTest {
         Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
         dmbs.switchToTheNextTab();
         Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
+    }
+
+    @Ignore
+    @Test
+    public void setWindowSizeSimple() {
+        Dimension expectedDimension = new Dimension(800, 600);
+        dmbs.setBrowserWindowSize(800, 600);
+        Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
+        assertThat(expectedDimension, equalTo(actualDimension));
     }
 
 }

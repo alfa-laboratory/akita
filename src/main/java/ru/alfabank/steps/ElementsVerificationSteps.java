@@ -34,18 +34,13 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
  * Шаги для тестирования элементов страницы, доступные по умолчанию в каждом новом проекте
  */
 
-
 @Slf4j
 public class ElementsVerificationSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
-
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
      * Проверка появления элемента(не списка) на странице в течение DEFAULT_TIMEOUT.
      * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
-     * таймаут равен 10 секундам
+     * таймаут равен 15 секундам
      */
     @Тогда("^элемент \"([^\"]*)\" отображается на странице$")
     public void elemIsPresentedOnPage(String elementName) {
@@ -68,7 +63,7 @@ public class ElementsVerificationSteps extends BaseMethods {
     /**
      * Проверка того, что элемент исчезнет со страницы (станет невидимым) в течение DEFAULT_TIMEOUT.
      * В случае, если свойство "waitingCustomElementsTimeout" в application.properties не задано,
-     * таймаут равен 10 секундам
+     * таймаут равен 15 секундам
      */
     @Тогда("^ожидается исчезновение элемента \"([^\"]*)\"")
     public void elemDisappered(String elementName) {
@@ -197,10 +192,14 @@ public class ElementsVerificationSteps extends BaseMethods {
         assertEquals(String.format("Неверное количество символов. Ожидаемый результат: %s, текущий результат: %s", num, length), num, length);
     }
 
-
-
-
-
-
+    /**
+     * Проверка, что поле для ввода пусто
+     */
+    @Тогда("^поле \"([^\"]*)\" пусто$")
+    public void fieldInputIsEmpty(String fieldName) {
+        assertThat(String.format("Поле [%s] не пусто", fieldName),
+                akitaScenario.getCurrentPage().getAnyElementText(fieldName),
+                isEmptyOrNullString());
+    }
 
 }

@@ -40,13 +40,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
  * Шаги для работы с вэб-страницей, переменными и property-файлами, доступные по умолчанию в каждом новом проекте
  */
 
-
 @Slf4j
 public class WebPageVerificationSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
-
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
      * Проверка, что текущий URL совпадает с ожидаемым
@@ -95,27 +90,6 @@ public class WebPageVerificationSteps extends BaseMethods {
         } else akitaScenario.getCurrentPage().disappeared();
     }
 
-    /**
-     * Проверка равенства двух переменных из хранилища
-     */
-    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
-    public void compareTwoVariables(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
-        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
-        assertThat(String.format("Значения в переменных [%s] и [%s] не совпадают", firstVariableName, secondVariableName),
-                firstValueToCompare, equalTo(secondValueToCompare));
-    }
-
-    /**
-     * Проверка неравенства двух переменных из хранилища
-     */
-    @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
-    public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
-        String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
-        String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
-        assertThat(String.format("Значения в переменных [%s] и [%s] совпадают", firstVariableName, secondVariableName),
-                firstValueToCompare, Matchers.not(equalTo(secondValueToCompare)));
-    }
 
     /**
      * Проверка того, что блок исчез/стал невидимым
@@ -125,18 +99,6 @@ public class WebPageVerificationSteps extends BaseMethods {
         if (isIE()) {
             akitaScenario.getPage(nameOfPage).ieDisappeared();
         } else akitaScenario.getPage(nameOfPage).disappeared();
-    }
-
-    /**
-     * Проверка выражения на истинность
-     * выражение из property, из переменной сценария или значение аргумента
-     * Например, string1.equals(string2)
-     * OR string.equals("string")
-     * Любое Java-выражение, возвращающие boolean
-     */
-    @Тогда("^верно, что \"([^\"]*)\"$")
-    public void expressionExpression(String expression) {
-        akitaScenario.getVars().evaluate("assert(" + expression + ")");
     }
 
     /**
@@ -156,30 +118,5 @@ public class WebPageVerificationSteps extends BaseMethods {
         return $$(cssSelector).stream()
                 .filter(SelenideElement::isDisplayed)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Выполняется поиск нужного файла в папке /Downloads
-     * Поиск осуществляется по содержанию ожидаемого текста в названии файла. Можно передавать регулярное выражение.
-     * После выполнения проверки файл удаляется
-     */
-    @Тогда("^файл \"(.*)\" загрузился в папку /Downloads$")
-    public void testFileDownloaded(String fileName) {
-        File downloads = getDownloadsDir();
-        File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
-        assertNotNull("Ошибка поиска файла", expectedFiles);
-        assertFalse("Файл не загрузился", expectedFiles.length == 0);
-        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
-                expectedFiles.length == 1);
-        deleteFiles(expectedFiles);
-    }
-
-    /**
-    * Проверка совпадения значения из переменной и значения из property
-    */
-    @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
-    public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
-        assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
-                (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
     }
 }

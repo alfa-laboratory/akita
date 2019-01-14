@@ -32,10 +32,7 @@ import static com.codeborne.selenide.WebDriverRunner.*;
 import static ru.alfabank.tests.core.drivers.CustomDriverProvider.REMOTE_URL;
 
 @Slf4j
-public class InitialSetupSteps {
-
-    @Delegate
-    AkitaScenario akitaScenario = AkitaScenario.getInstance();
+public class InitialSetupHooks extends BaseMethods{
 
     /**
      * Создает настойки прокси для запуска драйвера

@@ -33,13 +33,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrP
  * Шаги для тестирования элементов страницы, доступные по умолчанию в каждом новом проекте
  */
 
-
 @Slf4j
 public class ElementsInteractionSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
-
-    private static final int DEFAULT_TIMEOUT = loadPropertyInt("waitingCustomElementsTimeout", 10000);
 
     /**
      * На странице происходит клик по заданному элементу
@@ -85,13 +80,5 @@ public class ElementsInteractionSteps extends BaseMethods {
         String file = loadValueFromFileOrPropertyOrVariableOrDefault(fileName);
         File attachmentFile = new File(file);
         akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
-    }
-
-    /**
-     * На странице происходит клик по заданному элементу в блоке
-     */
-    @И("^выполнено нажатие на (?:кнопку|поле) \"([^\"]*)\" в блоке \"([^\"]*)\"$")
-    public void clickOnElementInBlock(String elementName, String blockName) {
-        akitaScenario.getCurrentPage().getBlock(blockName).getElement(elementName).click();
     }
 }

@@ -15,12 +15,14 @@
  */
 package ru.alfabank.steps;
 
+import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.text.IsEqualIgnoringCase;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.Dimension;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.Set;
@@ -32,13 +34,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 /**
- * Шаги для работы с cookies
+ * Шаги для управления браузером и работы с cookies
  */
 
 @Slf4j
 public class ManageBrowserSteps extends BaseMethods {
-
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
      * Удаляем все cookies
@@ -124,6 +124,23 @@ public class ManageBrowserSteps extends BaseMethods {
     @И("выполнено закрытие текущей вкладки")
     public void closeCurrentTab() {
         getWebDriver().close();
+    }
+
+    /**
+     * Устанавливает размеры окна браузера
+     */
+    @И("^установлено разрешение экрана (\\d+) х (\\d+)$")
+    public void setBrowserWindowSize(int width, int height) {
+        getWebDriver().manage().window().setSize(new Dimension(width, height));
+        akitaScenario.write("Установлены размеры окна браузера: ширина " + width + " высота" + height);
+    }
+
+    /**
+     * Разворачивает окно с браузером на весь экран
+     */
+    @Если("^окно развернуто на весь экран$")
+    public void expandWindowToFullScreen() {
+        getWebDriver().manage().window().maximize();
     }
 
 }
