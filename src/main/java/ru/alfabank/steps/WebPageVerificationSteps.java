@@ -17,9 +17,12 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
+import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
@@ -90,7 +93,6 @@ public class WebPageVerificationSteps extends BaseMethods {
         } else akitaScenario.getCurrentPage().disappeared();
     }
 
-
     /**
      * Проверка того, что блок исчез/стал невидимым
      */
@@ -118,5 +120,11 @@ public class WebPageVerificationSteps extends BaseMethods {
         return $$(cssSelector).stream()
                 .filter(SelenideElement::isDisplayed)
                 .collect(Collectors.toList());
+    }
+
+    @И("^ссылка страницы содержит текст \"([^\"]*)\"$")
+    public void linkShouldHaveText(String text) {
+        String currentUrl = WebDriverRunner.url();
+        Assert.assertThat(currentUrl, containsStringIgnoringCase(text));
     }
 }

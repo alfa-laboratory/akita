@@ -203,4 +203,14 @@ public class WebPageStepsTest {
         wpis.loginByUserData("testUser");
     }
 
+    @Test
+    public void testLinkShouldHaveText(){
+        String text = "/RedirectionPage";
+        akitaScenario.getEnvironment()
+                .getPage("AkitaPageMock")
+                .getElement("Link")
+                .click();
+        wpvs.linkShouldHaveText(text);
+    }
+
 }
