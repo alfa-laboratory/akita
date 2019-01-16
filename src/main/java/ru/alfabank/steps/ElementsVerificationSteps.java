@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
- * Шаги для тестирования элементов страницы, доступные по умолчанию в каждом новом проекте
+ * Шаги, содержащие проверки элементов страницы, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j

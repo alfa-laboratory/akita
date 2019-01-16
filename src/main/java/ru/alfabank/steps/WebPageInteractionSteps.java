@@ -39,7 +39,7 @@ import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
- * Шаги для работы с вэб-страницей, переменными и property-файлами, доступные по умолчанию в каждом новом проекте
+ * Шаги для взаимодействия с вэб-страницей, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j
@@ -167,6 +167,25 @@ public class WebPageInteractionSteps extends BaseMethods {
             sleep(1000);
         } while (!atBottom());
         assertThat("Элемент с текстом " + expectedValue + " не найден", el.isDisplayed());
+    }
+
+    /**
+     *  Переключение на вкладку браузера с заголовком
+     */
+    @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
+    public void switchToTheTabWithTitle(String title) {
+        switchTo().window(title);
+        checkPageTitle(title);
+    }
+
+    /**
+     *  Производится сохранение заголовка страницы в переменную
+     */
+    @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
+    public void savePageTitleToVariable(String variableName) {
+        String titleName = getWebDriver().getTitle().trim();
+        akitaScenario.setVar(variableName, titleName);
+        akitaScenario.write("Значение заголовка страницы [" + titleName + "] сохранено в переменную [" + variableName + "]");
     }
 
 }

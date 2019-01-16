@@ -67,14 +67,6 @@ public class ManageBrowserStepsTest {
     }
 
     @Test
-    public void testCloseCurrentTab() {
-        executeJavaScript("window.open(\"RedirectionPage.html\")");
-        dmbs.switchToTheTabWithTitle("Page with redirection");
-        dmbs.closeCurrentTab();
-        dmbs.switchToTheTabWithTitle("Title");
-    }
-
-    @Test
     public void testCheckPageTitleSuccess() {
         dmbs.checkPageTitle("Title");
     }
@@ -87,21 +79,6 @@ public class ManageBrowserStepsTest {
     @Test
     public void testCheckPageTitlePositive() {
         dmbs.checkPageTitle("titleFromProperty");
-    }
-
-    @Test
-    public void savePageTitleToVariablePositive() {
-        dmbs.savePageTitleToVariable("TitleVariable");
-        MatcherAssert.assertThat(akitaScenario.getVar("TitleVariable"), Matchers.equalTo("Title"));
-    }
-
-    @Test
-    public void testSwitchToTheTabWithTitle() {
-        executeJavaScript("window.open(\"RedirectionPage.html\")");
-        dmbs.switchToTheTabWithTitle("Page with redirection");
-        dmbs.checkPageTitle("Page with redirection");
-        dmbs.switchToTheTabWithTitle("Title");
-        dmbs.checkPageTitle("Title");
     }
 
     @Test

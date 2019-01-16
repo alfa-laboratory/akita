@@ -22,6 +22,7 @@ import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
+import org.hamcrest.text.IsEqualIgnoringCase;
 import org.junit.Assert;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.isIE;
 import static com.codeborne.selenide.WebDriverRunner.url;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,7 +42,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
- * Шаги для работы с вэб-страницей, переменными и property-файлами, доступные по умолчанию в каждом новом проекте
+ * Шаги, содержащие проверки состояний вэб-страницы, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j
@@ -127,4 +129,14 @@ public class WebPageVerificationSteps extends BaseMethods {
         String currentUrl = url();
         Assert.assertThat(currentUrl, containsStringIgnoringCase(text));
     }
+
+    /**
+     * Производится сравнение заголовка страницы со значением, указанным в шаге
+     * (в приоритете: из property, из переменной сценария, значение аргумента)
+     */
+    @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
+    public void checkTitlePage(String pageTitleName) {
+        checkPageTitle(pageTitleName);
+    }
+
 }

@@ -31,7 +31,7 @@ import static java.util.stream.Collectors.toList;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
- * Шаги для тестирования списков элементов, доступные по умолчанию в каждом новом проекте
+ * Шаги для взаимодействия со списками элементов, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j

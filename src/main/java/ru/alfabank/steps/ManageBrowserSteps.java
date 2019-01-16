@@ -88,37 +88,6 @@ public class ManageBrowserSteps extends BaseMethods {
     }
 
     /**
-     *  Переключение на вкладку браузера с заголовком
-     */
-    @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
-    public void switchToTheTabWithTitle(String title) {
-        switchTo().window(title);
-        checkPageTitle(title);
-    }
-
-    /**
-     *  Производится сравнение заголовка страницы со значением, указанным в шаге
-     *  (в приоритете: из property, из переменной сценария, значение аргумента)
-     */
-    @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
-    public void checkPageTitle(String pageTitleName) {
-        pageTitleName = getPropertyOrStringVariableOrValue(pageTitleName);
-        String currentTitle = getWebDriver().getTitle().trim();
-        assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
-                pageTitleName, IsEqualIgnoringCase.equalToIgnoringCase(currentTitle));
-    }
-
-    /**
-     *  Производится сохранение заголовка страницы в переменную
-     */
-    @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
-    public void savePageTitleToVariable(String variableName) {
-        String titleName = getWebDriver().getTitle().trim();
-        akitaScenario.setVar(variableName, titleName);
-        akitaScenario.write("Значение заголовка страницы [" + titleName + "] сохранено в переменную [" + variableName + "]");
-    }
-
-    /**
      *  Производится закрытие текущей вкладки
      */
     @И("выполнено закрытие текущей вкладки")

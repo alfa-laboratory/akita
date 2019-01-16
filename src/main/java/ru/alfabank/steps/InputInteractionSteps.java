@@ -34,7 +34,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
- * Шаги для тестирования полей ввода, доступные по умолчанию в каждом новом проекте
+ * Шаги для взаимодействия с полями ввода, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j

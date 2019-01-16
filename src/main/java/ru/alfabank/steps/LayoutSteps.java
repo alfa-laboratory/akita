@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Шаги для тестирования скриншотов (Galen Framework)
+ * Шаги для тестирования верстки (Galen Framework)
  */
 
 public class LayoutSteps extends BaseMethods {

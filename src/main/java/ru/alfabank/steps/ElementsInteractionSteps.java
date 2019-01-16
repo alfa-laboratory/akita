@@ -30,8 +30,8 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 /**
- * Шаги для тестирования элементов страницы, доступные по умолчанию в каждом новом проекте
- */
+ * Шаги для взаимодействия с элементами страницы, доступные по умолчанию в каждом новом проекте
+ * */
 
 @Slf4j
 public class ElementsInteractionSteps extends BaseMethods {

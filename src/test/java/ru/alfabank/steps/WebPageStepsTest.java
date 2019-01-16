@@ -18,22 +18,19 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.ex.ElementShouldNot;
-import cucumber.api.DataTable;
 import cucumber.api.Scenario;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.*;
-import org.openqa.selenium.Dimension;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
 
 public class WebPageStepsTest {
 
@@ -41,10 +38,12 @@ public class WebPageStepsTest {
     private static AkitaScenario akitaScenario;
     private static WebPageVerificationSteps wpvs;
     private static InputInteractionSteps iis;
+    private static ManageBrowserSteps mbs;
 
 
     @BeforeClass
     public static void setup() {
+        mbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -213,4 +212,26 @@ public class WebPageStepsTest {
         wpvs.linkShouldHaveText(text);
     }
 
+    @Test
+    public void savePageTitleToVariablePositive() {
+        wpis.savePageTitleToVariable("TitleVariable");
+        MatcherAssert.assertThat(akitaScenario.getVar("TitleVariable"), Matchers.equalTo("Title"));
+    }
+
+    @Test
+    public void testSwitchToTheTabWithTitle() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        wpis.switchToTheTabWithTitle("Page with redirection");
+        wpvs.checkPageTitle("Page with redirection");
+        wpis.switchToTheTabWithTitle("Title");
+        wpvs.checkPageTitle("Title");
+    }
+
+    @Test
+    public void testCloseCurrentTab() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        wpis.switchToTheTabWithTitle("Page with redirection");
+        mbs.closeCurrentTab();
+        wpis.switchToTheTabWithTitle("Title");
+    }
 }
