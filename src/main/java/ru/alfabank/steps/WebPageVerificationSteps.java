@@ -124,7 +124,7 @@ public class WebPageVerificationSteps extends BaseMethods {
 
     @И("^ссылка страницы содержит текст \"([^\"]*)\"$")
     public void linkShouldHaveText(String text) {
-        String currentUrl = WebDriverRunner.url();
+        String currentUrl = url();
         Assert.assertThat(currentUrl, containsStringIgnoringCase(text));
     }
 }

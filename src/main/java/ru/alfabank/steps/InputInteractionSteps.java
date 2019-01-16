@@ -173,6 +173,7 @@ public class InputInteractionSteps extends BaseMethods {
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и сохранено в переменную \"([^\"]*)\"$")
     public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
+        outputFormat = outputFormat.replaceAll("#","0");
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.setVar(saveToVariableName, new DecimalFormat(outputFormat).format(finalValue));
@@ -187,6 +188,7 @@ public class InputInteractionSteps extends BaseMethods {
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\"$")
     public void inputRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat) {
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
+        outputFormat = outputFormat.replaceAll("#","0");
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.write(String.format("В поле [%s] введено значение [%s]", fieldName, new DecimalFormat(outputFormat).format(finalValue)));
     }
