@@ -37,7 +37,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
- * Шаги для тестирования списков элементов, доступные по умолчанию в каждом новом проекте
+ * Шаги для взаимодействия с коллекциями элементов, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j
