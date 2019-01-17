@@ -15,11 +15,14 @@
  */
 package ru.alfabank.steps;
 
+import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.text.IsEqualIgnoringCase;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.Dimension;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.Set;
@@ -28,17 +31,14 @@ import static com.codeborne.selenide.Selenide.clearBrowserCookies;
 import static com.codeborne.selenide.Selenide.switchTo;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 /**
- * Шаги для работы с cookies
+ * Шаги для управления браузером и работы с cookies
  */
-@Slf4j
-public class DefaultManageBrowserSteps {
 
-    private DefaultSteps ds = new DefaultSteps();
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
+@Slf4j
+public class ManageBrowserSteps extends BaseMethods {
 
     /**
      * Удаляем все cookies
@@ -88,37 +88,6 @@ public class DefaultManageBrowserSteps {
     }
 
     /**
-     *  Переключение на вкладку браузера с заголовком
-     */
-    @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
-    public void switchToTheTabWithTitle(String title) {
-        switchTo().window(title);
-        checkPageTitle(title);
-    }
-
-    /**
-     *  Производится сравнение заголовка страницы со значением, указанным в шаге
-     *  (в приоритете: из property, из переменной сценария, значение аргумента)
-     */
-    @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
-    public void checkPageTitle(String pageTitleName) {
-        pageTitleName = ds.getPropertyOrStringVariableOrValue(pageTitleName);
-        String currentTitle = getWebDriver().getTitle().trim();
-        assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
-                pageTitleName, equalToIgnoringCase(currentTitle));
-    }
-
-    /**
-     *  Производится сохранение заголовка страницы в переменную
-     */
-    @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
-    public void savePageTitleToVariable(String variableName) {
-        String titleName = getWebDriver().getTitle().trim();
-        akitaScenario.setVar(variableName, titleName);
-        akitaScenario.write("Значение заголовка страницы [" + titleName + "] сохранено в переменную [" + variableName + "]");
-    }
-
-    /**
      *  Производится закрытие текущей вкладки
      */
     @И("выполнено закрытие текущей вкладки")
@@ -126,12 +95,21 @@ public class DefaultManageBrowserSteps {
         getWebDriver().close();
     }
 
-    private String nextWindowHandle() {
-        String currentWindowHandle = getWebDriver().getWindowHandle();
-        Set<String> windowHandles = getWebDriver().getWindowHandles();
-        windowHandles.remove(currentWindowHandle);
+    /**
+     * Устанавливает размеры окна браузера
+     */
+    @И("^установлено разрешение экрана (\\d+) х (\\d+)$")
+    public void setBrowserWindowSize(int width, int height) {
+        getWebDriver().manage().window().setSize(new Dimension(width, height));
+        akitaScenario.write("Установлены размеры окна браузера: ширина " + width + " высота" + height);
+    }
 
-        return windowHandles.iterator().next();
+    /**
+     * Разворачивает окно с браузером на весь экран
+     */
+    @Если("^окно развернуто на весь экран$")
+    public void expandWindowToFullScreen() {
+        getWebDriver().manage().window().maximize();
     }
 
 }

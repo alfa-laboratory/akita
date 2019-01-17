@@ -18,39 +18,29 @@ package ru.alfabank.steps;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import com.jayway.jsonpath.spi.json.GsonJsonProvider;
-import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
 import cucumber.api.DataTable;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
-import io.restassured.http.Method;
-import io.restassured.internal.support.Prettifier;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSender;
-import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 /**
  * Шаги для тестирования API, доступные по умолчанию в каждом новом проекте
  */
 
 @Slf4j
-public class DefaultApiSteps {
+public class ApiSteps extends BaseMethods {
 
     private AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
@@ -149,88 +139,4 @@ public class DefaultApiSteps {
             throw new RuntimeException("В json не найдено значение по заданному jsonpath");
     }
 
-    private Configuration createJsonPathConfiguration() {
-        return new Configuration.ConfigurationBuilder()
-            .jsonProvider(new GsonJsonProvider())
-            .mappingProvider(new GsonMappingProvider())
-            .build();
-    }
-
-    /**
-     * Создание запроса
-     *
-     * @param paramsTable массив с параметрами
-     * @return сформированный запрос
-     */
-    private RequestSender createRequest(List<RequestParam> paramsTable) {
-        String body = null;
-        RequestSpecification request = given();
-        for (RequestParam requestParam : paramsTable) {
-            String name = requestParam.getName();
-            String value = requestParam.getValue();
-            switch (requestParam.getType()) {
-                case PARAMETER:
-                    request.param(name, value);
-                    break;
-                case HEADER:
-                    request.header(name, value);
-                    break;
-                case BODY:
-                    value = loadValueFromFileOrPropertyOrVariableOrDefault(value);
-                    body = resolveVars(value);
-                    request.body(body);
-                    break;
-                default:
-                    throw new IllegalArgumentException(String.format("Некорректно задан тип %s для параметра запроса %s ", requestParam.getType(), name));
-            }
-        }
-        if (body != null) {
-            akitaScenario.write("Тело запроса:\n" + body);
-        }
-        return request;
-    }
-
-    /**
-     * Получает body из ответа и сохраняет в переменную
-     *
-     * @param variableName имя переменной, в которую будет сохранен ответ
-     * @param response     ответ от http запроса
-     */
-    private void getBodyAndSaveToVariable(String variableName, Response response) {
-        if (response.statusCode() >= 200 && response.statusCode() < 300) {
-            akitaScenario.setVar(variableName, response.getBody().asString());
-            akitaScenario.write("Тело ответа : \n" + new Prettifier().getPrettifiedBodyIfPossible(response, response));
-        } else {
-            fail("Некорректный ответ на запрос: " + new Prettifier().getPrettifiedBodyIfPossible(response, response));
-        }
-    }
-
-    /**
-     * Сравнение кода http ответа с ожидаемым
-     *
-     * @param response           ответ от сервиса
-     * @param expectedStatusCode ожидаемый http статус код
-     * @return возвращает true или false в зависимости от ожидаемого и полученного http кодов
-     */
-    public boolean checkStatusCode(Response response, int expectedStatusCode) {
-        int statusCode = response.getStatusCode();
-        if (statusCode != expectedStatusCode) {
-            akitaScenario.write("Получен неверный статус код ответа " + statusCode + ". Ожидаемый статус код " + expectedStatusCode);
-        }
-        return statusCode == expectedStatusCode;
-    }
-
-    /**
-     * Отправка http запроса
-     *
-     * @param method      тип http запроса
-     * @param address     url, на который будет направлен запроc
-     * @param paramsTable список параметров для http запроса
-     */
-    public Response sendRequest(String method, String address,
-                                List<RequestParam> paramsTable) {
-        address = loadProperty(address, resolveVars(address));
-        RequestSender request = createRequest(paramsTable);
-        return request.request(Method.valueOf(method), address);
-    }
 }

@@ -22,7 +22,7 @@ import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import ru.alfabank.steps.DefaultSteps;
+import ru.alfabank.steps.WebPageInteractionSteps;
 
 import java.io.File;
 
@@ -32,19 +32,20 @@ import static org.hamcrest.Matchers.*;
 
 public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
+    private static WebPageInteractionSteps wpis;
 
     @BeforeClass
     public static void prepare() {
 
         env = new AkitaEnvironment();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        DefaultSteps ds = new DefaultSteps();
+        wpis = new WebPageInteractionSteps();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test

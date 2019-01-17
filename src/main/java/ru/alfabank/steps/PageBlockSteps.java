@@ -18,17 +18,15 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.SelenideElement;
 import cucumber.api.java.ru.И;
 import lombok.extern.slf4j.Slf4j;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.stream.Collectors;
 
 /**
- * Шаги для работы с блоками со страницы, доступные по умолчанию в каждом новом проекте
+ * Шаги для тестирования отдельных блоков страницы
  */
-@Slf4j
-public class DefaultPageElementSteps {
 
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
+@Slf4j
+public class PageBlockSteps extends BaseMethods{
 
     /**
      * На странице происходит клик по заданному элементу в блоке
@@ -37,12 +35,9 @@ public class DefaultPageElementSteps {
     public void clickOnElementInBlock(String elementName, String blockName) {
         akitaScenario.getCurrentPage().getBlock(blockName).getElement(elementName).click();
     }
-
-    @И("^в блоке \"([^\"]*)\" найден список элементов\"([^\"]*)\" и сохранен в переменную \"([^\"]*)\"$")
-    public void getElementsList(String blockName, String listName, String varName) {
-        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getBlock(blockName).getElementsList(listName));
-    }
-
+    /**
+     * Поиск списка в блоке и сохранение всех значений выбранного списка в переменную
+     */
     @И("^в блоке \"([^\"]*)\" найден список элементов\"([^\"]*)\" и сохранен текст в переменную \"([^\"]*)\"$")
     public void getListElementsText(String blockName, String listName, String varName) {
         akitaScenario.setVar(varName,
@@ -53,4 +48,13 @@ public class DefaultPageElementSteps {
                         .map(SelenideElement::getText)
                         .collect(Collectors.toList()));
     }
+
+    /**
+     * Поиск списка в блоке и сохранение всех элементов выбранного списка в переменную
+     */
+    @И("^в блоке \"([^\"]*)\" найден список элементов\"([^\"]*)\" и сохранен в переменную \"([^\"]*)\"$")
+    public void getElementsList(String blockName, String listName, String varName) {
+        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getBlock(blockName).getElementsList(listName));
+    }
+
 }

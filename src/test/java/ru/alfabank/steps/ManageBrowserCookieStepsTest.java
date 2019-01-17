@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriver.Options;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -34,22 +34,23 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
+public class ManageBrowserCookieStepsTest {
 
-public class DefaultManageBrowserStepsTest {
+    private static ManageBrowserSteps dmbs;
+    private static WebDriver webDriver;
+    private static AkitaScenario akitaScenario;
+    public static WebPageInteractionSteps wpis;
 
-    private DefaultManageBrowserSteps dmbs;
-    private WebDriver webDriver;
-    private AkitaScenario akitaScenario;
-
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setup() {
+        dmbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        wpis = new WebPageInteractionSteps();
         webDriver = mock(WebDriver.class);
         WebDriverRunner.setWebDriver(webDriver);
-        dmbs = new DefaultManageBrowserSteps();
-        when(webDriver.manage()).thenReturn(mock(Options.class));
+        when(webDriver.manage()).thenReturn(mock(WebDriver.Options.class));
     }
 
     @AfterClass
