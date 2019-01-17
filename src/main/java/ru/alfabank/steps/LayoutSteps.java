@@ -15,28 +15,16 @@
  */
 package ru.alfabank.steps;
 
-import com.galenframework.api.Galen;
-import com.galenframework.reports.model.LayoutReport;
 import cucumber.api.java.ru.Тогда;
-import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static org.junit.Assert.fail;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOrDefault;
+/**
+ * Шаги для тестирования верстки (Galen Framework)
+ */
 
-public class LayoutSteps {
-    public static final String SPECS_DIR_PATH = loadSystemPropertyOrDefault("specsDir",
-        System.getProperty("user.dir") + "/src/test/resources/specs/");
-    public static final String IMG_DIFF_PATH = loadSystemPropertyOrDefault("imgDiff",
-        System.getProperty("user.dir") + "/build/results-img/");
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
+public class LayoutSteps extends BaseMethods {
 
     /**
      * Шаг проверяет, что текущая страница соответствует описанным в .spec файле требованиям
@@ -64,41 +52,5 @@ public class LayoutSteps {
         List<String> tags = new ArrayList<>();
         tags.add(tag);
         checkLayoutAccordingToSpec(spec, tags);
-    }
-
-    @SneakyThrows
-    /**
-     * Проверяет соответствие текущей страницы ее описанию в .spec файле.
-     * Скриншоты с расходениями в дизайне сохраняются в /build/results-img/ и прикрепояются к cucumber отчету
-     * Путь /build/results-img/ можно переопределить, задав системную переменную imgDiff
-     */
-    private void checkLayoutAccordingToSpec(String spec, List<String> tags) {
-        LayoutReport report = Galen.checkLayout(getWebDriver(), SPECS_DIR_PATH + spec, tags);
-        report.getFileStorage().copyAllFilesTo(new File(IMG_DIFF_PATH));
-        if (report.errors() > 0) {
-            embedScreenshotAndFail(report);
-        }
-    }
-
-    private void embedScreenshotAndFail(LayoutReport report) {
-        Map<String, File> screenshots = report.getFileStorage().getFiles();
-        screenshots.forEach((key, value) -> {
-            if (key.contains("map") || key.contains("expected") || key.contains("actual")) {
-                akitaScenario.write(key);
-                embedFileToReport(value, "image/png");
-            }
-        });
-        fail(report.getValidationErrorResults().toString());
-    }
-
-    /**
-     * Прикрепляет файл к текущему сценарию в cucumber отчете
-     * @param fileName - название файла
-     * @param mimeType - тип файла
-     */
-    @SneakyThrows
-    public static void embedFileToReport(File fileName, String mimeType) {
-        AkitaScenario.getInstance().getScenario()
-            .embed(FileUtils.readFileToByteArray(fileName), mimeType);
     }
 }

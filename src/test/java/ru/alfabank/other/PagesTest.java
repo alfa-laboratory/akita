@@ -24,12 +24,12 @@ import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.alfatest.cucumber.api.Pages;
-import ru.alfabank.steps.DefaultSteps;
+import ru.alfabank.steps.WebPageInteractionSteps;
 
 import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 public class PagesTest {
     private static Pages pages;
@@ -41,13 +41,13 @@ public class PagesTest {
         akitaPageMock = new AkitaPageMock();
 
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        DefaultSteps ds = new DefaultSteps();
+        WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
-        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
+        wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test

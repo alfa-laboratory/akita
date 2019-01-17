@@ -15,9 +15,7 @@
  */
 package ru.alfabank.steps;
 
-import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,49 +28,48 @@ import java.io.File;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-public class PageElementTest {
+public class PageBlockStepsTest {
 
-    private static DefaultSteps ds;
-    private static DefaultPageElementSteps dpes;
     private static AkitaScenario akitaScenario;
+    private static WebPageInteractionSteps wpis;
+    private static PageBlockSteps pbs;
 
     @BeforeClass
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
-        ds = new DefaultSteps();
-        dpes = new DefaultPageElementSteps();
+        wpis = new WebPageInteractionSteps();
+        pbs = new PageBlockSteps();
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
+        String inputFilePath2 = "src/test/resources/RedirectionPage.html";
+        String url2 = new File(inputFilePath2).getAbsolutePath();
+        akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
     @Before
     public void prepare() {
-        ds.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
-    }
-
-    @AfterClass
-    public static void close() {
-        WebDriverRunner.closeWebDriver();
+        wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test
     public void clickOnElementInBlockPositiveTest() {
-        dpes.clickOnElementInBlock("SearchButton", "SearchBlock");
+        pbs.clickOnElementInBlock("SearchButton", "SearchBlock");
         assertFalse(akitaScenario.getPage("SearchBlock").getElement("SearchButton").isEnabled());
     }
 
     @Test
     public void getElementsListInBlockPositiveTest() {
-        dpes.getElementsList("AkitaTable", "Rows", "ListTable");
+        pbs.getElementsList("AkitaTable", "Rows", "ListTable");
         assertNotNull(akitaScenario.getVar("ListTable"));
     }
 
     @Test
     public void getListElementsTextInBlockPositiveTest() {
-        dpes.getListElementsText("AkitaTable", "Rows", "ListTable");
+        pbs.getListElementsText("AkitaTable", "Rows", "ListTable");
         assertNotNull(akitaScenario.getVar("ListTable"));
     }
+
 }
