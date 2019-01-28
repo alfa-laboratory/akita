@@ -197,28 +197,28 @@ public class ApiStepsTest {
     }
 
     @Test()
-    void shouldNotFindBodyByPath() throws Exception {
+    void shouldNotFindBodyByPath() {
         String expectedBodyValue = "{\"value\": \"true\"}";
         String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars(expectedBodyValue));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
-    void shouldFindBodyByPath() throws Exception {
+    void shouldFindBodyByPath() {
         String expectedBodyValue = "{\"asn\": \"1\"}";
         String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars("/src/test/resources/body.json"));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
-    void shouldFindBodyByPropertyKey() throws Exception {
+    void shouldFindBodyByPropertyKey() {
         String expectedBodyValue = "{\"property\":\"body\"}";
         String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars("bodyValue"));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test
-    void shouldFindBodyWithVarResolving() throws Exception {
+    void shouldFindBodyWithVarResolving() {
         akitaScenario.setVar("var1", "\"1\"");
         String defaultBodyValue = "{\"a\":{var1}, \"b\": {\"c\": {var2}}}";
         String expectedBodyValue = "{\"a\":\"1\", \"b\": {\"c\": \"2\"}}";
