@@ -155,11 +155,13 @@ public class InputFieldStepsTest {
 
     @Test
     void testInputRandomNumSequenceNegative() {
-        iis.inputRandomNumSequence("GoodButton", 4);
-        assertThat(akitaScenario.getEnvironment()
-                        .getPage("AkitaPageMock")
-                        .getAnyElementText("GoodButton").length(),
-                equalTo(4));
+        assertThrows(AssertionError.class, () -> {
+            iis.inputRandomNumSequence("GoodButton", 4);
+            assertThat(akitaScenario.getEnvironment()
+                            .getPage("AkitaPageMock")
+                            .getAnyElementText("GoodButton").length(),
+                    equalTo(4));
+        });
     }
 
     @Test
