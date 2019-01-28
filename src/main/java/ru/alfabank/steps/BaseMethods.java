@@ -48,7 +48,7 @@ import static com.codeborne.selenide.WebDriverRunner.isIE;
 import static io.restassured.RestAssured.given;
 import static java.util.Objects.isNull;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 

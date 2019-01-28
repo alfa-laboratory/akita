@@ -15,20 +15,21 @@
  */
 package ru.alfabank.core;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertTrue;
 
 public class RequestParamTests {
     private static RequestParam requestParam;
     private static RequestParam requestParamForCompare;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         requestParam = RequestParam.builder()
                 .name("test")

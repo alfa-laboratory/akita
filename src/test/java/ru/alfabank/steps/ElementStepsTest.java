@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -33,7 +32,7 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ElementStepsTest {
 
@@ -43,8 +42,7 @@ public class ElementStepsTest {
     private static AkitaScenario akitaScenario;
 
 
-
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -60,12 +58,12 @@ public class ElementStepsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
+    @BeforeEach
     public void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
@@ -126,9 +124,10 @@ public class ElementStepsTest {
         elvs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckElemClassContainsExpectedValueNegative() {
-        elvs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+        assertThrows(AssertionError.class, () ->
+                elvs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled"));
     }
 
     @Test
@@ -136,9 +135,10 @@ public class ElementStepsTest {
         elvs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckElemClassNotContainsExpectedValueNegative() {
-        elvs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+        assertThrows(AssertionError.class, () ->
+                elvs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled"));
     }
 
     @Test
@@ -177,9 +177,10 @@ public class ElementStepsTest {
         elvs.fieldIsDisable("DisabledField");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testFieldIsDisableNegative() {
-        elvs.fieldIsDisable("TextField");
+        assertThrows(AssertionError.class, () ->
+                elvs.fieldIsDisable("TextField"));
     }
 
     @Test
@@ -212,9 +213,10 @@ public class ElementStepsTest {
         elvs.clickableField("Link");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testButtonIsActiveNegative() {
-        elvs.clickableField("Кнопка Подписать и отправить");
+        assertThrows(AssertionError.class, () ->
+                elvs.clickableField("Кнопка Подписать и отправить"));
     }
 
     @Test

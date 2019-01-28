@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -38,7 +37,7 @@ public class BaseMethodsTest {
     private static BaseMethods bm;
     private static WebPageInteractionSteps wpis;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -53,12 +52,12 @@ public class BaseMethodsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
+    @BeforeEach
     public void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }

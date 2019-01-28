@@ -17,12 +17,9 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.hamcrest.core.IsEqual;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -33,6 +30,7 @@ import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ManageBrowserStepsTest {
@@ -41,7 +39,7 @@ public class ManageBrowserStepsTest {
     private static AkitaScenario akitaScenario;
     public static WebPageInteractionSteps wpis;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         dmbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
@@ -56,12 +54,12 @@ public class ManageBrowserStepsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
+    @BeforeEach
     public void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
@@ -71,9 +69,10 @@ public class ManageBrowserStepsTest {
         dmbs.checkPageTitle("Title");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckPageTitleFailure() {
-        dmbs.checkPageTitle("NoTitle");
+        assertThrows(AssertionError.class, () ->
+                dmbs.checkPageTitle("NoTitle"));
     }
 
     @Test
@@ -85,13 +84,13 @@ public class ManageBrowserStepsTest {
     public void testSwitchToTheNextTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         dmbs.switchToTheNextTab();
-        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
+        assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
         dmbs.switchToTheNextTab();
-        Assert.assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
+        assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Title"));
     }
 
-    @Ignore
     @Test
+    @Disabled
     public void setWindowSizeSimple() {
         Dimension expectedDimension = new Dimension(800, 600);
         dmbs.setBrowserWindowSize(800, 600);

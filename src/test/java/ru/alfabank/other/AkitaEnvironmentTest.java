@@ -16,8 +16,8 @@
 package ru.alfabank.other;
 
 import cucumber.api.Scenario;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -34,7 +34,7 @@ public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
     private static WebPageInteractionSteps wpis;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepare() {
 
         env = new AkitaEnvironment();

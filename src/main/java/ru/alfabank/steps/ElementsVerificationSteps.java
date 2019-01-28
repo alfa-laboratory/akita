@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
@@ -21,14 +20,12 @@ import com.codeborne.selenide.SelenideElement;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static com.codeborne.selenide.Condition.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Шаги, содержащие проверки элементов страницы, доступные по умолчанию в каждом новом проекте
@@ -98,7 +95,7 @@ public class ElementsVerificationSteps extends BaseMethods {
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
     public void clickableField(String elementName) {
         SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
-        assertTrue(String.format("Элемент [%s] не кликабелен", elementName), element.isEnabled());
+        assertTrue(element.isEnabled(), String.format("Элемент [%s] не кликабелен", elementName));
     }
 
     /**
@@ -180,7 +177,7 @@ public class ElementsVerificationSteps extends BaseMethods {
     @Тогда("^(?:ссылка|кнопка|поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен|недоступна)$")
     public void fieldIsDisable(String elementName) {
         SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
-        assertTrue(String.format("Элемент [%s] доступен", elementName), element.is(Condition.disabled));
+        assertTrue(element.is(Condition.disabled), String.format("Элемент [%s] доступен", elementName));
     }
 
     /**
@@ -189,7 +186,7 @@ public class ElementsVerificationSteps extends BaseMethods {
     @Тогда("^в поле \"([^\"]*)\" содержится (\\d+) символов$")
     public void checkFieldSymbolsCount(String element, int num) {
         int length = akitaScenario.getCurrentPage().getAnyElementText(element).length();
-        assertEquals(String.format("Неверное количество символов. Ожидаемый результат: %s, текущий результат: %s", num, length), num, length);
+        assertEquals(num, length, String.format("Неверное количество символов. Ожидаемый результат: %s, текущий результат: %s", num, length));
     }
 
     /**
@@ -199,7 +196,7 @@ public class ElementsVerificationSteps extends BaseMethods {
     public void fieldInputIsEmpty(String fieldName) {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
                 akitaScenario.getCurrentPage().getAnyElementText(fieldName),
-                isEmptyOrNullString());
+                is(emptyOrNullString()));
     }
 
 }

@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -33,7 +32,8 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ListStepsTest {
 
@@ -42,7 +42,7 @@ public class ListStepsTest {
     private static ListInteractionSteps lis;
     private static ListVerificationSteps lvs;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -58,12 +58,12 @@ public class ListStepsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
+    @BeforeEach
     public void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
@@ -88,9 +88,10 @@ public class ListStepsTest {
         lis.selectElementInListIfFoundByText("List2", "item2");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void selectElementInListIfFoundByTextTestNegative() {
-        lis.selectElementInListIfFoundByText("List2", "item5");
+        assertThrows(IllegalArgumentException.class, () ->
+                lis.selectElementInListIfFoundByText("List2", "item5"));
     }
 
     @Test
@@ -98,9 +99,10 @@ public class ListStepsTest {
         lis.selectElementInListIfFoundByText("List2", "item2ValueInProps");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void selectElementInListIfFoundByTextTestNegativeWithProps() {
-        lis.selectElementInListIfFoundByText("List2", "item5ValueInProps");
+        assertThrows(IllegalArgumentException.class, () ->
+                lis.selectElementInListIfFoundByText("List2", "item5ValueInProps"));
     }
 
     @Test
@@ -113,14 +115,16 @@ public class ListStepsTest {
         lvs.listContainsMoreOrLessElements("List", "более", 2);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testListContainsMoreOrLessElementsLessNegative() {
-        lvs.listContainsMoreOrLessElements("List", "менее", 3);
+        assertThrows(AssertionError.class, () ->
+                lvs.listContainsMoreOrLessElements("List", "менее", 3));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testListContainsMoreOrLessElementsMoreNegative() {
-        lvs.listContainsMoreOrLessElements("List", "более", 3);
+        assertThrows(AssertionError.class, () ->
+                lvs.listContainsMoreOrLessElements("List", "более", 3));
     }
 
     @Test
@@ -139,9 +143,10 @@ public class ListStepsTest {
         lvs.listContainsNumberFromVariable("List", "var3");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
-        lvs.listContainsNumberFromVariable("List", "4");
+        assertThrows(AssertionError.class, () ->
+                lvs.listContainsNumberFromVariable("List", "4"));
     }
 
     @Test
@@ -149,9 +154,10 @@ public class ListStepsTest {
         lvs.checkListTextsByRegExp("List", "[A-z]*");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckListTextsByRegExpNegative() {
-        lvs.checkListTextsByRegExp("List", "[0-9]*");
+        assertThrows(AssertionError.class, () ->
+                lvs.checkListTextsByRegExp("List", "[0-9]*"));
     }
 
     @Test
@@ -159,9 +165,10 @@ public class ListStepsTest {
         lvs.listContainsNumberOfElements("List", 3);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testListContainsNumberOfElementsNegative() {
-        lvs.listContainsNumberOfElements("List", 4);
+        assertThrows(AssertionError.class, () ->
+                lvs.listContainsNumberOfElements("List", 4));
     }
 
     @Test
@@ -177,9 +184,10 @@ public class ListStepsTest {
         lis.selectElementNumberFromList(1, "List");
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void selectElementNumberFromListUnderMinBorder() {
-        lis.selectElementNumberFromList(0, "List");
+        assertThrows(IndexOutOfBoundsException.class, () ->
+                lis.selectElementNumberFromList(0, "List"));
     }
 
     @Test
@@ -187,9 +195,10 @@ public class ListStepsTest {
         lis.selectElementNumberFromList(3, "List");
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void selectElementNumberFromListOverMaxBorder() {
-        lis.selectElementNumberFromList(4, "List");
+        assertThrows(IndexOutOfBoundsException.class, () ->
+                lis.selectElementNumberFromList(4, "List"));
     }
 
     @Test
@@ -197,9 +206,10 @@ public class ListStepsTest {
         lis.selectRandomElementFromList("List");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void selectRandomElementFromListAndSaveVarNegative() {
-        lis.selectRandomElementFromListAndSaveVar("NormalField", "test");
+        assertThrows(IllegalArgumentException.class, () ->
+                lis.selectRandomElementFromListAndSaveVar("NormalField", "test"));
     }
 
     @Test
@@ -212,9 +222,10 @@ public class ListStepsTest {
         lvs.checkListElementsContainsText("List2", "itemValueInProps");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckListElementsContainsTextNegative() {
-        lvs.checkListElementsContainsText("List2", "item1");
+        assertThrows(AssertionError.class, () ->
+                lvs.checkListElementsContainsText("List2", "item1"));
     }
 
     @Test
@@ -222,9 +233,10 @@ public class ListStepsTest {
         lvs.checkListElementsNotContainsText("List2", "item1");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckListElementsNotContainsTextNegative() {
-        lvs.checkListElementsNotContainsText("List2", "item");
+        assertThrows(AssertionError.class, () ->
+                lvs.checkListElementsNotContainsText("List2", "item"));
     }
 
     @Test
@@ -234,9 +246,10 @@ public class ListStepsTest {
                 equalTo("Two"), equalTo("Three")));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckListElementsNotContainsTextNegativeWithProps() {
-        lvs.checkListElementsNotContainsText("List2", "itemValueInProps");
+        assertThrows(AssertionError.class, () ->
+                lvs.checkListElementsNotContainsText("List2", "itemValueInProps"));
     }
 
     @Test
@@ -248,13 +261,14 @@ public class ListStepsTest {
         lvs.checkIfListInnerTextConsistsOfTableElements("List3", types);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void checkIfListInnerTextConsistsOfTableElementsNegative() {
         ArrayList<String> types = new ArrayList<>();
         types.add("One 1");
         types.add("Two 2");
         types.add("Null");
-        lvs.checkIfListInnerTextConsistsOfTableElements("List3", types);
+        assertThrows(AssertionError.class, () ->
+                lvs.checkIfListInnerTextConsistsOfTableElements("List3", types));
     }
 
     @Test
@@ -267,7 +281,7 @@ public class ListStepsTest {
         lvs.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testListInnerTextCorrespondsToListFromVariableNegativeSize() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One 1");
@@ -275,17 +289,19 @@ public class ListStepsTest {
         arrayList.add("Three 3");
         arrayList.add("One 1");
         akitaScenario.setVar("qwerty", arrayList);
-        lvs.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
+        assertThrows(AssertionError.class, () ->
+                lvs.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty"));
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testListInnerTextCorrespondsToListFromVariableNegative() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One 1");
         arrayList.add("Two 2");
         arrayList.add("Null");
         akitaScenario.setVar("qwerty", arrayList);
-        lvs.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty");
+        assertThrows(AssertionError.class, () ->
+                lvs.checkListInnerTextCorrespondsToListFromVariable("List3", "qwerty"));
     }
 
     @Test
@@ -298,7 +314,7 @@ public class ListStepsTest {
         lvs.compareListFromUIAndFromVariable("List", "qwerty");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCompareListFromUIAndFromVariableNegative() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Ten");
@@ -306,7 +322,8 @@ public class ListStepsTest {
         arrayList.add("Two");
         arrayList.add("Three");
         akitaScenario.setVar("qwerty", arrayList);
-        lvs.compareListFromUIAndFromVariable("List", "qwerty");
+        assertThrows(AssertionError.class, () ->
+                lvs.compareListFromUIAndFromVariable("List", "qwerty"));
     }
 
     @Test
@@ -320,9 +337,10 @@ public class ListStepsTest {
         assertThat(akitaScenario.tryGetVar("varName"), equalTo("Three"));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void selectElementNumberFromListAndSaveToVarUnderMinBorder() {
-        lis.selectElementNumberFromListAndSaveToVar(0, "List", "varName");
+        assertThrows(IndexOutOfBoundsException.class, () ->
+                lis.selectElementNumberFromListAndSaveToVar(0, "List", "varName"));
     }
 
     @Test
@@ -331,9 +349,10 @@ public class ListStepsTest {
         assertThat(akitaScenario.tryGetVar("varName"), equalTo("Two"));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void selectElementNumberFromListAndSaveToVarOverMaxBorder() {
-        lis.selectElementNumberFromListAndSaveToVar(4, "List", "varName");
+        assertThrows(IndexOutOfBoundsException.class, () ->
+                lis.selectElementNumberFromListAndSaveToVar(4, "List", "varName"));
     }
 
 }

@@ -15,11 +15,11 @@
  */
 package ru.alfabank.steps;
 
-import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.DataTable;
 import cucumber.api.Scenario;
-import org.junit.*;
-import org.openqa.selenium.Dimension;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -31,6 +31,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
 
 public class RoundUpStepsTest {
@@ -40,7 +42,7 @@ public class RoundUpStepsTest {
     private static RoundUpSteps rus;
     private static ElementsVerificationSteps elis;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -56,12 +58,12 @@ public class RoundUpStepsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
+    @BeforeEach
     public void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void compareTwoDigitVarsNegative() {
         String number1Name = "number1", number1Value = "1234567890";
         akitaScenario.setVar(number1Name, number1Value);
@@ -69,7 +71,8 @@ public class RoundUpStepsTest {
         String number2Name = "number2", number2Value = "1234567894";
         akitaScenario.setVar(number2Name, number2Value);
 
-        rus.compareTwoVariables(number1Name, number2Name);
+        assertThrows(AssertionError.class, () ->
+                rus.compareTwoVariables(number1Name, number2Name));
     }
 
     @Test
@@ -83,7 +86,7 @@ public class RoundUpStepsTest {
         rus.compareTwoVariables(number1Name, number2Name);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCompareTwoDigitVarsAnotherNegative() {
         String number1Name = "number1", number1Value = null;
         akitaScenario.setVar(number1Name, number1Value);
@@ -91,7 +94,8 @@ public class RoundUpStepsTest {
         String number2Name = "number2", number2Value = null;
         akitaScenario.setVar(number2Name, number2Value);
 
-        rus.compareTwoVariables(number1Name, number2Name);
+        assertThrows(IllegalArgumentException.class, () ->
+                rus.compareTwoVariables(number1Name, number2Name));
     }
 
     @Test
@@ -106,7 +110,7 @@ public class RoundUpStepsTest {
         rus.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckingTwoVariablesAreNotEqualsNegative() {
         String variable1Name = "number1";
         int variable1Value = 666;
@@ -115,17 +119,20 @@ public class RoundUpStepsTest {
         String variable2Name = "number2";
         int variable2Value = 666;
         akitaScenario.setVar(variable2Name, variable2Value);
-        rus.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
+        assertThrows(AssertionError.class, () ->
+                rus.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCheckingTwoVariablesAreNotEqualsAnotherNegative() {
         String variable1Name = "number1", variable1Value = null;
         akitaScenario.setVar(variable1Name, variable1Value);
 
         String variable2Name = "number2", variable2Value = null;
         akitaScenario.setVar(variable2Name, variable2Value);
-        rus.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name);
+
+        assertThrows(IllegalArgumentException.class, () ->
+                rus.checkingTwoVariablesAreNotEquals(variable1Name, variable2Name));
     }
 
     @Test
@@ -140,10 +147,11 @@ public class RoundUpStepsTest {
         rus.checkIfValueFromVariableEqualPropertyVariable("timeout", "waitingAppearTimeout");
     }
 
-    @Test(expected = AssertionError.class)
+    @Test
     public void testCheckIfValueFromVariableEqualPropertyVariableNegative() {
         akitaScenario.setVar("timeout", "500");
-        rus.checkIfValueFromVariableEqualPropertyVariable("timeout", "waitingAppearTimeout");
+        assertThrows(AssertionError.class, () ->
+                rus.checkIfValueFromVariableEqualPropertyVariable("timeout", "waitingAppearTimeout"));
     }
 
     @Test
@@ -158,7 +166,7 @@ public class RoundUpStepsTest {
         DataTable dataTable = dataTableFromLists(allLists);
 
         rus.fillTemplate(templateName, varName, dataTable);
-        Assert.assertEquals("{\"name\": \"Jack\", \"age\": 35}", (String) akitaScenario.getVar(varName));
+        assertEquals("{\"name\": \"Jack\", \"age\": 35}", akitaScenario.getVar(varName));
     }
 
     @Test

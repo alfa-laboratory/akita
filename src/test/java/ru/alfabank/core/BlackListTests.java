@@ -17,8 +17,8 @@ package ru.alfabank.core;
 
 
 import net.lightbody.bmp.proxy.BlacklistEntry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.BlackListManager;
 
@@ -58,7 +58,7 @@ public class BlackListTests {
         assertThat(newEntries, samePropertyValuesAs(blackList.getBlacklistEntries()));
     }
 
-    @Before
+    @BeforeEach
     public void initBlackList() {
         new BlackListManager("blacklist").fillBlackList(defaultBlacklistEntries);
     }

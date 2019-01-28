@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import ru.alfabank.StubScenario;
@@ -30,8 +29,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class ManageBrowserCookieStepsTest {
@@ -41,7 +39,7 @@ public class ManageBrowserCookieStepsTest {
     private static AkitaScenario akitaScenario;
     public static WebPageInteractionSteps wpis;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         dmbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
@@ -53,7 +51,7 @@ public class ManageBrowserCookieStepsTest {
         when(webDriver.manage()).thenReturn(mock(WebDriver.Options.class));
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
@@ -69,7 +67,7 @@ public class ManageBrowserCookieStepsTest {
         Cookie cookie = new Cookie("cookieName", "123");
         when(webDriver.manage().getCookieNamed("cookieName")).thenReturn(cookie);
         dmbs.saveCookieToVar("cookieName", "varName");
-        assertThat(akitaScenario.getVar("varName"), equalTo(cookie));
+        assertEquals(cookie, akitaScenario.getVar("varName"));
     }
 
     @Test
@@ -77,7 +75,7 @@ public class ManageBrowserCookieStepsTest {
         Set set = new HashSet();
         when(webDriver.manage().getCookies()).thenReturn(set);
         dmbs.saveAllCookies("var2");
-        assertThat(akitaScenario.getVar("var2"), equalTo(set));
+        assertEquals(set, akitaScenario.getVar("var2"));
     }
 
     @Test

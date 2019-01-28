@@ -17,7 +17,10 @@ package ru.alfabank.other;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
@@ -30,32 +33,35 @@ import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class AkitaScenarioTest {
     private static AkitaScenario akitaScenario;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         akitaScenario = AkitaScenario.getInstance();
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
-    @Before
+    @BeforeEach
     public void prepare() {
         Scenario scenario = new StubScenario();
         AkitaPage akitaPageMock = mock(AkitaPage.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetSetVarNegative1() {
         String notExistingVar = "randomName";
-        akitaScenario.getVar(notExistingVar);
+        assertThrows(IllegalArgumentException.class, () ->
+                akitaScenario.getVar(notExistingVar));
     }
 
     @Test
@@ -82,10 +88,11 @@ public class AkitaScenarioTest {
         close();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void putGetPagesNegative() {
         AkitaPageMock alfaPageMock = null;
-        akitaScenario.getPages().put("Mock", alfaPageMock);
+        assertThrows(IllegalArgumentException.class, () ->
+                akitaScenario.getPages().put("Mock", alfaPageMock));
     }
 
     @Test
@@ -114,16 +121,17 @@ public class AkitaScenarioTest {
         close();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setCurrentPageNegative() {
-        akitaScenario.setCurrentPage(null);
+        assertThrows(IllegalArgumentException.class, () -> akitaScenario.setCurrentPage(null));
     }
 
     @Test
     public void shouldReturnScenarioTest() {
         Scenario actualScenario = akitaScenario.getScenario();
-        Assert.assertEquals("My scenario", actualScenario.getName());
+        assertEquals("My scenario", actualScenario.getName());
     }
+
     @Test
     public void getVarsTest() {
         akitaScenario.setVar("1", "1");

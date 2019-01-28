@@ -16,9 +16,9 @@
 package ru.alfabank.other;
 
 import com.codeborne.selenide.WebDriverRunner;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -27,18 +27,19 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ScopedVariablesTest {
     private static ScopedVariables variables;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
         variables = new ScopedVariables();
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
@@ -115,23 +116,25 @@ public class ScopedVariablesTest {
         assertThat(ScopedVariables.resolveVars(inputJsonString), equalTo(expectedJsonString));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void resolveVariableFromJsonStringWithUnknownVariable() {
         String inputJsonString = "{\"unknown\": {unknownVariable}, " +
                 "\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"{bodyWithParams1}\", \"age\": {bodyWithParams2}}, " +
                 "\"object\": {\"var1\": 1}, " +
                 "\"length\": {resolve.Переменная-1_2}}";
-        ScopedVariables.resolveVars(inputJsonString);
+        assertThrows(IllegalArgumentException.class, () ->
+                ScopedVariables.resolveVars(inputJsonString));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void resolveVariableFromXmlStringWithUnknownVariable() {
         String inputJsonString = "<note>" +
                 "<from>{bodyWithParams1}</from>" +
                 "<from>{unknownVariable}</from>" +
                 "</note>";
-        ScopedVariables.resolveVars(inputJsonString);
+        assertThrows(IllegalArgumentException.class, () ->
+                ScopedVariables.resolveVars(inputJsonString));
     }
 
 }

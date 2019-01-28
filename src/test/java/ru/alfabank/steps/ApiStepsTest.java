@@ -18,10 +18,10 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -45,19 +45,19 @@ public class ApiStepsTest {
     private static ApiSteps api;
     private static AkitaScenario akitaScenario;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         api = new ApiSteps();
         akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
-    @Rule
+    @RegisterExtension
     public WireMockRule wireMockRule = new WireMockRule();
 
     @Test

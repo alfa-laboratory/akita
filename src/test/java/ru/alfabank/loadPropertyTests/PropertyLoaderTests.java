@@ -17,36 +17,33 @@ package ru.alfabank.loadPropertyTests;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 public class PropertyLoaderTests {
     private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
     }
 
-    @Before
+    @BeforeEach
     public void prepare() {
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
-    @AfterClass
+    @AfterAll
     public static void close() {
         WebDriverRunner.closeWebDriver();
     }
@@ -57,7 +54,7 @@ public class PropertyLoaderTests {
         akitaScenario.setVar("second", "ne_rabotaet");
         String expected = "pervoe ne_rabotaet";
         String actual = resolveVars("{first} {second}");
-        assertThat("Итоговый URL не равен 'pervoe ne_rabotaet'", actual, Matchers.equalTo(expected));
+        assertEquals(expected, actual, "Итоговый URL не равен 'pervoe ne_rabotaet'");
     }
 
     @Test
@@ -65,7 +62,7 @@ public class PropertyLoaderTests {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}");
-        assertThat("Итоговый URL не равен 'caramba'", actual, Matchers.equalTo("caramba"));
+        assertEquals("caramba", actual, "Итоговый URL не равен 'caramba'");
     }
 
     @Test
@@ -73,7 +70,7 @@ public class PropertyLoaderTests {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}/{varFromPropertyFile2}");
-        assertThat("Итоговый URL не равен 'caramba/kumkvat'", actual, Matchers.equalTo("caramba/kumkvat"));
+        assertEquals("caramba/kumkvat", actual, "Итоговый URL не равен 'caramba/kumkvat'");
     }
 
     @Test
@@ -81,7 +78,7 @@ public class PropertyLoaderTests {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}/{first}");
-        assertThat("Итоговый URL не равен 'caramba/alfalab'", actual, Matchers.equalTo("caramba/alfalab"));
+        assertEquals("caramba/alfalab", actual, "Итоговый URL не равен 'caramba/alfalab'");
     }
 
     @Test
@@ -89,43 +86,45 @@ public class PropertyLoaderTests {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("/{second}/{varFromPropertyFile1}/{first}/");
-        assertThat("Итоговый URL не равен '//ru/credit/caramba/alfalab/'", actual, Matchers.equalTo("//ru/credit/caramba/alfalab/"));
+        assertEquals("//ru/credit/caramba/alfalab/", actual, "Итоговый URL не равен '//ru/credit/caramba/alfalab/'");
     }
 
     @Test
     public void getValuesByNameWithDot() {
         String resolvedString = resolveVars("{testUser.password}");
-        assertThat("успешно разрезолвилась переменная с .", resolvedString, Matchers.equalTo("testPassword"));
+        assertEquals("testPassword", resolvedString, "успешно разрезолвилась переменная с .");
     }
 
     @Test
     public void getValueFromMapByNameWithDot() {
         akitaScenario.setVar("user.login", "superLogin");
         String resolvedString = akitaScenario.replaceVariables("{user.login}");
-        assertThat("успешно разрезолвилась переменная с .", resolvedString, Matchers.equalTo("superLogin"));
+        assertEquals("superLogin", resolvedString,"успешно разрезолвилась переменная с .");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getNotExistingValue() {
-        resolveVars("{RandomTestVariable3321}");
+        assertThrows(IllegalArgumentException.class, () -> {
+            resolveVars("{RandomTestVariable3321}");
+        });
     }
 
     @Test
     public void getJsonStringType() {
         String expectedValue = "{\"accounts\": []}";
         String actualValue = resolveVars(expectedValue);
-        assertThat(actualValue, is(expectedValue));
+        assertEquals(actualValue, expectedValue);
     }
 
     @Test
     public void testPropertyWhenLoadValueFromFileOrPropertyOrVariableOrDefault2() {
-        MatcherAssert.assertThat(loadValueFromFileOrPropertyOrVariableOrDefault("testScript"), equalTo("alert('privet');"));
+        assertEquals("alert('privet');", loadValueFromFileOrPropertyOrVariableOrDefault("testScript"));
     }
 
     @Test
     public void testVariableWhenLoadValueFromFileOrPropertyOrVariableOrDefault3() {
         akitaScenario.setVar("varName", "testVariable");
-        MatcherAssert.assertThat("testVariable", equalTo(loadValueFromFileOrPropertyOrVariableOrDefault("varName")));
+        assertEquals("testVariable", loadValueFromFileOrPropertyOrVariableOrDefault("varName"));
     }
 
 }
