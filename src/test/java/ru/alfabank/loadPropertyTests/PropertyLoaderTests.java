@@ -34,22 +34,22 @@ public class PropertyLoaderTests {
     private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     @BeforeAll
-    public static void init() {
+    static void init() {
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void someValuesFromMap() {
+    void someValuesFromMap() {
         akitaScenario.setVar("first", "pervoe");
         akitaScenario.setVar("second", "ne_rabotaet");
         String expected = "pervoe ne_rabotaet";
@@ -58,7 +58,7 @@ public class PropertyLoaderTests {
     }
 
     @Test
-    public void getValueFromPropertyFile() {
+    void getValueFromPropertyFile() {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}");
@@ -66,7 +66,7 @@ public class PropertyLoaderTests {
     }
 
     @Test
-    public void getSomeValuesFromPropertyFile() {
+    void getSomeValuesFromPropertyFile() {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}/{varFromPropertyFile2}");
@@ -74,7 +74,7 @@ public class PropertyLoaderTests {
     }
 
     @Test
-    public void getSomeValuesFromPropAndMap() {
+    void getSomeValuesFromPropAndMap() {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}/{first}");
@@ -82,7 +82,7 @@ public class PropertyLoaderTests {
     }
 
     @Test
-    public void getSomeValuesFromPropAndMapAndSpec() {
+    void getSomeValuesFromPropAndMapAndSpec() {
         akitaScenario.setVar("first", "alfalab");
         akitaScenario.setVar("second", "/ru/credit");
         String actual = resolveVars("/{second}/{varFromPropertyFile1}/{first}/");
@@ -90,39 +90,39 @@ public class PropertyLoaderTests {
     }
 
     @Test
-    public void getValuesByNameWithDot() {
+    void getValuesByNameWithDot() {
         String resolvedString = resolveVars("{testUser.password}");
         assertEquals("testPassword", resolvedString, "успешно разрезолвилась переменная с .");
     }
 
     @Test
-    public void getValueFromMapByNameWithDot() {
+    void getValueFromMapByNameWithDot() {
         akitaScenario.setVar("user.login", "superLogin");
         String resolvedString = akitaScenario.replaceVariables("{user.login}");
         assertEquals("superLogin", resolvedString,"успешно разрезолвилась переменная с .");
     }
 
     @Test
-    public void getNotExistingValue() {
+    void getNotExistingValue() {
         assertThrows(IllegalArgumentException.class, () -> {
             resolveVars("{RandomTestVariable3321}");
         });
     }
 
     @Test
-    public void getJsonStringType() {
+    void getJsonStringType() {
         String expectedValue = "{\"accounts\": []}";
         String actualValue = resolveVars(expectedValue);
         assertEquals(actualValue, expectedValue);
     }
 
     @Test
-    public void testPropertyWhenLoadValueFromFileOrPropertyOrVariableOrDefault2() {
+    void testPropertyWhenLoadValueFromFileOrPropertyOrVariableOrDefault2() {
         assertEquals("alert('privet');", loadValueFromFileOrPropertyOrVariableOrDefault("testScript"));
     }
 
     @Test
-    public void testVariableWhenLoadValueFromFileOrPropertyOrVariableOrDefault3() {
+    void testVariableWhenLoadValueFromFileOrPropertyOrVariableOrDefault3() {
         akitaScenario.setVar("varName", "testVariable");
         assertEquals("testVariable", loadValueFromFileOrPropertyOrVariableOrDefault("varName"));
     }

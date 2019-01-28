@@ -35,7 +35,7 @@ public class PageBlockStepsTest {
     private static PageBlockSteps pbs;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -50,24 +50,24 @@ public class PageBlockStepsTest {
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test
-    public void clickOnElementInBlockPositiveTest() {
+    void clickOnElementInBlockPositiveTest() {
         pbs.clickOnElementInBlock("SearchButton", "SearchBlock");
         assertFalse(akitaScenario.getPage("SearchBlock").getElement("SearchButton").isEnabled());
     }
 
     @Test
-    public void getElementsListInBlockPositiveTest() {
+    void getElementsListInBlockPositiveTest() {
         pbs.getElementsList("AkitaTable", "Rows", "ListTable");
         assertNotNull(akitaScenario.getVar("ListTable"));
     }
 
     @Test
-    public void getListElementsTextInBlockPositiveTest() {
+    void getListElementsTextInBlockPositiveTest() {
         pbs.getListElementsText("AkitaTable", "Rows", "ListTable");
         assertNotNull(akitaScenario.getVar("ListTable"));
     }

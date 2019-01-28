@@ -45,7 +45,7 @@ public class WebPageStepsTest {
 
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         mbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -62,136 +62,136 @@ public class WebPageStepsTest {
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void navigateToUrl() {
+    void navigateToUrl() {
         assertThat(WebDriverRunner.getWebDriver().getTitle(), equalTo("Title"));
     }
 
     @Test
-    public void checkCurrentURLPositive() {
+    void checkCurrentURLPositive() {
         wpvs.checkCurrentURL(akitaScenario.getVar("Page").toString());
     }
 
     @Test
-    public void checkCurrentURLNegative() {
+    void checkCurrentURLNegative() {
         assertThrows(NullPointerException.class, () ->
                 wpvs.checkCurrentURL(null));
     }
 
     @Test
-    public void testCheckCurrentURLAnotherNegative() {
+    void testCheckCurrentURLAnotherNegative() {
         String myURL = "https://google.ru/";
         assertThrows(AssertionError.class, () ->
                 wpvs.checkCurrentURL(myURL));
     }
 
     @Test
-    public void testCheckCurrentURLIsNotEqualsPositive() {
+    void testCheckCurrentURLIsNotEqualsPositive() {
         String myURL = "https://google.ru/";
         wpvs.checkCurrentURLIsNotEquals(myURL);
     }
 
     @Test
-    public void testCheckCurrentURLIsNotEqualsNegative() {
+    void testCheckCurrentURLIsNotEqualsNegative() {
         assertThrows(AssertionError.class, () ->
                 wpvs.checkCurrentURLIsNotEquals(akitaScenario.getVar("Page").toString()));
     }
 
     @Test
-    public void testCheckCurrentURLIsNotEqualsAnotherNegative() {
+    void testCheckCurrentURLIsNotEqualsAnotherNegative() {
         assertThrows(NullPointerException.class, () ->
                 wpvs.checkCurrentURLIsNotEquals(null));
     }
 
     @Test
-    public void testLoadPagePositive() {
+    void testLoadPagePositive() {
         wpis.loadPage("AkitaPageMock");
     }
 
     @Test
-    public void testLoadPageNegative() {
+    void testLoadPageNegative() {
         assertThrows(IllegalArgumentException.class, () ->
                 wpis.loadPage("thisPageDoesNotExists"));
     }
 
     @Test
-    public void testLoadPageFailedPositive() {
+    void testLoadPageFailedPositive() {
         wpvs.loadPageFailed("RedirectionPage");
     }
 
     @Test
-    public void testLoadPageFailedNegative() {
+    void testLoadPageFailedNegative() {
         assertThrows(IllegalArgumentException.class, () ->
                 wpvs.loadPageFailed("thisPageDoesNotExists"));
     }
 
     @Test
-    public void testScrollPageToElementPositive() {
+    void testScrollPageToElementPositive() {
         wpis.scrollPageToElement("mockTagName");
     }
 
     @Test
-    public void testScrollPageToElementNegative() {
+    void testScrollPageToElementNegative() {
         assertThrows(AssertionError.class, () ->
                 wpis.scrollPageToElement("Кнопка Показать ещё"));
     }
 
     @Test
-    public void testScrollWhileElemNotFoundOnPagePositive() {
+    void testScrollWhileElemNotFoundOnPagePositive() {
         wpis.scrollWhileElemNotFoundOnPage("mockTagName");
     }
 
     @Test
-    public void testScrollWhileElemNotFoundOnPageNegative() {
+    void testScrollWhileElemNotFoundOnPageNegative() {
         assertThrows(AssertionError.class, () ->
                 wpis.scrollWhileElemNotFoundOnPage("Кнопка Показать ещё"));
     }
 
     @Test
-    public void testScrollWhileElemWithTextNotFoundOnPagePositive() {
+    void testScrollWhileElemWithTextNotFoundOnPagePositive() {
         wpis.scrollWhileElemWithTextNotFoundOnPage("Serious testing page");
     }
 
     @Test
-    public void testScrollWhileElemWithTextNotFoundOnPageNegative() {
+    void testScrollWhileElemWithTextNotFoundOnPageNegative() {
         assertThrows(AssertionError.class, () ->
                 wpis.scrollWhileElemWithTextNotFoundOnPage("Not serious testing page"));
     }
 
     @Test
-    public void blockDisappearedSimple() {
+    void blockDisappearedSimple() {
         assertThrows(ElementShouldNot.class, () ->
                 wpvs.blockDisappeared("AkitaPageMock"));
     }
 
     @Test
-    public void goToUrl() {
+    void goToUrl() {
         wpis.goToUrl((String) akitaScenario.getVar("RedirectionPage"));
     }
 
     @Test
-    public void urlClickAndCheckRedirectionPositive() {
+    void urlClickAndCheckRedirectionPositive() {
         wpis.urlClickAndCheckRedirection("RedirectionPage", "Link");
     }
 
     @Test
-    public void openReadOnlyFormPositive() {
+    void openReadOnlyFormPositive() {
         wpis.goToSelectedPageByLink("RedirectionPage",
                 akitaScenario.getVar("RedirectionPage").toString());
         wpvs.openReadOnlyForm();
     }
 
     @Test
-    public void currentDatePositive() {
+    void currentDatePositive() {
         iis.currentDate("NormalField", "dd.MM.yyyy");
         assertThat(akitaScenario.getEnvironment()
                         .getPage("AkitaPageMock")
@@ -201,22 +201,22 @@ public class WebPageStepsTest {
     }
 
     @Test
-    public void refreshPageSimple() {
+    void refreshPageSimple() {
         wpis.refreshPage();
     }
 
     @Test
-    public void scrollDownSimple() {
+    void scrollDownSimple() {
         wpis.scrollDown();
     }
 
     @Test
-    public void loginByUserDataPositive() {
+    void loginByUserDataPositive() {
         wpis.loginByUserData("testUser");
     }
 
     @Test
-    public void testLinkShouldHaveText() {
+    void testLinkShouldHaveText() {
         String text = "/RedirectionPage";
         akitaScenario.getEnvironment()
                 .getPage("AkitaPageMock")
@@ -226,13 +226,13 @@ public class WebPageStepsTest {
     }
 
     @Test
-    public void savePageTitleToVariablePositive() {
+    void savePageTitleToVariablePositive() {
         wpis.savePageTitleToVariable("TitleVariable");
         MatcherAssert.assertThat(akitaScenario.getVar("TitleVariable"), Matchers.equalTo("Title"));
     }
 
     @Test
-    public void testSwitchToTheTabWithTitle() {
+    void testSwitchToTheTabWithTitle() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         wpis.switchToTheTabWithTitle("Page with redirection");
         wpvs.checkPageTitle("Page with redirection");
@@ -241,7 +241,7 @@ public class WebPageStepsTest {
     }
 
     @Test
-    public void testCloseCurrentTab() {
+    void testCloseCurrentTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         wpis.switchToTheTabWithTitle("Page with redirection");
         mbs.closeCurrentTab();

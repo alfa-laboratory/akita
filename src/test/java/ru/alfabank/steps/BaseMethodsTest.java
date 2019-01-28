@@ -38,7 +38,7 @@ public class BaseMethodsTest {
     private static WebPageInteractionSteps wpis;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -53,37 +53,37 @@ public class BaseMethodsTest {
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromProperty() {
+    void testGetPropertyOrStringVariableOrValueFromProperty() {
         akitaScenario.setVar("testVar", "shouldNotLoadMe");
         assertThat(bm.getPropertyOrStringVariableOrValue("testVar"),
                 equalTo(PropertyLoader.loadProperty("testVar")));
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
+    void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
         akitaScenario.setVar("akita.url", "shouldLoadMe");
         assertThat(bm.getPropertyOrStringVariableOrValue("akita.url"),
                 equalTo("shouldLoadMe"));
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromValue() {
+    void testGetPropertyOrStringVariableOrValueFromValue() {
         assertThat(bm.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
                 equalTo("getPropertyOrVariableOrValueTestValue"));
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromSystemVariable() {
+    void testGetPropertyOrStringVariableOrValueFromSystemVariable() {
         String propertyName = "akita.url";
         String expectedValue = "http://url";
         System.setProperty(propertyName, expectedValue);

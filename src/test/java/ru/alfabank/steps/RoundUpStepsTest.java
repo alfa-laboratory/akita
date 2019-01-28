@@ -43,7 +43,7 @@ public class RoundUpStepsTest {
     private static ElementsVerificationSteps elis;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -59,12 +59,12 @@ public class RoundUpStepsTest {
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test
-    public void compareTwoDigitVarsNegative() {
+    void compareTwoDigitVarsNegative() {
         String number1Name = "number1", number1Value = "1234567890";
         akitaScenario.setVar(number1Name, number1Value);
 
@@ -76,7 +76,7 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    public void compareTwoDigitVars() {
+    void compareTwoDigitVars() {
         String number1Name = "number1", number1Value = "1234567890.97531";
         akitaScenario.setVar(number1Name, number1Value);
 
@@ -87,7 +87,7 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    public void testCompareTwoDigitVarsAnotherNegative() {
+    void testCompareTwoDigitVarsAnotherNegative() {
         String number1Name = "number1", number1Value = null;
         akitaScenario.setVar(number1Name, number1Value);
 
@@ -99,7 +99,7 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    public void testCheckingTwoVariablesAreNotEqualsPositive() {
+    void testCheckingTwoVariablesAreNotEqualsPositive() {
         String variable1Name = "number1";
         int variable1Value = 666;
         akitaScenario.setVar(variable1Name, variable1Value);
@@ -111,7 +111,7 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    public void testCheckingTwoVariablesAreNotEqualsNegative() {
+    void testCheckingTwoVariablesAreNotEqualsNegative() {
         String variable1Name = "number1";
         int variable1Value = 666;
         akitaScenario.setVar(variable1Name, variable1Value);
@@ -124,7 +124,7 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    public void testCheckingTwoVariablesAreNotEqualsAnotherNegative() {
+    void testCheckingTwoVariablesAreNotEqualsAnotherNegative() {
         String variable1Name = "number1", variable1Value = null;
         akitaScenario.setVar(variable1Name, variable1Value);
 
@@ -136,26 +136,26 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    public void saveValueToVarPositive() {
+    void saveValueToVarPositive() {
         rus.saveValueToVar("testVar", "test");
         assertThat(akitaScenario.getVar("test"), equalTo("customTestValue"));
     }
 
     @Test
-    public void testCheckIfValueFromVariableEqualPropertyVariablePositive() {
+    void testCheckIfValueFromVariableEqualPropertyVariablePositive() {
         akitaScenario.setVar("timeout", "1000");
         rus.checkIfValueFromVariableEqualPropertyVariable("timeout", "waitingAppearTimeout");
     }
 
     @Test
-    public void testCheckIfValueFromVariableEqualPropertyVariableNegative() {
+    void testCheckIfValueFromVariableEqualPropertyVariableNegative() {
         akitaScenario.setVar("timeout", "500");
         assertThrows(AssertionError.class, () ->
                 rus.checkIfValueFromVariableEqualPropertyVariable("timeout", "waitingAppearTimeout"));
     }
 
     @Test
-    public void testfillTemplate() {
+    void testfillTemplate() {
         String templateName = "strTemplate";
         String varName = "varName";
         List<String> row1 = new ArrayList<>(Arrays.asList("_name_", "Jack"));
@@ -170,24 +170,24 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    public void pushButtonOnKeyboardSimple() {
+    void pushButtonOnKeyboardSimple() {
         rus.pushButtonOnKeyboard("alt");
     }
 
     @Test
-    public void setVariableTest() {
+    void setVariableTest() {
         rus.setVariable("ul", "Serious testing page");
         assertThat(akitaScenario.getVar("ul"), equalTo("Serious testing page"));
     }
 
     @Test
-    public void testTestScript() {
+    void testTestScript() {
         rus.executeJsScript("HIDEnSHOW()");
         elis.elementIsNotVisible("ul");
     }
 
     @Test
-    public void expressionExpressionPositive() {
+    void expressionExpressionPositive() {
         rus.expressionExpression("\"test\".equals(\"test\")");
     }
 

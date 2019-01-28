@@ -33,13 +33,13 @@ public class BlackListTests {
     private static List<BlacklistEntry> defaultBlacklistEntries = new ArrayList<>();
 
     @Test
-    public void testGetDefaultBlacklistEntries() {
+    void testGetDefaultBlacklistEntries() {
         BlackList blackList = new BlackList();
         assertThat(defaultBlacklistEntries, samePropertyValuesAs(blackList.getBlacklistEntries()));
     }
 
     @Test
-    public void testAddToDefaultBlacklistEntries() {
+    void testAddToDefaultBlacklistEntries() {
         List<BlacklistEntry> expectedEntries = new ArrayList<>();
         expectedEntries.addAll(defaultBlacklistEntries);
 
@@ -52,14 +52,14 @@ public class BlackListTests {
     }
 
     @Test
-    public void testNewBlacklistEntries() {
+    void testNewBlacklistEntries() {
         List<BlacklistEntry> newEntries = new ArrayList<>(Arrays.asList(new BlacklistEntry("new.entry", 404)));
         BlackList blackList = new BlackList(newEntries);
         assertThat(newEntries, samePropertyValuesAs(blackList.getBlacklistEntries()));
     }
 
     @BeforeEach
-    public void initBlackList() {
+    void initBlackList() {
         new BlackListManager("blacklist").fillBlackList(defaultBlacklistEntries);
     }
 }

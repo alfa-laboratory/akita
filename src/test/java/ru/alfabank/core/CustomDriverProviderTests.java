@@ -27,7 +27,7 @@ import static org.hamcrest.core.Is.is;
 public class CustomDriverProviderTests {
 
     @Test
-    public void createChromeDriverTest() {
+    void createChromeDriverTest() {
         System.setProperty("browser", "chrome");
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
@@ -38,7 +38,7 @@ public class CustomDriverProviderTests {
 
     @Test
     @Disabled
-    public void createFirefoxDriverTest() {
+    void createFirefoxDriverTest() {
         System.setProperty("browser", "firefox");
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;

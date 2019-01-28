@@ -43,7 +43,7 @@ public class ListStepsTest {
     private static ListVerificationSteps lvs;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -59,120 +59,120 @@ public class ListStepsTest {
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void listIsPresentedOnPageTest() {
+    void listIsPresentedOnPageTest() {
         lvs.listIsPresentedOnPage("List");
     }
 
     @Test
-    public void checkIfSelectedListElementMatchesValueTest() {
+    void checkIfSelectedListElementMatchesValueTest() {
         lis.checkIfSelectedListElementMatchesValue("List", "One");
     }
 
     @Test
-    public void checkIfSelectedListElementMatchesValueWithProps() {
+    void checkIfSelectedListElementMatchesValueWithProps() {
         lis.checkIfSelectedListElementMatchesValue("List", "oneValueInProps");
     }
 
     @Test
-    public void selectElementInListIfFoundByTextTestPositive() {
+    void selectElementInListIfFoundByTextTestPositive() {
         lis.selectElementInListIfFoundByText("List2", "item2");
     }
 
     @Test
-    public void selectElementInListIfFoundByTextTestNegative() {
+    void selectElementInListIfFoundByTextTestNegative() {
         assertThrows(IllegalArgumentException.class, () ->
                 lis.selectElementInListIfFoundByText("List2", "item5"));
     }
 
     @Test
-    public void selectElementInListIfFoundByTextTestPositiveWithProps() {
+    void selectElementInListIfFoundByTextTestPositiveWithProps() {
         lis.selectElementInListIfFoundByText("List2", "item2ValueInProps");
     }
 
     @Test
-    public void selectElementInListIfFoundByTextTestNegativeWithProps() {
+    void selectElementInListIfFoundByTextTestNegativeWithProps() {
         assertThrows(IllegalArgumentException.class, () ->
                 lis.selectElementInListIfFoundByText("List2", "item5ValueInProps"));
     }
 
     @Test
-    public void testListContainsMoreOrLessElementsLessPositive() {
+    void testListContainsMoreOrLessElementsLessPositive() {
         lvs.listContainsMoreOrLessElements("List", "менее", 4);
     }
 
     @Test
-    public void testListContainsMoreOrLessElementsMorePositive() {
+    void testListContainsMoreOrLessElementsMorePositive() {
         lvs.listContainsMoreOrLessElements("List", "более", 2);
     }
 
     @Test
-    public void testListContainsMoreOrLessElementsLessNegative() {
+    void testListContainsMoreOrLessElementsLessNegative() {
         assertThrows(AssertionError.class, () ->
                 lvs.listContainsMoreOrLessElements("List", "менее", 3));
     }
 
     @Test
-    public void testListContainsMoreOrLessElementsMoreNegative() {
+    void testListContainsMoreOrLessElementsMoreNegative() {
         assertThrows(AssertionError.class, () ->
                 lvs.listContainsMoreOrLessElements("List", "более", 3));
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
+    void testListContainsNumberOfElementsOrContainsFromVariablePositive() {
         lvs.listContainsNumberFromVariable("List", "3");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
+    void testListContainsNumberOfElementsOrContainsFromVariableAnotherPositive() {
         akitaScenario.setVar("variable", "3");
         lvs.listContainsNumberFromVariable("List", "variable");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
+    void testListContainsNumberOfElementsOrContainsFromVariableOneMorePositive() {
         lvs.listContainsNumberFromVariable("List", "var3");
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
+    void testListContainsNumberOfElementsOrContainsFromVariableNegative() {
         assertThrows(AssertionError.class, () ->
                 lvs.listContainsNumberFromVariable("List", "4"));
     }
 
     @Test
-    public void testCheckListTextsByRegExpPositive() {
+    void testCheckListTextsByRegExpPositive() {
         lvs.checkListTextsByRegExp("List", "[A-z]*");
     }
 
     @Test
-    public void testCheckListTextsByRegExpNegative() {
+    void testCheckListTextsByRegExpNegative() {
         assertThrows(AssertionError.class, () ->
                 lvs.checkListTextsByRegExp("List", "[0-9]*"));
     }
 
     @Test
-    public void testListContainsNumberOfElementsPositive() {
+    void testListContainsNumberOfElementsPositive() {
         lvs.listContainsNumberOfElements("List", 3);
     }
 
     @Test
-    public void testListContainsNumberOfElementsNegative() {
+    void testListContainsNumberOfElementsNegative() {
         assertThrows(AssertionError.class, () ->
                 lvs.listContainsNumberOfElements("List", 4));
     }
 
     @Test
-    public void checkIfListContainsValueFromFieldPositive() {
+    void checkIfListContainsValueFromFieldPositive() {
         List<String> list = new ArrayList<>();
         list.add("Serious testing page");
         akitaScenario.setVar("list", list);
@@ -180,80 +180,80 @@ public class ListStepsTest {
     }
 
     @Test
-    public void selectElementNumberFromListMinBorder() {
+    void selectElementNumberFromListMinBorder() {
         lis.selectElementNumberFromList(1, "List");
     }
 
     @Test
-    public void selectElementNumberFromListUnderMinBorder() {
+    void selectElementNumberFromListUnderMinBorder() {
         assertThrows(IndexOutOfBoundsException.class, () ->
                 lis.selectElementNumberFromList(0, "List"));
     }
 
     @Test
-    public void selectElementNumberFromListMaxBorder() {
+    void selectElementNumberFromListMaxBorder() {
         lis.selectElementNumberFromList(3, "List");
     }
 
     @Test
-    public void selectElementNumberFromListOverMaxBorder() {
+    void selectElementNumberFromListOverMaxBorder() {
         assertThrows(IndexOutOfBoundsException.class, () ->
                 lis.selectElementNumberFromList(4, "List"));
     }
 
     @Test
-    public void selectRandomElementFromListPositive() {
+    void selectRandomElementFromListPositive() {
         lis.selectRandomElementFromList("List");
     }
 
     @Test
-    public void selectRandomElementFromListAndSaveVarNegative() {
+    void selectRandomElementFromListAndSaveVarNegative() {
         assertThrows(IllegalArgumentException.class, () ->
                 lis.selectRandomElementFromListAndSaveVar("NormalField", "test"));
     }
 
     @Test
-    public void testCheckListElementsContainsTextPositive() {
+    void testCheckListElementsContainsTextPositive() {
         lvs.checkListElementsContainsText("List2", "item");
     }
 
     @Test
-    public void testCheckListElementsContainsTextPositiveWithProps() {
+    void testCheckListElementsContainsTextPositiveWithProps() {
         lvs.checkListElementsContainsText("List2", "itemValueInProps");
     }
 
     @Test
-    public void testCheckListElementsContainsTextNegative() {
+    void testCheckListElementsContainsTextNegative() {
         assertThrows(AssertionError.class, () ->
                 lvs.checkListElementsContainsText("List2", "item1"));
     }
 
     @Test
-    public void testCheckListElementsNotContainsTextPositive() {
+    void testCheckListElementsNotContainsTextPositive() {
         lvs.checkListElementsNotContainsText("List2", "item1");
     }
 
     @Test
-    public void testCheckListElementsNotContainsTextNegative() {
+    void testCheckListElementsNotContainsTextNegative() {
         assertThrows(AssertionError.class, () ->
                 lvs.checkListElementsNotContainsText("List2", "item"));
     }
 
     @Test
-    public void selectRandomElementFromListAndSaveVarPositive() {
+    void selectRandomElementFromListAndSaveVarPositive() {
         lis.selectRandomElementFromListAndSaveVar("List", "test");
         assertThat(akitaScenario.tryGetVar("test"), anyOf(equalTo("One"),
                 equalTo("Two"), equalTo("Three")));
     }
 
     @Test
-    public void testCheckListElementsNotContainsTextNegativeWithProps() {
+    void testCheckListElementsNotContainsTextNegativeWithProps() {
         assertThrows(AssertionError.class, () ->
                 lvs.checkListElementsNotContainsText("List2", "itemValueInProps"));
     }
 
     @Test
-    public void checkIfListInnerTextConsistsOfTableElements() {
+    void checkIfListInnerTextConsistsOfTableElements() {
         ArrayList<String> types = new ArrayList<>();
         types.add("One 1");
         types.add("Two 2");
@@ -262,7 +262,7 @@ public class ListStepsTest {
     }
 
     @Test
-    public void checkIfListInnerTextConsistsOfTableElementsNegative() {
+    void checkIfListInnerTextConsistsOfTableElementsNegative() {
         ArrayList<String> types = new ArrayList<>();
         types.add("One 1");
         types.add("Two 2");
@@ -272,7 +272,7 @@ public class ListStepsTest {
     }
 
     @Test
-    public void testListInnerTextCorrespondsToListFromVariable() {
+    void testListInnerTextCorrespondsToListFromVariable() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One 1");
         arrayList.add("Two 2");
@@ -282,7 +282,7 @@ public class ListStepsTest {
     }
 
     @Test
-    public void testListInnerTextCorrespondsToListFromVariableNegativeSize() {
+    void testListInnerTextCorrespondsToListFromVariableNegativeSize() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One 1");
         arrayList.add("Two 2");
@@ -294,7 +294,7 @@ public class ListStepsTest {
     }
 
     @Test
-    public void testListInnerTextCorrespondsToListFromVariableNegative() {
+    void testListInnerTextCorrespondsToListFromVariableNegative() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One 1");
         arrayList.add("Two 2");
@@ -305,7 +305,7 @@ public class ListStepsTest {
     }
 
     @Test
-    public void testCompareListFromUIAndFromVariablePositive() {
+    void testCompareListFromUIAndFromVariablePositive() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("One");
         arrayList.add("Two");
@@ -315,7 +315,7 @@ public class ListStepsTest {
     }
 
     @Test
-    public void testCompareListFromUIAndFromVariableNegative() {
+    void testCompareListFromUIAndFromVariableNegative() {
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.add("Ten");
         arrayList.add("One");
@@ -327,30 +327,30 @@ public class ListStepsTest {
     }
 
     @Test
-    public void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() {
+    void testListContainsNumberOfElementsOrContainsFromVariableMuchMorePositive() {
         lvs.listContainsNumberFromVariable("List", "Проверка комплаенса 3");
     }
 
     @Test
-    public void selectElementNumberFromListAndSaveToVarMinBorder() {
+    void selectElementNumberFromListAndSaveToVarMinBorder() {
         lis.selectElementNumberFromListAndSaveToVar(1, "List", "varName");
         assertThat(akitaScenario.tryGetVar("varName"), equalTo("Three"));
     }
 
     @Test
-    public void selectElementNumberFromListAndSaveToVarUnderMinBorder() {
+    void selectElementNumberFromListAndSaveToVarUnderMinBorder() {
         assertThrows(IndexOutOfBoundsException.class, () ->
                 lis.selectElementNumberFromListAndSaveToVar(0, "List", "varName"));
     }
 
     @Test
-    public void selectElementNumberFromListAndSaveToVarMaxBorder() {
+    void selectElementNumberFromListAndSaveToVarMaxBorder() {
         lis.selectElementNumberFromListAndSaveToVar(3, "List", "varName");
         assertThat(akitaScenario.tryGetVar("varName"), equalTo("Two"));
     }
 
     @Test
-    public void selectElementNumberFromListAndSaveToVarOverMaxBorder() {
+    void selectElementNumberFromListAndSaveToVarOverMaxBorder() {
         assertThrows(IndexOutOfBoundsException.class, () ->
                 lis.selectElementNumberFromListAndSaveToVar(4, "List", "varName"));
     }

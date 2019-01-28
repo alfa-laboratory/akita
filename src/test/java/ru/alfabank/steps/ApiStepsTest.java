@@ -18,10 +18,10 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Rule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -46,28 +46,28 @@ public class ApiStepsTest {
     private static AkitaScenario akitaScenario;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         api = new ApiSteps();
         akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
-    @RegisterExtension
-    public WireMockRule wireMockRule = new WireMockRule();
+    @Rule
+    WireMockRule wireMockRule = new WireMockRule();
 
     @Test
-    public void getURLwithPathParamsCalculatedSimple() {
+    void getURLwithPathParamsCalculatedSimple() {
         assertThat(resolveVars("alfabank.ru"),
             equalTo("alfabank.ru"));
     }
 
     @Test
-    public void sendHttpRequestGET() throws Exception {
+    void sendHttpRequestGET() throws Exception {
         stubFor(get(urlEqualTo("/get/resource"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -78,7 +78,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestPost() throws Exception {
+    void sendHttpRequestPost() throws Exception {
         stubFor(post(urlEqualTo("/post/resource"))
             .willReturn(aResponse()
                 .withStatus(200)
@@ -89,7 +89,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestWithVarsPost() throws Exception {
+    void sendHttpRequestWithVarsPost() throws Exception {
         String body = "testBodyValue";
         String bodyVarName = "testBodyName";
         akitaScenario.setVar(bodyVarName, body);
@@ -113,7 +113,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestFromFileWithVarsPost() throws Exception {
+    void sendHttpRequestFromFileWithVarsPost() throws Exception {
         String body = "{\"person\": {\"name\": \"Jack\", \"age\": 35}, \"object\": {\"var1\": 1}}";
         String bodyFileName = "/src/test/resources/bodyWithParams.json";
 
@@ -135,7 +135,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void sendHttpRequestSaveResponseTest() throws Exception {
+    void sendHttpRequestSaveResponseTest() throws Exception {
         stubFor(post(urlEqualTo("/post/saveWithTable"))
             .willReturn(aResponse()
                 .withStatus(201)
@@ -160,7 +160,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void checkResponseCodeTest() throws Exception {
+    void checkResponseCodeTest() throws Exception {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=test"))
             .willReturn(aResponse()
                 .withStatus(404)
@@ -177,7 +177,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void shouldCreateRequestForEqualsParamNamesTest() throws Exception {
+    void shouldCreateRequestForEqualsParamNamesTest() throws Exception {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=first&param=second"))
             .willReturn(aResponse()
                 .withStatus(200)));
@@ -189,7 +189,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    public void shouldSendPutRequest() throws Exception {
+    void shouldSendPutRequest() throws Exception {
         stubFor(put(urlEqualTo("/put/someInfo"))
             .willReturn(aResponse()
                 .withStatus(205)));
@@ -197,28 +197,28 @@ public class ApiStepsTest {
     }
 
     @Test()
-    public void shouldNotFindBodyByPath() throws Exception {
+    void shouldNotFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"value\": \"true\"}";
         String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars(expectedBodyValue));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
-    public void shouldFindBodyByPath() throws Exception {
+    void shouldFindBodyByPath() throws Exception {
         String expectedBodyValue = "{\"asn\": \"1\"}";
         String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars("/src/test/resources/body.json"));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test()
-    public void shouldFindBodyByPropertyKey() throws Exception {
+    void shouldFindBodyByPropertyKey() throws Exception {
         String expectedBodyValue = "{\"property\":\"body\"}";
         String actualBodyValue = loadValueFromFileOrPropertyOrVariableOrDefault(resolveVars("bodyValue"));
         assertThat(actualBodyValue, equalTo(expectedBodyValue));
     }
 
     @Test
-    public void shouldFindBodyWithVarResolving() throws Exception {
+    void shouldFindBodyWithVarResolving() throws Exception {
         akitaScenario.setVar("var1", "\"1\"");
         String defaultBodyValue = "{\"a\":{var1}, \"b\": {\"c\": {var2}}}";
         String expectedBodyValue = "{\"a\":\"1\", \"b\": {\"c\": \"2\"}}";

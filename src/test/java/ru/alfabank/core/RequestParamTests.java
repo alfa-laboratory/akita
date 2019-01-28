@@ -30,7 +30,7 @@ public class RequestParamTests {
     private static RequestParam requestParamForCompare;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         requestParam = RequestParam.builder()
                 .name("test")
                 .value("testValue")
@@ -39,13 +39,13 @@ public class RequestParamTests {
     }
 
     @Test
-    public void getNameTest() {
+    void getNameTest() {
         requestParam.setType("hEaDer");
         assertThat(requestParam.getType(), equalTo(RequestParamType.HEADER));
     }
 
     @Test
-    public void equalsTest() {
+    void equalsTest() {
         RequestParam requestParamForCompare = RequestParam.builder()
                 .name("test")
                 .value("testValue")
@@ -55,7 +55,7 @@ public class RequestParamTests {
     }
 
     @Test
-    public void hashTest() {
+    void hashTest() {
         RequestParam requestParamForCompare = RequestParam.builder()
                 .name("test")
                 .value("testValue")
@@ -66,7 +66,7 @@ public class RequestParamTests {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         RequestParam requestParamForCompare = RequestParam.builder()
                 .name("test")
                 .value("testValue")

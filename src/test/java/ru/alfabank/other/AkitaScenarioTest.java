@@ -41,31 +41,31 @@ public class AkitaScenarioTest {
     private static AkitaScenario akitaScenario;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         akitaScenario = AkitaScenario.getInstance();
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         Scenario scenario = new StubScenario();
         AkitaPage akitaPageMock = mock(AkitaPage.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     @Test
-    public void testGetSetVarNegative1() {
+    void testGetSetVarNegative1() {
         String notExistingVar = "randomName";
         assertThrows(IllegalArgumentException.class, () ->
                 akitaScenario.getVar(notExistingVar));
     }
 
     @Test
-    public void testGetSetVar() {
+    void testGetSetVar() {
         String varName = "varName";
         String varValue = "1234567891011";
         akitaScenario.setVar(varName, varValue);
@@ -74,7 +74,7 @@ public class AkitaScenarioTest {
     }
 
     @Test
-    public void putGetPagesPositive() {
+    void putGetPagesPositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         Scenario scenario = new StubScenario();
@@ -89,25 +89,25 @@ public class AkitaScenarioTest {
     }
 
     @Test
-    public void putGetPagesNegative() {
+    void putGetPagesNegative() {
         AkitaPageMock alfaPageMock = null;
         assertThrows(IllegalArgumentException.class, () ->
                 akitaScenario.getPages().put("Mock", alfaPageMock));
     }
 
     @Test
-    public void getEnvironmentPositive() {
+    void getEnvironmentPositive() {
         assertThat(akitaScenario.getEnvironment(), is(notNullValue()));
     }
 
     @Test
-    public void getEnvironmentNegative() {
+    void getEnvironmentNegative() {
         akitaScenario.setEnvironment(null);
         assertThat(akitaScenario.getEnvironment(), is(nullValue()));
     }
 
     @Test
-    public void getCurrentPagePositive() {
+    void getCurrentPagePositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         Scenario scenario = new StubScenario();
@@ -122,18 +122,18 @@ public class AkitaScenarioTest {
     }
 
     @Test
-    public void setCurrentPageNegative() {
+    void setCurrentPageNegative() {
         assertThrows(IllegalArgumentException.class, () -> akitaScenario.setCurrentPage(null));
     }
 
     @Test
-    public void shouldReturnScenarioTest() {
+    void shouldReturnScenarioTest() {
         Scenario actualScenario = akitaScenario.getScenario();
         assertEquals("My scenario", actualScenario.getName());
     }
 
     @Test
-    public void getVarsTest() {
+    void getVarsTest() {
         akitaScenario.setVar("1", "1");
         akitaScenario.setVar("2", "2");
         ScopedVariables scopedVariables = akitaScenario.getVars();

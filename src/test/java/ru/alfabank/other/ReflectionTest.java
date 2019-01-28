@@ -37,7 +37,7 @@ public class ReflectionTest {
     }
 
     @Test
-    public void extractFieldValueNegative() {
+    void extractFieldValueNegative() {
         MockClass mockClass = new MockClass();
         Field field = null;
         assertThrows(NullPointerException.class, () ->
@@ -45,7 +45,7 @@ public class ReflectionTest {
     }
 
     @Test
-    public void extractFieldValuePositive() throws NoSuchFieldException {
+    void extractFieldValuePositive() throws NoSuchFieldException {
         MockClass mockClass = new MockClass();
         Class reflectClass = mockClass.getClass();
         Field field = reflectClass.getField("mockField");

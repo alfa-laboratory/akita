@@ -37,7 +37,7 @@ public class PagesTest {
     private static AkitaPageMock akitaPageMock;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         pages = new Pages();
         akitaPageMock = new AkitaPageMock();
 
@@ -52,13 +52,13 @@ public class PagesTest {
     }
 
     @Test
-    public void getSetCurrentPagePositive() {
+    void getSetCurrentPagePositive() {
         pages.setCurrentPage(akitaPageMock);
         assertThat(pages.getCurrentPage(), equalTo(akitaPageMock));
     }
 
     @Test
-    public void setCurrentPageNegative() {
+    void setCurrentPageNegative() {
         pages.setCurrentPage(null);
         assertThrows(IllegalStateException.class, () -> {
                 pages.getCurrentPage();
@@ -66,20 +66,20 @@ public class PagesTest {
     }
 
     @Test
-    public void getPutPositive() {
+    void getPutPositive() {
         pages.put("Test", akitaPageMock);
         assertThat(pages.get("Test"), equalTo(akitaPageMock));
     }
 
     @Test
-    public void putNegative() {
+    void putNegative() {
         AkitaPage nullPage = null;
         assertThrows(IllegalArgumentException.class, () ->
                 pages.put("Test", nullPage));
     }
 
     @Test
-    public void getNegative() {
+    void getNegative() {
         assertThrows(IllegalArgumentException.class, () ->
                 pages.get("WRONG_KEY_TO_GET_PAGE"));
     }

@@ -35,7 +35,7 @@ public class AkitaEnvironmentTest {
     private static WebPageInteractionSteps wpis;
 
     @BeforeAll
-    public static void prepare() {
+    static void prepare() {
 
         env = new AkitaEnvironment();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
@@ -49,35 +49,35 @@ public class AkitaEnvironmentTest {
     }
 
     @Test
-    public void initPagesTest() {
+    void initPagesTest() {
         getWebDriver().navigate();
         assertThat(env.getPage("AkitaPageMock"), is(notNullValue()));
     }
 
     @Test
-    public void getVarsTest() {
+    void getVarsTest() {
         assertThat(env.getVars(), is(notNullValue()));
     }
 
     @Test
-    public void getSetVarPositive() {
+    void getSetVarPositive() {
         String testString = "TestString1";
         env.setVar("Test1", testString);
         assertThat(env.getVar("Test1"), equalTo(testString));
     }
 
     @Test
-    public void getSetVarNegative() {
+    void getSetVarNegative() {
         assertThat(env.getVar("Test"), is(nullValue()));
     }
 
     @Test
-    public void getPagesTest() {
+    void getPagesTest() {
         assertThat(env.getPages(), is(notNullValue()));
     }
 
     @Test
-    public void getPage() {
+    void getPage() {
         AkitaPageMock alfaPageMockInstance = new AkitaPageMock();
         env.getPages().put("newAwesomePage", alfaPageMockInstance);
         assertThat(env.getPage("newAwesomePage"), is(alfaPageMockInstance));

@@ -33,47 +33,47 @@ public class ScopedVariablesTest {
     private static ScopedVariables variables;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
         variables = new ScopedVariables();
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void evaluatePositive() {
+    void evaluatePositive() {
         assertThat(variables.evaluate("\"test\".equals(\"test\")"), equalTo(true));
     }
 
     @Test
-    public void evaluateNegative() {
+    void evaluateNegative() {
         assertThat(variables.evaluate("\"test1\".equals(\"test\")"), equalTo(false));
     }
 
     @Test
-    public void putGetPositive() {
+    void putGetPositive() {
         variables.put("Test", "text");
         assertThat(variables.get("Test"), equalTo("text"));
     }
 
     @Test
-    public void putGetNull() {
+    void putGetNull() {
         Object nullObject = nullValue();
         variables.put("Test", nullObject);
         assertThat(variables.get("Test"), equalTo(nullObject));
     }
 
     @Test
-    public void getNegative() {
+    void getNegative() {
         assertThat(variables.get("asdfg"), equalTo(null));
     }
 
     @Test
-    public void clearPositive() {
+    void clearPositive() {
         variables.put("test", "text");
         variables.clear();
         assertThat(variables.get("test"), equalTo(null));
@@ -81,19 +81,19 @@ public class ScopedVariablesTest {
 
 
     @Test
-    public void removePositive() {
+    void removePositive() {
         variables.put("test", "text");
         variables.remove("test");
         assertThat(variables.get("test"), equalTo(null));
     }
 
     @Test
-    public void removeNegative() {
+    void removeNegative() {
         assertThat(variables.remove("WRONG_KEY"), equalTo(null));
     }
 
     @Test
-    public void resolveVariableFromJsonString() {
+    void resolveVariableFromJsonString() {
         String inputJsonString = "{\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"{bodyWithParams1}\", \"age\": {bodyWithParams2}}, " +
                 "\"object\": {\"var1\": 1}, " +
@@ -106,7 +106,7 @@ public class ScopedVariablesTest {
     }
 
     @Test
-    public void resolveVariableFromXmlString() {
+    void resolveVariableFromXmlString() {
         String inputJsonString = "<note>" +
                 "<from>{bodyWithParams1}</from>" +
                 "</note>";
@@ -117,7 +117,7 @@ public class ScopedVariablesTest {
     }
 
     @Test
-    public void resolveVariableFromJsonStringWithUnknownVariable() {
+    void resolveVariableFromJsonStringWithUnknownVariable() {
         String inputJsonString = "{\"unknown\": {unknownVariable}, " +
                 "\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"{bodyWithParams1}\", \"age\": {bodyWithParams2}}, " +
@@ -128,7 +128,7 @@ public class ScopedVariablesTest {
     }
 
     @Test
-    public void resolveVariableFromXmlStringWithUnknownVariable() {
+    void resolveVariableFromXmlStringWithUnknownVariable() {
         String inputJsonString = "<note>" +
                 "<from>{bodyWithParams1}</from>" +
                 "<from>{unknownVariable}</from>" +

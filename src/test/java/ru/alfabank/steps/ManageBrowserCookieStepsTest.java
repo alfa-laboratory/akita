@@ -40,7 +40,7 @@ public class ManageBrowserCookieStepsTest {
     public static WebPageInteractionSteps wpis;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         dmbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -52,18 +52,18 @@ public class ManageBrowserCookieStepsTest {
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void deleteCookiesTest() {
+    void deleteCookiesTest() {
         dmbs.deleteCookies();
         verify(webDriver.manage(), times(1)).deleteAllCookies();
     }
 
     @Test
-    public void saveCookieToVarTest() {
+    void saveCookieToVarTest() {
         Cookie cookie = new Cookie("cookieName", "123");
         when(webDriver.manage().getCookieNamed("cookieName")).thenReturn(cookie);
         dmbs.saveCookieToVar("cookieName", "varName");
@@ -71,7 +71,7 @@ public class ManageBrowserCookieStepsTest {
     }
 
     @Test
-    public void saveAllCookiesTest() {
+    void saveAllCookiesTest() {
         Set set = new HashSet();
         when(webDriver.manage().getCookies()).thenReturn(set);
         dmbs.saveAllCookies("var2");
@@ -79,7 +79,7 @@ public class ManageBrowserCookieStepsTest {
     }
 
     @Test
-    public void replaceCookieTest() {
+    void replaceCookieTest() {
         dmbs.replaceCookie("testName", "12qwe");
         verify(webDriver.manage(), times(1)).addCookie(new Cookie("testName", "12qwe"));
     }

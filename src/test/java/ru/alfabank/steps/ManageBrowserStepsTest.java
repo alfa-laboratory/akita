@@ -40,7 +40,7 @@ public class ManageBrowserStepsTest {
     public static WebPageInteractionSteps wpis;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         dmbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -55,33 +55,33 @@ public class ManageBrowserStepsTest {
     }
 
     @BeforeEach
-    public void prepare() {
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @AfterAll
-    public static void close() {
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void testCheckPageTitleSuccess() {
+    void testCheckPageTitleSuccess() {
         dmbs.checkPageTitle("Title");
     }
 
     @Test
-    public void testCheckPageTitleFailure() {
+    void testCheckPageTitleFailure() {
         assertThrows(AssertionError.class, () ->
                 dmbs.checkPageTitle("NoTitle"));
     }
 
     @Test
-    public void testCheckPageTitlePositive() {
+    void testCheckPageTitlePositive() {
         dmbs.checkPageTitle("titleFromProperty");
     }
 
     @Test
-    public void testSwitchToTheNextTab() {
+    void testSwitchToTheNextTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         dmbs.switchToTheNextTab();
         assertThat(getWebDriver().getTitle(), IsEqual.equalTo("Page with redirection"));
@@ -91,7 +91,7 @@ public class ManageBrowserStepsTest {
 
     @Test
     @Disabled
-    public void setWindowSizeSimple() {
+    void setWindowSizeSimple() {
         Dimension expectedDimension = new Dimension(800, 600);
         dmbs.setBrowserWindowSize(800, 600);
         Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
