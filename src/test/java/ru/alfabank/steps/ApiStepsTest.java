@@ -16,9 +16,8 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -40,13 +39,18 @@ import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
 
+
 public class ApiStepsTest {
 
     private static ApiSteps api;
     private static AkitaScenario akitaScenario;
+    private static WireMockServer wireMockServer;
 
     @BeforeAll
     static void setup() {
+        wireMockServer = new WireMockServer();
+        wireMockServer.start();
+
         akitaScenario = AkitaScenario.getInstance();
         api = new ApiSteps();
         akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
@@ -55,10 +59,8 @@ public class ApiStepsTest {
     @AfterAll
     static void close() {
         WebDriverRunner.closeWebDriver();
+        wireMockServer.stop();
     }
-
-    @Rule
-    WireMockRule wireMockRule = new WireMockRule();
 
     @Test
     void getURLwithPathParamsCalculatedSimple() {
