@@ -15,8 +15,8 @@
  */
 package ru.alfabank.core;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import ru.alfabank.tests.core.drivers.CustomDriverProvider;
@@ -27,7 +27,7 @@ import static org.hamcrest.core.Is.is;
 public class CustomDriverProviderTests {
 
     @Test
-    public void createChromeDriverTest() {
+    void createChromeDriverTest() {
         System.setProperty("browser", "chrome");
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
@@ -36,9 +36,9 @@ public class CustomDriverProviderTests {
         currentDriver.quit();
     }
 
-    @Ignore
     @Test
-    public void createFirefoxDriverTest() {
+    @Disabled
+    void createFirefoxDriverTest() {
         System.setProperty("browser", "firefox");
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;

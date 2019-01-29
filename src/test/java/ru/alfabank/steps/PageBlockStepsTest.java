@@ -16,17 +16,17 @@
 package ru.alfabank.steps;
 
 import cucumber.api.Scenario;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PageBlockStepsTest {
 
@@ -34,8 +34,8 @@ public class PageBlockStepsTest {
     private static WebPageInteractionSteps wpis;
     private static PageBlockSteps pbs;
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -49,25 +49,25 @@ public class PageBlockStepsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
-    public void prepare() {
+    @BeforeEach
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
     @Test
-    public void clickOnElementInBlockPositiveTest() {
+    void clickOnElementInBlockPositiveTest() {
         pbs.clickOnElementInBlock("SearchButton", "SearchBlock");
         assertFalse(akitaScenario.getPage("SearchBlock").getElement("SearchButton").isEnabled());
     }
 
     @Test
-    public void getElementsListInBlockPositiveTest() {
+    void getElementsListInBlockPositiveTest() {
         pbs.getElementsList("AkitaTable", "Rows", "ListTable");
         assertNotNull(akitaScenario.getVar("ListTable"));
     }
 
     @Test
-    public void getListElementsTextInBlockPositiveTest() {
+    void getListElementsTextInBlockPositiveTest() {
         pbs.getListElementsText("AkitaTable", "Rows", "ListTable");
         assertNotNull(akitaScenario.getVar("ListTable"));
     }

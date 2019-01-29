@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -38,8 +37,8 @@ public class BaseMethodsTest {
     private static BaseMethods bm;
     private static WebPageInteractionSteps wpis;
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -53,38 +52,38 @@ public class BaseMethodsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
-    public void prepare() {
+    @BeforeEach
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @AfterClass
-    public static void close() {
+    @AfterAll
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromProperty() {
+    void testGetPropertyOrStringVariableOrValueFromProperty() {
         akitaScenario.setVar("testVar", "shouldNotLoadMe");
         assertThat(bm.getPropertyOrStringVariableOrValue("testVar"),
                 equalTo(PropertyLoader.loadProperty("testVar")));
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
+    void testGetPropertyOrStringVariableOrValueFromScopedVariable() {
         akitaScenario.setVar("akita.url", "shouldLoadMe");
         assertThat(bm.getPropertyOrStringVariableOrValue("akita.url"),
                 equalTo("shouldLoadMe"));
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromValue() {
+    void testGetPropertyOrStringVariableOrValueFromValue() {
         assertThat(bm.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
                 equalTo("getPropertyOrVariableOrValueTestValue"));
     }
 
     @Test
-    public void testGetPropertyOrStringVariableOrValueFromSystemVariable() {
+    void testGetPropertyOrStringVariableOrValueFromSystemVariable() {
         String propertyName = "akita.url";
         String expectedValue = "http://url";
         System.setProperty(propertyName, expectedValue);

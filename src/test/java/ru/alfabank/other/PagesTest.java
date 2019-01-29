@@ -16,8 +16,8 @@
 package ru.alfabank.other;
 
 import cucumber.api.Scenario;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -30,13 +30,14 @@ import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PagesTest {
     private static Pages pages;
     private static AkitaPageMock akitaPageMock;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         pages = new Pages();
         akitaPageMock = new AkitaPageMock();
 
@@ -51,31 +52,35 @@ public class PagesTest {
     }
 
     @Test
-    public void getSetCurrentPagePositive() {
+    void getSetCurrentPagePositive() {
         pages.setCurrentPage(akitaPageMock);
         assertThat(pages.getCurrentPage(), equalTo(akitaPageMock));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void setCurrentPageNegative() {
+    @Test
+    void setCurrentPageNegative() {
         pages.setCurrentPage(null);
-        pages.getCurrentPage();
+        assertThrows(IllegalStateException.class, () -> {
+                pages.getCurrentPage();
+        });
     }
 
     @Test
-    public void getPutPositive() {
+    void getPutPositive() {
         pages.put("Test", akitaPageMock);
         assertThat(pages.get("Test"), equalTo(akitaPageMock));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void putNegative() {
+    @Test
+    void putNegative() {
         AkitaPage nullPage = null;
-        pages.put("Test", nullPage);
+        assertThrows(IllegalArgumentException.class, () ->
+                pages.put("Test", nullPage));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getNegative() {
-        pages.get("WRONG_KEY_TO_GET_PAGE");
+    @Test
+    void getNegative() {
+        assertThrows(IllegalArgumentException.class, () ->
+                pages.get("WRONG_KEY_TO_GET_PAGE"));
     }
 }

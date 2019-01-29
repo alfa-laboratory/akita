@@ -19,10 +19,10 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -36,6 +36,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByName;
 
 public class AkitaPageTest {
@@ -43,8 +45,8 @@ public class AkitaPageTest {
     private static AkitaPage page;
     private static WebPageInteractionSteps wpis;
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         wpis = new WebPageInteractionSteps();
         akitaPageMock = new AkitaPageMock();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
@@ -57,104 +59,106 @@ public class AkitaPageTest {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @AfterClass
-    public static void close() {
+    @AfterAll
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void getBlockPositive() {
+    void getBlockPositive() {
         assertThat(page.getBlock("SearchBlock"), is(notNullValue()));
     }
 
     @Test
-    public void getBlockElementsPositive() {
+    void getBlockElementsPositive() {
         List<SelenideElement> selenideElements = page.getBlockElements("SearchBlock");
         assertThat(selenideElements, is(notNullValue()));
     }
 
     @Test
-    public void getBlockElementPositive() {
+    void getBlockElementPositive() {
         assertThat(page.getBlockElement("SearchBlock", "SearchButton"), is(notNullValue()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getBlockNegative() {
-        page.getBlock("Not exact Block");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void getElementNegative() {
-        akitaPageMock.getElement("test");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void getElementsListNegative() {
-        akitaPageMock.getElementsList("test");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void getAnyElementTextNegative() {
-        akitaPageMock.getAnyElementText("test");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void getAnyElementsListTextsNegative() {
-        akitaPageMock.getAnyElementsListTexts("test");
+    @Test
+    void getBlockNegative() {
+        assertThrows(IllegalArgumentException.class, () -> page.getBlock("Not exact Block"));
     }
 
     @Test
-    public void appearedPositive() {
-        assertThat(akitaPageMock.appeared(), equalTo(akitaPageMock));
+    void getElementNegative() {
+        assertThrows(NullPointerException.class, () -> akitaPageMock.getElement("test"));
     }
 
     @Test
-    public void disappearedNegative() {
-        assertThat(akitaPageMock.disappeared(), equalTo(akitaPageMock));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void waitElementsUntilNegative() {
-        akitaPageMock.waitElementsUntil(Condition.appear, 1, "test");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void getButtonFromListByNameNegative() {
-        SelenideElement selenideElementMock = akitaPageMock.getMockCss();
-        List<SelenideElement> list = new LinkedList<>();
-        list.add(selenideElementMock);
-        getButtonFromListByName(list, "test");
+    void getElementsListNegative() {
+        assertThrows(NullPointerException.class, () -> akitaPageMock.getElementsList("test"));
     }
 
     @Test
-    public void getElementPositive() {
+    void getAnyElementTextNegative() {
+        assertThrows(NullPointerException.class, () -> akitaPageMock.getAnyElementText("test"));
+    }
+
+    @Test
+    void getAnyElementsListTextsNegative() {
+        assertThrows(NullPointerException.class, () ->akitaPageMock.getAnyElementsListTexts("test"));
+    }
+
+    @Test
+    void appearedPositive() {
+        assertEquals(akitaPageMock, akitaPageMock.appeared());
+    }
+
+    @Test
+    void disappearedNegative() {
+        assertEquals(akitaPageMock, akitaPageMock.disappeared());
+    }
+
+    @Test
+    void waitElementsUntilNegative() {
+        assertThrows(NullPointerException.class, () -> akitaPageMock.waitElementsUntil(Condition.appear, 1, "test"));
+    }
+
+    @Test
+    void getButtonFromListByNameNegative() {
+        assertThrows(NullPointerException.class, () -> {
+            SelenideElement selenideElementMock = akitaPageMock.getMockCss();
+            List<SelenideElement> list = new LinkedList<>();
+            list.add(selenideElementMock);
+            getButtonFromListByName(list, "test");
+        });
+    }
+
+    @Test
+    void getElementPositive() {
         assertThat(page.getElement("GoodButton"), is(notNullValue()));
     }
 
     @Test
-    public void getElementsListPositive() {
+    void getElementsListPositive() {
         assertThat(page.getElementsList("List"), is(notNullValue()));
     }
 
     @Test
-    public void getAnyElementTextPositive() {
+    void getAnyElementTextPositive() {
         assertThat(page.getAnyElementText("TextField"), equalTo("text1 text2 text3"));
     }
 
     @Test
-    public void getAnyElementsListTextsPositive() {
+    void getAnyElementsListTextsPositive() {
         assertThat(page.getAnyElementsListTexts("List").toString(),
                 equalTo("[Three, One, Two]"));
     }
 
     @Test
-    public void waitElementsUntilPositive() {
+    void waitElementsUntilPositive() {
         page.waitElementsUntil(Condition.disappear, 1, "HiddenDiv");
     }
 
-    @Ignore
     @Test
-    public void getButtonFromListByNamePositive() {
+    @Disabled
+    void getButtonFromListByNamePositive() {
         SelenideElement selenideElement = akitaPageMock.getGoodButton();
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElement);

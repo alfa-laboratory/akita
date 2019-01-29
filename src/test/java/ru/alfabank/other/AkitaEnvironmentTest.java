@@ -16,8 +16,8 @@
 package ru.alfabank.other;
 
 import cucumber.api.Scenario;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -34,8 +34,8 @@ public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
     private static WebPageInteractionSteps wpis;
 
-    @BeforeClass
-    public static void prepare() {
+    @BeforeAll
+    static void prepare() {
 
         env = new AkitaEnvironment();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
@@ -49,35 +49,35 @@ public class AkitaEnvironmentTest {
     }
 
     @Test
-    public void initPagesTest() {
+    void initPagesTest() {
         getWebDriver().navigate();
         assertThat(env.getPage("AkitaPageMock"), is(notNullValue()));
     }
 
     @Test
-    public void getVarsTest() {
+    void getVarsTest() {
         assertThat(env.getVars(), is(notNullValue()));
     }
 
     @Test
-    public void getSetVarPositive() {
+    void getSetVarPositive() {
         String testString = "TestString1";
         env.setVar("Test1", testString);
         assertThat(env.getVar("Test1"), equalTo(testString));
     }
 
     @Test
-    public void getSetVarNegative() {
+    void getSetVarNegative() {
         assertThat(env.getVar("Test"), is(nullValue()));
     }
 
     @Test
-    public void getPagesTest() {
+    void getPagesTest() {
         assertThat(env.getPages(), is(notNullValue()));
     }
 
     @Test
-    public void getPage() {
+    void getPage() {
         AkitaPageMock alfaPageMockInstance = new AkitaPageMock();
         env.getPages().put("newAwesomePage", alfaPageMockInstance);
         assertThat(env.getPage("newAwesomePage"), is(alfaPageMockInstance));
