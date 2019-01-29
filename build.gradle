@@ -60,7 +60,7 @@ dependencies {
     compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
-    compile "org.junit.jupiter:junit-jupiter-api:5.3.2"
+    compile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
     compile group: 'com.codeborne', name: 'selenide', version: selenideVersion
     compile group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
     compile group: 'io.cucumber', name: 'cucumber-core', version: cucumberVersion
