@@ -1,45 +1,34 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.hamcrest.text.IsEqualIgnoringCase;
-import org.junit.Assert;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.isIE;
 import static com.codeborne.selenide.WebDriverRunner.url;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.containsStringIgnoringCase;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
  * Шаги, содержащие проверки состояний вэб-страницы, доступные по умолчанию в каждом новом проекте
@@ -113,9 +102,9 @@ public class WebPageVerificationSteps extends BaseMethods {
     @Тогда("^открыта read-only форма$")
     public void openReadOnlyForm() {
         int inputsCount = getDisplayedElementsByCss("input").size();
-        assertTrue("Форма не read-only. Количество input-полей: " + inputsCount, inputsCount == 0);
+        assertTrue(inputsCount == 0, "Форма не read-only. Количество input-полей: " + inputsCount);
         int textareasCount = getDisplayedElementsByCss("textarea").size();
-        assertTrue("Форма не read-only. Количество элементов textarea: " + textareasCount, textareasCount == 0);
+        assertTrue(textareasCount == 0, "Форма не read-only. Количество элементов textarea: " + textareasCount);
     }
 
     private List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {
@@ -127,7 +116,7 @@ public class WebPageVerificationSteps extends BaseMethods {
     @И("^ссылка страницы содержит текст \"([^\"]*)\"$")
     public void linkShouldHaveText(String text) {
         String currentUrl = url();
-        Assert.assertThat(currentUrl, containsStringIgnoringCase(text));
+        assertThat(currentUrl, containsStringIgnoringCase(text));
     }
 
     /**

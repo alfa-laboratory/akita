@@ -1,27 +1,23 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -33,7 +29,7 @@ import static com.codeborne.selenide.Selenide.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ElementStepsTest {
 
@@ -43,9 +39,8 @@ public class ElementStepsTest {
     private static AkitaScenario akitaScenario;
 
 
-
-    @BeforeClass
-    public static void setup() {
+    @BeforeAll
+    static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
@@ -60,37 +55,37 @@ public class ElementStepsTest {
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
     }
 
-    @Before
-    public void prepare() {
+    @BeforeEach
+    void prepare() {
         wpis.goToSelectedPageByLink("AkitaPageMock", akitaScenario.getVar("Page").toString());
     }
 
-    @AfterClass
-    public static void close() {
+    @AfterAll
+    static void close() {
         WebDriverRunner.closeWebDriver();
     }
 
     @Test
-    public void storeFieldValueInVariablePositive() {
+    void storeFieldValueInVariablePositive() {
         String varName = "mockId";
         elis.storeElementValueInVariable(varName, varName);
         assertThat(akitaScenario.getVar(varName), equalTo("Serious testing page"));
     }
 
     @Test
-    public void clickOnElementPositive() {
+    void clickOnElementPositive() {
         elis.clickOnElement("GoodButton");
         assertThat(akitaScenario.getPage("AkitaPageMock").getElement("GoodButton").isEnabled(),
                 equalTo(false));
     }
 
     @Test
-    public void elemIsPresentedOnPagePositive() {
+    void elemIsPresentedOnPagePositive() {
         elvs.elemIsPresentedOnPage("mockTagName");
     }
 
     @Test
-    public void findElementPositive() {
+    void findElementPositive() {
         elis.findElement("LINK");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
@@ -98,7 +93,7 @@ public class ElementStepsTest {
     }
 
     @Test
-    public void findElementMixedLanguagePositive() {
+    void findElementMixedLanguagePositive() {
         elis.findElement("EnGliSh? РуСсКий.");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
@@ -106,7 +101,7 @@ public class ElementStepsTest {
     }
 
     @Test
-    public void findElementMixedLanguagePartialRuPositive() {
+    void findElementMixedLanguagePartialRuPositive() {
         elis.findElement("РуСсКий.");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
@@ -114,7 +109,7 @@ public class ElementStepsTest {
     }
 
     @Test
-    public void findElementMixedLanguagePartialEnPositive() {
+    void findElementMixedLanguagePartialEnPositive() {
         elis.findElement("EnGliSh");
         sleep(500);
         assertThat(WebDriverRunner.getWebDriver().findElement(By.name("mixedButton"))
@@ -122,115 +117,119 @@ public class ElementStepsTest {
     }
 
     @Test
-    public void testCheckElemClassContainsExpectedValuePositive() {
+    void testCheckElemClassContainsExpectedValuePositive() {
         elvs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testCheckElemClassContainsExpectedValueNegative() {
-        elvs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
+    @Test
+    void testCheckElemClassContainsExpectedValueNegative() {
+        assertThrows(AssertionError.class, () ->
+                elvs.checkElemClassContainsExpectedValue("Кнопка Подписать и отправить", "enabled"));
     }
 
     @Test
-    public void testCheckElemClassNotContainsExpectedValuePositive() {
+    void testCheckElemClassNotContainsExpectedValuePositive() {
         elvs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "enabled");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testCheckElemClassNotContainsExpectedValueNegative() {
-        elvs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled");
+    @Test
+    void testCheckElemClassNotContainsExpectedValueNegative() {
+        assertThrows(AssertionError.class, () ->
+                elvs.checkElemClassNotContainsExpectedValue("Кнопка Подписать и отправить", "disabled"));
     }
 
     @Test
-    public void compareFieldAndVariablePositive() {
+    void compareFieldAndVariablePositive() {
         akitaScenario.setVar("test", "Serious testing page");
         elvs.compareFieldAndVariable("mockTagName", "test");
     }
 
     @Test
-    public void compareValInFieldAndFromStepTest() {
+    void compareValInFieldAndFromStepTest() {
         elvs.compareValInFieldAndFromStep("ul", "Serious testing page");
     }
 
     @Test
-    public void compareValInFieldAndFromStepTestWithProps() {
+    void compareValInFieldAndFromStepTestWithProps() {
         elvs.compareValInFieldAndFromStep("ul", "testingPageTextProps");
     }
 
     @Test
-    public void testFieldContainsInnerTextPositive() {
+    void testFieldContainsInnerTextPositive() {
         elvs.testFieldContainsInnerText("innerTextP", "inner text");
     }
 
     @Test
-    public void testActualValueContainsSubstringPositive() {
+    void testActualValueContainsSubstringPositive() {
         elvs.testActualValueContainsSubstring("TextField", "xt");
     }
 
     @Test
-    public void testActualValueContainsSubstringPositiveWithProps() {
+    void testActualValueContainsSubstringPositiveWithProps() {
         elvs.testActualValueContainsSubstring("TextField", "textValueInProps");
     }
 
     @Test
-    public void fieldIsDisablePositive() {
+    void fieldIsDisablePositive() {
         elvs.fieldIsDisable("DisabledField");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testFieldIsDisableNegative() {
-        elvs.fieldIsDisable("TextField");
+    @Test
+    void testFieldIsDisableNegative() {
+        assertThrows(AssertionError.class, () ->
+                elvs.fieldIsDisable("TextField"));
     }
 
     @Test
-    public void testClickOnButtonAndUploadFilePositive() {
+    void testClickOnButtonAndUploadFilePositive() {
         elis.clickOnButtonAndUploadFile("Кнопка загрузки файлов", "src/test/resources/example.pdf");
     }
 
     @Test
-    public void elementIsNotVisiblePositive() {
+    void elementIsNotVisiblePositive() {
         elvs.elementIsNotVisible("HiddenDiv");
     }
 
     @Test
-    public void checkElemContainsAtrWithValuePositive() {
+    void checkElemContainsAtrWithValuePositive() {
         elvs.checkElemContainsAtrWithValue("SUPERBUTTON", "onclick", "HIDEnSHOW()");
     }
 
     @Test
-    public void elementHoverTest() {
+    void elementHoverTest() {
         elis.elementHover("NormalField");
     }
 
     @Test
-    public void clickableFieldTest() {
+    void clickableFieldTest() {
         elvs.clickableField("SUPERBUTTON");
     }
 
     @Test
-    public void testButtonIsActiveAnotherPositive() {
+    void testButtonIsActiveAnotherPositive() {
         elvs.clickableField("Link");
     }
 
-    @Test(expected = AssertionError.class)
-    public void testButtonIsActiveNegative() {
-        elvs.clickableField("Кнопка Подписать и отправить");
+    @Test
+    void testButtonIsActiveNegative() {
+        assertThrows(AssertionError.class, () ->
+                elvs.clickableField("Кнопка Подписать и отправить"));
     }
 
     @Test
-    public void elementDisapperaredAndAppearedComplex() {
+    void elementDisapperaredAndAppearedComplex() {
         elvs.testElementAppeared("ul", 1);
         elis.clickOnElement("SUPERBUTTON");
         elvs.elemDisappered("ul");
     }
 
     @Test
-    public void testCheckFieldsize() {
+    void testCheckFieldsize() {
         elvs.checkFieldSymbolsCount("ul", 20);
     }
 
     @Test
-    public void fieldInputIsEmptyPositive() {
+    void fieldInputIsEmptyPositive() {
         elvs.fieldInputIsEmpty("NormalField");
     }
 

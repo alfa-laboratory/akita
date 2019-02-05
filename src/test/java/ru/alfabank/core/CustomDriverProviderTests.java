@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,8 +12,8 @@
  */
 package ru.alfabank.core;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import ru.alfabank.tests.core.drivers.CustomDriverProvider;
@@ -27,7 +24,7 @@ import static org.hamcrest.core.Is.is;
 public class CustomDriverProviderTests {
 
     @Test
-    public void createChromeDriverTest() {
+    void createChromeDriverTest() {
         System.setProperty("browser", "chrome");
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
@@ -36,9 +33,9 @@ public class CustomDriverProviderTests {
         currentDriver.quit();
     }
 
-    @Ignore
     @Test
-    public void createFirefoxDriverTest() {
+    @Disabled
+    void createFirefoxDriverTest() {
         System.setProperty("browser", "firefox");
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;

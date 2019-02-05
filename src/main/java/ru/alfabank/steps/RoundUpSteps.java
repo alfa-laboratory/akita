@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,12 +34,8 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
+import static org.junit.jupiter.api.Assertions.*;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
  * Шаги для тестирования взаимодействия с внешним окружением (устройствами, файлами, переменными окружения, property и т.д.)
@@ -186,10 +179,10 @@ public class RoundUpSteps extends BaseMethods {
     public void testFileDownloaded(String fileName) {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
-        assertNotNull("Ошибка поиска файла", expectedFiles);
-        assertFalse("Файл не загрузился", expectedFiles.length == 0);
-        assertTrue(String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName),
-                expectedFiles.length == 1);
+        assertNotNull(expectedFiles, "Ошибка поиска файла");
+        assertFalse( expectedFiles.length == 0, "Файл не загрузился");
+        assertTrue(expectedFiles.length == 1,
+                String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName));
         deleteFiles(expectedFiles);
     }
 

@@ -1,19 +1,15 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
@@ -21,20 +17,17 @@ import com.codeborne.selenide.SelenideElement;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
  * Шаги для взаимодействия с коллекциями элементов, доступные по умолчанию в каждом новом проекте
@@ -64,8 +57,8 @@ public class ListVerificationSteps extends BaseMethods {
     public void checkIfListContainsValueFromField(String variableListName, String elementName) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
-        assertTrue(String.format("Список из переменной [%s] не содержит значение поля [%s]", variableListName, elementName),
-                listFromVariable.contains(actualValue));
+        assertTrue(listFromVariable.contains(actualValue),
+                String.format("Список из переменной [%s] не содержит значение поля [%s]", variableListName, elementName));
     }
 
     /**
@@ -78,8 +71,8 @@ public class ListVerificationSteps extends BaseMethods {
         List<String> actualValues = akitaScenario.getCurrentPage().getAnyElementsListInnerTexts(listName);
         int numberOfTypes = actualValues.size();
         assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
-        assertTrue(String.format("Значения элементов в списке %s: %s не совпадают с ожидаемыми значениями из таблицы %s", listName, actualValues, textTable),
-                actualValues.containsAll(textTable));
+        assertTrue(actualValues.containsAll(textTable),
+                String.format("Значения элементов в списке %s: %s не совпадают с ожидаемыми значениями из таблицы %s", listName, actualValues, textTable));
     }
 
     /**
@@ -105,8 +98,8 @@ public class ListVerificationSteps extends BaseMethods {
         List<String> elementsListText = listOfElementsFromPage.stream()
                 .map(element -> element.getText().trim().toLowerCase())
                 .collect(toList());
-        assertTrue(String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value),
-                elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
+        assertTrue(elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())),
+                String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value));
     }
 
     /**
@@ -119,8 +112,8 @@ public class ListVerificationSteps extends BaseMethods {
         List<String> elementsListText = listOfElementsFromPage.stream()
                 .map(element -> element.getText().trim().toLowerCase())
                 .collect(toList());
-        assertFalse(String.format("Элемены списка %s: [%s] содержат текст [%s] ", listName, elementsListText, value),
-                elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())));
+        assertFalse(elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())),
+                String.format("Элемены списка %s: [%s] содержат текст [%s] ", listName, elementsListText, value));
     }
 
     /**
@@ -130,8 +123,8 @@ public class ListVerificationSteps extends BaseMethods {
     public void checkListTextsByRegExp(String listName, String pattern) {
         akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
             String str = akitaScenario.getCurrentPage().getAnyElementText(element);
-            assertTrue(format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName),
-                    isTextMatches(str, pattern));
+            assertTrue(isTextMatches(str, pattern),
+                    String.format("Текст '%s' из списка '%s' не соответствует формату регулярного выражения", str, listName));
         });
     }
 
@@ -141,7 +134,8 @@ public class ListVerificationSteps extends BaseMethods {
     @Тогда("^в списке \"([^\"]*)\" содержится (\\d+) (?:элемент|элементов|элемента)")
     public void listContainsNumberOfElements(String listName, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        assertTrue(String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() == quantity);
+        assertTrue(listOfElementsFromPage.size() == quantity,
+                String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()));
     }
 
     /**
@@ -160,9 +154,11 @@ public class ListVerificationSteps extends BaseMethods {
     public void listContainsMoreOrLessElements(String listName, String moreOrLess, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         if ("более".equals(moreOrLess)) {
-            assertTrue(String.format("Число элементов списка меньше ожидаемого: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() > quantity);
+            assertTrue(listOfElementsFromPage.size() > quantity,
+                    String.format("Число элементов списка меньше ожидаемого: %s", listOfElementsFromPage.size()));
         } else
-            assertTrue(String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()), listOfElementsFromPage.size() < quantity);
+            assertTrue(listOfElementsFromPage.size() < quantity,
+                    String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()));
 
     }
 

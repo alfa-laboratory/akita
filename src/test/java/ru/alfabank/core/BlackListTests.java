@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +14,8 @@ package ru.alfabank.core;
 
 
 import net.lightbody.bmp.proxy.BlacklistEntry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.BlackListManager;
 
@@ -33,13 +30,13 @@ public class BlackListTests {
     private static List<BlacklistEntry> defaultBlacklistEntries = new ArrayList<>();
 
     @Test
-    public void testGetDefaultBlacklistEntries() {
+    void testGetDefaultBlacklistEntries() {
         BlackList blackList = new BlackList();
         assertThat(defaultBlacklistEntries, samePropertyValuesAs(blackList.getBlacklistEntries()));
     }
 
     @Test
-    public void testAddToDefaultBlacklistEntries() {
+    void testAddToDefaultBlacklistEntries() {
         List<BlacklistEntry> expectedEntries = new ArrayList<>();
         expectedEntries.addAll(defaultBlacklistEntries);
 
@@ -52,14 +49,14 @@ public class BlackListTests {
     }
 
     @Test
-    public void testNewBlacklistEntries() {
+    void testNewBlacklistEntries() {
         List<BlacklistEntry> newEntries = new ArrayList<>(Arrays.asList(new BlacklistEntry("new.entry", 404)));
         BlackList blackList = new BlackList(newEntries);
         assertThat(newEntries, samePropertyValuesAs(blackList.getBlacklistEntries()));
     }
 
-    @Before
-    public void initBlackList() {
+    @BeforeEach
+    void initBlackList() {
         new BlackListManager("blacklist").fillBlackList(defaultBlacklistEntries);
     }
 }
