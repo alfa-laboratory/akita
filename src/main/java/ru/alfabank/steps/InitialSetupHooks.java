@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +17,6 @@ import com.google.common.base.Strings;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
@@ -32,7 +28,7 @@ import static com.codeborne.selenide.WebDriverRunner.*;
 import static ru.alfabank.tests.core.drivers.CustomDriverProvider.REMOTE_URL;
 
 @Slf4j
-public class InitialSetupHooks extends BaseMethods{
+public class InitialSetupHooks extends BaseMethods {
 
     /**
      * Создает настойки прокси для запуска драйвера
@@ -75,7 +71,6 @@ public class InitialSetupHooks extends BaseMethods{
      *
      * @throws Exception
      */
-    @Before(order = 21)
     public static void clearCash() throws Exception {
         getWebDriver().manage().deleteAllCookies();
     }
