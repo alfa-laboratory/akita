@@ -15,6 +15,8 @@
  */
 package ru.alfabank.steps;
 
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.When;
 import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
@@ -44,6 +46,7 @@ public class ManageBrowserSteps extends BaseMethods {
      * Удаляем все cookies
      */
     @Когда("^cookies приложения очищены$")
+    @When("^cleared application's cookies$")
     public void deleteCookies(){
         clearBrowserCookies();
     }
@@ -52,6 +55,7 @@ public class ManageBrowserSteps extends BaseMethods {
      * Ищем cookie по имени. Сохраняем cookie в переменную для дальнейшего использования
      */
     @Когда("^cookie с именем \"([^\"]*)\" сохранена в переменную \"([^\"]*)\"$")
+    @When("^cookie with name \"([^\"]*)\" has been saved to the variable \"([^\"]*)\"$")
     public void saveCookieToVar(String nameCookie, String cookieVar){
         String cookieName = resolveVars(nameCookie);
         Cookie var = getWebDriver().manage().getCookieNamed(cookieName);
@@ -62,6 +66,7 @@ public class ManageBrowserSteps extends BaseMethods {
      * Сохраняем все cookies в переменную для дальнейшего использования
      */
     @Когда("^cookies сохранены в переменную \"([^\"]*)\"$")
+    @When("^cookies have been saved to the variable \"([^\"]*)\"$")
     public void saveAllCookies(String variableName){
         Set cookies = getWebDriver().manage().getCookies();
         akitaScenario.setVar(variableName, cookies);
@@ -71,6 +76,7 @@ public class ManageBrowserSteps extends BaseMethods {
      * Находим cookie по имени и подменяем ее значение. Имя cookie и домен не меняются
      */
     @Когда("^добавлена cookie с именем \"([^\"]*)\" и значением \"([^\"]*)\"$")
+    @When("^cookie with name \"([^\"]*)\" and value \"([^\"]*)\" has been added$")
     public void replaceCookie(String cookieName, String cookieValue){
         String nameCookie = resolveVars(cookieName);
         String valueCookie = resolveVars(cookieValue);
@@ -81,6 +87,7 @@ public class ManageBrowserSteps extends BaseMethods {
      *  Переключение на следующую вкладку браузера
      */
     @Когда("выполнено переключение на следующую вкладку")
+    @When("^switched to the next tab$")
     public void switchToTheNextTab() {
         String nextWindowHandle = nextWindowHandle();
         getWebDriver().switchTo().window(nextWindowHandle);
@@ -91,6 +98,7 @@ public class ManageBrowserSteps extends BaseMethods {
      *  Производится закрытие текущей вкладки
      */
     @И("выполнено закрытие текущей вкладки")
+    @And("^closed current tab$")
     public void closeCurrentTab() {
         getWebDriver().close();
     }
@@ -99,6 +107,7 @@ public class ManageBrowserSteps extends BaseMethods {
      * Устанавливает размеры окна браузера
      */
     @И("^установлено разрешение экрана (\\d+) х (\\d+)$")
+    @And("^set screen resolution to (\\d+) х (\\d+)$")
     public void setBrowserWindowSize(int width, int height) {
         getWebDriver().manage().window().setSize(new Dimension(width, height));
         akitaScenario.write("Установлены размеры окна браузера: ширина " + width + " высота" + height);
@@ -108,6 +117,7 @@ public class ManageBrowserSteps extends BaseMethods {
      * Разворачивает окно с браузером на весь экран
      */
     @Если("^окно развернуто на весь экран$")
+    @And("^window has been maximized$")
     public void expandWindowToFullScreen() {
         getWebDriver().manage().window().maximize();
     }

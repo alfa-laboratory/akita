@@ -18,6 +18,7 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.java.en.When;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
@@ -42,6 +43,7 @@ public class ListInteractionSteps extends BaseMethods {
      * (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Когда("^в списке \"([^\"]*)\" выбран элемент с (?:текстом|значением) \"(.*)\"$")
+    @When("^selected element from the \"([^\"]*)\" list with (?:text|value) \"(.*)\"$")
     public void checkIfSelectedListElementMatchesValue(String listName, String expectedValue) {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
@@ -61,6 +63,7 @@ public class ListInteractionSteps extends BaseMethods {
      * Не чувствителен к регистру
      */
     @Когда("^в списке \"([^\"]*)\" выбран элемент содержащий текст \"([^\"]*)\"$")
+    @When("^selected element from the \"([^\"]*)\" list that contains text \"([^\"]*)\"$")
     public void selectElementInListIfFoundByText(String listName, String expectedValue) {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
@@ -78,6 +81,7 @@ public class ListInteractionSteps extends BaseMethods {
      * Выбор из списка со страницы любого случайного элемента и сохранение его значения в переменную
      */
     @Когда("^выбран любой элемент из списка \"([^\"]*)\" и его значение сохранено в переменную \"([^\"]*)\"$")
+    @When("^random element in \"([^\"]*)\" list has been selected and its value has been saved to the \"([^\"]*)\" variable$")
     public void selectRandomElementFromListAndSaveVar(String listName, String varName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement element = listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()));
@@ -92,6 +96,7 @@ public class ListInteractionSteps extends BaseMethods {
      * Нумерация элементов начинается с 1
      */
     @Когда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\"$")
+    @When("^selected the (\\d+)(st|nd|rd|th) element from the \"([^\"]*)\" list$")
     public void selectElementNumberFromList(Integer elementNumber, String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement elementToSelect;
@@ -109,6 +114,7 @@ public class ListInteractionSteps extends BaseMethods {
      * Выбор из списка со страницы любого случайного элемента
      */
     @Когда("^выбран любой элемент в списке \"([^\"]*)\"$")
+    @When("^random element in \"([^\"]*)\" list has been selected$")
     public void selectRandomElementFromList(String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
@@ -121,6 +127,7 @@ public class ListInteractionSteps extends BaseMethods {
      * Нумерация элементов начинается с 1
      */
     @Тогда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\" и его значение сохранено в переменную \"([^\"]*)\"$")
+    @When("^selected the (\\d+)(st|nd|rd|th) element from the \"([^\"]*)\" list and its value has been saved to the \"([^\"]*)\" variable$")
     public void selectElementNumberFromListAndSaveToVar(Integer elementNumber, String listName, String varName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement elementToSelect;
