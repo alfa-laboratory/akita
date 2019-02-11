@@ -13,7 +13,6 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
@@ -41,7 +40,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      * Выполняется обновление страницы
      */
     @И("^выполнено обновление текущей страницы$")
-    @And("^page has been refreshed$")
+    @When("^page has been refreshed$")
     public void refreshPage() {
         refresh();
     }
@@ -67,7 +66,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      * Ссылка может передаваться как строка, так и как ключ из application.properties
      */
     @И("^совершен переход на страницу \"([^\"]*)\" по ссылке \"([^\"]*)\"$")
-    @And("^opened page \"([^\"]*)\" by link \"([^\"]*)\"$")
+    @When("^opened page \"([^\"]*)\" by link \"([^\"]*)\"$")
     public void goToSelectedPageByLink(String pageName, String urlOrName) {
         String address = loadProperty(urlOrName, resolveVars(urlOrName));
         akitaScenario.write(" url = " + address);
@@ -79,7 +78,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      * Переход на страницу по клику и проверка, что страница загружена
      */
     @И("^выполнен переход на страницу \"([^\"]*)\" после нажатия на (?:ссылку|кнопку) \"([^\"]*)\"$")
-    @And("^page \"([^\"]*)\" has been opened after pressing the \"([^\"]*)\" (?:link|button)$")
+    @When("^page \"([^\"]*)\" has been opened after pressing the \"([^\"]*)\" (?:link|button)$")
     public void urlClickAndCheckRedirection(String pageName, String elementName) {
         akitaScenario.getCurrentPage().getElement(elementName).click();
         loadPage(pageName);
@@ -115,7 +114,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      * Выполняется переход в конец страницы
      */
     @И("^совершен переход в конец страницы$")
-    @And("^page has been scrolled to the bottom$")
+    @When("^page has been scrolled to the bottom$")
     public void scrollDown() {
         Actions actions = new Actions(getWebDriver());
         actions.keyDown(Keys.CONTROL).sendKeys(Keys.END).build().perform();
@@ -137,7 +136,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      * Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */
     @И("^страница прокручена до появления элемента \"([^\"]*)\"$")
-    @And("^page has been scrolled down till the \"([^\"]*)\" element is appeared$")
+    @When("^page has been scrolled down till the \"([^\"]*)\" element is appeared$")
     public void scrollWhileElemNotFoundOnPage(String elementName) {
         SelenideElement el = null;
         do {
@@ -156,7 +155,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      * Если достигнут футер страницы и элемент не найден - выбрасывается exception.
      */
     @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
-    @And("^page has been scrolled down till the element with text \"([^\"]*)\" is appeared$")
+    @When("^page has been scrolled down till the element with text \"([^\"]*)\" is appeared$")
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
         SelenideElement el = null;
         do {

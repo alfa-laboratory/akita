@@ -126,7 +126,7 @@ public class WebPageVerificationSteps extends BaseMethods {
         assertThat(currentUrl, containsStringIgnoringCase(text));
     }
 
-    /**
+    /*
      * Производится сравнение заголовка страницы со значением, указанным в шаге
      * (в приоритете: из property, из переменной сценария, значение аргумента)
      */
