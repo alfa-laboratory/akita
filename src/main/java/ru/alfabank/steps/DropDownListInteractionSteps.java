@@ -17,7 +17,7 @@ public class DropDownListInteractionSteps extends BaseMethods {
      * Выбор из выпадающего списка элемента с заданным текстом
      * (в приоритете: из property, из переменной сценария, значение аргумента)
      */
-    @Тогда("^в выпадающем списке \"([^\"]*)\" выбран элемент с внутренним текстом \"([^\"]*)\"$")
+    @Тогда("^в выпадающем списке \"([^\"]*)\" выбран элемент с текстом \"([^\"]*)\"$")
     public void selectELementFromDropDownListWithText (String listName, String expectedText) {
         final String text = getPropertyOrStringVariableOrValue(expectedText);
         SelenideElement list = akitaScenario.getCurrentPage().getElement(listName);
