@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +14,9 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.Selenide;
 import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
@@ -52,6 +52,7 @@ public class RoundUpSteps extends BaseMethods {
      * для дальнейшего использования
      */
     @И("^сохранено значение \"([^\"]*)\" из property файла в переменную \"([^\"]*)\"$")
+    @And("^value of \"([^\"]*)\" from property-file has been saved to the variable \"([^\"]*)\"$")
     public void saveValueToVar(String propertyVariableName, String variableName) {
         propertyVariableName = loadProperty(propertyVariableName);
         akitaScenario.setVar(variableName, propertyVariableName);
@@ -62,6 +63,7 @@ public class RoundUpSteps extends BaseMethods {
      * Устанавливается значение переменной в хранилище переменных. Один из кейсов: установка login пользователя
      */
     @И("^установлено значение переменной \"([^\"]*)\" равным \"(.*)\"$")
+    @And("^value of the variable \"([^\"]*)\" has been set to \"(.*)\"$")
     public void setVariable(String variableName, String value) {
         value = getPropertyOrValue(value);
         akitaScenario.setVar(variableName, value);
@@ -71,6 +73,7 @@ public class RoundUpSteps extends BaseMethods {
      * Ожидание в течение заданного количества секунд
      */
     @Когда("^выполнено ожидание в течение (\\d+) (?:секунд|секунды)")
+    @When("^waiting for (\\d+) (?:second|seconds)$")
     public void waitForSeconds(long seconds) {
         sleep(1000 * seconds);
     }
@@ -79,6 +82,7 @@ public class RoundUpSteps extends BaseMethods {
      * Эмулирует нажатие клавиш на клавиатуре
      */
     @И("^выполнено нажатие на клавиатуре \"([^\"]*)\"$")
+    @And("^pressed \"([^\"]*)\" key $")
     public void pushButtonOnKeyboard(String buttonName) {
         Keys key = Keys.valueOf(buttonName.toUpperCase());
         switchTo().activeElement().sendKeys(key);
@@ -93,6 +97,7 @@ public class RoundUpSteps extends BaseMethods {
      * @param keyNames название клавиши
      */
     @И("^выполнено нажатие на сочетание клавиш из таблицы$")
+    @And("^pressed keyboard shortcut from the table$")
     public void pressKeyCombination(List<String> keyNames) {
         Iterable<CharSequence> listKeys = keyNames.stream()
                 .map(this::getKeyOrCharacter)
@@ -114,6 +119,7 @@ public class RoundUpSteps extends BaseMethods {
      * Скрипт можно передать как аргумент метода или значение из application.properties
      */
     @Когда("^выполнен js-скрипт \"([^\"]*)\"")
+    @When("^executed js-script \"([^\"]*)\"$")
     public void executeJsScript(String scriptName) {
         String content = loadValueFromFileOrPropertyOrVariableOrDefault(scriptName);
         Selenide.executeJavaScript(content);
@@ -124,6 +130,7 @@ public class RoundUpSteps extends BaseMethods {
      *
      */
     @И("^снят скриншот текущей страницы$")
+    @And("^screenshot of the current page has been taken$")
     public void takeScreenshot() {
         final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
         AkitaScenario.getInstance().getScenario().embed(screenshot, "image/png");
@@ -133,6 +140,7 @@ public class RoundUpSteps extends BaseMethods {
      * Выполняется чтение файла с шаблоном и заполнение его значениями из таблицы
      */
     @И("^шаблон \"([^\"]*)\" заполнен данными из таблицы и сохранён в переменную \"([^\"]*)\"$")
+    @And("^template named \"([^\"]*)\" has been filled with data from the table and saved to the variable \"([^\"]*)\"$")
     public void fillTemplate(String templateName, String varName, DataTable table) {
         String template = loadValueFromFileOrPropertyOrVariableOrDefault(templateName);
         boolean error = false;
@@ -155,6 +163,7 @@ public class RoundUpSteps extends BaseMethods {
      * Проверка равенства двух переменных из хранилища
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" совпадают$")
+    @Then("^variable named \"([^\"]*)\" is equal to variable named \"([^\"]*)\"$")
     public void compareTwoVariables(String firstVariableName, String secondVariableName) {
         String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
@@ -166,6 +175,7 @@ public class RoundUpSteps extends BaseMethods {
      * Проверка неравенства двух переменных из хранилища
      */
     @Тогда("^значения в переменных \"([^\"]*)\" и \"([^\"]*)\" не совпадают$")
+    @Then("^variable named \"([^\"]*)\" is not equal to variable named \"([^\"]*)\"$")
     public void checkingTwoVariablesAreNotEquals(String firstVariableName, String secondVariableName) {
         String firstValueToCompare = akitaScenario.getVar(firstVariableName).toString();
         String secondValueToCompare = akitaScenario.getVar(secondVariableName).toString();
@@ -179,6 +189,7 @@ public class RoundUpSteps extends BaseMethods {
      * После выполнения проверки файл удаляется
      */
     @Тогда("^файл \"(.*)\" загрузился в папку /Downloads$")
+    @Then("^file \"(.*)\" has been downloaded to the /Downloads folder$")
     public void testFileDownloaded(String fileName) {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
@@ -193,6 +204,7 @@ public class RoundUpSteps extends BaseMethods {
      * Проверка совпадения значения из переменной и значения из property
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
+    @Then("^values of \"([^\"]*)\" variable and \"([^\"]*)\" key from property file are equal$")
     public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
         assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
                 (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
@@ -206,6 +218,7 @@ public class RoundUpSteps extends BaseMethods {
      * Любое Java-выражение, возвращающие boolean
      */
     @Тогда("^верно, что \"([^\"]*)\"$")
+    @Then("^\"([^\"]*)\" is true$")
     public void expressionExpression(String expression) {
         akitaScenario.getVars().evaluate("assert(" + expression + ")");
     }

@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +12,7 @@
  */
 package ru.alfabank.steps;
 
+import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.Тогда;
 
 import java.util.ArrayList;
@@ -34,6 +32,7 @@ public class LayoutSteps extends BaseMethods {
      */
 
     @Тогда("(?:страница соответствует|соответствует|блок соответствует) ожидаемой спецификации \"([^\"]*)\"")
+    @Then("^(?:page|block) matches the expected Galen-specification \"([^\"]*)\"$")
     public void compareCurrentPageWithBase(String spec) {
         checkLayoutAccordingToSpec(spec, null);
     }
@@ -48,6 +47,7 @@ public class LayoutSteps extends BaseMethods {
      *           для которого описан дизайн конкретных элементов.
      */
     @Тогда("(?:страница соответствует|соответствует|блок соответствует) спецификации \"([^\"]*)\" для экрана \"(\\D+)\"")
+    @Then("^(?:page|block) matches the Galen-specification \"([^\"]*)\" for \"(\\D+)\"$")
     public void compareCurrentPageWithBase(String spec, String tag) {
         List<String> tags = new ArrayList<>();
         tags.add(tag);
