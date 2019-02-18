@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +19,8 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import cucumber.api.DataTable;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import io.restassured.response.Response;
@@ -50,6 +49,7 @@ public class ApiSteps extends BaseMethods {
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" has been executed. Response has been saved to the variable named \"([^\"]*)\"$")
     public void sendHttpRequestWithoutParams(String method, String address, String variableName) throws Exception {
         Response response = sendRequest(method, address, new ArrayList<>());
         getBodyAndSaveToVariable(variableName, response);
@@ -63,6 +63,7 @@ public class ApiSteps extends BaseMethods {
      * Результат сохраняется в заданную переменную
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
+    @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" with headers and parametres from the table has been executed. Response has been saved to the variable named \"([^\"]*)\"$")
     public void sendHttpRequestSaveResponse(String method, String address, String variableName, List<RequestParam> paramsTable) throws Exception {
         Response response = sendRequest(method, address, paramsTable);
         getBodyAndSaveToVariable(variableName, response);
@@ -75,6 +76,7 @@ public class ApiSteps extends BaseMethods {
      * Content-Type при необходимости должен быть указан в качестве header.
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
+    @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" has been executed. Expected response code: (\\d+)$")
     public void checkResponseCode(String method, String address, int expectedStatusCode, List<RequestParam> paramsTable) throws Exception {
         Response response = sendRequest(method, address, paramsTable);
         assertTrue(checkStatusCode(response, expectedStatusCode));
@@ -86,6 +88,7 @@ public class ApiSteps extends BaseMethods {
      * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, литералы true, false и null.
      */
     @Тогда("^в json (?:строке|файле) \"([^\"]*)\" значения, найденные по jsonpath, равны значениям из таблицы$")
+    @Then("^values from json (?:string|file) named \"([^\"]*)\" found via jsonpath are equal to the values from the table$")
     public void checkValuesInJsonAsString(String jsonVar, DataTable dataTable) {
         String strJson = loadValueFromFileOrPropertyOrVariableOrDefault(jsonVar);
         Gson gsonObject = new Gson();
@@ -117,6 +120,7 @@ public class ApiSteps extends BaseMethods {
      * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, литералы true, false и null.
      */
     @Тогда("^значения из json (?:строки|файла) \"([^\"]*)\", найденные по jsonpath из таблицы, сохранены в переменные$")
+    @Then("^values from json (?:string|file) named \"([^\"]*)\" has been found via jsonpaths from the table and saved to the variables$")
     public void getValuesFromJsonAsString(String jsonVar, DataTable dataTable) {
         String strJson = loadValueFromFileOrPropertyOrVariableOrDefault(jsonVar);
         Gson gsonObject = new Gson();
