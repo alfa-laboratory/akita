@@ -12,11 +12,16 @@
  */
 package ru.alfabank.steps;
 
+import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.java.ru.Когда;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.awt.*;
@@ -27,6 +32,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
@@ -35,6 +42,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 @Slf4j
 public class InputInteractionSteps extends BaseMethods {
+
 
     /**
      * Устанавливается значение (в приоритете: из property, из переменной сценария, значение аргумента) в заданное поле.
@@ -54,7 +62,9 @@ public class InputInteractionSteps extends BaseMethods {
     @Когда("^очищено поле \"([^\"]*)\"$")
     public void cleaningField(String nameOfField) {
         super.cleanField(nameOfField);
-    };
+    }
+
+    ;
 
     /**
      * Добавление строки (в приоритете: из property, из переменной сценария, значение аргумента) в поле к уже заполненой строке
@@ -169,7 +179,7 @@ public class InputInteractionSteps extends BaseMethods {
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и сохранено в переменную \"([^\"]*)\"$")
     public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
-        outputFormat = outputFormat.replaceAll("#","0");
+        outputFormat = outputFormat.replaceAll("#", "0");
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.setVar(saveToVariableName, new DecimalFormat(outputFormat).format(finalValue));
@@ -184,7 +194,7 @@ public class InputInteractionSteps extends BaseMethods {
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\"$")
     public void inputRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat) {
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
-        outputFormat = outputFormat.replaceAll("#","0");
+        outputFormat = outputFormat.replaceAll("#", "0");
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.write(String.format("В поле [%s] введено значение [%s]", fieldName, new DecimalFormat(outputFormat).format(finalValue)));
     }
