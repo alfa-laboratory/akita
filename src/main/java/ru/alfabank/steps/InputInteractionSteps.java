@@ -60,8 +60,6 @@ public class InputInteractionSteps extends BaseMethods {
         super.cleanField(nameOfField);
     }
 
-    ;
-
     /**
      * Добавление строки (в приоритете: из property, из переменной сценария, значение аргумента) в поле к уже заполненой строке
      */
