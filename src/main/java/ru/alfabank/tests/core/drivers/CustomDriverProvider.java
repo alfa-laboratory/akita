@@ -37,6 +37,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 import ru.alfabank.tests.core.helpers.BlackList;
+import ru.alfabank.tests.core.helpers.PropertyLoader;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -94,7 +95,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         }
 
         if (OPERA.equalsIgnoreCase(expectedBrowser)) {
-            return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(capabilities) : getRemoteDriver(getOperaDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(capabilities) : getRemoteDriver(getOperaRemoteDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (SAFARI.equalsIgnoreCase(expectedBrowser)) {
@@ -214,6 +215,22 @@ public class CustomDriverProvider implements WebDriverProvider {
         operaOptions.merge(capabilities);
         return operaOptions;
     }
+
+    /**
+     * Задает options для запуска Opera драйвера в контейнере Selenoid
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     * @return operaOptions
+     */
+    private OperaOptions getOperaRemoteDriverOptions(DesiredCapabilities capabilities) {
+        log.info("---------------Opera Driver---------------------");
+        OperaOptions operaOptions = !this.options[0].equals("") ? (new OperaOptions()).addArguments(this.options) : new OperaOptions();
+        operaOptions.setCapability("browserVersion", PropertyLoader.loadSystemPropertyOrDefault("browserVersion", "latest"));
+        operaOptions.setCapability("browserName", "opera");
+        operaOptions.setBinary(PropertyLoader.loadSystemPropertyOrDefault("webdriver.opera.driver","/usr/bin/opera"));
+        operaOptions.merge(capabilities);
+        return operaOptions;
+    }
+
 
     /**
      * Задает options для запуска IE драйвера

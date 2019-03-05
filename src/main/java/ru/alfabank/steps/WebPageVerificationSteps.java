@@ -13,6 +13,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class WebPageVerificationSteps extends BaseMethods {
      * то берется переданное значение)
      */
     @Тогда("^текущий URL равен \"([^\"]*)\"$")
+    @Then("^current URL is equal to \"([^\"]*)\"$")
     public void checkCurrentURL(String url) {
         String currentUrl = url();
         String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
@@ -55,6 +57,7 @@ public class WebPageVerificationSteps extends BaseMethods {
      * то берется переданное значение)
      */
     @Тогда("^текущий URL не равен \"([^\"]*)\"$")
+    @Then("^current URL is not equal to \"([^\"]*)\"$")
     public void checkCurrentURLIsNotEquals(String url) {
         String currentUrl = url();
         String expectedUrl = resolveVars(getPropertyOrStringVariableOrValue(url));
@@ -68,6 +71,7 @@ public class WebPageVerificationSteps extends BaseMethods {
      * из application.properties. Если свойство не найдено, время таймаута равно 8 секундам
      */
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" (?:загрузилась|загрузился)$")
+    @Then("^(?:page|block|form|tab) \"([^\"]*)\" has been loaded$")
     public void loadingPage(String nameOfPage) {
         super.loadPage(nameOfPage);
     }
@@ -77,6 +81,7 @@ public class WebPageVerificationSteps extends BaseMethods {
      * но без аннотации @Optional, не появились на странице
      */
     @Тогда("^(?:страница|блок|форма|вкладка) \"([^\"]*)\" не (?:загрузилась|загрузился)$")
+    @Then("^(?:page|block|form|tab) \"([^\"]*)\" has not been loaded$")
     public void loadPageFailed(String nameOfPage) {
         akitaScenario.setCurrentPage(akitaScenario.getPage(nameOfPage));
         if (isIE()) {
@@ -88,6 +93,7 @@ public class WebPageVerificationSteps extends BaseMethods {
      * Проверка того, что блок исчез/стал невидимым
      */
     @Тогда("^(?:страница|блок|форма) \"([^\"]*)\" (?:скрыт|скрыта)")
+    @Then("^(?:page|block|form) \"([^\"]*)\" is hidden$")
     public void blockDisappeared(String nameOfPage) {
         if (isIE()) {
             akitaScenario.getPage(nameOfPage).ieDisappeared();
@@ -100,6 +106,7 @@ public class WebPageVerificationSteps extends BaseMethods {
      * -textarea
      */
     @Тогда("^открыта read-only форма$")
+    @Then("^read-only form has been opened$")
     public void openReadOnlyForm() {
         int inputsCount = getDisplayedElementsByCss("input").size();
         assertTrue(inputsCount == 0, "Форма не read-only. Количество input-полей: " + inputsCount);
@@ -119,11 +126,12 @@ public class WebPageVerificationSteps extends BaseMethods {
         assertThat(currentUrl, containsStringIgnoringCase(text));
     }
 
-    /**
+    /*
      * Производится сравнение заголовка страницы со значением, указанным в шаге
      * (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
+    @Then("^page's header is equal to \"([^\"]*)\"$")
     public void checkTitlePage(String pageTitleName) {
         checkPageTitle(pageTitleName);
     }

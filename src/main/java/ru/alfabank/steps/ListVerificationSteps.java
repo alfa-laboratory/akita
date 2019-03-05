@@ -14,6 +14,7 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.java.en.When;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class ListVerificationSteps extends BaseMethods {
      * таймаут равен 10 секундам
      */
     @Тогда("^список \"([^\"]*)\" отображается на странице$")
+    @When("^list \"([^\"]*)\" is visible$")
     public void listIsPresentedOnPage(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElementsList(elementName)
@@ -54,6 +56,7 @@ public class ListVerificationSteps extends BaseMethods {
      */
     @SuppressWarnings("unchecked")
     @Тогда("^список из переменной \"([^\"]*)\" содержит значение (?:поля|элемента) \"([^\"]*)\"$")
+    @When("^list from the variable \"([^\"]*)\" contains the value of the (?:field|element) \"([^\"]*)\"$")
     public void checkIfListContainsValueFromField(String variableListName, String elementName) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         List<String> listFromVariable = ((List<String>) akitaScenario.getVar(variableListName));
@@ -67,6 +70,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Для получения текста из элементов списка используется метод getText()
      */
     @Тогда("^список \"([^\"]*)\" состоит из элементов таблицы$")
+    @When("^list named \"([^\"]*)\" contains elements from the table$")
     public void checkIfListInnerTextConsistsOfTableElements(String listName, List<String> textTable) {
         List<String> actualValues = akitaScenario.getCurrentPage().getAnyElementsListInnerTexts(listName);
         int numberOfTypes = actualValues.size();
@@ -81,6 +85,7 @@ public class ListVerificationSteps extends BaseMethods {
      */
     @SuppressWarnings("unchecked")
     @Тогда("^список \"([^\"]*)\" со страницы совпадает со списком \"([^\"]*)\"$")
+    @When("^list named \"([^\"]*)\" from current page matches \"([^\"]*)\" list$")
     public void compareListFromUIAndFromVariable(String listName, String listVariable) {
         HashSet<String> expectedList = new HashSet<>((List<String>) akitaScenario.getVar(listVariable));
         HashSet<String> actualList = new HashSet<>(akitaScenario.getCurrentPage().getAnyElementsListTexts(listName));
@@ -92,6 +97,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Не чувствителен к регистру
      */
     @Тогда("^элементы списка \"([^\"]*)\" содержат текст \"([^\"]*)\"$")
+    @When("^elements of the \"([^\"]*)\" list contain text \"([^\"]*)\"$")
     public void checkListElementsContainsText(String listName, String expectedValue) {
         final String value = getPropertyOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
@@ -106,6 +112,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Проверка, что каждый элемент списка не содержит ожидаемый текст
      */
     @Тогда("^элементы списка \"([^\"]*)\" не содержат текст \"([^\"]*)\"$")
+    @When("^elements of the \"([^\"]*)\" list do not contain text \"([^\"]*)\"$")
     public void checkListElementsNotContainsText(String listName, String expectedValue) {
         final String value = getPropertyOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
@@ -120,6 +127,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Проход по списку и проверка текста у элемента на соответствие формату регулярного выражения
      */
     @И("элементы списка \"([^\"]*)\" соответствуют формату \"([^\"]*)\"$")
+    @When("^elements of the \"([^\"]*)\" list match the \"([^\"]*)\" format$")
     public void checkListTextsByRegExp(String listName, String pattern) {
         akitaScenario.getCurrentPage().getElementsList(listName).forEach(element -> {
             String str = akitaScenario.getCurrentPage().getAnyElementText(element);
@@ -132,6 +140,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Производится проверка соответствия числа элементов списка значению, указанному в шаге
      */
     @Тогда("^в списке \"([^\"]*)\" содержится (\\d+) (?:элемент|элементов|элемента)")
+    @When("^list named \"([^\"]*)\" contains (\\d+) element(|s)$")
     public void listContainsNumberOfElements(String listName, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         assertTrue(listOfElementsFromPage.size() == quantity,
@@ -142,6 +151,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Производится проверка соответствия числа элементов списка значению из property файла, из переменной сценария или указанному в шаге
      */
     @Тогда("^в списке \"([^\"]*)\" содержится количество элементов, равное значению из переменной \"([^\"]*)\"")
+    @When("^list named \"([^\"]*)\" contains the number of elements equal to the value of the \"([^\"]*)\" variable$")
     public void listContainsNumberFromVariable(String listName, String quantity) {
         int numberOfElements = getCounterFromString(getPropertyOrStringVariableOrValue(quantity));
         listContainsNumberOfElements(listName, numberOfElements);
@@ -151,6 +161,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Производится сопоставление числа элементов списка и значения, указанного в шаге
      */
     @Тогда("^в списке \"([^\"]*)\" содержится (более|менее) (\\d+) (?:элементов|элемента)")
+    @When("^list named \"([^\"]*)\" contains (more|less) then (\\d+) element(?:|s)$")
     public void listContainsMoreOrLessElements(String listName, String moreOrLess, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         if ("более".equals(moreOrLess)) {
@@ -169,6 +180,7 @@ public class ListVerificationSteps extends BaseMethods {
      */
     @SuppressWarnings("unchecked")
     @Тогда("^список \"([^\"]*)\" на странице совпадает со списком \"([^\"]*)\"$")
+    @When("^list named \"([^\"]*)\" on page matches with the \"([^\"]*)\" list$")
     public void checkListInnerTextCorrespondsToListFromVariable(String listName, String listVariable) {
         List<String> expectedList = new ArrayList<>((List<String>) akitaScenario.getVar(listVariable));
         List<String> actualList = new ArrayList<>(akitaScenario.getCurrentPage().getAnyElementsListInnerTexts(listName));
