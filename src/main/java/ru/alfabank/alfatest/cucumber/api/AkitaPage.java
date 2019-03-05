@@ -129,7 +129,7 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение текста элемента, как редактируемого поля, так и статичного элемента по значению элемента
      */
     public String getAnyElementText(SelenideElement element) {
-        if (element.getTagName().equals("input")) {
+        if (element.getTagName().equals("input") || element.getTagName().equals("textarea")) {
             return element.getValue();
         } else {
             return element.getText();

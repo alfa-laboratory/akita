@@ -14,10 +14,7 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -68,6 +65,16 @@ public class InputFieldStepsTest {
                         .getAnyElementText("NormalField"),
                 equalTo("testSetFieldValue"));
     }
+
+    @Test
+    void setTextareaFieldValuePositive() {
+        iis.setFieldValue("normalTextAreaWithText", "textValueInProps");
+        assertThat(akitaScenario.getEnvironment()
+                        .getPage("AkitaPageMock")
+                        .getAnyElementText("normalTextAreaWithText"),
+                equalTo("text"));
+    }
+
 
     @Test
     void setFieldValuePositiveWithProps() {
