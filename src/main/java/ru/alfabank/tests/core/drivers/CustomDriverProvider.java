@@ -58,7 +58,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
 /**
  * Провайдер драйверов, который позволяет запускать тесты локально или удаленно, используя Selenoid
  * Параметры запуска можно задавать, как системные переменные.
- * <p>
+ *
  * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера:
  * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800 -Doptions=--load-extension=my-custom-extension
  * Если параметр remoteUrl не указан - тесты будут запущены локально в заданном браузере последней версии.
@@ -94,6 +94,11 @@ public class CustomDriverProvider implements WebDriverProvider {
         return proxy;
     }
 
+    /**
+     * если установлен -Dproxy=true стартует прокси
+     * har для прослушки указывается в application.properties
+     * @param capabilities
+     */
     private void enableProxy(DesiredCapabilities capabilities) {
         proxy.setTrustAllServers(Boolean.getBoolean(loadProperty(TRUST_ALL_SERVERS, "true")));
         proxy.start();
@@ -158,7 +163,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver getRemoteDriver(MutableCapabilities capabilities, String remoteUrl) {
-        log.info("---------------run Selenoid Remote Driver---------------------");
+        log.info("---------------run Remote Driver---------------------");
         Boolean isSelenoidRun = loadSystemPropertyOrDefault(SELENOID, true);
         if (isSelenoidRun) {
             capabilities.setCapability("enableVNC", true);
