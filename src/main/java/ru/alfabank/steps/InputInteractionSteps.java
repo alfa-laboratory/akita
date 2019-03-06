@@ -37,6 +37,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 @Slf4j
 public class InputInteractionSteps extends BaseMethods {
 
+
     /**
      * Устанавливается значение (в приоритете: из property, из переменной сценария, значение аргумента) в заданное поле.
      * Перед использованием поле нужно очистить
@@ -57,7 +58,7 @@ public class InputInteractionSteps extends BaseMethods {
     @When("^cleared field named \"([^\"]*)\"$")
     public void cleaningField(String nameOfField) {
         super.cleanField(nameOfField);
-    };
+    }
 
     /**
      * Добавление строки (в приоритете: из property, из переменной сценария, значение аргумента) в поле к уже заполненой строке
@@ -180,7 +181,7 @@ public class InputInteractionSteps extends BaseMethods {
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и сохранено в переменную \"([^\"]*)\"$")
     @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+) in format \"([^\"])\" and saved to variable named \"([^\"]*)\"$")
     public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
-        outputFormat = outputFormat.replaceAll("#","0");
+        outputFormat = outputFormat.replaceAll("#", "0");
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.setVar(saveToVariableName, new DecimalFormat(outputFormat).format(finalValue));
@@ -196,7 +197,7 @@ public class InputInteractionSteps extends BaseMethods {
     @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+)  in format \"([^\"])\"$")
     public void inputRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat) {
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
-        outputFormat = outputFormat.replaceAll("#","0");
+        outputFormat = outputFormat.replaceAll("#", "0");
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.write(String.format("В поле [%s] введено значение [%s]", fieldName, new DecimalFormat(outputFormat).format(finalValue)));
     }

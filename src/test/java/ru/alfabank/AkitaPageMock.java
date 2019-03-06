@@ -92,6 +92,10 @@ public class AkitaPageMock extends AkitaPage {
     @Name("TextField")
     public SelenideElement textField;
 
+    @FindBy(name = "normalTextAreaWithText")
+    @Name("normalTextAreaWithText")
+    public SelenideElement textAreaField;
+
     @FindBy(id = "link")
     @Name("Link")
     public SelenideElement link;
