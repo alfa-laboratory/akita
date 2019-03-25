@@ -100,14 +100,14 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @param capabilities
      */
     private void enableProxy(DesiredCapabilities capabilities) {
-        proxy.setTrustAllServers(Boolean.getBoolean(loadProperty(TRUST_ALL_SERVERS, "true")));
+        proxy.setTrustAllServers(Boolean.valueOf(loadProperty(TRUST_ALL_SERVERS, "true")));
         proxy.start();
 
         Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
 
         capabilities.setCapability(PROXY, seleniumProxy);
-        capabilities.setCapability(ACCEPT_SSL_CERTS, Boolean.getBoolean(loadProperty(ACCEPT_SSL_CERTS, "true")));
-        capabilities.setCapability(SUPPORTS_JAVASCRIPT, Boolean.getBoolean(loadProperty(SUPPORTS_JAVASCRIPT, "true")));
+        capabilities.setCapability(ACCEPT_SSL_CERTS, Boolean.valueOf(loadProperty(ACCEPT_SSL_CERTS, "true")));
+        capabilities.setCapability(SUPPORTS_JAVASCRIPT, Boolean.valueOf(loadProperty(SUPPORTS_JAVASCRIPT, "true")));
 
         proxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_CONTENT, CaptureType.RESPONSE_HEADERS);
         proxy.newHar(loadProperty(NEW_HAR));
