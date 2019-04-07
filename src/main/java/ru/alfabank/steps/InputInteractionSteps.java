@@ -13,6 +13,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.java.en.When;
 import cucumber.api.java.ru.Когда;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -36,11 +37,13 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 @Slf4j
 public class InputInteractionSteps extends BaseMethods {
 
+
     /**
      * Устанавливается значение (в приоритете: из property, из переменной сценария, значение аргумента) в заданное поле.
      * Перед использованием поле нужно очистить
      */
     @Когда("^в поле \"([^\"]*)\" введено значение \"(.*)\"$")
+    @When("^into the field named \"([^\"]*)\" has been typed value \"(.*)\"$")
     public void setFieldValue(String elementName, String value) {
         value = getPropertyOrStringVariableOrValue(value);
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
@@ -52,14 +55,16 @@ public class InputInteractionSteps extends BaseMethods {
      * Очищается заданное поле
      */
     @Когда("^очищено поле \"([^\"]*)\"$")
+    @When("^cleared field named \"([^\"]*)\"$")
     public void cleaningField(String nameOfField) {
         super.cleanField(nameOfField);
-    };
+    }
 
     /**
      * Добавление строки (в приоритете: из property, из переменной сценария, значение аргумента) в поле к уже заполненой строке
      */
     @Когда("^в элемент \"([^\"]*)\" дописывается значение \"(.*)\"$")
+    @When("^element named \"([^\"]*)\" has been suplemented with value of \"(.*)\"$")
     public void addValue(String elementName, String value) {
         value = getPropertyOrStringVariableOrValue(value);
         SelenideElement field = akitaScenario.getCurrentPage().getElement(elementName);
@@ -76,6 +81,7 @@ public class InputInteractionSteps extends BaseMethods {
      * При неверном формате, используется dd.MM.yyyy
      */
     @Когда("^элемент \"([^\"]*)\" заполняется текущей датой в формате \"([^\"]*)\"$")
+    @When("^element named \"([^\"]*)\" has been filled with current date in format \"([^\"]*)\"$")
     public void currentDate(String fieldName, String dateFormat) {
         long date = System.currentTimeMillis();
         String currentStringDate;
@@ -96,6 +102,7 @@ public class InputInteractionSteps extends BaseMethods {
      * используя буфер обмена и клавиши SHIFT + INSERT
      */
     @Когда("^вставлено значение \"([^\"]*)\" в элемент \"([^\"]*)\" с помощью горячих клавиш$")
+    @When("^the value of \"([^\"]*)\" has been pasted to element named \"([^\"]*)\" using hotkeys$")
     public void pasteValueToTextField(String value, String fieldName) {
         value = getPropertyOrStringVariableOrValue(value);
         ClipboardOwner clipboardOwner = (clipboard, contents) -> {
@@ -110,6 +117,7 @@ public class InputInteractionSteps extends BaseMethods {
      * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины
      */
     @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице)$")
+    @When("^into the field named \"([^\"]*)\" has been entered (\\d+) random (?:latin|cyrillic) symbol(|s)$")
     public void setRandomCharSequence(String elementName, int seqLength, String lang) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
@@ -125,6 +133,7 @@ public class InputInteractionSteps extends BaseMethods {
      * Ввод в поле случайной последовательности латинских или кириллических букв задаваемой длины и сохранение этого значения в переменную
      */
     @Когда("^в поле \"([^\"]*)\" введено (\\d+) случайных символов на (кириллице|латинице) и сохранено в переменную \"([^\"]*)\"$")
+    @When("^into the field named \"([^\"]*)\" has been entered (\\d+) random (?:latin|cyrillic) symbol(|s) and saved to variable named \"([^\"]*)\"$")
     public void setRandomCharSequenceAndSaveToVar(String elementName, int seqLength, String lang, String varName) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
@@ -141,6 +150,7 @@ public class InputInteractionSteps extends BaseMethods {
      * Ввод в поле случайной последовательности цифр задаваемой длины
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) (?:цифр|цифры)$")
+    @When("^into the field named \"([^\"]*)\" has been entered (\\d+) random digit(|s)$")
     public void inputRandomNumSequence(String elementName, int seqLength) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
@@ -153,6 +163,7 @@ public class InputInteractionSteps extends BaseMethods {
      * Ввод в поле случайной последовательности цифр задаваемой длины и сохранение этого значения в переменную
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное число из (\\d+) (?:цифр|цифры) и сохранено в переменную \"([^\"]*)\"$")
+    @When("^into the field named \"([^\"]*)\" has been entered (\\d+) random digit(|s) and saved to variable named \"([^\"]*)\"$")
     public void inputAndSetRandomNumSequence(String elementName, int seqLength, String varName) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(elementName);
         cleanField(elementName);
@@ -168,8 +179,9 @@ public class InputInteractionSteps extends BaseMethods {
      * Пример формата ввода: ###.##
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и сохранено в переменную \"([^\"]*)\"$")
+    @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+) in format \"([^\"])\" and saved to variable named \"([^\"]*)\"$")
     public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
-        outputFormat = outputFormat.replaceAll("#","0");
+        outputFormat = outputFormat.replaceAll("#", "0");
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.setVar(saveToVariableName, new DecimalFormat(outputFormat).format(finalValue));
@@ -182,9 +194,10 @@ public class InputInteractionSteps extends BaseMethods {
      * Пример формата ввода: ###.##
      */
     @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\"$")
+    @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+)  in format \"([^\"])\"$")
     public void inputRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat) {
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
-        outputFormat = outputFormat.replaceAll("#","0");
+        outputFormat = outputFormat.replaceAll("#", "0");
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.write(String.format("В поле [%s] введено значение [%s]", fieldName, new DecimalFormat(outputFormat).format(finalValue)));
     }

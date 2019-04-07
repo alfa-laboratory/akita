@@ -14,6 +14,7 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
@@ -37,6 +38,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * таймаут равен 15 секундам
      */
     @Тогда("^элемент \"([^\"]*)\" отображается на странице$")
+    @Then("^element named \"([^\"]*)\" is visible$")
     public void elemIsPresentedOnPage(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
@@ -48,6 +50,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * заданного количества секунд
      */
     @Тогда("^элемент \"([^\"]*)\" отобразился на странице в течение (\\d+) (?:секунд|секунды)")
+    @Then("^element named \"([^\"]*)\" has been loaded in (\\d+) second(|s)$")
     public void testElementAppeared(String elementName, int seconds) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 Condition.appear, seconds * 1000, akitaScenario.getCurrentPage().getElement(elementName)
@@ -60,6 +63,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * таймаут равен 15 секундам
      */
     @Тогда("^ожидается исчезновение элемента \"([^\"]*)\"")
+    @Then("^waiting for the element named \"([^\"]*)\" to disappear$")
     public void elemDisappered(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 Condition.disappears, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
@@ -69,6 +73,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка того, что значение из поля совпадает со значением заданной переменной из хранилища
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" совпадает со значением из переменной \"([^\"]*)\"$")
+    @Then("^value of the (?:field|element) named \"([^\"]*)\" is equal to variable named \"([^\"]*)\"$")
     public void compareFieldAndVariable(String elementName, String variableName) {
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         String expectedValue = akitaScenario.getVar(variableName).toString();
@@ -80,6 +85,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка того, что элемент не отображается на странице
      */
     @Тогда("^(?:поле|выпадающий список|элемент) \"([^\"]*)\" не отображается на странице$")
+    @Then("^(?:field|drop-down list|element) named \"([^\"]*)\" is not visible$")
     public void elementIsNotVisible(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 not(Condition.appear), DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName)
@@ -90,6 +96,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка, что элемент на странице кликабелен
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" кликабельно$")
+    @Then("^(?:field|element) named \"([^\"]*)\" is clickable$")
     public void clickableField(String elementName) {
         SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
         assertTrue(element.isEnabled(), String.format("Элемент [%s] не кликабелен", elementName));
@@ -99,6 +106,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка, что у элемента есть атрибут с ожидаемым значением (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^элемент \"([^\"]*)\" содержит атрибут \"([^\"]*)\" со значением \"(.*)\"$")
+    @Then("^element named \"([^\"]*)\" contains attribute named \"([^\"]*)\" with value of \"(.*)\"$")
     public void checkElemContainsAtrWithValue(String elementName, String attribute, String expectedAttributeValue) {
         expectedAttributeValue = getPropertyOrStringVariableOrValue(expectedAttributeValue);
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
@@ -114,6 +122,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * можно использовать данный метод и проверить, что среди его классов есть disabled
      */
     @Тогда("^элемент \"([^\"]*)\" содержит класс со значением \"(.*)\"$")
+    @Then("^element named \"([^\"]*)\" contains class with value of \"(.*)\"$")
     public void checkElemClassContainsExpectedValue(String elementName, String expectedClassValue) {
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         expectedClassValue = getPropertyOrStringVariableOrValue(expectedClassValue);
@@ -126,6 +135,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка, что элемент не содержит указанный класс
      */
     @Тогда("^элемент \"([^\"]*)\" не содержит класс со значением \"(.*)\"$")
+    @Then("^element named \"([^\"]*)\" does not contain class with value of \"(.*)\"$")
     public void checkElemClassNotContainsExpectedValue(String elementName, String expectedClassValue) {
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         assertThat(String.format("Элемент [%s] содержит класс со значением [%s]", elementName, expectedClassValue),
@@ -138,6 +148,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * указанное в шаге
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит значение \"(.*)\"$")
+    @Then("^(?:field|element) named \"([^\"]*)\" contains value of \"(.*)\"$")
     public void testActualValueContainsSubstring(String elementName, String expectedValue) {
         expectedValue = getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
@@ -152,6 +163,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Не чувствителен к регистру
      */
     @Тогда("^(?:поле|элемент) \"([^\"]*)\" содержит внутренний текст \"(.*)\"$")
+    @Then("^(?:field|element) named \"([^\"]*)\" contains inner text \"(.*)\"$")
     public void testFieldContainsInnerText(String fieldName, String expectedText) {
         expectedText = getPropertyOrStringVariableOrValue(expectedText);
         String field = akitaScenario.getCurrentPage().getElement(fieldName).innerText().trim().toLowerCase();
@@ -162,6 +174,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка, что значение в поле равно значению, указанному в шаге (в приоритете: из property, из переменной сценария, значение аргумента)
      */
     @Тогда("^значение (?:поля|элемента) \"([^\"]*)\" равно \"(.*)\"$")
+    @Then("^value of (?:field|element) named \"([^\"]*)\" is equal to \"(.*)\"$")
     public void compareValInFieldAndFromStep(String elementName, String expectedValue) {
         expectedValue = getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
@@ -172,6 +185,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка, что кнопка/ссылка недоступна для нажатия, поле или элемент не доступен для редактирования
      */
     @Тогда("^(?:ссылка|кнопка|поле|элемент) \"([^\"]*)\" (?:недоступно|недоступен|недоступна)$")
+    @Then("^(?:link|button|field|element) named \"([^\"]*)\" is not (?:clickable|editable)$")
     public void fieldIsDisable(String elementName) {
         SelenideElement element = akitaScenario.getCurrentPage().getElement(elementName);
         assertTrue(element.is(Condition.disabled), String.format("Элемент [%s] доступен", elementName));
@@ -181,6 +195,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Производится проверка количества символов в поле со значением, указанным в шаге
      */
     @Тогда("^в поле \"([^\"]*)\" содержится (\\d+) символов$")
+    @Then("^field named \"([^\"]*)\" contains (\\d+) symbol(|s)$")
     public void checkFieldSymbolsCount(String element, int num) {
         int length = akitaScenario.getCurrentPage().getAnyElementText(element).length();
         assertEquals(num, length, String.format("Неверное количество символов. Ожидаемый результат: %s, текущий результат: %s", num, length));
@@ -190,6 +205,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      * Проверка, что поле для ввода пусто
      */
     @Тогда("^поле \"([^\"]*)\" пусто$")
+    @Then("^field named \"([^\"]*)\" is empty$")
     public void fieldInputIsEmpty(String fieldName) {
         assertThat(String.format("Поле [%s] не пусто", fieldName),
                 akitaScenario.getCurrentPage().getAnyElementText(fieldName),

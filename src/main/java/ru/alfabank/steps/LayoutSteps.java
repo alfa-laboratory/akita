@@ -12,6 +12,7 @@
  */
 package ru.alfabank.steps;
 
+import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.Тогда;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class LayoutSteps extends BaseMethods {
      */
 
     @Тогда("(?:страница соответствует|соответствует|блок соответствует) ожидаемой спецификации \"([^\"]*)\"")
+    @Then("^(?:page|block) matches the expected Galen-specification \"([^\"]*)\"$")
     public void compareCurrentPageWithBase(String spec) {
         checkLayoutAccordingToSpec(spec, null);
     }
@@ -45,6 +47,7 @@ public class LayoutSteps extends BaseMethods {
      *           для которого описан дизайн конкретных элементов.
      */
     @Тогда("(?:страница соответствует|соответствует|блок соответствует) спецификации \"([^\"]*)\" для экрана \"(\\D+)\"")
+    @Then("^(?:page|block) matches the Galen-specification \"([^\"]*)\" for \"(\\D+)\"$")
     public void compareCurrentPageWithBase(String spec, String tag) {
         List<String> tags = new ArrayList<>();
         tags.add(tag);

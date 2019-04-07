@@ -16,9 +16,12 @@ import com.codeborne.selenide.WebDriverProvider;
 import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.proxy.BlacklistEntry;
+import net.lightbody.bmp.proxy.CaptureType;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -46,6 +49,10 @@ import java.util.List;
 import java.util.Map;
 
 import static com.codeborne.selenide.WebDriverRunner.*;
+import static org.openqa.selenium.remote.CapabilityType.ACCEPT_SSL_CERTS;
+import static org.openqa.selenium.remote.CapabilityType.PROXY;
+import static org.openqa.selenium.remote.CapabilityType.SUPPORTS_JAVASCRIPT;
+import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOrDefault;
 
 /**
@@ -74,17 +81,47 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static String WINDOW_HEIGHT = "height";
     public final static String VERSION_LATEST = "latest";
     public final static String LOCAL = "local";
+    public final static String TRUST_ALL_SERVERS = "trustAllServers";
+    public final static String NEW_HAR = "har";
+    public final static String SELENOID = "selenoid";
     public final static int DEFAULT_WIDTH = 1920;
     public final static int DEFAULT_HEIGHT = 1080;
 
-    private BrowserMobProxy proxy = new BrowserMobProxyServer();
+    private static BrowserMobProxy proxy = new BrowserMobProxyServer();
     private String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
+
+    public static BrowserMobProxy getProxy() {
+        return proxy;
+    }
+
+    /**
+     * если установлен -Dproxy=true стартует прокси
+     * har для прослушки указывается в application.properties
+     * @param capabilities
+     */
+    private void enableProxy(DesiredCapabilities capabilities) {
+        proxy.setTrustAllServers(Boolean.valueOf(loadProperty(TRUST_ALL_SERVERS, "true")));
+        proxy.start();
+
+        Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
+
+        capabilities.setCapability(PROXY, seleniumProxy);
+        capabilities.setCapability(ACCEPT_SSL_CERTS, Boolean.valueOf(loadProperty(ACCEPT_SSL_CERTS, "true")));
+        capabilities.setCapability(SUPPORTS_JAVASCRIPT, Boolean.valueOf(loadProperty(SUPPORTS_JAVASCRIPT, "true")));
+
+        proxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_CONTENT, CaptureType.RESPONSE_HEADERS);
+        proxy.newHar(loadProperty(NEW_HAR));
+    }
 
     @Override
     public WebDriver createDriver(DesiredCapabilities capabilities) {
         String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, CHROME);
         String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, LOCAL);
         BlackList blackList = new BlackList();
+        boolean isProxyMode = loadSystemPropertyOrDefault(PROXY, false);
+        if (isProxyMode) {
+            enableProxy(capabilities);
+        }
 
         if (FIREFOX.equalsIgnoreCase(expectedBrowser)) {
             return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver(capabilities) : getRemoteDriver(getFirefoxDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
@@ -126,14 +163,17 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver getRemoteDriver(MutableCapabilities capabilities, String remoteUrl) {
-        log.info("---------------run Selenoid Remote Driver---------------------");
-        capabilities.setCapability("enableVNC", true);
-        capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
-            loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+        log.info("---------------run Remote Driver---------------------");
+        Boolean isSelenoidRun = loadSystemPropertyOrDefault(SELENOID, true);
+        if (isSelenoidRun) {
+            capabilities.setCapability("enableVNC", true);
+            capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
+                loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+        }
         try {
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
-                    URI.create(remoteUrl).toURL(),
-                    capabilities
+                URI.create(remoteUrl).toURL(),
+                capabilities
             );
             remoteWebDriver.setFileDetector(new LocalFileDetector());
             return remoteWebDriver;
@@ -142,7 +182,8 @@ public class CustomDriverProvider implements WebDriverProvider {
         }
     }
 
-    /** Задает capabilities для запуска Remote драйвера для Selenoid
+    /**
+     * Задает capabilities для запуска Remote драйвера для Selenoid
      * со списком соответствующих URL, которые добавляются в Blacklist
      * URL для добавления в Blacklist могут быть указаны в формате регулярных выражений
      *
@@ -160,7 +201,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * Устанавливает ChromeOptions для запуска google chrome эмулирующего работу мобильного устройства (по умолчанию nexus 5)
      * Название мобильного устройства (device) может быть задано через системные переменные
      *
-     *@return ChromeOptions
+     * @return ChromeOptions
      */
     private ChromeOptions getMobileChromeOptions(DesiredCapabilities capabilities) {
         log.info("---------------run CustomMobileDriver---------------------");
@@ -178,6 +219,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Задает options для запуска Chrome драйвера
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
      * @return ChromeOptions
      */
     private ChromeOptions getChromeDriverOptions(DesiredCapabilities capabilities) {
@@ -192,6 +234,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Задает options для запуска Firefox драйвера
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
      * @return FirefoxOptions
      */
     private FirefoxOptions getFirefoxDriverOptions(DesiredCapabilities capabilities) {
@@ -206,6 +249,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Задает options для запуска Opera драйвера
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
      * @return operaOptions
      */
     private OperaOptions getOperaDriverOptions(DesiredCapabilities capabilities) {
@@ -219,6 +263,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Задает options для запуска Opera драйвера в контейнере Selenoid
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
      * @return operaOptions
      */
     private OperaOptions getOperaRemoteDriverOptions(DesiredCapabilities capabilities) {
@@ -226,7 +271,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         OperaOptions operaOptions = !this.options[0].equals("") ? (new OperaOptions()).addArguments(this.options) : new OperaOptions();
         operaOptions.setCapability("browserVersion", PropertyLoader.loadSystemPropertyOrDefault("browserVersion", "latest"));
         operaOptions.setCapability("browserName", "opera");
-        operaOptions.setBinary(PropertyLoader.loadSystemPropertyOrDefault("webdriver.opera.driver","/usr/bin/opera"));
+        operaOptions.setBinary(PropertyLoader.loadSystemPropertyOrDefault("webdriver.opera.driver", "/usr/bin/opera"));
         operaOptions.merge(capabilities);
         return operaOptions;
     }
@@ -235,6 +280,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Задает options для запуска IE драйвера
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
      * @return internetExplorerOptions
      */
     private InternetExplorerOptions getIEDriverOptions(DesiredCapabilities capabilities) {
@@ -252,6 +298,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Задает options для запуска Edge драйвера
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
      * @return edgeOptions
      */
     private EdgeOptions getEdgeDriverOptions(DesiredCapabilities capabilities) {
@@ -265,6 +312,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Задает options для запуска Safari драйвера
      * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
      * @return SafariOptions
      */
     private SafariOptions getSafariDriverOptions(DesiredCapabilities capabilities) {
@@ -356,6 +404,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     /**
      * Читает значение параметра headless из application.properties
      * и selenide.headless из системных пропертей
+     *
      * @return значение параметра headless или false, если он отсутствует
      */
     private Boolean getHeadless() {
