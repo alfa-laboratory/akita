@@ -88,5 +88,4 @@ public class BaseMethodsTest {
         System.clearProperty(propertyName);
         assertThat(actualValue, equalTo(expectedValue));
     }
-
 }

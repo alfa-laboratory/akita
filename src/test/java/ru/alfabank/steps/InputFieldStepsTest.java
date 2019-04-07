@@ -265,5 +265,4 @@ public class InputFieldStepsTest {
         assertThrows(IllegalArgumentException.class, () ->
                 iis.setRandomNumSequenceWithIntAndFract("NormalField", 5, 10, "####,", "test"));
     }
-
 }

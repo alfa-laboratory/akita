@@ -38,9 +38,7 @@ public class DropDownListInteractionSteps extends BaseMethods {
     public void selectELementFromDropDownListWithText (String listName, String expectedText) {
         final String text = getPropertyOrStringVariableOrValue(expectedText);
         SelenideElement list = akitaScenario.getCurrentPage().getElement(listName);
-
         list.selectOption(text);
-
     }
 
     /**
@@ -52,9 +50,7 @@ public class DropDownListInteractionSteps extends BaseMethods {
     public void selectElementFromDropDownListWithValue (String listName, String expectedValue) {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         SelenideElement list = akitaScenario.getCurrentPage().getElement(listName);
-
         list.selectOptionByValue(value);
-
     }
 
     /**
@@ -71,9 +67,7 @@ public class DropDownListInteractionSteps extends BaseMethods {
                     String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
                             listName, elementNumber, list.getOptions().size()));
         }
-
         list.selectByIndex(selectedElementNumber);
-
     }
 
     /**
@@ -85,9 +79,6 @@ public class DropDownListInteractionSteps extends BaseMethods {
     public void selectELementFromDropDownListContainingText (String listName, String expectedText) {
         final String text = getPropertyOrStringVariableOrValue(expectedText);
         SelenideElement list = akitaScenario.getCurrentPage().getElement(listName);
-
         list.selectOptionContainingText(text);
-
     }
-
 }

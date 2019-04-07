@@ -174,5 +174,4 @@ public class JsonApiStepsTest {
         JsonElement jsonElement = parser.parse(element);
         return jsonElement.toString();
     }
-
 }

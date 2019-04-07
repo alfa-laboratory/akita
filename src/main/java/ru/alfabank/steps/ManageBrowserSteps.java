@@ -17,19 +17,14 @@ import cucumber.api.java.en.When;
 import cucumber.api.java.ru.Если;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
-import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
-import org.hamcrest.text.IsEqualIgnoringCase;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.Dimension;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.Set;
 
 import static com.codeborne.selenide.Selenide.clearBrowserCookies;
-import static com.codeborne.selenide.Selenide.switchTo;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 /**
@@ -118,5 +113,4 @@ public class ManageBrowserSteps extends BaseMethods {
     public void expandWindowToFullScreen() {
         getWebDriver().manage().window().maximize();
     }
-
 }

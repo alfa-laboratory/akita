@@ -123,7 +123,7 @@ public class WebPageVerificationSteps extends BaseMethods {
     @И("^ссылка страницы содержит текст \"([^\"]*)\"$")
     public void linkShouldHaveText(String text) {
         String currentUrl = url();
-        assertThat(currentUrl, containsStringIgnoringCase(text));
+        assertThat(currentUrl, containsStringIgnoringCase(getPropertyOrStringVariableOrValue(text)));
     }
 
     /*
@@ -133,7 +133,6 @@ public class WebPageVerificationSteps extends BaseMethods {
     @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
     @Then("^page's header is equal to \"([^\"]*)\"$")
     public void checkTitlePage(String pageTitleName) {
-        checkPageTitle(pageTitleName);
+        checkPageTitle(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(pageTitleName)));
     }
-
 }

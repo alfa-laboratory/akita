@@ -187,5 +187,4 @@ public class RoundUpStepsTest {
     void expressionExpressionPositive() {
         rus.expressionExpression("\"test\".equals(\"test\")");
     }
-
 }

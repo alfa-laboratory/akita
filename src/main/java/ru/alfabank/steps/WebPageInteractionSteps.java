@@ -13,6 +13,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
@@ -173,19 +174,20 @@ public class WebPageInteractionSteps extends BaseMethods {
      *  Переключение на вкладку браузера с заголовком
      */
     @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
+    @When("^switching to a tab with the title \"([^\"]*)\"$")
     public void switchToTheTabWithTitle(String title) {
-        switchTo().window(title);
-        checkPageTitle(title);
+        switchTo().window(getPropertyOrStringVariableOrValue(title));
+        checkPageTitle(getPropertyOrStringVariableOrValue(title));
     }
 
     /**
      *  Производится сохранение заголовка страницы в переменную
      */
     @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
+    @And("^page's header has been saved to the \"([^\"]*)\" variable$")
     public void savePageTitleToVariable(String variableName) {
         String titleName = getWebDriver().getTitle().trim();
         akitaScenario.setVar(variableName, titleName);
         akitaScenario.write("Значение заголовка страницы [" + titleName + "] сохранено в переменную [" + variableName + "]");
     }
-
 }

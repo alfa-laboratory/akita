@@ -68,5 +68,4 @@ public class PageBlockStepsTest {
         pbs.getListElementsText("AkitaTable", "Rows", "ListTable");
         assertNotNull(akitaScenario.getVar("ListTable"));
     }
-
 }

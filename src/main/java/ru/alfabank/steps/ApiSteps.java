@@ -70,13 +70,25 @@ public class ApiSteps extends BaseMethods {
     }
 
     /**
+     * Посылается http запрос по заданному урлу без параметров и BODY.
+     * Проверяется, что код ответа соответствует ожиданиям.
+     * URL можно задать как напрямую в шаге, так и указав в application.properties
+     */
+    @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\". Ожидается код ответа: (\\d+)$")
+    @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" has been executed. Expected response code: (\\d+)$")
+    public void checkResponseCodeWithoutParams(String method, String address, int expectedStatusCode) throws Exception {
+        Response response = sendRequest(method, address, new ArrayList<>());
+        assertTrue(checkStatusCode(response, expectedStatusCode));
+    }
+
+    /**
      * Посылается http запрос по заданному урлу с заданными параметрами.
      * Проверяется, что код ответа соответствует ожиданиям.
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      * Content-Type при необходимости должен быть указан в качестве header.
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
-    @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" has been executed. Expected response code: (\\d+)$")
+    @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" with headers and parametres from the table has been executed. Expected response code: (\\d+)$")
     public void checkResponseCode(String method, String address, int expectedStatusCode, List<RequestParam> paramsTable) throws Exception {
         Response response = sendRequest(method, address, paramsTable);
         assertTrue(checkStatusCode(response, expectedStatusCode));
@@ -142,5 +154,4 @@ public class ApiSteps extends BaseMethods {
         if (error)
             throw new RuntimeException("В json не найдено значение по заданному jsonpath");
     }
-
 }

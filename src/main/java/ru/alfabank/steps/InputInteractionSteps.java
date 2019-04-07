@@ -18,7 +18,6 @@ import cucumber.api.java.ru.Когда;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.Keys;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -27,8 +26,6 @@ import java.awt.datatransfer.StringSelection;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
  * Шаги для взаимодействия с полями ввода, доступные по умолчанию в каждом новом проекте
@@ -178,8 +175,8 @@ public class InputInteractionSteps extends BaseMethods {
      * Ввод в поле случайного дробного числа в заданном диапазоне и формате с последующим сохранением этого значения в переменную
      * Пример формата ввода: ###.##
      */
-    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\" и сохранено в переменную \"([^\"]*)\"$")
-    @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+) in format \"([^\"])\" and saved to variable named \"([^\"]*)\"$")
+    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"]*)\" и сохранено в переменную \"([^\"]*)\"$")
+    @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+) in format \"([^\"]*)\" and saved to variable named \"([^\"]*)\"$")
     public void setRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat, String saveToVariableName) {
         outputFormat = outputFormat.replaceAll("#", "0");
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
@@ -193,14 +190,12 @@ public class InputInteractionSteps extends BaseMethods {
      * Ввод в поле случайного дробного числа в заданном диапазоне и формате
      * Пример формата ввода: ###.##
      */
-    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"])\"$")
-    @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+)  in format \"([^\"])\"$")
+    @Когда("^в поле \"([^\"]*)\" введено случайное дробное число от (\\d+) до (\\d+) в формате \"([^\"]*)\"$")
+    @When("^into the field named \"([^\"]*)\" has been entered random fractional number from (\\d+) to (\\d+) in format \"([^\"]*)\"$")
     public void inputRandomNumSequenceWithIntAndFract(String fieldName, double valueFrom, double valueTo, String outputFormat) {
         double finalValue = ThreadLocalRandom.current().nextDouble(valueFrom, valueTo);
         outputFormat = outputFormat.replaceAll("#", "0");
         setFieldValue(fieldName, new DecimalFormat(outputFormat).format(finalValue));
         akitaScenario.write(String.format("В поле [%s] введено значение [%s]", fieldName, new DecimalFormat(outputFormat).format(finalValue)));
     }
-
-
 }

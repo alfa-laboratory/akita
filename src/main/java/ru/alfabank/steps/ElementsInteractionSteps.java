@@ -19,12 +19,10 @@ import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
 
 import static com.codeborne.selenide.Selenide.$;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 /**

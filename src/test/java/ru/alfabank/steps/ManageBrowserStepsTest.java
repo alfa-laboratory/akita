@@ -94,5 +94,4 @@ public class ManageBrowserStepsTest {
         Dimension actualDimension = WebDriverRunner.getWebDriver().manage().window().getSize();
         assertThat(expectedDimension, equalTo(actualDimension));
     }
-
 }
