@@ -211,5 +211,4 @@ public class ElementsVerificationSteps extends BaseMethods {
                 akitaScenario.getCurrentPage().getAnyElementText(fieldName),
                 is(emptyOrNullString()));
     }
-
 }

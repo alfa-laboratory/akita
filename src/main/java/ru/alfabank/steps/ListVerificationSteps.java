@@ -170,7 +170,6 @@ public class ListVerificationSteps extends BaseMethods {
         } else
             assertTrue(listOfElementsFromPage.size() < quantity,
                     String.format("Число элементов списка превышает ожидаемое: %s", listOfElementsFromPage.size()));
-
     }
 
     /**
@@ -189,5 +188,4 @@ public class ListVerificationSteps extends BaseMethods {
         assertThat(String.format("Список со страницы %s: %s не совпадает с ожидаемым списком из переменной %s:%s", listName, actualList, listVariable, expectedList)
                 , actualList, containsInAnyOrder(expectedList.toArray()));
     }
-
 }

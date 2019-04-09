@@ -13,6 +13,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
@@ -120,10 +121,15 @@ public class WebPageVerificationSteps extends BaseMethods {
                 .collect(Collectors.toList());
     }
 
+    /*
+     * Проверка, что значение в ссылке страницы содержит текст, указанный в шаге
+     * (в приоритете: из property, из переменной сценария, значение аргумента)
+     */
     @И("^ссылка страницы содержит текст \"([^\"]*)\"$")
+    @And("^link contains text \"([^\"]*)\"$")
     public void linkShouldHaveText(String text) {
         String currentUrl = url();
-        assertThat(currentUrl, containsStringIgnoringCase(text));
+        assertThat(currentUrl, containsStringIgnoringCase(getPropertyOrStringVariableOrValue(text)));
     }
 
     /*
@@ -133,7 +139,6 @@ public class WebPageVerificationSteps extends BaseMethods {
     @Тогда("^заголовок страницы равен \"([^\"]*)\"$")
     @Then("^page's header is equal to \"([^\"]*)\"$")
     public void checkTitlePage(String pageTitleName) {
-        checkPageTitle(pageTitleName);
+        checkPageTitle(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(pageTitleName)));
     }
-
 }

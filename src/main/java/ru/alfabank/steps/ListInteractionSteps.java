@@ -15,17 +15,13 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import cucumber.api.java.en.When;
-import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Когда;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
-import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static ru.alfabank.tests.core.helpers.PropertyLoader.loadPropertyInt;
 
 /**
  * Шаги для взаимодействия с коллекциями элементов, доступные по умолчанию в каждом новом проекте
@@ -137,5 +133,4 @@ public class ListInteractionSteps extends BaseMethods {
         elementToSelect.shouldBe(Condition.visible).click();
         akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(elementToSelect).trim());
     }
-
 }

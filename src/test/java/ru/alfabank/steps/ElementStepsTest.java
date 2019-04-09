@@ -232,5 +232,4 @@ public class ElementStepsTest {
     void fieldInputIsEmptyPositive() {
         elvs.fieldInputIsEmpty("NormalField");
     }
-
 }

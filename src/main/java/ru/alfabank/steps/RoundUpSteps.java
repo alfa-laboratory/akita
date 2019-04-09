@@ -222,5 +222,4 @@ public class RoundUpSteps extends BaseMethods {
     public void expressionExpression(String expression) {
         akitaScenario.getVars().evaluate("assert(" + expression + ")");
     }
-
 }

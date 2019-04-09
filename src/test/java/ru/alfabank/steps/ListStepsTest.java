@@ -30,7 +30,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ListStepsTest {
 
@@ -351,5 +350,4 @@ public class ListStepsTest {
         assertThrows(IndexOutOfBoundsException.class, () ->
                 lis.selectElementNumberFromListAndSaveToVar(4, "List", "varName"));
     }
-
 }

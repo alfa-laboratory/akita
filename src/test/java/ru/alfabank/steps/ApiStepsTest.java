@@ -159,6 +159,14 @@ public class ApiStepsTest {
     }
 
     @Test
+    void checkResponseCodeWithoutParamsTest() throws Exception {
+        stubFor(get(urlEqualTo("/get/resource"))
+            .willReturn(aResponse()
+                .withStatus(200)));
+        api.checkResponseCodeWithoutParams("GET", "/get/resource", 200);
+    }
+
+    @Test
     void checkResponseCodeTest() throws Exception {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=test"))
             .willReturn(aResponse()

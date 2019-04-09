@@ -34,6 +34,7 @@ public class PageBlockSteps extends BaseMethods{
     public void clickOnElementInBlock(String elementName, String blockName) {
         akitaScenario.getCurrentPage().getBlock(blockName).getElement(elementName).click();
     }
+
     /**
      * Поиск списка в блоке и сохранение всех значений выбранного списка в переменную
      */
@@ -57,5 +58,4 @@ public class PageBlockSteps extends BaseMethods{
     public void getElementsList(String blockName, String listName, String varName) {
         akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getBlock(blockName).getElementsList(listName));
     }
-
 }

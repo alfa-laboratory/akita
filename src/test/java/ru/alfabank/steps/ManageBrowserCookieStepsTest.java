@@ -80,5 +80,4 @@ public class ManageBrowserCookieStepsTest {
         dmbs.replaceCookie("testName", "12qwe");
         verify(webDriver.manage(), times(1)).addCookie(new Cookie("testName", "12qwe"));
     }
-
 }
