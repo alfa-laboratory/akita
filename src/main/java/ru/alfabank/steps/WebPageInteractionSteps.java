@@ -174,7 +174,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      *  Переключение на вкладку браузера с заголовком
      */
     @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
-    @When("^switching to a tab with the title \"([^\"]*)\"$")
+    @When("^switched to a tab with the title \"([^\"]*)\"$")
     public void switchToTheTabWithTitle(String title) {
         switchTo().window(getPropertyOrStringVariableOrValue(title));
         checkPageTitle(getPropertyOrStringVariableOrValue(title));
