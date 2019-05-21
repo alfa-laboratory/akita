@@ -13,6 +13,7 @@
 package ru.alfabank.alfatest.cucumber.api;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
@@ -111,11 +112,11 @@ public abstract class AkitaPage extends ElementsContainer {
     public List<String> getAnyElementsListInnerTexts(String listName) {
         List<SelenideElement> elementsList = getElementsList(listName);
         return elementsList.stream()
-            .map(element -> element.getTagName().equals("input")
-                ? element.getValue().trim()
-                : element.innerText().trim()
-            )
-            .collect(toList());
+                .map(element -> element.getTagName().equals("input")
+                        ? element.getValue().trim()
+                        : element.innerText().trim()
+                )
+                .collect(toList());
     }
 
     /**
@@ -192,8 +193,8 @@ public abstract class AkitaPage extends ElementsContainer {
         Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
                 .forEach(f -> {
-                    if (AkitaPage.class.isAssignableFrom(f.getType())){
-                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>)f.getType()).initialize();
+                    if (AkitaPage.class.isAssignableFrom(f.getType())) {
+                        AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>) f.getType()).initialize();
                         func.accept(akitaPage);
                     }
                 });
@@ -313,6 +314,7 @@ public abstract class AkitaPage extends ElementsContainer {
         }
         return null;
     }
+
     /**
      * Список всех элементов страницы
      */
@@ -341,23 +343,31 @@ public abstract class AkitaPage extends ElementsContainer {
         checkNamedAnnotations();
         return Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null)
-                .peek((Field f) -> {
-                    if (!SelenideElement.class.isAssignableFrom(f.getType())
-                            && !AkitaPage.class.isAssignableFrom(f.getType())) {
-                        if (List.class.isAssignableFrom(f.getType())) {
-                            ParameterizedType listType = (ParameterizedType) f.getGenericType();
-                            Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
-                            if (SelenideElement.class.isAssignableFrom(listClass) || AkitaPage.class.isAssignableFrom(listClass)) {
-                                return;
-                            }
-                        }
-                        throw new IllegalStateException(
-                                format("Поле с аннотацией @Name должно иметь тип SelenideElement или List<SelenideElement>.\n" +
-                                        "Если поле описывает блок, оно должно принадлежать классу, унаследованному от AkitaPage.\n" +
-                                        "Найдено поле с типом %s", f.getType()));
-                    }
-                })
+                .peek(this::checkFieldType)
                 .collect(toMap(f -> f.getDeclaredAnnotation(Name.class).value(), this::extractFieldValueViaReflection));
+    }
+
+    private void checkFieldType(Field f) {
+        if (!SelenideElement.class.isAssignableFrom(f.getType())
+                && !AkitaPage.class.isAssignableFrom(f.getType())) {
+            checkCollectionFieldType(f);
+        }
+    }
+
+    private void checkCollectionFieldType(Field f) {
+        if (ElementsCollection.class.isAssignableFrom(f.getType())) {
+            return;
+        } else if (List.class.isAssignableFrom(f.getType())) {
+            ParameterizedType listType = (ParameterizedType) f.getGenericType();
+            Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
+            if (SelenideElement.class.isAssignableFrom(listClass) || AkitaPage.class.isAssignableFrom(listClass)) {
+                return;
+            }
+        }
+        throw new IllegalStateException(
+                format("Поле с аннотацией @Name должно иметь тип SelenideElement или List<SelenideElement>.\n" +
+                        "Если поле описывает блок, оно должно принадлежать классу, унаследованному от AkitaPage.\n" +
+                        "Найдено поле с типом %s", f.getType()));
     }
 
     /**
