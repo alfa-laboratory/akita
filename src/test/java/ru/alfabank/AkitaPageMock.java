@@ -12,6 +12,7 @@
  */
 package ru.alfabank;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
@@ -59,7 +60,7 @@ public class AkitaPageMock extends AkitaPage {
 
     @FindBy(xpath = "//ul[@id=\"list3\"]/li")
     @Name("List3")
-    public List<SelenideElement> list3;
+    public ElementsCollection list3;
 
     @FindBy(name = "goodButton")
     @Name("GoodButton")
