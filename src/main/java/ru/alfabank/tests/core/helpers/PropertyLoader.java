@@ -195,7 +195,7 @@ public class PropertyLoader {
         Properties instance = new Properties();
         String profile = System.getProperty("profile", "");
         if (!Strings.isNullOrEmpty(profile)) {
-            String path = Paths.get(profile, PROPERTIES_FILE).toString();
+            String path = Paths.get(profile).toString();
             URL url = PropertyLoader.class.getClassLoader().getResource(path);
             try (
                 InputStream resourceStream = url.openStream();
