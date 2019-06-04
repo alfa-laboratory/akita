@@ -39,13 +39,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codeborne.selenide.Browsers.IE;
+import static com.codeborne.selenide.Browsers.INTERNET_EXPLORER;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.codeborne.selenide.WebDriverRunner.isIE;
 import static io.restassured.RestAssured.given;
 import static java.util.Objects.isNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
+import static ru.alfabank.tests.core.drivers.CustomDriverProvider.BROWSER;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.*;
 
 /**
@@ -327,5 +329,10 @@ public class BaseMethods {
         String currentTitle = getWebDriver().getTitle().trim();
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
                 pageTitleName, IsEqualIgnoringCase.equalToIgnoringCase(currentTitle));
+    }
+
+    public boolean isIE(){
+        String currentBrowser = loadSystemPropertyOrDefault(BROWSER, "");
+        return currentBrowser.equalsIgnoreCase(IE) || currentBrowser.equalsIgnoreCase(INTERNET_EXPLORER);
     }
 }
