@@ -104,6 +104,8 @@ ext {
 bintray {
     user = bintrayUserName
     key = bintrayPassword
+    print "****************************"
+    print user
     publications = ['nebula']
     dryRun = false
     publish = true
