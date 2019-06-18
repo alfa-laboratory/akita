@@ -6,7 +6,9 @@ dist: trusty
 addons:
   chrome: stable
 before_install:
-- test $TRAVIS_PULL_REQUEST = false && openssl aes-256-cbc -K $encrypted_f71e8fb01138_key -iv $encrypted_f71e8fb01138_iv -in gradle.properties.enc -out gradle.properties -d || true
+- test $TRAVIS_PULL_REQUEST = false && openssl aes-256-cbc -K $encrypted_45a1e02b23ba_key
+  -iv $encrypted_45a1e02b23ba_iv -in gradle.properties.enc -out gradle.properties
+  -d || true
 install:
 - wget 'https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip'
 - sudo apt-get install -y unzip
