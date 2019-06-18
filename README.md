@@ -4,7 +4,8 @@
 # Akita
 [![Build Status](https://travis-ci.org/alfa-laboratory/akita.svg?branch=master)](https://travis-ci.org/alfa-laboratory/akita)
 [![Coverage Status](https://coveralls.io/repos/github/alfa-laboratory/akita/badge.svg?branch=master)](https://coveralls.io/github/alfa-laboratory/akita?branch=master)
-[![Download](https://api.bintray.com/packages/alfa-laboratory/maven-releases/akita/images/download.svg) ](https://bintray.com/alfa-laboratory/maven-releases/akita/_latestVersion)
+[![Download](https://api.bintray.com/packages/alfa-laboratory/maven-releases/akita/images/download.svg) ](https://bintray.com/alfa-laboratory/maven-releases/akita/_latestVersion)<br /> <br />  [![@akitaQA](https://img.shields.io/badge/Telegram-%40akitaQA-orange.svg)](https://t.me/joinchat/D53UAg8lG2xv81zgb7dEtQ)<br />
+⇧ Join us! ⇧
 
 Akita - бери и тестируй
 =========================
@@ -18,7 +19,7 @@ BDD библиотека шагов для тестирования на осн�
 ```
 Функционал: Страница депозитов
   Сценарий: Открытие депозита
-    Допустим совершен переход на страницу "Депозиты" по ссылке из property файла = "depositsUrl"
+    Допустим совершен переход на страницу "Депозиты" по ссылке "depositsUrl"
     Когда выполнено нажатие на кнопку "Открыть депозит"
     Тогда страница "Открытие депозита" загрузилась
 ```
@@ -69,7 +70,7 @@ application.properties
 Пример инициализации страницы "Депозиты":
 ```
 DepositsPage page = (DepositsPage) getCurrentPage();
-akitaaScenario.setCurrentPage(page.initialize().appeared());
+akitaScenario.setCurrentPage(page.initialize().appeared());
 ```
 
 Пример получения конкретной страницы:
@@ -99,14 +100,33 @@ waitingAppearTimeout=150000
 akitaScenario.getCurrentPage().getElement("Открыть депозит")
 akitaScenario.getCurrentPage().getElementsList("Список депозитов")
  ```
+Блоки на странице
+============================
+Реализована возможность описывать блоки на странице (Page Element)
+Например:
+```
+@FindBy(className = "header")
+@Name("Шапка страницы")
+public HeaderBlock header;
+```
+При загрузке страницы будут учитываться элементы, описанные в блоке
 
+Screenshots
+============================
+Реализован кастомный StepFormatter. При подключении его к проеку с тестами, становится достуна опция снятия скриншотов после желаемого или каждого шага. ```@CucumberOptions(format = {"pretty", "ru.alfabank.tests.core.formatters.StepFormatter"})```
+
+
+Аннотация @Screenshot, указанная над кастомным тестовым шагом, позволит добавить скриншот после прохождения этого шага в отчет.
+
+
+Есть также возможность получать скриншоты после каждого шага всех сценариев. Для этого необходимо задать системную переменную takeScreenshotAfterSteps=true.
 
 Работа с REST запросами
 =======================
 
 В библиотеке реализована возможность отправки REST запросов и сохранения ответа в переменную.
 
-Поддерживаются следующие типы запросов: GET, POST.
+Поддерживаются следующие типы запросов: GET, POST, PUT, DELETE.
    ```Когда выполнен POST запрос на URL "{depositsApi}deposits/{docNumber}/repay" с headers и parameters из таблицы. Полученный ответ сохранен в переменную
        | type   | name          | value           |
        | header | applicationId | test            |
@@ -145,6 +165,51 @@ akitaScenario.write("Текущий URL = " + currentUrl + " \nОжидаемы�
 Получение значения переменной из хранилища:
 ```akitaScenario.getVar(<имя переменной>)```
 
+
+Кастомный драйвер - CustomDriverProvider
+=========================================
+Позволяет запускать тесты с кастомными настройками браузеров и на ремоуте. Параметры запуска можно задавать как системные переменные.
+Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера:
+```
+./gradlew clean gCR -Pbrowser=chrome -PbrowserVersion=64.0 -PremoteUrl=http://remote/url -Pwidth=1200 -Pheight=800
+```
+Если параметр remoteUrl не указан - тесты будут запущены локально в заданном браузере последней версии
+(Пример настройки запуска тестов с кастомным браузером можно посмотреть в [Akita-testing-template](https://github.com/alfa-laboratory/akita-testing-template))
+
+
+Если указан параметр headless `-Pheadless=true`, то браузеры chrome и firefox будут запускаться в [headless режиме](https://developers.google.com/web/updates/2017/04/headless-chrome).
+
+Blacklist
+=========================================
+Иногда есть необходимость добавить определенные ресурсы в черный список.
+Для этого была реализована возможность создать файл без расширения ```blacklist``` . Его необходимо положить в ```src/main/java/resources/```
+
+```blacklist``` предназначен для хранения нежелательных, указанных пользователем ресурсов, которые будут добавлены в черный список при запуске тестов через ```CustomDriverProvide```.
+
+Формат записи - каждый новый ресурс с новой строки, например:
+
+     .*ru.fp.kaspersky-labs.com.*
+     http://google.com/ 200
+При необходимости можно указывать возвращаемый статус код через пробел, например:
+```http://google.com/ 200```
+
+Если статус код не указан, по умолчанию будет присвоен ```404```
+
+Proxy
+=========================================
+Реализована возможность включать proxy-сервер во время запуска тестов (а именно, BrowserMobProxy)
+
+Для этого при старте тестов необходима указать параметр ```-Dproxy=true```
+
+Если необходимо слушать определенный har, его можно задать в файле application.properties ```har=some.test.har```
+В application.properties также можно указывать дополнительные capabilities для режима proxy, например
+
+```
+trustAllServers=true
+acceptSslCerts=true
+javascriptEnabled=true
+```
+
 Краткое описание главных классов
 =================================
 
@@ -173,17 +238,24 @@ scenario - Сценарий из Cucumber.api, с которым связана 
 ```ru.alfabank.tests.core.helpers.PropertyLoader```
 Класс для получения свойств
 
+```ru.alfabank.tests.core.drivers.CustomDriverProvider```
+Провайдер кастомного драйвера
+
+## Testing Template 
+https://github.com/alfa-laboratory/akita-testing-template
+## Контакты
+[Telegram](https://t.me/akitaQA)
 
 
 Используемые зависимости:
 --------------------------
->nebula-release-plugin - Apache License Version 2.0
->coveralls-gradle-plugin - The MIT License (MIT)
->com.codeborne.selenide - The MIT License (MIT)
->io.rest-assured.rest-assured - Apache License Version 2.0
->com.google.inject.guice - Apache License Version 2.0
->org.mockito.mockito-core - The MIT License
->com.github.tomakehurst:wiremock - Apache License Version 2.0
+> nebula-release-plugin - Apache License Version 2.0
+> coveralls-gradle-plugin - The MIT License (MIT)
+> com.codeborne.selenide - The MIT License (MIT)
+> io.rest-assured.rest-assured - Apache License Version 2.0
+> com.google.inject.guice - Apache License Version 2.0
+> org.mockito.mockito-core - The MIT License
+> com.github.tomakehurst:wiremock - Apache License Version 2.0
 >org.hamcrest.hamcrest-all - BSD License
 >org.codehaus.groovy - Apache License Version 2.0
 >JUnit - Eclipse Public License

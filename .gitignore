@@ -9,6 +9,7 @@
 target/
 build/
 classes/
+/drivers/
 .gradle/
 bin/**
 tmp/**
@@ -30,3 +31,5 @@ local.properties
 *.settings
 
 gradle.properties
+out/
+.DS_Store

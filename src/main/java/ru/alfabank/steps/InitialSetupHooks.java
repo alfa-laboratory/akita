@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,20 +17,30 @@ import com.google.common.base.Strings;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.TakesScreenshot;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.WebDriverRunner.*;
+import static ru.alfabank.tests.core.drivers.CustomDriverProvider.REMOTE_URL;
 
 @Slf4j
-public class InitialSetupSteps {
+public class InitialSetupHooks extends BaseMethods {
 
-    @Delegate
-    AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    /**
+     * Создает настойки прокси для запуска драйвера
+     */
+    @Before(order = 1)
+    public void setDriverProxy() {
+        if (!Strings.isNullOrEmpty(System.getProperty("proxy"))) {
+            Proxy proxy = new Proxy().setHttpProxy(System.getProperty("proxy"));
+            setProxy(proxy);
+            log.info("Проставлена прокси: " + proxy);
+        }
+    }
 
     /**
      * Создает окружение(среду) для запуска сценария
@@ -53,8 +60,8 @@ public class InitialSetupSteps {
      */
     @Before(order = 20)
     public static void setEnvironmentToTest() throws Exception {
-        if (!Strings.isNullOrEmpty(System.getProperty("remote"))) {
-            log.info("Тесты запущены на удаленной машине: " + System.getProperty("remote"));
+        if (!Strings.isNullOrEmpty(System.getProperty(REMOTE_URL))) {
+            log.info("Тесты запущены на удаленной машине: " + System.getProperty(REMOTE_URL));
         } else
             log.info("Тесты будут запущены локально");
     }
@@ -64,20 +71,19 @@ public class InitialSetupSteps {
      *
      * @throws Exception
      */
-    @Before(order = 21)
     public static void clearCash() throws Exception {
         getWebDriver().manage().deleteAllCookies();
     }
 
     /**
      * Если сценарий завершился со статусом "fail" будет создан скриншот и сохранен в директорию
-     * <project>/build/reports/tests
+     * {@code <project>/build/reports/tests}
      *
      * @param scenario текущий сценарий
      */
     @After(order = 20)
     public void takeScreenshot(Scenario scenario) {
-        if (scenario.isFailed()) {
+        if (scenario.isFailed() && hasWebDriverStarted()) {
             AkitaScenario.sleep(1);
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
             scenario.embed(screenshot, "image/png");
@@ -90,7 +96,7 @@ public class InitialSetupSteps {
 
     @After(order = 10)
     public void closeWebDriver() {
-        if (getWebDriver() != null) {
+        if (hasWebDriverStarted()) {
             getWebDriver().manage().deleteAllCookies();
             WebDriverRunner.closeWebDriver();
         }

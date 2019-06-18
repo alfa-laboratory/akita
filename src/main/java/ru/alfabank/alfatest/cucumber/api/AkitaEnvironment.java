@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +13,10 @@
 package ru.alfabank.alfatest.cucumber.api;
 
 import cucumber.api.Scenario;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
+import ru.alfabank.alfatest.cucumber.annotations.Name;
 
 import java.util.Arrays;
 
@@ -55,8 +54,9 @@ public class AkitaEnvironment {
      * добавляя ссылки на эти классы в поле "pages"
      */
     @SuppressWarnings("unchecked")
+    @SneakyThrows
     private void initPages() {
-        new AnnotationScanner().getClassesAnnotatedWith(AkitaPage.Name.class)
+        new AnnotationScanner().getClassesAnnotatedWith(Name.class)
                 .stream()
                 .map(it -> {
                     if (AkitaPage.class.isAssignableFrom(it)) {
@@ -75,9 +75,9 @@ public class AkitaEnvironment {
      * @return значение аннотации "AkitaPage.Name" для класса
      */
     private String getClassAnnotationValue(Class<?> c) {
-        return Arrays.stream(c.getAnnotationsByType(AkitaPage.Name.class))
+        return Arrays.stream(c.getAnnotationsByType(Name.class))
                 .findAny()
-                .map(AkitaPage.Name::value)
+                .map(Name::value)
                 .orElseThrow(() -> new AssertionError("Не найдены аннотации AkitaPage.Name в класса " + c.getClass().getName()));
     }
 
@@ -98,6 +98,10 @@ public class AkitaEnvironment {
 
     public void setVar(String name, Object object) {
         getVariables().put(name, object);
+    }
+
+    public Scenario getScenario() {
+        return scenario;
     }
 
     public Pages getPages() {

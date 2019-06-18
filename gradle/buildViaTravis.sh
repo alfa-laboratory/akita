@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # This script will build the project.
 
-SWITCHES="--info --stacktrace"
+SWITCHES="javadoc --info --stacktrace"
 
 GRADLE_VERSION=$(./gradlew -version | grep Gradle | cut -d ' ' -f 2)
 

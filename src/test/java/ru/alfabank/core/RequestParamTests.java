@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,21 +12,22 @@
  */
 package ru.alfabank.core;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertTrue;
 
 public class RequestParamTests {
     private static RequestParam requestParam;
     private static RequestParam requestParamForCompare;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         requestParam = RequestParam.builder()
                 .name("test")
                 .value("testValue")
@@ -38,13 +36,13 @@ public class RequestParamTests {
     }
 
     @Test
-    public void getNameTest() {
+    void getNameTest() {
         requestParam.setType("hEaDer");
         assertThat(requestParam.getType(), equalTo(RequestParamType.HEADER));
     }
 
     @Test
-    public void equalsTest() {
+    void equalsTest() {
         RequestParam requestParamForCompare = RequestParam.builder()
                 .name("test")
                 .value("testValue")
@@ -54,7 +52,7 @@ public class RequestParamTests {
     }
 
     @Test
-    public void hashTest() {
+    void hashTest() {
         RequestParam requestParamForCompare = RequestParam.builder()
                 .name("test")
                 .value("testValue")
@@ -65,7 +63,7 @@ public class RequestParamTests {
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         RequestParam requestParamForCompare = RequestParam.builder()
                 .name("test")
                 .value("testValue")

@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,16 +12,20 @@
  */
 package ru.alfabank;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
+import ru.alfabank.alfatest.cucumber.annotations.Name;
+import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 
 import java.util.List;
 
 @Getter
-@AkitaPage.Name("AkitaPageMock")
+@Name("AkitaPageMock")
 public class AkitaPageMock extends AkitaPage {
+
     @FindBy(id = "mockId")
     @Name("mockId")
     public SelenideElement mockId;
@@ -52,6 +53,14 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(xpath = "//ul[@id=\"list\"]/li")
     @Name("List")
     public List<SelenideElement> list;
+
+    @FindBy(xpath = "//ul[@id=\"list2\"]/li")
+    @Name("List2")
+    public List<SelenideElement> list2;
+
+    @FindBy(xpath = "//ul[@id=\"list3\"]/li")
+    @Name("List3")
+    public ElementsCollection list3;
 
     @FindBy(name = "goodButton")
     @Name("GoodButton")
@@ -84,6 +93,10 @@ public class AkitaPageMock extends AkitaPage {
     @Name("TextField")
     public SelenideElement textField;
 
+    @FindBy(name = "normalTextAreaWithText")
+    @Name("normalTextAreaWithText")
+    public SelenideElement textAreaField;
+
     @FindBy(id = "link")
     @Name("Link")
     public SelenideElement link;
@@ -103,4 +116,34 @@ public class AkitaPageMock extends AkitaPage {
     @FindBy(id = "ul")
     @Name("ul")
     public SelenideElement ul;
+
+    @FindBy(id = "innerText1")
+    @Name("innerTextP")
+    public SelenideElement innerTextP;
+
+    @FindBy(className = "searchBlock")
+    @Name("SearchBlock")
+    public SearchFieldMock searchField;
+
+    @Optional
+    @FindBy(xpath = "//span[text()='Показать ещё']")
+    @Name("Кнопка Показать ещё")
+    public SelenideElement buttonShowMore;
+
+    @FindBy(xpath = "//*[text()='Подписать и отправить']/parent::button")
+    @Name("Кнопка Подписать и отправить")
+    public SelenideElement signAndSendToBankButton;
+
+    @FindBy(css = "#multi-file-upload-form .file")
+    @Name("Кнопка загрузки файлов")
+    public SelenideElement uploadButton;
+
+    @FindBy(name = "mixedButton")
+    @Name("Кнопка с англо-русским названием")
+    public SelenideElement mixLangButton;
+
+    @FindBy(id = "t1")
+    @Name("AkitaTable")
+    @Optional
+    public AkitaTableMock akitaTableMock;
 }

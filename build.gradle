@@ -8,17 +8,18 @@ buildscript {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 
         classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
+        classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.3.0'
         classpath 'com.netflix.nebula:nebula-publishing-plugin:4.9.1'
-        classpath 'com.netflix.nebula:nebula-project-plugin:3.3.0'
     }
 }
 
 repositories {
     maven {
-        url  "http://dl.bintray.com/alfa-laboratory/maven-releases"
+        url "http://dl.bintray.com/alfa-laboratory/maven-releases"
     }
     mavenLocal()
     jcenter()
@@ -29,7 +30,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'idea'
-apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'base'
 apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
@@ -39,8 +40,9 @@ apply plugin: 'distribution'
 
 // ==== nebula
 apply plugin: 'nebula.release'
-apply plugin: 'nebula.project'
 apply plugin: 'nebula.maven-publish'
+apply plugin: 'nebula.source-jar'
+apply plugin: 'nebula.javadoc-jar'
 
 group = 'ru.alfabank.tests'
 
@@ -50,25 +52,28 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 project.ext {
-    cucumberVersion = '1.2.5'
+    cucumberVersion = '2.4.0'
+    selenideVersion = '5.2.2'
 }
 
 dependencies {
-    compile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
-    compile group: 'junit', name: 'junit', version: '4.12'
-    compile group: 'com.codeborne', name: 'selenide', version: '4.5'
-    compile group: 'info.cukes', name: 'cucumber-java', version: cucumberVersion
-    compile group: 'info.cukes', name: 'cucumber-core', version: cucumberVersion
+    compile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
+    compile group: 'com.codeborne', name: 'selenide', version: selenideVersion
+    compile group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
+    compile group: 'io.cucumber', name: 'cucumber-core', version: cucumberVersion
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+    compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 
-    testCompile "org.mockito:mockito-core:2.+"
-    testCompile "com.github.tomakehurst:wiremock-standalone:2.8.0"
-
+    testCompile "org.mockito:mockito-core:2.13.0"
+    testCompile "org.mockito:mockito-inline:2.13.0"
+    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -79,6 +84,10 @@ publishing {
         maven(MavenPublication) {
             from components.java
 
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+
             artifact sourceJar {
                 classifier "sources"
             }
@@ -86,29 +95,26 @@ publishing {
     }
 }
 
-
 ext {
     bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
     bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
     bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
-
 }
 
 bintray {
     user = bintrayUserName
     key = bintrayPassword
-
     publications = ['nebula']
     dryRun = false
     publish = true
     pkg {
         userOrg = 'alfa-laboratory'
-        repo='maven-releases'
+        repo = 'maven-releases'
         name = 'akita'
         desc = project.description
         websiteUrl = 'https://github.com/alfa-laboratory/akita'
-        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita'
-        vcsUrl = 'https://github.com/alfa-laboratory/akita'
+        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita/issues'
+        vcsUrl = 'https://github.com/alfa-laboratory/akita.git'
         licenses = ['Apache-2.0']
         labels = ['gradle', 'nebula']
         publicDownloadNumbers = true
@@ -123,25 +129,29 @@ bintray {
 
 test {
     maxParallelForks = 1
-    ignoreFailures = true
+    ignoreFailures = false
 
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=chrome"
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
 }
 
-bintrayUpload.onlyIf { !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV") }
+bintrayUpload.onlyIf {
+    !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
+}
 
 
 jacocoTestReport {
     reports {
         xml.enabled true
         csv.enabled true
-        html.destination "${buildDir}/jacocoHtml"
+        html.destination file("${buildDir}/jacocoHtml")
     }
 }
 
 license {
     header rootProject.file('HEADER')
-    strictCheck true
+    exclude ("body.json")
+    exclude ("bodyWithParams.json")
+    strictCheck false
 }

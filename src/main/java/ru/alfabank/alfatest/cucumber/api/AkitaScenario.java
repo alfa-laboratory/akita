@@ -1,12 +1,9 @@
 /**
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +13,7 @@
 package ru.alfabank.alfatest.cucumber.api;
 
 import com.codeborne.selenide.Selenide;
+import cucumber.api.Scenario;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 
@@ -75,7 +73,7 @@ public final class AkitaScenario {
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы, которая передается в метод в качестве аргумента.
-     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
+     * Пример использования: {@code withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});}
      * Проверка отображения всех элементов страницы выполняется всегда
      *
      * @param clazz класс страницы, доступ к полям и методам которой необходимо получить
@@ -86,7 +84,7 @@ public final class AkitaScenario {
 
     /**
      * Позволяет получить доступ к полям и методам конкретной страницы.
-     * Пример использования: withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});
+     * Пример использования: {@code withPage(AkitaPage.class, page -> { some actions with AkitaPage methods});}
      * Проверка отображения всех элементов страницы опциональна
      *
      * @param clazz                   класс страницы, доступ к полям и методам которой необходимо получить
@@ -94,6 +92,13 @@ public final class AkitaScenario {
      */
     public static <T extends AkitaPage> void withPage(Class<T> clazz, boolean checkIfElementsAppeared, Consumer<T> consumer) {
         Pages.withPage(clazz, checkIfElementsAppeared, consumer);
+    }
+
+    /**
+     * Возвращает текущий сценарий (Cucumber.api)
+     */
+    public Scenario getScenario() {
+        return this.getEnvironment().getScenario();
     }
 
     /**
@@ -140,8 +145,8 @@ public final class AkitaScenario {
      * @param clazz                   - класс страницы, которую необходимо получить
      * @param checkIfElementsAppeared - флаг, определяющий проверку отображения элементов на странице
      */
-    public <T extends AkitaPage> T getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
-        return Pages.getPage(clazz, checkIfElementsAppeared);
+    public <T extends AkitaPage> AkitaPage getPage(Class<T> clazz, boolean checkIfElementsAppeared) {
+        return Pages.getPage(clazz, checkIfElementsAppeared).initialize();
     }
 
     /**
