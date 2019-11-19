@@ -17,6 +17,9 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.AbstractFindByBuilder;
+import org.openqa.selenium.support.FindBy;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
@@ -27,6 +30,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static com.codeborne.selenide.Selenide.$$;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -94,13 +98,17 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение элемента-списка со страницы по имени
      */
     @SuppressWarnings("unchecked")
-    public List<SelenideElement> getElementsList(String listName) {
+    public ElementsCollection getElementsList(String listName) {
         Object value = namedElements.get(listName);
         if (!(value instanceof List)) {
             throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
         }
-        Stream<Object> s = ((List) value).stream();
-        return s.map(AkitaPage::castToSelenideElement).collect(toList());
+        FindBy listSelector = Arrays.stream(this.getClass().getDeclaredFields())
+                .filter(f -> f.getDeclaredAnnotation(Name.class) != null && f.getDeclaredAnnotation(Name.class).value().equals(listName))
+                .map(f -> f.getDeclaredAnnotation(FindBy.class))
+                .findFirst().get();
+        FindBy.FindByBuilder findByBuilder = new FindBy.FindByBuilder();
+        return $$(findByBuilder.buildIt(listSelector, null));
     }
 
     /**
@@ -267,7 +275,7 @@ public abstract class AkitaPage extends ElementsContainer {
      *
      * @param elements список selenide-элементов
      */
-    public void waitElementsUntil(Condition condition, int timeout, List<SelenideElement> elements) {
+    public void waitElementsUntil(Condition condition, int timeout, ElementsCollection elements) {
         Spectators.waitElementsUntil(condition, timeout, elements);
     }
 

@@ -12,17 +12,24 @@
  */
 package ru.alfabank.steps;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import cucumber.api.java.en.When;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.support.FindBy;
+import ru.alfabank.alfatest.cucumber.annotations.Name;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.codeborne.selenide.Selectors.byXpath;
+import static com.codeborne.selenide.Selenide.$$;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -45,9 +52,9 @@ public class ListVerificationSteps extends BaseMethods {
     @Тогда("^список \"([^\"]*)\" отображается на странице$")
     @When("^list \"([^\"]*)\" is visible$")
     public void listIsPresentedOnPage(String elementName) {
+        ElementsCollection elements = akitaScenario.getCurrentPage().getElementsList(elementName);
         akitaScenario.getCurrentPage().waitElementsUntil(
-                Condition.appear, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElementsList(elementName)
-        );
+                Condition.appear, DEFAULT_TIMEOUT, elements);
     }
 
     /**
