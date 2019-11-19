@@ -39,7 +39,7 @@ public final class Spectators {
     }
 
     /**
-     * Перегрузка метода для работы с ElementsCollection и использования ста
+     * Перегрузка метода для работы с ElementsCollection и использования стандартных методов обработки списков
      *
      * @param selenideCondition Selenide.Condition
      * @param timeout           максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
