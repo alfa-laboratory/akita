@@ -17,6 +17,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
+import ru.alfabank.alfatest.cucumber.annotations.Hidden;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.utils.Reflection;
@@ -152,13 +153,23 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
-     * Получение всех элементов страницы, не помеченных аннотацией "Optional"
+     * Получение всех элементов страницы, не помеченных аннотацией "Optional" или "Hidden"
      */
     public List<SelenideElement> getPrimaryElements() {
         if (primaryElements == null) {
             primaryElements = readWithWrappedElements();
         }
         return new ArrayList<>(primaryElements);
+    }
+
+    /**
+     * Получение всех элементов страницы, помеченных аннотацией "Hidden"
+     */
+    public List<SelenideElement> getHiddenElements() {
+        if (hiddenElements == null) {
+            hiddenElements = readWithHiddenElements();
+        }
+        return new ArrayList<>(hiddenElements);
     }
 
     /**
@@ -180,18 +191,21 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
-     * Проверка появления всех элементов страницы, не помеченных аннотацией "Optional"
+     * Проверка того, что элементы, не помеченные аннотацией "Optional", отображаются,
+     * а элементы, помеченные аннотацией "Hidden", скрыты.
      */
     protected void isAppeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
                 elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+        getHiddenElements().parallelStream().forEach(elem ->
+                elem.waitUntil(Condition.hidden, Integer.valueOf(timeout)));
         eachForm(AkitaPage::isAppeared);
     }
 
     private void eachForm(Consumer<AkitaPage> func) {
         Arrays.stream(getClass().getDeclaredFields())
-                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
+                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null && f.getDeclaredAnnotation(Hidden.class) == null)
                 .forEach(f -> {
                     if (AkitaPage.class.isAssignableFrom(f.getType())) {
                         AkitaPage akitaPage = AkitaScenario.getInstance().getPage((Class<? extends AkitaPage>) f.getType()).initialize();
@@ -201,7 +215,7 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
-     * Проверка, что все элементы страницы, не помеченные аннотацией "Optional", исчезли
+     * Проверка, что все элементы страницы, не помеченные аннотацией "Optional" или "Hidden", исчезли
      */
     protected void isDisappeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
@@ -230,18 +244,21 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
-     * Проверка появления всех элементов страницы, не помеченных аннотацией "Optional".
+     * Проверка того, что элементы, не помеченные аннотацией "Optional", отображаются,
+     * а элементы, помеченные аннотацией "Hidden", скрыты.
      * Вместо parallelStream используется stream из-за медленной работы IE
      */
     protected void isAppearedInIe() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().stream().forEach(elem ->
                 elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+        getHiddenElements().stream().forEach(elem ->
+                elem.waitUntil(Condition.hidden, Integer.valueOf(timeout)));
         eachForm(AkitaPage::isAppearedInIe);
     }
 
     /**
-     * Проверка, что все элементы страницы, не помеченные аннотацией "Optional", исчезли
+     * Проверка, что все элементы страницы, не помеченные аннотацией "Optional" или "Hidden", исчезли
      * Вместо parallelStream используется stream из-за медленной работы IE
      */
     protected void isDisappearedInIe() {
@@ -320,9 +337,14 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     private Map<String, Object> namedElements;
     /**
-     * Список элементов страницы, не помеченных аннотацией "Optional"
+     * Список элементов страницы, не помеченных аннотацией "Optional" или "Hidden"
      */
     private List<SelenideElement> primaryElements;
+
+    /**
+     * Список элементов страницы, помеченных аннотацией "Hidden"
+     */
+    private List<SelenideElement> hiddenElements;
 
     @Override
     public void setSelf(SelenideElement self) {
@@ -333,6 +355,7 @@ public abstract class AkitaPage extends ElementsContainer {
     public AkitaPage initialize() {
         namedElements = readNamedElements();
         primaryElements = readWithWrappedElements();
+        hiddenElements = readWithHiddenElements();
         return this;
     }
 
@@ -384,11 +407,24 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
-     * Поиск и инициализации элементов страницы без аннотации Optional
+     * Поиск и инициализация элементов страницы без аннотации Optional или Hidden
      */
     private List<SelenideElement> readWithWrappedElements() {
         return Arrays.stream(getClass().getDeclaredFields())
-                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null)
+                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null && f.getDeclaredAnnotation(Hidden.class) == null)
+                .map(this::extractFieldValueViaReflection)
+                .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
+                .map(AkitaPage::castToSelenideElement)
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
+
+    /**
+     * Поиск и инициализация элементов страницы c аннотацией Hidden
+     */
+    private List<SelenideElement> readWithHiddenElements() {
+        return Arrays.stream(getClass().getDeclaredFields())
+                .filter(f -> f.getDeclaredAnnotation(Hidden.class) != null)
                 .map(this::extractFieldValueViaReflection)
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
                 .map(AkitaPage::castToSelenideElement)

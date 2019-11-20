@@ -16,6 +16,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
+import ru.alfabank.alfatest.cucumber.annotations.Hidden;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.alfatest.cucumber.annotations.Optional;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
@@ -75,10 +76,15 @@ public class AkitaPageMock extends AkitaPage {
     @Name("DisabledButton")
     public SelenideElement disabledButton;
 
-    @Optional
+    @Hidden
     @FindBy(id = "hiddenDiv")
     @Name("HiddenDiv")
     public SelenideElement hiddenDiv;
+
+    @Hidden
+    @FindBy(id = "divNotOnPage")
+    @Name("divNotOnPage")
+    public SelenideElement divNotOnPage;
 
     @Optional
     @FindBy(name = "disabledField")
