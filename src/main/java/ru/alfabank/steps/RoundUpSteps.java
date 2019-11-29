@@ -222,4 +222,13 @@ public class RoundUpSteps extends BaseMethods {
     public void expressionExpression(String expression) {
         akitaScenario.getVars().evaluate("assert(" + expression + ")");
     }
+
+    /**
+     * Проверка что в переменной содержится ожидаемое количество символов
+     */
+    @Тогда("^в переменной \"([^\"]*)\" содержится (\\d+) символов$")
+    public void checkInVariableContainsCharacters(String variableName, int numbersCount) {
+        assertThat("Количество символов в поле " + akitaScenario.getVar(variableName).toString().length() + "должно быть " + numbersCount,
+                akitaScenario.getVar(variableName).toString().length(), equalTo(numbersCount));
+    }
 }

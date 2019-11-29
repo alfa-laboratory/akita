@@ -24,6 +24,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -349,5 +350,17 @@ public class ListStepsTest {
     void selectElementNumberFromListAndSaveToVarOverMaxBorder() {
         assertThrows(IndexOutOfBoundsException.class, () ->
                 lis.selectElementNumberFromListAndSaveToVar(4, "List", "varName"));
+    }
+
+    @Test
+    void testCheckListMatchesRegexPositive() {
+        akitaScenario.setVar("List", Arrays.asList("ab", "bc"));
+        lvs.checkListMatchesRegex("List", "[A-z]*");
+    }
+    @Test
+    void testCheckListMatchesRegexNegative() {
+        akitaScenario.setVar("List", Arrays.asList("ab", "bc"));
+        assertThrows(AssertionError.class, () ->
+                lvs.checkListMatchesRegex("List", "[0-9]*"));
     }
 }

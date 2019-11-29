@@ -21,8 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Selenide.$;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static ru.alfabank.alfatest.cucumber.utils.DateUtils.convertStringDateToValues;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 /**
@@ -81,5 +86,31 @@ public class ElementsInteractionSteps extends BaseMethods {
         String file = loadValueFromFileOrPropertyOrVariableOrDefault(fileName);
         File attachmentFile = new File(file);
         akitaScenario.getCurrentPage().getElement(buttonName).uploadFile(attachmentFile);
+    }
+
+    /**
+     * Выполняется ввод даты в поле
+     * Дата преобразуется из значения "сегодня", "вчера", "завтра", "месяц назад", "3 месяца назад", "год назад", "месяц вперед", "3 месяца вперед", "год вперед"
+     */
+    @И("^в поле \"([^\"]*)\" введено и преобразовано в дату значение \"([^\"]*)\"$")
+    public void enterDateInField(String fieldName, String expectedDate) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDate actualdate = convertStringDateToValues(expectedDate);
+        clearField(fieldName);
+        valueInput.setValue(actualdate.format(formatter));
+    }
+
+    /**
+     * Проверяется, что поле содержит дату
+     * Дата преобразуется из значения "сегодня", "вчера", "завтра", "месяц назад", "3 месяца назад", "год назад", "месяц вперед", "3 месяца вперед", "год вперед"
+     */
+    @И("^(?:поле|элемент) \"([^\"]*)\" содержит дату \"(.*)\"$")
+    public void checkDateInField(String elementName, String expectedDate) {
+        expectedDate = getPropertyOrStringVariableOrValue(expectedDate);
+        LocalDate actualdate = convertStringDateToValues(expectedDate);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
+        assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, actualdate.format(formatter)), actualValue, containsString(String.valueOf(actualdate.format(formatter))));
     }
 }

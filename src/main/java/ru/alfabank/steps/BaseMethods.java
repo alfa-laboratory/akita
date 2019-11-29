@@ -328,4 +328,9 @@ public class BaseMethods {
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
                 pageTitleName, IsEqualIgnoringCase.equalToIgnoringCase(currentTitle));
     }
+
+    public void clearField(String nameOfField) {
+        SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(nameOfField);
+        valueInput.doubleClick().sendKeys(Keys.DELETE);
+    }
 }

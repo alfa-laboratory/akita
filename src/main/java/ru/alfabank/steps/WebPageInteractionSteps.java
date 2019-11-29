@@ -23,6 +23,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 
+import java.util.ArrayList;
+
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.url;
@@ -189,5 +191,14 @@ public class WebPageInteractionSteps extends BaseMethods {
         String titleName = getWebDriver().getTitle().trim();
         akitaScenario.setVar(variableName, titleName);
         akitaScenario.write("Значение заголовка страницы [" + titleName + "] сохранено в переменную [" + variableName + "]");
+    }
+
+    /**
+     *  Производится переключение на вкладку с номером
+     */
+    @Когда("^выполнено переключение на \"([^\"]*)\" вкладку$")
+    public void switchToTheTab(Integer number) {
+        ArrayList<String> tabs = new ArrayList<>(getWebDriver().getWindowHandles());
+        getWebDriver().switchTo().window(tabs.get(number-1));
     }
 }

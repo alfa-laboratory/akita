@@ -26,10 +26,13 @@ import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WebPageStepsTest {
@@ -70,7 +73,7 @@ public class WebPageStepsTest {
 
     @Test
     void navigateToUrl() {
-        assertThat(WebDriverRunner.getWebDriver().getTitle(), equalTo("Title"));
+        assertThat(getWebDriver().getTitle(), equalTo("Title"));
     }
 
     @Test
@@ -243,5 +246,13 @@ public class WebPageStepsTest {
         wpis.switchToTheTabWithTitle("Page with redirection");
         mbs.closeCurrentTab();
         wpis.switchToTheTabWithTitle("Title");
+    }
+
+    @Test
+    void switchToTheTab() {
+        executeJavaScript("window.open(\"RedirectionPage.html\")");
+        wpis.switchToTheTab(2);
+        int tabIndex = new ArrayList<>(getWebDriver().getWindowHandles()).indexOf(getWebDriver().getWindowHandle());
+        assertEquals(2, tabIndex + 1);
     }
 }
