@@ -249,7 +249,7 @@ public class WebPageStepsTest {
     }
 
     @Test
-    void switchToTheTab() {
+    void testSwitchToTheTab() {
         executeJavaScript("window.open(\"RedirectionPage.html\")");
         wpis.switchToTheTab(2);
         int tabIndex = new ArrayList<>(getWebDriver().getWindowHandles()).indexOf(getWebDriver().getWindowHandle());

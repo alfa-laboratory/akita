@@ -228,7 +228,11 @@ public class RoundUpSteps extends BaseMethods {
      */
     @Тогда("^в переменной \"([^\"]*)\" содержится (\\d+) символов$")
     public void checkInVariableContainsCharacters(String variableName, int numbersCount) {
-        assertThat("Количество символов в поле " + akitaScenario.getVar(variableName).toString().length() + "должно быть " + numbersCount,
-                akitaScenario.getVar(variableName).toString().length(), equalTo(numbersCount));
+        String reason = String.format(
+                "Количество символов в поле %s должно быть %d",
+                akitaScenario.getVar(variableName).toString(),
+                numbersCount
+        );
+        assertThat(reason, akitaScenario.getVar(variableName).toString().length(), equalTo(numbersCount));
     }
 }

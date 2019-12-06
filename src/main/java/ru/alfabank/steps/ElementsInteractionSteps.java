@@ -100,7 +100,6 @@ public class ElementsInteractionSteps extends BaseMethods {
         clearField(fieldName);
         valueInput.setValue(actualdate.format(formatter));
     }
-
     /**
      * Проверяется, что поле содержит дату
      * Дата преобразуется из значения "сегодня", "вчера", "завтра", "месяц назад", "3 месяца назад", "год назад", "месяц вперед", "3 месяца вперед", "год вперед"
