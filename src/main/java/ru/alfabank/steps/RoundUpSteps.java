@@ -227,6 +227,7 @@ public class RoundUpSteps extends BaseMethods {
      * Проверка что в переменной содержится ожидаемое количество символов
      */
     @Тогда("^в переменной \"([^\"]*)\" содержится (\\d+) символов$")
+    @Then("the variable \"([^\"]*)\" contains (\\d+) characters")
     public void checkInVariableContainsCharacters(String variableName, int numbersCount) {
         String reason = String.format(
                 "Количество символов в поле %s должно быть %d",

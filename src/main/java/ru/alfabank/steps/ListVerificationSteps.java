@@ -194,6 +194,7 @@ public class ListVerificationSteps extends BaseMethods {
      * Производится проход по списку и проверятся текст на соответствие формату регулярного выражения
      */
     @Тогда("^элементы списка \"([^\"]*)\" удовлетворяют регулярному выражению \"(.*)\"")
+    @When("^list items \"([^\"]*)\" satisfy regular expression \"(.*)\"")
     public void checkListMatchesRegex(String listName, String pattern) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()

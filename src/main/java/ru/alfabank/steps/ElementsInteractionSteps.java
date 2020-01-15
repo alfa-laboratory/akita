@@ -93,6 +93,7 @@ public class ElementsInteractionSteps extends BaseMethods {
      * Дата преобразуется из значения "сегодня", "вчера", "завтра", "месяц назад", "3 месяца назад", "год назад", "месяц вперед", "3 месяца вперед", "год вперед"
      */
     @И("^в поле \"([^\"]*)\" введено и преобразовано в дату значение \"([^\"]*)\"$")
+    @And("^in the field \"([^\"]*)\" the value is entered and converted to a date \"([^\"]*)\"$")
     public void enterDateInField(String fieldName, String expectedDate) {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -105,6 +106,7 @@ public class ElementsInteractionSteps extends BaseMethods {
      * Дата преобразуется из значения "сегодня", "вчера", "завтра", "месяц назад", "3 месяца назад", "год назад", "месяц вперед", "3 месяца вперед", "год вперед"
      */
     @И("^(?:поле|элемент) \"([^\"]*)\" содержит дату \"(.*)\"$")
+    @And("^(?:field|element) \"([^\"]*)\" contains date \"(.*)\"$")
     public void checkDateInField(String elementName, String expectedDate) {
         expectedDate = getPropertyOrStringVariableOrValue(expectedDate);
         LocalDate actualdate = convertStringDateToValues(expectedDate);

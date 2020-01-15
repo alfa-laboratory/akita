@@ -197,6 +197,7 @@ public class WebPageInteractionSteps extends BaseMethods {
      *  Производится переключение на вкладку с номером
      */
     @Когда("^выполнено переключение на \"([^\"]*)\" вкладку$")
+    @When("^switched to a tab \"([^\"]*)\"$")
     public void switchToTheTab(Integer number) {
         ArrayList<String> tabs = new ArrayList<>(getWebDriver().getWindowHandles());
         getWebDriver().switchTo().window(tabs.get(number-1));
