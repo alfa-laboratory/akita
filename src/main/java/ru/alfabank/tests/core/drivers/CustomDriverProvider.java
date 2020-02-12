@@ -170,6 +170,8 @@ public class CustomDriverProvider implements WebDriverProvider {
         Boolean isSelenoidRun = loadSystemPropertyOrDefault(SELENOID, true);
         if (isSelenoidRun) {
             capabilities.setCapability("enableVNC", true);
+            capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
+                    loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
         }
         try {
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
