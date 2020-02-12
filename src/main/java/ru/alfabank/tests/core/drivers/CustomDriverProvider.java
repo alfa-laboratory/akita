@@ -38,6 +38,8 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.safari.SafariOptions;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
@@ -134,6 +136,10 @@ public class CustomDriverProvider implements WebDriverProvider {
 
         if (OPERA.equalsIgnoreCase(expectedBrowser)) {
             return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(capabilities) : getRemoteDriver(getOperaRemoteDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+        }
+
+        if (SAFARI.equalsIgnoreCase(expectedBrowser)) {
+            return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver(capabilities) : getRemoteDriver(getSafariDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
         }
 
         if (INTERNET_EXPLORER.equalsIgnoreCase(expectedBrowser)) {
@@ -304,6 +310,19 @@ public class CustomDriverProvider implements WebDriverProvider {
         return edgeOptions;
     }
 
+    /**
+     * Задает options для запуска Safari драйвера
+     * options можно передавать, как системную переменную, например -Doptions=--load-extension=my-custom-extension
+     *
+     * @return SafariOptions
+     */
+    private SafariOptions getSafariDriverOptions(DesiredCapabilities capabilities) {
+        log.info("---------------Safari Driver---------------------");
+        SafariOptions safariOptions = new SafariOptions();
+        safariOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        safariOptions.merge(capabilities);
+        return safariOptions;
+    }
 
     /**
      * Создает экземпляр ChromeDriver с переданными capabilities и window dimensions
@@ -353,6 +372,16 @@ public class CustomDriverProvider implements WebDriverProvider {
     private WebDriver createEdgeDriver(DesiredCapabilities capabilities) {
         EdgeDriver edgeDriver = new EdgeDriver(getEdgeDriverOptions(capabilities));
         return edgeDriver;
+    }
+
+    /**
+     * Создает экземпляр SafariDriver с переданными capabilities и window dimensions
+     *
+     * @return WebDriver
+     */
+    private WebDriver createSafariDriver(DesiredCapabilities capabilities) {
+        SafariDriver safariDriver = new SafariDriver(getSafariDriverOptions(capabilities));
+        return safariDriver;
     }
 
     /**
