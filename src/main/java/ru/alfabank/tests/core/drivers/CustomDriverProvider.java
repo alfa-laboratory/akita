@@ -126,28 +126,20 @@ public class CustomDriverProvider implements WebDriverProvider {
         switch (expectedBrowser.toLowerCase()) {
             case (FIREFOX):
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver(capabilities) : getRemoteDriver(getFirefoxDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
             case (MOBILE_DRIVER):
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions(capabilities)) : getRemoteDriver(getMobileChromeOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
             case (OPERA):
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(capabilities) : getRemoteDriver(getOperaRemoteDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
             case (SAFARI):
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver(capabilities) : getRemoteDriver(getSafariDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
             case (INTERNET_EXPLORER):
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
             case (IE):
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
             case (EDGE):
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? createEdgeDriver(capabilities) : getRemoteDriver(getEdgeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
             default:
                 return LOCAL.equalsIgnoreCase(remoteUrl) ? createChromeDriver(capabilities) : getRemoteDriver(getChromeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
-            break;
 
         }
     }
