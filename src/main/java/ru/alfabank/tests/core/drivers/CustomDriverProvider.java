@@ -202,6 +202,7 @@ public class CustomDriverProvider implements WebDriverProvider {
             "test-type", "no-default-browser-check", "ignore-certificate-errors");
 
         Map<String, String> mobileEmulation = new HashMap<>();
+        chromeOptions.setHeadless(getHeadless());
         mobileEmulation.put("deviceName", mobileDeviceName);
         chromeOptions.setExperimentalOption("mobileEmulation", mobileEmulation);
         chromeOptions.merge(capabilities);
