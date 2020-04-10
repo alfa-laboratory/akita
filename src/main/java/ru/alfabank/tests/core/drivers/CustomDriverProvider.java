@@ -12,6 +12,7 @@
  */
 package ru.alfabank.tests.core.drivers;
 
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverProvider;
 import lombok.extern.slf4j.Slf4j;
 import net.lightbody.bmp.BrowserMobProxy;
@@ -115,6 +116,8 @@ public class CustomDriverProvider implements WebDriverProvider {
 
     @Override
     public WebDriver createDriver(DesiredCapabilities capabilities) {
+        Configuration.browserSize = String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
+                loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
         String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, CHROME);
         String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, LOCAL);
         BlackList blackList = new BlackList();
@@ -168,7 +171,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         if (isSelenoidRun) {
             capabilities.setCapability("enableVNC", true);
             capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
-                loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+                    loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
         }
         try {
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
@@ -330,7 +333,6 @@ public class CustomDriverProvider implements WebDriverProvider {
      */
     private WebDriver createChromeDriver(DesiredCapabilities capabilities) {
         ChromeDriver chromeDriver = new ChromeDriver(getChromeDriverOptions(capabilities));
-        chromeDriver.manage().window().setSize(setDimension());
         return chromeDriver;
     }
 
@@ -341,7 +343,6 @@ public class CustomDriverProvider implements WebDriverProvider {
      */
     private WebDriver createFirefoxDriver(DesiredCapabilities capabilities) {
         FirefoxDriver firefoxDriver = new FirefoxDriver(getFirefoxDriverOptions(capabilities));
-        firefoxDriver.manage().window().setSize(setDimension());
         return firefoxDriver;
     }
 
@@ -352,7 +353,6 @@ public class CustomDriverProvider implements WebDriverProvider {
      */
     private WebDriver createOperaDriver(DesiredCapabilities capabilities) {
         OperaDriver operaDriver = new OperaDriver(getOperaDriverOptions(capabilities));
-        operaDriver.manage().window().setSize(setDimension());
         return operaDriver;
     }
 
@@ -363,7 +363,6 @@ public class CustomDriverProvider implements WebDriverProvider {
      */
     private WebDriver createIEDriver(DesiredCapabilities capabilities) {
         InternetExplorerDriver internetExplorerDriver = new InternetExplorerDriver(getIEDriverOptions(capabilities));
-        internetExplorerDriver.manage().window().setSize(setDimension());
         return internetExplorerDriver;
     }
 
@@ -374,7 +373,6 @@ public class CustomDriverProvider implements WebDriverProvider {
      */
     private WebDriver createEdgeDriver(DesiredCapabilities capabilities) {
         EdgeDriver edgeDriver = new EdgeDriver(getEdgeDriverOptions(capabilities));
-        edgeDriver.manage().window().setSize(setDimension());
         return edgeDriver;
     }
 
@@ -385,20 +383,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      */
     private WebDriver createSafariDriver(DesiredCapabilities capabilities) {
         SafariDriver safariDriver = new SafariDriver(getSafariDriverOptions(capabilities));
-        safariDriver.manage().window().setSize(setDimension());
         return safariDriver;
-    }
-
-    /**
-     * Задает настройки разрешения окна браузера
-     * Пользовательские значения ширины и высоты окна браузера можно задать, обозначив параметры
-     * -Dwidth и -Dheight при старте тестов.
-     * Например: ./gradlew test -Dbrowser=chrome -Dwidth=1200 -Dheight=800
-     * Если пользовательские значения ширины и высоты окна браузера не указаны, используются дефолтные 1920x1080
-     */
-    private Dimension setDimension() {
-        return new Dimension(loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
-            loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
     }
 
     /**
