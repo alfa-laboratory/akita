@@ -166,13 +166,9 @@ public class ElementsVerificationSteps extends BaseMethods {
      */
     @Тогда("^(?:поля|элементы) содержат значения из таблицы")
     @Then("^(?:fields|elements) contain values from the DataTable")
-    public void testActualValuesContainsSubstrings(DataTable arg) {
+    public void actualValuesContainsSubstrings(DataTable arg) {
         List<Map<String, String>> table = arg.asMaps(String.class, String.class);
-        for (int i = 0; i < table.size(); i++) {
-            String elementName = table.get(i).get("elementName");
-            String value = table.get(i).get("value");
-            testActualValueContainsSubstring(elementName, value);
-        }
+        table.stream().forEach(element -> testActualValueContainsSubstring(element.get("elementName"), element.get("value")));
     }
 
     /**

@@ -68,11 +68,7 @@ public class InputInteractionSteps extends BaseMethods {
     @When("^into the fields have been typed values from the DataTable")
     public void setFieldsValues(DataTable arg) {
         List<Map<String, String>> table = arg.asMaps(String.class, String.class);
-        for (int i = 0; i < table.size(); i++) {
-            String elementName = table.get(i).get("inputName");
-            String value = table.get(i).get("value");
-            setFieldValue(elementName, value);
-        }
+        table.stream().forEach(element -> setFieldValue(element.get("inputName"), element.get("value")));
     }
 
     /**
