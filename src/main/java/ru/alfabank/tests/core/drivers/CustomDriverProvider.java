@@ -40,6 +40,7 @@ import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
@@ -83,6 +84,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static String TRUST_ALL_SERVERS = "trustAllServers";
     public final static String NEW_HAR = "har";
     public final static String SELENOID = "selenoid";
+    private final static String SELENOID_SESSION_NAME = "selenoidSessionName";
     public final static int DEFAULT_WIDTH = 1920;
     public final static int DEFAULT_HEIGHT = 1080;
 
@@ -161,6 +163,10 @@ public class CustomDriverProvider implements WebDriverProvider {
             capabilities.setCapability("enableVNC", true);
             capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
                     loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+            String sessionName = loadSystemPropertyOrDefault(SELENOID_SESSION_NAME, "");
+            if (!sessionName.isEmpty()) {
+                capabilities.setCapability("name", String.format("%s %s", sessionName, AkitaScenario.getInstance().getScenario().getName()));
+            }
         }
         try {
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
