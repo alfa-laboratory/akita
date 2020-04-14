@@ -59,8 +59,10 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * Провайдер драйверов, который позволяет запускать тесты локально или удаленно, используя Selenoid
  * Параметры запуска можно задавать, как системные переменные.
  *
- * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера:
- * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800 -Doptions=--load-extension=my-custom-extension
+ * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера,
+ * при удаленном запуске имя сессии в Selenoid UI:
+ * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800
+ * -DselenoidSessionName=MyProjectName -Doptions=--load-extension=my-custom-extension
  * Если параметр remoteUrl не указан - тесты будут запущены локально в заданном браузере последней версии.
  * Все необходимые опции можно прописывать в переменную options, разделяя их пробелом.
  * Если указан параметр remoteUrl и browser, но версия браузера не указана,
@@ -68,6 +70,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * Если браузер не указан - по умолчанию будет запущен chrome
  * По умолчанию размер окна браузера при remote запуске равен 1920x1080
  * Предусмотрена возможность запуска в режиме мобильного браузера (-Dbrowser=mobile)
+ * Если selenoidSessionName не указан - имя сессии в Selenoid UI отображаться не будет
  * С указанием устройства, на котором будем эмулироваться запуск мобильного chrome браузера (-Ddevice=iPhone 6)
  * Если указан параметр headless, то браузеры firefox и chrome будут запускаться без GUI (-Dheadless=true)
  */
