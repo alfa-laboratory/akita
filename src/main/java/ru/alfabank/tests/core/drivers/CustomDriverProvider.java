@@ -40,6 +40,7 @@ import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
+import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
@@ -58,8 +59,10 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * Провайдер драйверов, который позволяет запускать тесты локально или удаленно, используя Selenoid
  * Параметры запуска можно задавать, как системные переменные.
  *
- * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера:
- * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800 -Doptions=--load-extension=my-custom-extension
+ * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера,
+ * при удаленном запуске имя сессии в Selenoid UI:
+ * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800
+ * -DselenoidSessionName=MyProjectName -Doptions=--load-extension=my-custom-extension
  * Если параметр remoteUrl не указан - тесты будут запущены локально в заданном браузере последней версии.
  * Все необходимые опции можно прописывать в переменную options, разделяя их пробелом.
  * Если указан параметр remoteUrl и browser, но версия браузера не указана,
@@ -67,6 +70,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  * Если браузер не указан - по умолчанию будет запущен chrome
  * По умолчанию размер окна браузера при remote запуске равен 1920x1080
  * Предусмотрена возможность запуска в режиме мобильного браузера (-Dbrowser=mobile)
+ * Если selenoidSessionName не указан - имя сессии в Selenoid UI отображаться не будет
  * С указанием устройства, на котором будем эмулироваться запуск мобильного chrome браузера (-Ddevice=iPhone 6)
  * Если указан параметр headless, то браузеры firefox и chrome будут запускаться без GUI (-Dheadless=true)
  */
@@ -83,6 +87,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static String TRUST_ALL_SERVERS = "trustAllServers";
     public final static String NEW_HAR = "har";
     public final static String SELENOID = "selenoid";
+    private final static String SELENOID_SESSION_NAME = "selenoidSessionName";
     public final static int DEFAULT_WIDTH = 1920;
     public final static int DEFAULT_HEIGHT = 1080;
 
@@ -161,6 +166,10 @@ public class CustomDriverProvider implements WebDriverProvider {
             capabilities.setCapability("enableVNC", true);
             capabilities.setCapability("screenResolution", String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
                     loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT)));
+            String sessionName = loadSystemPropertyOrDefault(SELENOID_SESSION_NAME, "");
+            if (!sessionName.isEmpty()) {
+                capabilities.setCapability("name", String.format("%s %s", sessionName, AkitaScenario.getInstance().getScenario().getName()));
+            }
         }
         try {
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
