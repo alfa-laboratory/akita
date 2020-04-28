@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.$$;
-import static com.codeborne.selenide.WebDriverRunner.isIE;
 import static com.codeborne.selenide.WebDriverRunner.url;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
