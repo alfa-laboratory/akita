@@ -18,6 +18,8 @@ import com.galenframework.reports.model.LayoutReport;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider;
+import com.unboundid.util.Base64;
+import cucumber.api.java.ru.Когда;
 import io.restassured.http.Method;
 import io.restassured.internal.support.Prettifier;
 import io.restassured.response.Response;
@@ -26,12 +28,19 @@ import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.hamcrest.text.IsEqualIgnoringCase;
 import org.openqa.selenium.Keys;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
+import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -39,6 +48,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codeborne.selenide.Selenide.sleep;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.isIE;
 import static io.restassured.RestAssured.given;
@@ -327,5 +337,33 @@ public class BaseMethods {
         String currentTitle = getWebDriver().getTitle().trim();
         assertThat(String.format("Заголовок страницы не совпадает с ожидаемым значением. Ожидаемый результат: %s, текущий результат: %s", pageTitleName, currentTitle),
                 pageTitleName, IsEqualIgnoringCase.equalToIgnoringCase(currentTitle));
+    }
+
+    @Когда("сделан скриншот с именем \"([^\"]*)\"$")
+    public void saveScreenshotWithName(String scrinShotName) throws IOException, ParseException {
+        sleep(5000);
+        String scrinShot = scrinShotName+".jpg";
+        ImageIO.write(grabScreen(), "jpg", new File(getHomeDir(), scrinShot));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(1000);
+        BufferedImage image = ImageIO.read(new File(getHomeDir(), scrinShot));
+        ImageIO.write(image, "jpg", baos);
+        baos.flush();
+        String base64String = Base64.encode(baos.toByteArray());
+        baos.close();
+        byte[] resByteArray = Base64.decode(base64String);
+        AkitaScenario.getInstance().getScenario().embed(resByteArray, "image/jpg");
+    }
+
+    private static File getHomeDir() {
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        return fsv.getHomeDirectory();
+    }
+    private static BufferedImage grabScreen() {
+        try {
+            return new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize())) ;
+        } catch (SecurityException e) {
+        } catch (AWTException e) {
+        }
+        return null;
     }
 }
