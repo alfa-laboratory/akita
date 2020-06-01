@@ -39,6 +39,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codeborne.selenide.Condition.disabled;
+import static com.codeborne.selenide.Condition.readonly;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.isIE;
 import static io.restassured.RestAssured.given;
@@ -311,7 +313,7 @@ public class BaseMethods {
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(nameOfField);
         Keys removeKey = isIE() ? Keys.BACK_SPACE : Keys.DELETE;
         do {
-            valueInput.doubleClick().sendKeys(removeKey);
+            valueInput.shouldNotBe(readonly, disabled).doubleClick().sendKeys(removeKey);
         } while (valueInput.getValue().length() != 0);
     }
 
