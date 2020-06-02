@@ -13,6 +13,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.ex.ElementShouldNot;
 import cucumber.api.Scenario;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -110,6 +111,11 @@ public class InputFieldStepsTest {
                         .getPage("AkitaPageMock")
                         .getAnyElementText("TextField"),
                 equalTo(""));
+    }
+
+    @Test
+    void cleanNotEditableField() {
+        assertThrows(ElementShouldNot.class, () -> iis.cleanField("DisabledField"));
     }
 
     @Test
