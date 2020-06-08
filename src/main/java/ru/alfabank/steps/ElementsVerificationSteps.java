@@ -14,10 +14,14 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.DataTable;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.codeborne.selenide.Condition.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -153,6 +157,18 @@ public class ElementsVerificationSteps extends BaseMethods {
         expectedValue = getPropertyOrStringVariableOrValue(expectedValue);
         String actualValue = akitaScenario.getCurrentPage().getAnyElementText(elementName);
         assertThat(String.format("Поле [%s] не содержит значение [%s]", elementName, expectedValue), actualValue, containsString(expectedValue));
+    }
+
+    /**
+     * Проверка, что значение в поле содержит значение (в приоритете: из property, из переменной сценария, значение аргумента),
+     * указанное в таблице
+     * Поля и значения задаются в описании шага, в таблице вида | elementName | value |
+     */
+    @Тогда("^(?:поля|элементы) содержат значения из таблицы")
+    @Then("^(?:fields|elements) contain values from the DataTable")
+    public void actualValuesContainsSubstrings(DataTable arg) {
+        List<Map<String, String>> table = arg.asMaps(String.class, String.class);
+        table.stream().forEach(element -> testActualValueContainsSubstring(element.get("elementName"), element.get("value")));
     }
 
     /**
