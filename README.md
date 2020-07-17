@@ -28,7 +28,7 @@ BDD библиотека шагов для тестирования на осн�
 application.properties
 =======================
 Для указания дополнительных параметров или тестовых данных создайте в своем проекте файл application.properties
-в main/java/resources
+в src/main/resources
 
 Работа со страницами
 ====================
@@ -67,6 +67,7 @@ application.properties
 ```
 
 Инициализация страницы
+======================
 Страница инициализируется каждый раз, когда вызываются методы initialize(<Имя класса страницы>.class)
 
 Пример инициализации страницы "Депозиты":
@@ -118,7 +119,7 @@ public HeaderBlock header;
 
 Screenshots
 ============================
-Реализован кастомный StepFormatter. При подключении его к проеку с тестами, становится достуна опция снятия скриншотов после желаемого или каждого шага. ```@CucumberOptions(format = {"pretty", "ru.alfabank.tests.core.formatters.StepFormatter"})```
+Реализован кастомный StepFormatter. При подключении его к проекту с тестами, становится достуна опция снятия скриншотов после желаемого или каждого шага. ```@CucumberOptions(format = {"pretty", "ru.alfabank.tests.core.formatters.StepFormatter"})```
 
 
 Аннотация @Screenshot, указанная над кастомным тестовым шагом, позволит добавить скриншот после прохождения этого шага в отчет.
@@ -187,7 +188,7 @@ akitaScenario.write("Текущий URL = " + currentUrl + " \nОжидаемы�
 Blacklist
 =========================================
 Иногда есть необходимость добавить определенные ресурсы в черный список.
-Для этого была реализована возможность создать файл без расширения ```blacklist``` . Его необходимо положить в ```src/main/java/resources/```
+Для этого была реализована возможность создать файл без расширения ```blacklist``` . Его необходимо положить в ```src/main/resources/```
 
 ```blacklist``` предназначен для хранения нежелательных, указанных пользователем ресурсов, которые будут добавлены в черный список при запуске тестов через ```CustomDriverProvider```.
 
@@ -204,7 +205,7 @@ Proxy
 =========================================
 Реализована возможность включать proxy-сервер во время запуска тестов (а именно, BrowserMobProxy)
 
-Для этого при старте тестов необходима указать параметр ```-Dproxy=true```
+Для этого при старте тестов необходимо указать параметр ```-Dproxy=true```
 
 Если необходимо слушать определенный har, его можно задать в файле application.properties ```har=some.test.har```
 В application.properties также можно указывать дополнительные capabilities для режима proxy, например
@@ -215,7 +216,7 @@ acceptSslCerts=true
 javascriptEnabled=true
 ```
 
-Краткое описание главных классов
+Краткое описание основных классов
 =================================
 
 ```ru.alfabank.alfatest.cucumber.api.AkitaEnvironment```
@@ -254,18 +255,20 @@ https://github.com/alfa-laboratory/akita-testing-template
 
 Используемые зависимости:
 --------------------------
-> nebula-release-plugin - Apache License Version 2.0
-> coveralls-gradle-plugin - The MIT License (MIT)
-> com.codeborne.selenide - The MIT License (MIT)
-> io.rest-assured.rest-assured - Apache License Version 2.0
-> com.google.inject.guice - Apache License Version 2.0
-> org.mockito.mockito-core - The MIT License
-> com.github.tomakehurst:wiremock - Apache License Version 2.0
->org.hamcrest.hamcrest-all - BSD License
->org.codehaus.groovy - Apache License Version 2.0
->JUnit - Eclipse Public License
->org.slf4j.slf4j-simple - The MIT License (MIT)
->org.projectlombok.lombok - The MIT License (MIT)
->info.cukes.cucumber-java - The MIT License (MIT)
->info.cukes.cucumber-core - The MIT License (MIT)
->org.reflections.reflections
+```
+nebula-release-plugin - Apache License Version 2.0
+coveralls-gradle-plugin - The MIT License (MIT)
+com.codeborne.selenide - The MIT License (MIT)
+io.rest-assured.rest-assured - Apache License Version 2.0
+com.google.inject.guice - Apache License Version 2.0
+org.mockito.mockito-core - The MIT License
+com.github.tomakehurst:wiremock - Apache License Version 2.0
+org.hamcrest.hamcrest-all - BSD License
+org.codehaus.groovy - Apache License Version 2.0
+JUnit - Eclipse Public License
+org.slf4j.slf4j-simple - The MIT License (MIT)
+org.projectlombok.lombok - The MIT License (MIT)
+info.cukes.cucumber-java - The MIT License (MIT)
+info.cukes.cucumber-core - The MIT License (MIT)
+org.reflections.reflections
+```
