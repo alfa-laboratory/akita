@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.codeborne.selenide.Selectors.byXpath;
 import static com.codeborne.selenide.Selenide.$$;
@@ -194,5 +195,20 @@ public class ListVerificationSteps extends BaseMethods {
                 hasSize(expectedList.size()));
         assertThat(String.format("Список со страницы %s: %s не совпадает с ожидаемым списком из переменной %s:%s", listName, actualList, listVariable, expectedList)
                 , actualList, containsInAnyOrder(expectedList.toArray()));
+    }
+
+    /**
+     * Производится проход по списку и проверятся текст на соответствие формату регулярного выражения
+     */
+    @Тогда("^элементы списка \"([^\"]*)\" удовлетворяют регулярному выражению \"(.*)\"")
+    @When("^list items \"([^\"]*)\" satisfy regular expression \"(.*)\"")
+    public void checkListMatchesRegex(String listName, String pattern) {
+        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
+        List<String> elementsListText = listOfElementsFromPage.stream()
+                .map(element -> element.getText().trim())
+                .collect(toList());
+        Pattern r = Pattern.compile(pattern);
+        assertTrue(elementsListText.stream().allMatch(item -> r.matcher(item).matches()),
+                String.format("Элемены списка %s: [%s] содержат не только символы [%s] ", listName, elementsListText, pattern));
     }
 }

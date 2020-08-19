@@ -187,4 +187,19 @@ public class RoundUpStepsTest {
     void expressionExpressionPositive() {
         rus.expressionExpression("\"test\".equals(\"test\")");
     }
+
+    @Test
+    void checkInVariableContainsCharactersPositive() {
+        String varName = "testName";
+        String varValue = "testValue";
+        akitaScenario.setVar(varName, varValue);
+        rus.checkInVariableContainsCharacters(varName, varValue.length());
+    }
+    @Test
+    public void checkInVariableContainsCharactersNegative() {
+        String varName = "testName";
+        String varValue = "testValue";
+        akitaScenario.setVar(varName,varValue);
+        assertThrows(AssertionError.class, () -> rus.checkInVariableContainsCharacters(varName, 5));
+    }
 }
