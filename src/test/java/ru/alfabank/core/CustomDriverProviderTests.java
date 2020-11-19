@@ -43,4 +43,57 @@ public class CustomDriverProviderTests {
         assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.firefox.FirefoxDriver"));
         currentDriver.quit();
     }
+
+    @Ignore
+    @Test
+    public void createOperaDriverTest() {
+        System.setProperty("browser", "opera");
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.opera.OperaDriver"));
+        currentDriver.quit();
+    }
+
+    @Ignore
+    @Test
+    public void createEdgeDriverTest() {
+        System.setProperty("browser", "Edge");
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.edge.EdgeDriver"));
+        currentDriver.quit();
+    }
+
+    @Ignore
+    @Test
+    public void createIEDriverTest() {
+        System.setProperty("browser", "internet explorer");
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.ie.InternetExplorerDriver"));
+        currentDriver.quit();
+    }
+
+    @Test
+    public void createMobileDriverTest() {
+        System.setProperty("browser", "mobile");
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.chrome.ChromeDriver"));
+        currentDriver.quit();
+    }
+
+    @Test
+    public void createDefaultDriverTest() {
+        System.setProperty("browser", "nonexistent");
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.chrome.ChromeDriver"));
+        currentDriver.quit();
+    }
 }
