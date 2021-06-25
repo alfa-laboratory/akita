@@ -34,7 +34,7 @@ import java.util.Properties;
  */
 @Slf4j
 public class PropertyLoader {
-    private static final String PROPERTIES_FILE = "/application.properties";
+    private static String propertiesFile = "/application.properties";
     private static final Properties PROPERTIES = getPropertiesInstance();
     private static final Properties PROFILE_PROPERTIES = getProfilePropertiesInstance();
 
@@ -99,9 +99,25 @@ public class PropertyLoader {
     public static String loadProperty(String propertyName) {
         String value = tryLoadProperty(propertyName);
         if (null == value) {
-            throw new IllegalArgumentException("В файле application.properties не найдено значение по ключу: " + propertyName);
+            throw new IllegalArgumentException("В файле " + propertiesFile + " не найдено значение по ключу: " + propertyName);
         }
         return value;
+    }
+
+    /**
+     * Возвращает свойство по его названию из property-файла по названию файла
+     *
+     * @param fileName     название файла из которого надо брать проперти
+     * @param propertyName название свойства
+     * @return значение свойства, в случае, если значение не найдено,
+     * будет выброшено исключение
+     */
+    public static String loadPropertyFromFile(String fileName, String propertyName) {
+        String property;
+        propertiesFile = "/" + fileName;
+        property = loadProperty(propertyName);
+        propertiesFile = "/application.properties";
+        return property;
     }
 
     /**
@@ -174,8 +190,8 @@ public class PropertyLoader {
     private static Properties getPropertiesInstance() {
         Properties instance = new Properties();
         try (
-            InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
-            InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+            InputStream resourceStream = PropertyLoader.class.getResourceAsStream(propertiesFile);
+            InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"));
         ) {
             instance.load(inputStream);
         }
@@ -234,6 +250,4 @@ public class PropertyLoader {
         AkitaScenario.getInstance().write("Значение не найдено в хранилище. Будет исользовано значение по умолчанию " + valueToFind);
         return valueToFind;
     }
-
 }
-
