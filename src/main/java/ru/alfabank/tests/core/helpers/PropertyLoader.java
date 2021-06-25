@@ -169,7 +169,7 @@ public class PropertyLoader {
      */
     public static String tryLoadProperty(String propertyName) {
         String value = null;
-        if (!Strings.isNullOrEmpty(propertyName)) {
+        if(!Strings.isNullOrEmpty(propertyName)) {
             String systemProperty = loadSystemPropertyOrDefault(propertyName, propertyName);
             if (!propertyName.equals(systemProperty)) return systemProperty;
 
@@ -190,19 +190,17 @@ public class PropertyLoader {
     private static Properties getPropertiesInstance() {
         Properties instance = new Properties();
         try (
-                InputStream resourceStream = PropertyLoader.class.getResourceAsStream(propertiesFile);
-                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"));
+            InputStream resourceStream = PropertyLoader.class.getResourceAsStream(propertiesFile);
+            InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"));
         ) {
             instance.load(inputStream);
         }
         return instance;
     }
 
-
     /**
      * Вспомогательный метод, возвращает свойства из кастомного application.properties по пути
      * из системного свойства "profile"
-     *
      * @return прочитанные свойства из кастомного файла application.properties,
      * если свойство "profile" указано,
      * иначе пустой объект
@@ -215,8 +213,8 @@ public class PropertyLoader {
             String path = Paths.get(profile).toString();
             URL url = PropertyLoader.class.getClassLoader().getResource(path);
             try (
-                    InputStream resourceStream = url.openStream();
-                    InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+                InputStream resourceStream = url.openStream();
+                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
             ) {
                 instance.load(inputStream);
             }
@@ -254,5 +252,3 @@ public class PropertyLoader {
     }
 
 }
-
-
