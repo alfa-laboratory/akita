@@ -99,7 +99,7 @@ public class PropertyLoader {
     public static String loadProperty(String propertyName) {
         String value = tryLoadProperty(propertyName);
         if (null == value) {
-            throw new IllegalArgumentException("В файле application.properties не найдено значение по ключу: " + propertyName);
+            throw new IllegalArgumentException("В файле " + propertiesFile + " не найдено значение по ключу: " + propertyName);
         }
         return value;
     }
@@ -107,14 +107,14 @@ public class PropertyLoader {
     /**
      * Возвращает свойство по его названию из property-файла по названию файла
      *
-     * @param filename     название файла из которого надо брать проперти
+     * @param fileName     название файла из которого надо брать проперти
      * @param propertyName название свойства
      * @return значение свойства, в случае, если значение не найдено,
      * будет выброшено исключение
      */
-    public static String loadPropertyFromFile(String filename, String propertyName) {
+    public static String loadPropertyFromFile(String fileName, String propertyName) {
         String property;
-        propertiesFile = "/" + filename;
+        propertiesFile = "/" + fileName;
         property = loadProperty(propertyName);
         propertiesFile = "/application.properties";
         return property;
