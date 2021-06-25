@@ -169,9 +169,9 @@ public class PropertyLoader {
      */
     public static String tryLoadProperty(String propertyName) {
         String value = null;
-        if(!Strings.isNullOrEmpty(propertyName)) {
+        if (!Strings.isNullOrEmpty(propertyName)) {
             String systemProperty = loadSystemPropertyOrDefault(propertyName, propertyName);
-            if (!propertyName.equals(systemProperty)) return systemProperty;
+            if(!propertyName.equals(systemProperty)) return systemProperty;
 
             value = PROFILE_PROPERTIES.getProperty(propertyName);
             if (null == value) {
@@ -201,6 +201,7 @@ public class PropertyLoader {
     /**
      * Вспомогательный метод, возвращает свойства из кастомного application.properties по пути
      * из системного свойства "profile"
+     *
      * @return прочитанные свойства из кастомного файла application.properties,
      * если свойство "profile" указано,
      * иначе пустой объект
@@ -225,7 +226,6 @@ public class PropertyLoader {
     /**
      * Получает значение из application.properties, файла по переданному пути, значение из хранилища переменных или как String аргумент
      * Используется для получение body.json api шагах, либо для получения script.js в ui шагах
-     *
      * @param valueToFind - ключ к значению в application.properties, путь к файлу c нужным значением, значение как String
      * @return значение как String
      */
@@ -250,5 +250,4 @@ public class PropertyLoader {
         AkitaScenario.getInstance().write("Значение не найдено в хранилище. Будет исользовано значение по умолчанию " + valueToFind);
         return valueToFind;
     }
-
 }
