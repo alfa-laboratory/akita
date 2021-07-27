@@ -47,6 +47,25 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     private static final String WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS = "8000";
 
+    /**
+     * Список всех элементов страницы
+     */
+    private Map<String, Object> namedElements;
+    /**
+     * Список элементов страницы, не помеченных аннотацией "Optional" или "Hidden"
+     */
+    private List<SelenideElement> primaryElements;
+
+    /**
+     * Список элементов страницы, помеченных аннотацией "Hidden"
+     */
+    private List<SelenideElement> hiddenElements;
+
+    /**
+     * Список списочных элементов страницы, не помеченных аннотацией "Optional" или "Hidden"
+     */
+    private List<ElementsCollection> primaryElementCollections;
+
     public AkitaPage() {
         super();
     }
@@ -181,6 +200,18 @@ public abstract class AkitaPage extends ElementsContainer {
     }
 
     /**
+     * Получения всех элементов с типом ElementsCollection, не помеченных аннотацией "Optional" или "Hidden"
+     * @return
+     */
+    public List<ElementsCollection> getPrimaryElementsCollections() {
+        if (primaryElementCollections == null) {
+            primaryElementCollections = readPrimaryElementsCollections();
+        }
+
+        return new ArrayList<>(primaryElementCollections);
+    }
+
+    /**
      * Обертка над AkitaPage.isAppeared
      * Ex: AkitaPage.appeared().doSomething();
      */
@@ -204,10 +235,18 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     protected void isAppeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
+
+        int timeoutMilliseconds = Integer.parseInt(timeout);
+
         getPrimaryElements().parallelStream().forEach(elem ->
-                elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+                elem.waitUntil(Condition.appear, timeoutMilliseconds));
+
         getHiddenElements().parallelStream().forEach(elem ->
-                elem.waitUntil(Condition.hidden, Integer.valueOf(timeout)));
+                elem.waitUntil(Condition.hidden, timeoutMilliseconds));
+
+        getPrimaryElementsCollections().parallelStream()
+                .forEach(col -> waitElementsUntil(Condition.appear, timeoutMilliseconds, col));
+
         eachForm(AkitaPage::isAppeared);
     }
 
@@ -254,14 +293,19 @@ public abstract class AkitaPage extends ElementsContainer {
     /**
      * Проверка того, что элементы, не помеченные аннотацией "Optional", отображаются,
      * а элементы, помеченные аннотацией "Hidden", скрыты.
-     * Вместо parallelStream используется stream из-за медленной работы IE
+     * Вместо parallelStream используется обычный Iterable.forEach() из-за медленной работы IE
      */
     protected void isAppearedInIe() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
-        getPrimaryElements().stream().forEach(elem ->
-                elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
-        getHiddenElements().stream().forEach(elem ->
-                elem.waitUntil(Condition.hidden, Integer.valueOf(timeout)));
+
+        int timeoutMilliseconds = Integer.parseInt(timeout);
+
+        getPrimaryElements().forEach(elem -> elem.waitUntil(Condition.appear, timeoutMilliseconds));
+
+        getHiddenElements().forEach(elem -> elem.waitUntil(Condition.hidden, timeoutMilliseconds));
+
+        getPrimaryElementsCollections().forEach(col -> waitElementsUntil(Condition.appear, timeoutMilliseconds, col));
+
         eachForm(AkitaPage::isAppearedInIe);
     }
 
@@ -339,20 +383,6 @@ public abstract class AkitaPage extends ElementsContainer {
         }
         return null;
     }
-
-    /**
-     * Список всех элементов страницы
-     */
-    private Map<String, Object> namedElements;
-    /**
-     * Список элементов страницы, не помеченных аннотацией "Optional" или "Hidden"
-     */
-    private List<SelenideElement> primaryElements;
-
-    /**
-     * Список элементов страницы, помеченных аннотацией "Hidden"
-     */
-    private List<SelenideElement> hiddenElements;
 
     @Override
     public void setSelf(SelenideElement self) {
@@ -437,6 +467,18 @@ public abstract class AkitaPage extends ElementsContainer {
                 .flatMap(v -> v instanceof List ? ((List<?>) v).stream() : Stream.of(v))
                 .map(AkitaPage::castToSelenideElement)
                 .filter(Objects::nonNull)
+                .collect(toList());
+    }
+
+    /**
+     * Поиск элементов страницы с типом ElementsCollection, не помеченных как Optional или Hidden
+     * @return
+     */
+    private List<ElementsCollection> readPrimaryElementsCollections() {
+        return Arrays.stream(getClass().getDeclaredFields())
+                .filter(f -> f.getType().equals(ElementsCollection.class))
+                .filter(f -> f.getDeclaredAnnotation(Optional.class) == null && f.getDeclaredAnnotation(Hidden.class) == null)
+                .map(f -> (ElementsCollection) Reflection.extractFieldValue(f, this))
                 .collect(toList());
     }
 
