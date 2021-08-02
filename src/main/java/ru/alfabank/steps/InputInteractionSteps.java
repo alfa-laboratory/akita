@@ -13,6 +13,7 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
+import cucumber.api.DataTable;
 import cucumber.api.java.en.When;
 import cucumber.api.java.ru.Когда;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,8 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -55,6 +58,17 @@ public class InputInteractionSteps extends BaseMethods {
     @When("^cleared field named \"([^\"]*)\"$")
     public void cleaningField(String nameOfField) {
         super.cleanField(nameOfField);
+    }
+
+    /**
+     * В группу полей устанавливаются значения (в приоритете: из property, из переменной сценария, значение аргумента).
+     * Поля и значения задаются в описании шага, в таблице вида | inputName | value |
+     */
+    @Когда("^в поля введены значения из таблицы")
+    @When("^into the fields have been typed values from the DataTable")
+    public void setFieldsValues(DataTable arg) {
+        List<Map<String, String>> table = arg.asMaps(String.class, String.class);
+        table.stream().forEach(element -> setFieldValue(element.get("inputName"), element.get("value")));
     }
 
     /**
