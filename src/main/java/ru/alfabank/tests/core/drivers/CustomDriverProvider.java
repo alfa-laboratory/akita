@@ -396,6 +396,4 @@ public class CustomDriverProvider implements WebDriverProvider {
         Boolean isHeadlessSys = Boolean.parseBoolean(System.getProperty("selenide." + HEADLESS, "false"));
         return isHeadlessApp || isHeadlessSys;
     }
-
-
 }
