@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlackList {
-    private List<BlacklistEntry> blacklistEntries = new ArrayList<>();
+    private final List<BlacklistEntry> blacklistEntries = new ArrayList<>();
 
-    private BlackListManager blackListManager = new BlackListManager("blacklist");
+    private final BlackListManager blackListManager = new BlackListManager("blacklist");
 
     public BlackList() {
         setDefaultBlacklistEntries();
@@ -39,6 +39,7 @@ public class BlackList {
 
     /**
      * очищает дефолтный сисок URL из Blacklist и задает новый Blacklist
+     *
      * @param newEntries - новый список URL для доавления в Blacklist
      */
     private void setNewBlacklistEntries(List<BlacklistEntry> newEntries) {
@@ -47,11 +48,10 @@ public class BlackList {
     }
 
     /**
-     *
      * @return - спискок URL, которые находятся в Blacklist
      */
     public List<BlacklistEntry> getBlacklistEntries() {
-        return blacklistEntries;
+        return (List<BlacklistEntry>) blacklistEntries;
     }
 
 

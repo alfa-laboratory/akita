@@ -40,11 +40,10 @@ import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByNam
 public class AkitaPageTest {
     private static AkitaPageMock akitaPageMock;
     private static AkitaPage page;
-    private static WebPageInteractionSteps wpis;
 
     @BeforeAll
     static void setup() {
-        wpis = new WebPageInteractionSteps();
+        WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         akitaPageMock = new AkitaPageMock();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -99,7 +98,7 @@ public class AkitaPageTest {
 
     @Test
     void getAnyElementsListTextsNegative() {
-        assertThrows(NullPointerException.class, () ->akitaPageMock.getAnyElementsListTexts("test"));
+        assertThrows(NullPointerException.class, () -> akitaPageMock.getAnyElementsListTexts("test"));
     }
 
     @Test

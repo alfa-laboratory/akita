@@ -28,7 +28,7 @@ import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 public class PropertyLoaderTests {
-    private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    private static final AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     @BeforeAll
     static void init() {
@@ -96,7 +96,7 @@ public class PropertyLoaderTests {
     void getValueFromMapByNameWithDot() {
         akitaScenario.setVar("user.login", "superLogin");
         String resolvedString = akitaScenario.replaceVariables("{user.login}");
-        assertEquals("superLogin", resolvedString,"успешно разрезолвилась переменная с .");
+        assertEquals("superLogin", resolvedString, "успешно разрезолвилась переменная с .");
     }
 
     @Test

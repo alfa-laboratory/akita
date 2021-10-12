@@ -14,7 +14,8 @@ package ru.alfabank.core;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ru.alfabank.tests.core.rest.RequestParam;
 import ru.alfabank.tests.core.rest.RequestParamType;
@@ -24,7 +25,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class RequestParamTests {
     private static RequestParam requestParam;
-    private static RequestParam requestParamForCompare;
 
     @BeforeAll
     static void init() {
@@ -48,7 +48,7 @@ public class RequestParamTests {
                 .value("testValue")
                 .type(RequestParamType.HEADER)
                 .build();
-        assertTrue(requestParam.equals(requestParamForCompare));
+        assertEquals(requestParam, requestParamForCompare);
     }
 
     @Test

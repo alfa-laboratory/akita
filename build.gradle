@@ -53,10 +53,11 @@ targetCompatibility = 1.8
 
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '5.2.2'
+    selenideVersion = '5.25.0'
 }
 
 dependencies {
+    implementation 'com.qaprosoft:carina-proxy:7.2.11'
     compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
@@ -64,16 +65,17 @@ dependencies {
     compile group: 'com.codeborne', name: 'selenide', version: selenideVersion
     compile group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
     compile group: 'io.cucumber', name: 'cucumber-core', version: cucumberVersion
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
+    compile group: 'net.lightbody.bmp', name: 'browsermob-proxy', version: '2.0.0'
 
-    testCompile "org.mockito:mockito-core:2.13.0"
-    testCompile "org.mockito:mockito-inline:2.13.0"
-    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
+    testCompile 'org.mockito:mockito-core:3.12.4'
+    testCompile 'org.mockito:mockito-inline:3.12.4'
+    testCompile 'com.github.tomakehurst:wiremock-standalone:2.27.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.2'
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -134,6 +136,8 @@ test {
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=chrome"
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
+
+    useJUnitPlatform()
 }
 
 bintrayUpload.onlyIf {

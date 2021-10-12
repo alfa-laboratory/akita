@@ -17,8 +17,6 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.SelenideElement;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.AbstractFindByBuilder;
 import org.openqa.selenium.support.FindBy;
 import ru.alfabank.alfatest.cucumber.annotations.Hidden;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
@@ -27,10 +25,12 @@ import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$$;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
@@ -76,8 +76,8 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение списка из элементов блока со страницы по имени (аннотированного "Name")
      */
     public List<SelenideElement> getBlockElements(String blockName) {
-        return getBlock(blockName).namedElements.entrySet().stream()
-                .map(x -> ((SelenideElement) x.getValue())).collect(toList());
+        return getBlock(blockName).namedElements.values().stream()
+                .map(o -> ((SelenideElement) o)).collect(toList());
     }
 
     /**
@@ -122,7 +122,7 @@ public abstract class AkitaPage extends ElementsContainer {
         List<SelenideElement> elementsList = getElementsList(listName);
         return elementsList.stream()
                 .map(element -> element.getTagName().equals("input")
-                        ? element.getValue().trim()
+                        ? Objects.requireNonNull(element.getValue()).trim()
                         : element.innerText().trim()
                 )
                 .collect(toList());
@@ -205,9 +205,9 @@ public abstract class AkitaPage extends ElementsContainer {
     protected void isAppeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
-                elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
+                elem.shouldNotBe(appear, Duration.ofMillis(Integer.parseInt(timeout))));
         getHiddenElements().parallelStream().forEach(elem ->
-                elem.waitUntil(Condition.hidden, Integer.valueOf(timeout)));
+                elem.shouldNotBe(appear, Duration.ofMillis(Integer.parseInt(timeout))));
         eachForm(AkitaPage::isAppeared);
     }
 
@@ -228,7 +228,7 @@ public abstract class AkitaPage extends ElementsContainer {
     protected void isDisappeared() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
-                elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
+                elem.waitWhile(exist, Integer.parseInt(timeout)));
     }
 
     /**
@@ -258,10 +258,10 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     protected void isAppearedInIe() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
-        getPrimaryElements().stream().forEach(elem ->
-                elem.waitUntil(Condition.appear, Integer.valueOf(timeout)));
-        getHiddenElements().stream().forEach(elem ->
-                elem.waitUntil(Condition.hidden, Integer.valueOf(timeout)));
+        getPrimaryElements().forEach(elem ->
+                elem.shouldNotHave(appear, Duration.ofMillis(Integer.parseInt(timeout))));
+        getHiddenElements().forEach(elem ->
+                elem.shouldNotHave(hidden, Duration.ofMillis(Integer.parseInt(timeout))));
         eachForm(AkitaPage::isAppearedInIe);
     }
 
@@ -271,8 +271,8 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     protected void isDisappearedInIe() {
         String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
-        getPrimaryElements().stream().forEach(elem ->
-                elem.waitWhile(Condition.exist, Integer.valueOf(timeout)));
+        getPrimaryElements().forEach(elem ->
+                elem.shouldNotHave(exist, Duration.ofMillis(Integer.parseInt(timeout))));
     }
 
 
@@ -354,11 +354,6 @@ public abstract class AkitaPage extends ElementsContainer {
      */
     private List<SelenideElement> hiddenElements;
 
-    @Override
-    public void setSelf(SelenideElement self) {
-        super.setSelf(self);
-        initialize();
-    }
 
     public AkitaPage initialize() {
         namedElements = readNamedElements();

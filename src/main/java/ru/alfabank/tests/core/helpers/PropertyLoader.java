@@ -22,11 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -155,7 +156,7 @@ public class PropertyLoader {
         String value = null;
         if (!Strings.isNullOrEmpty(propertyName)) {
             String systemProperty = loadSystemPropertyOrDefault(propertyName, propertyName);
-            if(!propertyName.equals(systemProperty)) return systemProperty;
+            if (!propertyName.equals(systemProperty)) return systemProperty;
 
             value = PROFILE_PROPERTIES.getProperty(propertyName);
             if (null == value) {
@@ -174,8 +175,9 @@ public class PropertyLoader {
     private static Properties getPropertiesInstance() {
         Properties instance = new Properties();
         try (
-            InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
-            InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+                InputStream resourceStream = PropertyLoader.class.getResourceAsStream(PROPERTIES_FILE);
+                InputStreamReader inputStream =
+                        new InputStreamReader(Objects.requireNonNull(resourceStream), StandardCharsets.UTF_8)
         ) {
             instance.load(inputStream);
         }
@@ -198,8 +200,8 @@ public class PropertyLoader {
             String path = Paths.get(profile).toString();
             URL url = PropertyLoader.class.getClassLoader().getResource(path);
             try (
-                InputStream resourceStream = url.openStream();
-                InputStreamReader inputStream = new InputStreamReader(resourceStream, Charset.forName("UTF-8"))
+                    InputStream resourceStream = Objects.requireNonNull(url).openStream();
+                    InputStreamReader inputStream = new InputStreamReader(resourceStream, StandardCharsets.UTF_8)
             ) {
                 instance.load(inputStream);
             }
@@ -210,6 +212,7 @@ public class PropertyLoader {
     /**
      * Получает значение из application.properties, файла по переданному пути, значение из хранилища переменных или как String аргумент
      * Используется для получение body.json api шагах, либо для получения script.js в ui шагах
+     *
      * @param valueToFind - ключ к значению в application.properties, путь к файлу c нужным значением, значение как String
      * @return значение как String
      */
@@ -223,7 +226,7 @@ public class PropertyLoader {
         try {
             Path path = Paths.get(System.getProperty("user.dir") + valueToFind);
             pathAsString = path.toString();
-            String fileValue = new String(Files.readAllBytes(path), "UTF-8");
+            String fileValue = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
             AkitaScenario.getInstance().write("Значение из файла " + valueToFind + " = " + fileValue);
             return fileValue;
         } catch (IOException | InvalidPathException e) {

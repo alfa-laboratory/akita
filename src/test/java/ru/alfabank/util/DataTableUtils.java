@@ -25,9 +25,7 @@ public class DataTableUtils {
         List<PickleRow> rows = new ArrayList<>();
         lists.forEach(list -> {
             List<PickleCell> cells = new ArrayList<>();
-            list.forEach(string -> {
-                cells.add(new PickleCell(null,string));
-            });
+            list.forEach(string -> cells.add(new PickleCell(null, string)));
             rows.add(new PickleRow(cells));
         });
         return new DataTable(new PickleTable(rows), null);

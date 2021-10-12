@@ -12,7 +12,6 @@
  */
 package ru.alfabank.steps;
 
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
@@ -20,21 +19,15 @@ import cucumber.api.java.en.When;
 import cucumber.api.java.ru.И;
 import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.support.FindBy;
-import ru.alfabank.alfatest.cucumber.annotations.Name;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.codeborne.selenide.Selectors.byXpath;
-import static com.codeborne.selenide.Selenide.$$;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.getPropertyOrValue;
 
 /**
@@ -150,8 +143,7 @@ public class ListVerificationSteps extends BaseMethods {
     @When("^list named \"([^\"]*)\" contains (\\d+) element(|s)$")
     public void listContainsNumberOfElements(String listName, int quantity) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        assertTrue(listOfElementsFromPage.size() == quantity,
-                String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()));
+        assertEquals(listOfElementsFromPage.size(), quantity, String.format("Число элементов в списке отличается от ожидаемого: %s", listOfElementsFromPage.size()));
     }
 
     /**

@@ -32,10 +32,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -268,6 +265,7 @@ public class BaseMethods {
 
     /**
      * Прикрепляет файл к текущему сценарию в cucumber отчете
+     *
      * @param fileName - название файла
      * @param mimeType - тип файла
      */
@@ -314,14 +312,14 @@ public class BaseMethods {
         Keys removeKey = isIE() ? Keys.BACK_SPACE : Keys.DELETE;
         do {
             valueInput.shouldNotBe(readonly, disabled).doubleClick().sendKeys(removeKey);
-        } while (valueInput.getValue().length() != 0);
+        } while (Objects.requireNonNull(valueInput.getValue()).length() != 0);
     }
 
     /**
      * Выдергиваем число из строки
      */
     public int getCounterFromString(String variableName) {
-        return Integer.parseInt(variableName.replaceAll("[^0-9]",""));
+        return Integer.parseInt(variableName.replaceAll("[^0-9]", ""));
     }
 
     public void checkPageTitle(String pageTitleName) {

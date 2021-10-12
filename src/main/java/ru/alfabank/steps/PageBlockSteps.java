@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 
 @Slf4j
-public class PageBlockSteps extends BaseMethods{
+public class PageBlockSteps extends BaseMethods {
 
     /**
      * На странице происходит клик по заданному элементу в блоке

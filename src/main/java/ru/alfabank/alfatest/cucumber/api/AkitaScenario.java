@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 @Slf4j
 public final class AkitaScenario {
 
-    private static AkitaScenario instance = new AkitaScenario();
+    private static final AkitaScenario instance = new AkitaScenario();
 
     /**
      * Среда прогона тестов, хранит в себе: Cucumber.Scenario,

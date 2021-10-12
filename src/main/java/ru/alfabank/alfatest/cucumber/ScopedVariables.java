@@ -13,7 +13,6 @@
 package ru.alfabank.alfatest.cucumber;
 
 import com.google.common.collect.Maps;
-import com.google.gson.JsonParser;
 import groovy.lang.GroovyShell;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
@@ -24,7 +23,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.String.format;
+import static com.google.gson.JsonParser.parseString;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
 /**
@@ -34,7 +33,7 @@ public class ScopedVariables {
 
     public static final String VARIABLE_NAME_PATTERN = "[{]([\\wа-яА-Я]+[\\wа-яА-Я.-]+[\\wа-яА-Я]+)[}]";
 
-    private Map<String, Object> variables = Maps.newHashMap();
+    private final Map<String, Object> variables = Maps.newHashMap();
 
     /**
      * Компилирует и выполняет в рантайме переданный на вход java/groovy-код.
@@ -45,11 +44,11 @@ public class ScopedVariables {
      */
     public Object evaluate(String expression) {
         GroovyShell shell = new GroovyShell();
-        variables.entrySet().forEach(e -> {
+        variables.forEach((key, value) -> {
             try {
-                shell.setVariable(e.getKey(), new BigDecimal(e.getValue().toString()));
+                shell.setVariable(key, new BigDecimal(value.toString()));
             } catch (NumberFormatException exp) {
-                shell.setVariable(e.getKey(), e.getValue());
+                shell.setVariable(key, value);
             }
         });
         return shell.evaluate(expression);
@@ -97,8 +96,8 @@ public class ScopedVariables {
         }
         if (!unresolvedVariables.isEmpty()) {
             throw new IllegalArgumentException(
-                "Значения " + unresolvedVariables +
-                " не были найдены ни в application.properties, ни в environment переменной");
+                    "Значения " + unresolvedVariables +
+                            " не были найдены ни в application.properties, ни в environment переменной");
         }
         if (newString.isEmpty()) {
             newString = inputString;
@@ -108,13 +107,14 @@ public class ScopedVariables {
 
     /**
      * Проверяет, является ли переданная в качестве аргумента строка валидным JSON
+     *
      * @param jsonInString - строка для валидации
      * @return
      */
     public static boolean isJSONValid(String jsonInString) {
         try {
-            JsonParser parser = new JsonParser();
-            parser.parse(jsonInString);
+
+            parseString(jsonInString);
         } catch (com.google.gson.JsonSyntaxException ex) {
             return false;
         }

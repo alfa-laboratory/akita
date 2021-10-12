@@ -18,10 +18,12 @@ import net.lightbody.bmp.proxy.BlacklistEntry;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,9 +34,10 @@ public class BlackListManager {
      * .*ru.fp.kaspersky-labs.com.*
      * http://google.com/ 200
      * При необходимости можно указывать статус код, по умолчанию будет присвоен 404
+     *
      * @param blacklistEntries - список ссылок и статус кодов
      */
-    private String fileName;
+    private final String fileName;
 
     public BlackListManager(String blacklist) {
         this.fileName = blacklist;
@@ -56,12 +59,11 @@ public class BlackListManager {
         ClassLoader classLoader = getClass().getClassLoader();
         byte[] file = new byte[0];
         try {
-            Path path = Paths.get(classLoader.getResource(fileName).toURI());
-            if(Files.exists(path)) {
+            Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+            if (Files.exists(path)) {
                 file = Files.readAllBytes(path);
-                return new String(file, "UTF-8");
-            }
-            else log.warn("Файла '" + fileName + "' - не существует\n");
+                return new String(file, StandardCharsets.UTF_8);
+            } else log.warn("Файла '" + fileName + "' - не существует\n");
         } catch (NullPointerException ne) {
             log.warn("Файла '" + fileName + "' - не существует\n");
         }

@@ -41,7 +41,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrP
 @Slf4j
 public class ApiSteps extends BaseMethods {
 
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    private final AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
      * Посылается http запрос по заданному урлу без параметров и BODY.

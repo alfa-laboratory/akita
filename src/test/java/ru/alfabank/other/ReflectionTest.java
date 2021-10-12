@@ -16,6 +16,7 @@ import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -38,13 +39,13 @@ public class ReflectionTest {
         MockClass mockClass = new MockClass();
         Field field = null;
         assertThrows(NullPointerException.class, () ->
-                extractFieldValue(field, mockClass));
+                extractFieldValue(Objects.requireNonNull(field), mockClass));
     }
 
     @Test
     void extractFieldValuePositive() throws NoSuchFieldException {
         MockClass mockClass = new MockClass();
-        Class reflectClass = mockClass.getClass();
+        Class<? extends MockClass> reflectClass = mockClass.getClass();
         Field field = reflectClass.getField("mockField");
         assertThat(extractFieldValue(field, mockClass), equalTo(mockClass.getMockField()));
     }

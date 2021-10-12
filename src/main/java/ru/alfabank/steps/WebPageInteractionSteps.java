@@ -171,7 +171,7 @@ public class WebPageInteractionSteps extends BaseMethods {
     }
 
     /**
-     *  Переключение на вкладку браузера с заголовком
+     * Переключение на вкладку браузера с заголовком
      */
     @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
     @When("^switched to a tab with the title \"([^\"]*)\"$")
@@ -181,7 +181,7 @@ public class WebPageInteractionSteps extends BaseMethods {
     }
 
     /**
-     *  Производится сохранение заголовка страницы в переменную
+     * Производится сохранение заголовка страницы в переменную
      */
     @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
     @And("^page's header has been saved to the \"([^\"]*)\" variable$")

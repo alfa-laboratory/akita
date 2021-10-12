@@ -50,7 +50,6 @@ public class AkitaScenarioTest {
     @BeforeEach
     void prepare() {
         Scenario scenario = new StubScenario();
-        AkitaPage akitaPageMock = mock(AkitaPage.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 

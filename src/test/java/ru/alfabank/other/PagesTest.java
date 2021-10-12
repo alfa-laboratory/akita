@@ -58,7 +58,7 @@ public class PagesTest {
     void setCurrentPageNegative() {
         pages.setCurrentPage(null);
         assertThrows(IllegalStateException.class, () -> {
-                pages.getCurrentPage();
+            pages.getCurrentPage();
         });
     }
 

@@ -29,7 +29,7 @@ import static com.codeborne.selenide.WebDriverRunner.url;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 
 /**
@@ -110,9 +110,9 @@ public class WebPageVerificationSteps extends BaseMethods {
     @Then("^read-only form has been opened$")
     public void openReadOnlyForm() {
         int inputsCount = getDisplayedElementsByCss("input").size();
-        assertTrue(inputsCount == 0, "Форма не read-only. Количество input-полей: " + inputsCount);
+        assertEquals(0, inputsCount, "Форма не read-only. Количество input-полей: " + inputsCount);
         int textareasCount = getDisplayedElementsByCss("textarea").size();
-        assertTrue(textareasCount == 0, "Форма не read-only. Количество элементов textarea: " + textareasCount);
+        assertEquals(0, textareasCount, "Форма не read-only. Количество элементов textarea: " + textareasCount);
     }
 
     private List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {

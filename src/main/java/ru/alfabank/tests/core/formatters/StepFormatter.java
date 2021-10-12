@@ -17,7 +17,6 @@ import cucumber.api.event.EventHandler;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestStepFinished;
 import cucumber.api.formatter.Formatter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -25,12 +24,9 @@ import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import ru.alfabank.alfatest.cucumber.annotations.Screenshot;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import ru.alfabank.alfatest.cucumber.api.AnnotationScanner;
-import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
@@ -63,23 +59,23 @@ public class StepFormatter implements Formatter {
      * Метод осуществляет снятие скришота и прикрепление его к cucumber отчету.
      * Скриншот снимается после шагов, помеченных аннотацией @Screenshot,
      * либо после каждого шага, если задана системная переменная takeScreenshotAfterSteps=true
-     * @param testStep - текущий шаг
      *
+     * @param testStep - текущий шаг
      */
     private void afterStep(TestStep testStep) {
         String fullMethodLocation = testStep.getCodeLocation();
         String currentMethodName = fullMethodLocation.substring(fullMethodLocation.indexOf('.') + 1, fullMethodLocation.indexOf('('));
 
         List<Method> methodsWithScreenshotAnnotation = new Reflections(new MethodAnnotationsScanner())
-            .getMethodsAnnotatedWith(Screenshot.class)
-            .stream()
-            .filter(m -> m.getName().contains(currentMethodName))
-            .collect(Collectors.toList());
+                .getMethodsAnnotatedWith(Screenshot.class)
+                .stream()
+                .filter(m -> m.getName().contains(currentMethodName))
+                .collect(Collectors.toList());
 
         boolean isScreenshotAnnotationPresent = methodsWithScreenshotAnnotation.size() > 0;
 
-        boolean isTakeScreenshotAfterStepsProperty = System.getProperty(SCREENSHOT_AFTER_STEPS) != null
-            ? Boolean.valueOf(System.getProperty(SCREENSHOT_AFTER_STEPS)) : false;
+        boolean isTakeScreenshotAfterStepsProperty =
+                System.getProperty(SCREENSHOT_AFTER_STEPS) != null && Boolean.parseBoolean(System.getProperty(SCREENSHOT_AFTER_STEPS));
 
         if (isScreenshotAnnotationPresent || isTakeScreenshotAfterStepsProperty) {
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);

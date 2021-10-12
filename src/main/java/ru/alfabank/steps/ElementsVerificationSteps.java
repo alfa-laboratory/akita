@@ -19,6 +19,8 @@ import cucumber.api.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 
+import java.util.Objects;
+
 import static com.codeborne.selenide.Condition.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -66,7 +68,7 @@ public class ElementsVerificationSteps extends BaseMethods {
     @Then("^waiting for the element named \"([^\"]*)\" to disappear$")
     public void elemDisappered(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
-                Condition.disappears, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
+                Condition.hidden, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
     }
 
     /**
@@ -128,7 +130,7 @@ public class ElementsVerificationSteps extends BaseMethods {
         expectedClassValue = getPropertyOrStringVariableOrValue(expectedClassValue);
         String currentClassValue = currentElement.getAttribute("class");
         assertThat(String.format("Элемент [%s] не содержит класс со значением [%s]", elementName, expectedClassValue)
-                , currentClassValue.toLowerCase(), containsString(expectedClassValue.toLowerCase()));
+                , Objects.requireNonNull(currentClassValue).toLowerCase(), containsString(expectedClassValue.toLowerCase()));
     }
 
     /**
@@ -139,7 +141,7 @@ public class ElementsVerificationSteps extends BaseMethods {
     public void checkElemClassNotContainsExpectedValue(String elementName, String expectedClassValue) {
         SelenideElement currentElement = akitaScenario.getCurrentPage().getElement(elementName);
         assertThat(String.format("Элемент [%s] содержит класс со значением [%s]", elementName, expectedClassValue),
-                currentElement.getAttribute("class").toLowerCase(),
+                Objects.requireNonNull(currentElement.getAttribute("class")).toLowerCase(),
                 Matchers.not(containsString(getPropertyOrStringVariableOrValue(expectedClassValue).toLowerCase())));
     }
 

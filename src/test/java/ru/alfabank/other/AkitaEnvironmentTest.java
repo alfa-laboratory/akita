@@ -29,14 +29,13 @@ import static org.hamcrest.Matchers.*;
 
 public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
-    private static WebPageInteractionSteps wpis;
 
     @BeforeAll
     static void prepare() {
 
         env = new AkitaEnvironment();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        wpis = new WebPageInteractionSteps();
+        WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         Scenario scenario = new StubScenario();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";

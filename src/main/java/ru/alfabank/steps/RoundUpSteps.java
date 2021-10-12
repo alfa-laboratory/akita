@@ -114,7 +114,7 @@ public class RoundUpSteps extends BaseMethods {
         }
     }
 
-     /**
+    /**
      * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
      * Скрипт можно передать как аргумент метода или значение из application.properties
      */
@@ -127,7 +127,6 @@ public class RoundUpSteps extends BaseMethods {
 
     /**
      * Метод осуществляет снятие скриншота и прикрепление его к cucumber отчету.
-     *
      */
     @И("^снят скриншот текущей страницы$")
     @And("^screenshot of the current page has been taken$")
@@ -194,8 +193,8 @@ public class RoundUpSteps extends BaseMethods {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull(expectedFiles, "Ошибка поиска файла");
-        assertFalse( expectedFiles.length == 0, "Файл не загрузился");
-        assertTrue(expectedFiles.length == 1,
+        assertFalse(expectedFiles.length == 0, "Файл не загрузился");
+        assertEquals(1, expectedFiles.length,
                 String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName));
         deleteFiles(expectedFiles);
     }
