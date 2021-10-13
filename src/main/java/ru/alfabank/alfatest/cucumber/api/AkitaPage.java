@@ -46,6 +46,7 @@ public abstract class AkitaPage extends ElementsContainer {
      * Стандартный таймаут ожидания элементов в миллисекундах
      */
     private static final String WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS = "8000";
+    private static final Integer TIMEOUT = Integer.parseInt(loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS));
 
     public AkitaPage() {
         super();
@@ -84,6 +85,8 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение элемента блока со страницы по имени (аннотированного "Name")
      */
     public SelenideElement getBlockElement(String blockName, String elementName) {
+        AkitaPage a = getBlock(blockName);
+        Map<String,Object> b = a.namedElements;
         return ((SelenideElement) getBlock(blockName).namedElements.get(elementName));
     }
 
@@ -203,11 +206,10 @@ public abstract class AkitaPage extends ElementsContainer {
      * а элементы, помеченные аннотацией "Hidden", скрыты.
      */
     protected void isAppeared() {
-        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
-        getPrimaryElements().parallelStream().forEach(elem ->
-                elem.shouldNotBe(appear, Duration.ofMillis(Integer.parseInt(timeout))));
-        getHiddenElements().parallelStream().forEach(elem ->
-                elem.shouldNotBe(appear, Duration.ofMillis(Integer.parseInt(timeout))));
+        getPrimaryElements().forEach(elem ->
+                elem.shouldBe(appear, Duration.ofMillis(TIMEOUT)));
+        getHiddenElements().forEach(elem ->
+                elem.shouldBe(hidden, Duration.ofMillis(TIMEOUT)));
         eachForm(AkitaPage::isAppeared);
     }
 
@@ -226,9 +228,8 @@ public abstract class AkitaPage extends ElementsContainer {
      * Проверка, что все элементы страницы, не помеченные аннотацией "Optional" или "Hidden", исчезли
      */
     protected void isDisappeared() {
-        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().parallelStream().forEach(elem ->
-                elem.waitWhile(exist, Integer.parseInt(timeout)));
+                elem.shouldNotBe(exist, Duration.ofMillis(TIMEOUT)));
     }
 
     /**
@@ -257,11 +258,10 @@ public abstract class AkitaPage extends ElementsContainer {
      * Вместо parallelStream используется stream из-за медленной работы IE
      */
     protected void isAppearedInIe() {
-        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().forEach(elem ->
-                elem.shouldNotHave(appear, Duration.ofMillis(Integer.parseInt(timeout))));
+                elem.shouldBe(appear, Duration.ofMillis(TIMEOUT)));
         getHiddenElements().forEach(elem ->
-                elem.shouldNotHave(hidden, Duration.ofMillis(Integer.parseInt(timeout))));
+                elem.shouldBe(hidden, Duration.ofMillis(TIMEOUT)));
         eachForm(AkitaPage::isAppearedInIe);
     }
 
@@ -270,9 +270,8 @@ public abstract class AkitaPage extends ElementsContainer {
      * Вместо parallelStream используется stream из-за медленной работы IE
      */
     protected void isDisappearedInIe() {
-        String timeout = loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS);
         getPrimaryElements().forEach(elem ->
-                elem.shouldNotHave(exist, Duration.ofMillis(Integer.parseInt(timeout))));
+                elem.shouldNotHave(exist, Duration.ofMillis(TIMEOUT)));
     }
 
 
