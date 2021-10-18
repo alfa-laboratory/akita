@@ -30,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElementStepsTest {
 
@@ -51,8 +52,8 @@ public class ElementStepsTest {
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
         String inputFilePath2 = "src/test/resources/RedirectionPage.html";
-        String url2 = new File(inputFilePath2).getAbsolutePath();
-        akitaScenario.setVar("RedirectionPage", "file://" + url2);
+        String url2 = new File(inputFilePath2).getName();
+        akitaScenario.setVar("RedirectionPage", url2);
     }
 
     @BeforeEach
@@ -88,8 +89,8 @@ public class ElementStepsTest {
     void findElementPositive() {
         elis.findElement("LINK");
         sleep(500);
-        assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
-                equalTo(akitaScenario.getVar("RedirectionPage")));
+        assertTrue(WebDriverRunner.getWebDriver().getCurrentUrl().
+                contains(akitaScenario.getVar("RedirectionPage").toString()));
     }
 
     @Test

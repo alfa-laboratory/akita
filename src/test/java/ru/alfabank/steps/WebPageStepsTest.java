@@ -26,6 +26,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
+import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,7 +43,7 @@ public class WebPageStepsTest {
 
 
     @BeforeAll
-    static void setup() {
+    static void setup() throws IOException {
         mbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -50,9 +51,7 @@ public class WebPageStepsTest {
         wpis = new WebPageInteractionSteps();
         wpvs = new WebPageVerificationSteps();
         iis = new InputInteractionSteps();
-        String inputFilePath = "src/test/resources/AkitaPageMock.html";
-        String url = new File(inputFilePath).getAbsolutePath();
-        akitaScenario.setVar("Page", "file://" + url);
+        akitaScenario.setVar("Page", "file:///C:/Projects/akita/src/test/resources/AkitaPageMock.html");
         String inputFilePath2 = "src/test/resources/RedirectionPage.html";
         String url2 = new File(inputFilePath2).getAbsolutePath();
         akitaScenario.setVar("RedirectionPage", "file://" + url2);

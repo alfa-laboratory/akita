@@ -87,7 +87,7 @@ public class ManageBrowserStepsTest {
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void setWindowSizeSimple() {
         Dimension expectedDimension = new Dimension(800, 600);
         dmbs.setBrowserWindowSize(800, 600);

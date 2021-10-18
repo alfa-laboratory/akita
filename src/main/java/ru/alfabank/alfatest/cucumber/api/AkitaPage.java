@@ -56,7 +56,7 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение блока со страницы по имени (аннотированного "Name")
      */
     public AkitaPage getBlock(String blockName) {
-        return (AkitaPage) java.util.Optional.ofNullable(namedElements.get(blockName))
+        return java.util.Optional.ofNullable(AkitaScenario.getInstance().getPage(blockName).initialize())
                 .orElseThrow(() -> new IllegalArgumentException("Блок " + blockName + " не описан на странице " + this.getClass().getName()));
     }
 
@@ -85,8 +85,6 @@ public abstract class AkitaPage extends ElementsContainer {
      * Получение элемента блока со страницы по имени (аннотированного "Name")
      */
     public SelenideElement getBlockElement(String blockName, String elementName) {
-        AkitaPage a = getBlock(blockName);
-        Map<String,Object> b = a.namedElements;
         return ((SelenideElement) getBlock(blockName).namedElements.get(elementName));
     }
 
@@ -228,7 +226,7 @@ public abstract class AkitaPage extends ElementsContainer {
      * Проверка, что все элементы страницы, не помеченные аннотацией "Optional" или "Hidden", исчезли
      */
     protected void isDisappeared() {
-        getPrimaryElements().parallelStream().forEach(elem ->
+        getPrimaryElements().forEach(elem ->
                 elem.shouldNotBe(exist, Duration.ofMillis(TIMEOUT)));
     }
 

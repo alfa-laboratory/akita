@@ -153,9 +153,9 @@ public class AkitaPageTest {
     }
 
     @Test
-    @Disabled
+  //  @Disabled
     void getButtonFromListByNamePositive() {
-        SelenideElement selenideElement = akitaPageMock.getGoodButton();
+        SelenideElement selenideElement = page.getElement("GoodButton");
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElement);
         assertThat(getButtonFromListByName(list, "GoodButton"), is(notNullValue()));

@@ -34,10 +34,10 @@ public final class Spectators {
      * @param selenideCondition Selenide.Condition
      * @param timeout           максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
      * @param selenideElements  произвольное количество selenide-элементов
-     * @see SelenideElement#shouldNotBe(Condition, Duration)
+     * @see SelenideElement#shouldBe(Condition, Duration)
      */
     public static void waitElementsUntil(Condition selenideCondition, int timeout, SelenideElement... selenideElements) {
-        Arrays.stream(selenideElements).forEach(e -> e.shouldNotBe(selenideCondition, Duration.ofMillis(timeout)));
+        Arrays.stream(selenideElements).forEach(e -> e.shouldBe(selenideCondition, Duration.ofMillis(timeout)));
     }
 
     /**
@@ -60,7 +60,7 @@ public final class Spectators {
      * @see SelenideElement#shouldNotBe(Condition, Duration)
      */
     public static void waitElementsUntil(Condition selenideCondition, int timeout, Collection<SelenideElement> selenideElements) {
-        selenideElements.forEach(e -> e.shouldNotBe(selenideCondition, Duration.ofMillis(timeout)));
+        selenideElements.forEach(e -> e.shouldBe(selenideCondition, Duration.ofMillis(timeout)));
     }
 
     private static CollectionCondition conditionToConditionCollection(Condition selenideCondition) {

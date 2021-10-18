@@ -12,7 +12,7 @@
  */
 package ru.alfabank.core;
 
-import org.junit.jupiter.api.Disabled;
+import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -25,7 +25,7 @@ public class CustomDriverProviderTests {
 
     @Test
     void createChromeDriverTest() {
-        System.setProperty("browser", "chrome");
+        Configuration.browser = "chrome";
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
         currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
@@ -34,13 +34,13 @@ public class CustomDriverProviderTests {
     }
 
     @Test
-    @Disabled
     void createFirefoxDriverTest() {
-        System.setProperty("browser", "firefox");
+        Configuration.browser = "firefox";
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
         currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
         assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.firefox.FirefoxDriver"));
         currentDriver.quit();
     }
+
 }
