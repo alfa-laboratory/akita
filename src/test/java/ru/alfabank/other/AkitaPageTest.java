@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import com.codeborne.selenide.WebDriverRunner;
 import cucumber.api.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
@@ -153,7 +152,7 @@ public class AkitaPageTest {
     }
 
     @Test
-  //  @Disabled
+        //  @Disabled
     void getButtonFromListByNamePositive() {
         SelenideElement selenideElement = page.getElement("GoodButton");
         List<SelenideElement> list = new LinkedList<>();

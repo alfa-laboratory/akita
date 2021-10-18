@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,16 +90,7 @@ public class ListInteractionSteps extends BaseMethods {
     @Когда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\"$")
     @When("^selected the (\\d+)(st|nd|rd|th) element from the \"([^\"]*)\" list$")
     public void selectElementNumberFromList(Integer elementNumber, String listName) {
-        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        SelenideElement elementToSelect;
-        int selectedElementNumber = elementNumber - 1;
-        if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
-            throw new IndexOutOfBoundsException(
-                    String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
-                            listName, elementNumber, listOfElementsFromPage.size()));
-        }
-        elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
-        elementToSelect.shouldBe(Condition.visible).click();
+        getListOfElementsFromPage(elementNumber, listName);
     }
 
     /**
@@ -121,9 +112,14 @@ public class ListInteractionSteps extends BaseMethods {
     @Тогда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\" и его значение сохранено в переменную \"([^\"]*)\"$")
     @When("^selected the (\\d+)(st|nd|rd|th) element from the \"([^\"]*)\" list and its value has been saved to the \"([^\"]*)\" variable$")
     public void selectElementNumberFromListAndSaveToVar(Integer elementNumber, String listName, String varName) {
+        SelenideElement elementToSelect = getListOfElementsFromPage(elementNumber, listName);
+        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(elementToSelect).trim());
+    }
+
+    private SelenideElement getListOfElementsFromPage(Integer elementNumber, String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement elementToSelect;
-        Integer selectedElementNumber = elementNumber - 1;
+        int selectedElementNumber = elementNumber - 1;
         if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
             throw new IndexOutOfBoundsException(
                     String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
@@ -131,6 +127,6 @@ public class ListInteractionSteps extends BaseMethods {
         }
         elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
         elementToSelect.shouldBe(Condition.visible).click();
-        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(elementToSelect).trim());
+        return elementToSelect;
     }
 }

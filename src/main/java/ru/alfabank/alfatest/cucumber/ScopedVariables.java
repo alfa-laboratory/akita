@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class ScopedVariables {
      * Проверяет, является ли переданная в качестве аргумента строка валидным JSON
      *
      * @param jsonInString - строка для валидации
-     * @return
+     * @return boolean
      */
     public static boolean isJSONValid(String jsonInString) {
         try {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,9 @@ public class BlackList {
     }
 
     /**
-     * очищает дефолтный сисок URL из Blacklist и задает новый Blacklist
+     * очищает дефолтный список URL из Blacklist и задает новый Blacklist
      *
-     * @param newEntries - новый список URL для доавления в Blacklist
+     * @param newEntries - новый список URL для добавления в Blacklist
      */
     private void setNewBlacklistEntries(List<BlacklistEntry> newEntries) {
         blacklistEntries.clear();
@@ -48,17 +48,17 @@ public class BlackList {
     }
 
     /**
-     * @return - спискок URL, которые находятся в Blacklist
+     * @return - список URL, которые находятся в Blacklist
      */
     public List<BlacklistEntry> getBlacklistEntries() {
-        return (List<BlacklistEntry>) blacklistEntries;
+        return  blacklistEntries;
     }
 
 
     /**
      * добавляет новые URL к дефолтному Blacklist
      *
-     * @param newEntries - новые URL, которые будут добавлены  в Blacklist
+     * @param newEntries - новые URL, которые будут добавлены в Blacklist
      */
     public void addToDefaultBlacklistEntries(List<BlacklistEntry> newEntries) {
         blacklistEntries.addAll(newEntries);

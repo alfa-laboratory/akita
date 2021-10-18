@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 /**
- * При подключении StepFormatter к проеку с тестами, становится достуна опция снятия скриншотов
+ * При подключении StepFormatter к проекту с тестами, становится доступна опция снятия скриншотов
  * после каждого шага. Для этого необходимо задать системную переменную takeScreenshotAfterSteps=true
  * Скриншот так же будет сниматься после каждого метода, помеченного аннотацией @Screenshot
  */
@@ -56,7 +56,7 @@ public class StepFormatter implements Formatter {
     }
 
     /**
-     * Метод осуществляет снятие скришота и прикрепление его к cucumber отчету.
+     * Метод осуществляет снятие скриншота и прикрепление его к cucumber отчету.
      * Скриншот снимается после шагов, помеченных аннотацией @Screenshot,
      * либо после каждого шага, если задана системная переменная takeScreenshotAfterSteps=true
      *

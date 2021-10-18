@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  */
 package ru.alfabank.tests.core.drivers;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import net.lightbody.bmp.BrowserMobProxy;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverProvider;
@@ -22,6 +23,7 @@ import net.lightbody.bmp.proxy.BlacklistEntry;
 import net.lightbody.bmp.proxy.CaptureType;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -102,7 +104,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * если установлен -Dproxy=true стартует прокси
      * har для прослушки указывается в application.properties
      *
-     * @param capabilities
+     * @param capabilities Капибилити для драйвера
      */
     private void enableProxy(DesiredCapabilities capabilities) {
         proxy.setTrustAllServers(Boolean.parseBoolean(loadProperty(TRUST_ALL_SERVERS, "true")));
@@ -123,7 +125,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     public WebDriver createDriver(@NotNull DesiredCapabilities capabilities) {
         Configuration.browserSize = String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
                 loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
-        String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, CHROME);
+        String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, capabilities.getBrowserName());
         String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, LOCAL);
         BlackList blackList = new BlackList();
         boolean isProxyMode = loadSystemPropertyOrDefault(PROXY, false);
@@ -189,8 +191,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      * со списком соответствующих URL, которые добавляются в Blacklist
      * URL для добавления в Blacklist могут быть указаны в формате регулярных выражений
      *
-     * @param capabilities
-     * @param remoteUrl
+     * @param capabilities Капибилити для драйвера
+     * @param remoteUrl Ссылка для удаленного запуска
      * @param blacklistEntries - список url для добавления в Blacklist
      * @return WebDriver
      */
@@ -289,7 +291,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     private InternetExplorerOptions getIEDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------IE Driver---------------------");
         InternetExplorerOptions internetExplorerOptions = !options[0].equals("") ? new InternetExplorerOptions().addCommandSwitches(options) : new InternetExplorerOptions();
-        internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        // internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, "11");
         internetExplorerOptions.setCapability("ie.usePerProcessProxy", "true");
         internetExplorerOptions.setCapability("requireWindowFocus", "false");
         internetExplorerOptions.setCapability("ie.browserCommandLineSwitches", "-private");
@@ -308,6 +310,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Edge Driver---------------------");
         EdgeOptions edgeOptions = new EdgeOptions();
         edgeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        capabilities.setPlatform(Platform.WINDOWS);
         edgeOptions.merge(capabilities);
         return edgeOptions;
     }
@@ -332,6 +335,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createChromeDriver(DesiredCapabilities capabilities) {
+        WebDriverManager.chromedriver().setup();
         return new ChromeDriver(getChromeDriverOptions(capabilities));
     }
 
@@ -341,6 +345,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createFirefoxDriver(DesiredCapabilities capabilities) {
+        WebDriverManager.firefoxdriver().setup();
         return new FirefoxDriver(getFirefoxDriverOptions(capabilities));
     }
 
@@ -350,6 +355,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createOperaDriver(DesiredCapabilities capabilities) {
+        WebDriverManager.operadriver().setup();
         return new OperaDriver(getOperaDriverOptions(capabilities));
     }
 
@@ -359,6 +365,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createIEDriver(DesiredCapabilities capabilities) {
+        WebDriverManager.iedriver().setup();
         return new InternetExplorerDriver(getIEDriverOptions(capabilities));
     }
 
@@ -368,6 +375,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createEdgeDriver(DesiredCapabilities capabilities) {
+        WebDriverManager.edgedriver().setup();
         return new EdgeDriver(getEdgeDriverOptions(capabilities));
     }
 
@@ -377,6 +385,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createSafariDriver(DesiredCapabilities capabilities) {
+        WebDriverManager.safaridriver().setup();
         return new SafariDriver(getSafariDriverOptions(capabilities));
     }
 

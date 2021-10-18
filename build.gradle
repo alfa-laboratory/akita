@@ -53,11 +53,12 @@ targetCompatibility = 1.8
 
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '5.25.0'
+    selenideVersion = '5.25.0-selenium-4.0.0'
 }
 
 dependencies {
     implementation 'com.qaprosoft:carina-proxy:7.2.11'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
     compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
@@ -73,8 +74,8 @@ dependencies {
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
     compile group: 'net.lightbody.bmp', name: 'browsermob-proxy', version: '2.0.0'
 
-    testCompile 'org.mockito:mockito-core:3.12.4'
-    testCompile 'org.mockito:mockito-inline:3.12.4'
+    testCompile 'org.mockito:mockito-core:4.0.0'
+    testCompile 'org.mockito:mockito-inline:4.0.0'
     testCompile 'com.github.tomakehurst:wiremock-standalone:2.27.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }

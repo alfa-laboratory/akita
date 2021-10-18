@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public final class Spectators {
     }
 
     /**
-     * Обертка над Selenide waitUntil для работы с колекцией элементов
+     * Обертка над Selenide waitUntil для работы с коллекцией элементов
      *
      * @param selenideCondition Selenide.Condition
      * @param timeout           максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,12 +12,12 @@
  */
 package ru.alfabank.core;
 
-import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import ru.alfabank.tests.core.drivers.CustomDriverProvider;
 
+import static com.codeborne.selenide.Browsers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -25,21 +25,49 @@ public class CustomDriverProviderTests {
 
     @Test
     void createChromeDriverTest() {
-        Configuration.browser = "chrome";
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
-        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        DesiredCapabilities ds = new DesiredCapabilities();
+        ds.setBrowserName(CHROME);
+        System.setProperty(CustomDriverProvider.BROWSER, CHROME);
+        currentDriver = customDriverProvider.createDriver(ds);
         assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.chrome.ChromeDriver"));
         currentDriver.quit();
     }
 
     @Test
     void createFirefoxDriverTest() {
-        Configuration.browser = "firefox";
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;
-        currentDriver = customDriverProvider.createDriver(new DesiredCapabilities());
+        DesiredCapabilities ds = new DesiredCapabilities();
+        ds.setBrowserName(FIREFOX);
+        System.setProperty(CustomDriverProvider.BROWSER, FIREFOX);
+        currentDriver = customDriverProvider.createDriver(ds);
         assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.firefox.FirefoxDriver"));
+        currentDriver.quit();
+    }
+
+    @Test
+    void createInternetExplorerDriverTest() {
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        DesiredCapabilities ds = new DesiredCapabilities();
+        ds.setBrowserName(INTERNET_EXPLORER);
+        System.setProperty(CustomDriverProvider.BROWSER, INTERNET_EXPLORER);
+        currentDriver = customDriverProvider.createDriver(ds);
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.ie.InternetExplorerDriver"));
+        currentDriver.quit();
+    }
+
+    @Test
+    void createEdgeDriverTest() {
+        CustomDriverProvider customDriverProvider = new CustomDriverProvider();
+        WebDriver currentDriver;
+        DesiredCapabilities ds = new DesiredCapabilities();
+        ds.setBrowserName(EDGE);
+        System.setProperty(CustomDriverProvider.BROWSER, EDGE);
+        currentDriver = customDriverProvider.createDriver(ds);
+        assertThat(currentDriver.getClass().getName(), is("org.openqa.selenium.edge.EdgeDriver"));
         currentDriver.quit();
     }
 

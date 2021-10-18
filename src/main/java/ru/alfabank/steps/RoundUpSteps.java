@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class RoundUpSteps extends BaseMethods {
      * Эмулирует нажатие сочетания клавиш на клавиатуре.
      * Допустим, чтобы эмулировать нажатие на Ctrl+A, в таблице должны быть следующие значения
      * | CONTROL |
-     * | a       |
+     * | a |
      *
      * @param keyNames название клавиши
      */
@@ -204,9 +204,9 @@ public class RoundUpSteps extends BaseMethods {
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
     @Then("^values of \"([^\"]*)\" variable and \"([^\"]*)\" key from property file are equal$")
-    public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
-        assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
-                (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
+    public void checkIfValueFromVariableEqualPropertyVariable(String envVariable, String propertyVariable) {
+        assertThat("Переменные " + envVariable + " и " + propertyVariable + " не совпадают",
+                (String) akitaScenario.getVar(envVariable), equalToIgnoringCase(loadProperty(propertyVariable)));
     }
 
     /**

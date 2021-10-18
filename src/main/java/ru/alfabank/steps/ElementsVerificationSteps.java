@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class ElementsVerificationSteps extends BaseMethods {
      */
     @Тогда("^ожидается исчезновение элемента \"([^\"]*)\"")
     @Then("^waiting for the element named \"([^\"]*)\" to disappear$")
-    public void elemDisappered(String elementName) {
+    public void elemDisappeared(String elementName) {
         akitaScenario.getCurrentPage().waitElementsUntil(
                 Condition.hidden, DEFAULT_TIMEOUT, akitaScenario.getCurrentPage().getElement(elementName));
     }

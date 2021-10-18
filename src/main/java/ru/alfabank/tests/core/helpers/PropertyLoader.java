@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class PropertyLoader {
         try {
             return Integer.valueOf(System.getProperty(propertyName, defaultValue.toString()).trim());
         } catch (NumberFormatException ex) {
-            log.error("Could not parse value to Integer ", ex.getMessage());
+            log.error("Could not parse value to Integer: " + ex.getMessage());
             return defaultValue;
         }
     }
@@ -234,7 +234,7 @@ public class PropertyLoader {
         }
         if (AkitaScenario.getInstance().tryGetVar(valueToFind) != null)
             return (String) AkitaScenario.getInstance().getVar(valueToFind);
-        AkitaScenario.getInstance().write("Значение не найдено в хранилище. Будет исользовано значение по умолчанию " + valueToFind);
+        AkitaScenario.getInstance().write("Значение не найдено в хранилище. Будет использовано значение по умолчанию " + valueToFind);
         return valueToFind;
     }
 

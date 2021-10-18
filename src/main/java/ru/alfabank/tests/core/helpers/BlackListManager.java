@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,23 +29,24 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class BlackListManager {
+
+    private final String fileName;
+
     /**
      * Производится парсинг строки из файла blacklist на наличие ссылок типа:
      * .*ru.fp.kaspersky-labs.com.*
      * http://google.com/ 200
      * При необходимости можно указывать статус код, по умолчанию будет присвоен 404
      *
-     * @param blacklistEntries - список ссылок и статус кодов
+     * @param blacklist - список ссылок и статус кодов
      */
-    private final String fileName;
-
     public BlackListManager(String blacklist) {
         this.fileName = blacklist;
     }
 
     public void fillBlackList(List<BlacklistEntry> blacklistEntries) {
         String file = getResource();
-        Pattern pattern = Pattern.compile("((https?:\\/\\/)?([\\da-z\\.\\*-]+)\\.([a-z\\.]{2,6})([\\/\\w\\.\\*-]*)*\\/?)\\s?(\\d{3})*");
+        Pattern pattern = Pattern.compile("((https?://)?([\\da-z.*-]+)\\.([a-z.]{2,6})([/\\w.*-]*)*/?)\\s?(\\d{3})*");
         Matcher matcher = pattern.matcher(file);
         while (matcher.find()) {
             if (matcher.group(6) == null)

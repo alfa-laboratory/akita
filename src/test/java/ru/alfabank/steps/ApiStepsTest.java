@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void sendHttpRequestGET() throws Exception {
+    void sendHttpRequestGET() {
         stubFor(get(urlEqualTo("/get/resource"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -77,7 +77,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void sendHttpRequestPost() throws Exception {
+    void sendHttpRequestPost() {
         stubFor(post(urlEqualTo("/post/resource"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -88,7 +88,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void sendHttpRequestWithVarsPost() throws Exception {
+    void sendHttpRequestWithVarsPost() {
         String body = "testBodyValue";
         String bodyVarName = "testBodyName";
         akitaScenario.setVar(bodyVarName, body);
@@ -112,7 +112,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void sendHttpRequestFromFileWithVarsPost() throws Exception {
+    void sendHttpRequestFromFileWithVarsPost() {
         String body = "{\"person\": {\"name\": \"Jack\", \"age\": 35}, \"object\": {\"var1\": 1}}";
         String bodyFileName = "/src/test/resources/bodyWithParams.json";
 
@@ -134,7 +134,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void sendHttpRequestSaveResponseTest() throws Exception {
+    void sendHttpRequestSaveResponseTest() {
         stubFor(post(urlEqualTo("/post/saveWithTable"))
                 .willReturn(aResponse()
                         .withStatus(201)
@@ -159,7 +159,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void checkResponseCodeWithoutParamsTest() throws Exception {
+    void checkResponseCodeWithoutParamsTest() {
         stubFor(get(urlEqualTo("/get/resource"))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -167,7 +167,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void checkResponseCodeTest() throws Exception {
+    void checkResponseCodeTest() {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=test"))
                 .willReturn(aResponse()
                         .withStatus(404)
@@ -184,7 +184,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void shouldCreateRequestForEqualsParamNamesTest() throws Exception {
+    void shouldCreateRequestForEqualsParamNamesTest() {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=first&param=second"))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -196,7 +196,7 @@ public class ApiStepsTest {
     }
 
     @Test
-    void shouldSendPutRequest() throws Exception {
+    void shouldSendPutRequest() {
         stubFor(put(urlEqualTo("/put/someInfo"))
                 .willReturn(aResponse()
                         .withStatus(205)));

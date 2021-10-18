@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,8 +111,8 @@ public class WebPageVerificationSteps extends BaseMethods {
     public void openReadOnlyForm() {
         int inputsCount = getDisplayedElementsByCss("input").size();
         assertEquals(0, inputsCount, "Форма не read-only. Количество input-полей: " + inputsCount);
-        int textareasCount = getDisplayedElementsByCss("textarea").size();
-        assertEquals(0, textareasCount, "Форма не read-only. Количество элементов textarea: " + textareasCount);
+        int textAreasCount = getDisplayedElementsByCss("textarea").size();
+        assertEquals(0, textAreasCount, "Форма не read-only. Количество элементов textarea: " + textAreasCount);
     }
 
     private List<SelenideElement> getDisplayedElementsByCss(String cssSelector) {

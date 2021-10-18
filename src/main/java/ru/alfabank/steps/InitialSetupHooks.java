@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,20 +46,18 @@ public class InitialSetupHooks extends BaseMethods {
      * Создает окружение(среду) для запуска сценария
      *
      * @param scenario сценарий
-     * @throws Exception
      */
     @Before(order = 10)
-    public void setScenario(Scenario scenario) throws Exception {
+    public void setScenario(Scenario scenario) {
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     /**
      * Уведомление о месте запуска тестов
      *
-     * @throws Exception
      */
     @Before(order = 20)
-    public static void setEnvironmentToTest() throws Exception {
+    public static void setEnvironmentToTest() {
         if (!Strings.isNullOrEmpty(System.getProperty(REMOTE_URL))) {
             log.info("Тесты запущены на удаленной машине: " + System.getProperty(REMOTE_URL));
         } else
@@ -69,9 +67,8 @@ public class InitialSetupHooks extends BaseMethods {
     /**
      * Удаляет все cookies
      *
-     * @throws Exception
      */
-    public static void clearCash() throws Exception {
+    public static void clearCash(){
         getWebDriver().manage().deleteAllCookies();
     }
 

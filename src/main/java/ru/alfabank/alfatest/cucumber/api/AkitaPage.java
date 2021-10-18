@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 
-/**
+/*
  * Класс для реализации паттерна PageObject
  */
 @Slf4j
@@ -46,7 +46,8 @@ public abstract class AkitaPage extends ElementsContainer {
      * Стандартный таймаут ожидания элементов в миллисекундах
      */
     private static final String WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS = "8000";
-    private static final Integer TIMEOUT = Integer.parseInt(loadProperty("waitingAppearTimeout", WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS));
+    private static final Integer TIMEOUT = Integer.parseInt(loadProperty("waitingAppearTimeout",
+            WAITING_APPEAR_TIMEOUT_IN_MILLISECONDS));
 
     public AkitaPage() {
         super();
@@ -69,7 +70,7 @@ public abstract class AkitaPage extends ElementsContainer {
         if (!(value instanceof List)) {
             throw new IllegalArgumentException("Список " + listName + " не описан на странице " + this.getClass().getName());
         }
-        Stream<Object> s = ((List) value).stream();
+        Stream<Object> s = ((List<Object>) value).stream();
         return s.map(AkitaPage::castToAkitaPage).collect(toList());
     }
 
@@ -99,7 +100,6 @@ public abstract class AkitaPage extends ElementsContainer {
     /**
      * Получение элемента-списка со страницы по имени
      */
-    @SuppressWarnings("unchecked")
     public ElementsCollection getElementsList(String listName) {
         Object value = namedElements.get(listName);
         if (!(value instanceof List)) {
@@ -108,7 +108,7 @@ public abstract class AkitaPage extends ElementsContainer {
         FindBy listSelector = Arrays.stream(this.getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Name.class) != null && f.getDeclaredAnnotation(Name.class).value().equals(listName))
                 .map(f -> f.getDeclaredAnnotation(FindBy.class))
-                .findFirst().get();
+                .findFirst().orElse(null);
         FindBy.FindByBuilder findByBuilder = new FindBy.FindByBuilder();
         return $$(findByBuilder.buildIt(listSelector, null));
     }
@@ -211,6 +211,7 @@ public abstract class AkitaPage extends ElementsContainer {
         eachForm(AkitaPage::isAppeared);
     }
 
+    @SuppressWarnings("unchecked")
     private void eachForm(Consumer<AkitaPage> func) {
         Arrays.stream(getClass().getDeclaredFields())
                 .filter(f -> f.getDeclaredAnnotation(Optional.class) == null && f.getDeclaredAnnotation(Hidden.class) == null)

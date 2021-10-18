@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,14 +218,14 @@ public class ElementStepsTest {
     }
 
     @Test
-    void elementDisapperaredAndAppearedComplex() {
+    void elementDisappearedAndAppearedComplex() {
         elvs.testElementAppeared("ul", 1);
         elis.clickOnElement("SUPERBUTTON");
-        elvs.elemDisappered("ul");
+        elvs.elemDisappeared("ul");
     }
 
     @Test
-    void testCheckFieldsize() {
+    void testCheckFieldSize() {
         elvs.checkFieldSymbolsCount("ul", 20);
     }
 

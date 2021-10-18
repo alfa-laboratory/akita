@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ public class BaseMethods {
      * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
      * если и оно отсутствует, то возвращает значение переданной на вход переменной
      *
-     * @return
+     * @return propertyCheck
      */
     public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
         String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
@@ -187,7 +187,7 @@ public class BaseMethods {
     /**
      * Возвращает каталог "Downloads" в домашней директории
      *
-     * @return
+     * @return downloadFile
      */
     public File getDownloadsDir() {
         String homeDir = System.getProperty("user.home");
@@ -201,7 +201,11 @@ public class BaseMethods {
      */
     public void deleteFiles(File[] filesToDelete) {
         for (File file : filesToDelete) {
-            file.delete();
+            if (file.delete()) {
+                akitaScenario.write("Файл: " + file + " удален");
+            } else {
+                akitaScenario.write("Проблемы с удалением файла: " + file);
+            }
         }
     }
 
@@ -254,13 +258,11 @@ public class BaseMethods {
      * Возвращает локатор для поиска по нормализованному(без учета регистра) тексту
      */
     public String getTranslateNormalizeSpaceText(String expectedText) {
-        StringBuilder text = new StringBuilder();
-        text.append("//*[contains(translate(normalize-space(text()), ");
-        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', ");
-        text.append("'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
-        text.append(expectedText.toLowerCase());
-        text.append("')]");
-        return text.toString();
+        return "//*[contains(translate(normalize-space(text()), " +
+                "'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', " +
+                "'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхчшщъыьэюя'), '" +
+                expectedText.toLowerCase() +
+                "')]";
     }
 
     /**
@@ -276,9 +278,9 @@ public class BaseMethods {
     }
 
     @SneakyThrows
-    /**
+    /*
      * Проверяет соответствие текущей страницы ее описанию в .spec файле.
-     * Скриншоты с расходениями в дизайне сохраняются в /build/results-img/ и прикрепояются к cucumber отчету
+     * Скриншоты с расхождениями в дизайне сохраняются в /build/results-img/ и прикрепляются к cucumber отчету
      * Путь /build/results-img/ можно переопределить, задав системную переменную imgDiff
      */
     public void checkLayoutAccordingToSpec(String spec, List<String> tags) {

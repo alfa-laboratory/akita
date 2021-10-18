@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class ListVerificationSteps extends BaseMethods {
     public void checkIfListInnerTextConsistsOfTableElements(String listName, List<String> textTable) {
         List<String> actualValues = akitaScenario.getCurrentPage().getAnyElementsListInnerTexts(listName);
         int numberOfTypes = actualValues.size();
-        assertThat(String.format("Количество элементов в списке [%s] не соответсвует ожиданию", listName), textTable, hasSize(numberOfTypes));
+        assertThat(String.format("Количество элементов в списке [%s] не соответствует ожиданию", listName), textTable, hasSize(numberOfTypes));
         assertTrue(actualValues.containsAll(textTable),
                 String.format("Значения элементов в списке %s: %s не совпадают с ожидаемыми значениями из таблицы %s", listName, actualValues, textTable));
     }
@@ -105,7 +105,7 @@ public class ListVerificationSteps extends BaseMethods {
                 .map(element -> element.getText().trim().toLowerCase())
                 .collect(toList());
         assertTrue(elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())),
-                String.format("Элемены списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value));
+                String.format("Элементы списка %s: [%s] не содержат текст [%s] ", listName, elementsListText, value));
     }
 
     /**
@@ -120,7 +120,7 @@ public class ListVerificationSteps extends BaseMethods {
                 .map(element -> element.getText().trim().toLowerCase())
                 .collect(toList());
         assertFalse(elementsListText.stream().allMatch(item -> item.contains(value.toLowerCase())),
-                String.format("Элемены списка %s: [%s] содержат текст [%s] ", listName, elementsListText, value));
+                String.format("Элементы списка %s: [%s] содержат текст [%s] ", listName, elementsListText, value));
     }
 
     /**
