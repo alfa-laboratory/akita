@@ -27,17 +27,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 
 public class BlackListTests {
-    private static final List<BlacklistEntry> defaultBlacklistEntries = new ArrayList<>();
+    private static final List<BlacklistEntry> DEFAULT_BLACKLIST_ENTRIES = new ArrayList<>();
 
     @Test
     void testGetDefaultBlacklistEntries() {
         BlackList blackList = new BlackList();
-        assertThat(defaultBlacklistEntries, samePropertyValuesAs(blackList.getBlacklistEntries()));
+        assertThat(DEFAULT_BLACKLIST_ENTRIES, samePropertyValuesAs(blackList.getBlacklistEntries()));
     }
 
     @Test
     void testAddToDefaultBlacklistEntries() {
-        List<BlacklistEntry> expectedEntries = new ArrayList<>(defaultBlacklistEntries);
+        List<BlacklistEntry> expectedEntries = new ArrayList<>(DEFAULT_BLACKLIST_ENTRIES);
 
         List<BlacklistEntry> newEntries = new ArrayList<>(Collections.singletonList(new BlacklistEntry("new.entry", 404)));
         expectedEntries.addAll(newEntries);
@@ -56,6 +56,6 @@ public class BlackListTests {
 
     @BeforeEach
     void initBlackList() {
-        new BlackListManager("blacklist").fillBlackList(defaultBlacklistEntries);
+        new BlackListManager("blacklist").fillBlackList(DEFAULT_BLACKLIST_ENTRIES);
     }
 }

@@ -93,11 +93,11 @@ public class CustomDriverProvider implements WebDriverProvider {
     public final static int DEFAULT_WIDTH = 1920;
     public final static int DEFAULT_HEIGHT = 1080;
 
-    private static final BrowserMobProxy proxy = new BrowserMobProxyServer();
+    private static final BrowserMobProxy PROXY = new BrowserMobProxyServer();
     private final String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
 
     public static BrowserMobProxy getProxy() {
-        return proxy;
+        return PROXY;
     }
 
     /**
@@ -107,17 +107,17 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @param capabilities Капибилити для драйвера
      */
     private void enableProxy(DesiredCapabilities capabilities) {
-        proxy.setTrustAllServers(Boolean.parseBoolean(loadProperty(TRUST_ALL_SERVERS, "true")));
-        proxy.start();
+        PROXY.setTrustAllServers(Boolean.parseBoolean(loadProperty(TRUST_ALL_SERVERS, "true")));
+        PROXY.start();
 
-        Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
+        Proxy seleniumProxy = ClientUtil.createSeleniumProxy(PROXY);
 
-        capabilities.setCapability(PROXY, seleniumProxy);
+        capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
         capabilities.setCapability(ACCEPT_SSL_CERTS, Boolean.valueOf(loadProperty(ACCEPT_SSL_CERTS, "true")));
         capabilities.setCapability(SUPPORTS_JAVASCRIPT, Boolean.valueOf(loadProperty(SUPPORTS_JAVASCRIPT, "true")));
 
-        proxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_CONTENT, CaptureType.RESPONSE_HEADERS);
-        proxy.newHar(loadProperty(NEW_HAR));
+        PROXY.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_CONTENT, CaptureType.RESPONSE_HEADERS);
+        PROXY.newHar(loadProperty(NEW_HAR));
     }
 
     @NotNull
@@ -128,7 +128,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, capabilities.getBrowserName());
         String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, LOCAL);
         BlackList blackList = new BlackList();
-        boolean isProxyMode = loadSystemPropertyOrDefault(PROXY, false);
+        boolean isProxyMode = loadSystemPropertyOrDefault(CapabilityType.PROXY, false);
         if (isProxyMode) {
             enableProxy(capabilities);
         }
@@ -197,7 +197,7 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver getRemoteDriver(MutableCapabilities capabilities, String remoteUrl, List<BlacklistEntry> blacklistEntries) {
-        proxy.setBlacklist(blacklistEntries);
+        PROXY.setBlacklist(blacklistEntries);
         return getRemoteDriver(capabilities, remoteUrl);
     }
 
