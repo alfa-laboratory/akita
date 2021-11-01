@@ -127,7 +127,7 @@ public class AkitaPageMock extends AkitaPage {
     @Name("innerTextP")
     public SelenideElement innerTextP;
 
-    @FindBy(className = "searchBlock")
+    @FindBy(xpath = "//form[@class='searchBlock']")
     @Name("SearchBlock")
     public SearchFieldMock searchField;
 

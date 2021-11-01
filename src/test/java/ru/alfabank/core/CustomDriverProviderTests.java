@@ -12,6 +12,7 @@
  */
 package ru.alfabank.core;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -48,6 +49,11 @@ public class CustomDriverProviderTests {
     }
 
     @Test
+    @Disabled
+    @Deprecated
+    /*
+    Use edge
+     */
     void createInternetExplorerDriverTest() {
         CustomDriverProvider customDriverProvider = new CustomDriverProvider();
         WebDriver currentDriver;

@@ -75,7 +75,9 @@ public class BaseMethodsTest {
 
     @Test
     void testGetPropertyOrStringVariableOrValueFromValue() {
-        assertThat(bm.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue"),
+        String getPropertyOrVariableOrValueTestValue =
+                bm.getPropertyOrStringVariableOrValue("getPropertyOrVariableOrValueTestValue");
+        assertThat(getPropertyOrVariableOrValueTestValue,
                 equalTo("getPropertyOrVariableOrValueTestValue"));
     }
 

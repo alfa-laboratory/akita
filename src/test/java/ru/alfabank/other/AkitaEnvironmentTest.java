@@ -31,7 +31,7 @@ public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
 
     @BeforeAll
-    static void prepare() {
+     static void prepare() {
 
         env = new AkitaEnvironment();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();

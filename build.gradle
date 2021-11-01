@@ -48,12 +48,9 @@ group = 'ru.alfabank.tests'
 
 description = """light testing framework Akita"""
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '5.25.0-selenium-4.0.0'
+    selenideVersion = '6.0.3'
 }
 
 dependencies {
