@@ -13,8 +13,8 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
-import cucumber.api.java.en.When;
-import cucumber.api.java.ru.Когда;
+import io.cucumber.java.ru.Когда;
+import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.Keys;

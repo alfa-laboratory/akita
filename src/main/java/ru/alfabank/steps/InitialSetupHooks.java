@@ -14,9 +14,9 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.common.base.Strings;
-import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
+import io.cucumber.java.Before;
+import io.cucumber.java.After;
+import io.cucumber.java.Scenario;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
@@ -86,7 +86,7 @@ public class InitialSetupHooks extends BaseMethods {
         if (scenario.isFailed() && hasWebDriverStarted()) {
             AkitaScenario.sleep(1);
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
-            scenario.embed(screenshot, "image/png");
+            scenario.attach(screenshot, "image/png", "screenshot");
         }
     }
 

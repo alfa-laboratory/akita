@@ -18,11 +18,11 @@ import com.google.gson.JsonParser;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Тогда;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.ru.И;
+import io.cucumber.java.ru.Тогда;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -107,7 +107,7 @@ public class ApiSteps extends BaseMethods {
         JsonParser parser = new JsonParser();
         ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
-        for (List<String> row : dataTable.raw()) {
+        for (List<String> row : dataTable.asLists()) {
             String jsonPath = row.get(0);
             JsonElement actualJsonElement;
             try {
@@ -138,7 +138,7 @@ public class ApiSteps extends BaseMethods {
         Gson gsonObject = new Gson();
         ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
-        for (List<String> row : dataTable.raw()) {
+        for (List<String> row : dataTable.asLists()) {
             String jsonPath = row.get(0);
             String varName = row.get(1);
             JsonElement jsonElement;

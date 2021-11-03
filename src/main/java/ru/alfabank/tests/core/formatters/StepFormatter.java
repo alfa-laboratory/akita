@@ -12,12 +12,12 @@
  */
 package ru.alfabank.tests.core.formatters;
 
-import cucumber.api.TestStep;
-import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventPublisher;
-import cucumber.api.event.TestStepFinished;
-import cucumber.api.formatter.Formatter;
-import lombok.SneakyThrows;
+import io.cucumber.plugin.EventListener;
+import io.cucumber.plugin.event.EventHandler;
+import io.cucumber.plugin.event.EventPublisher;
+import io.cucumber.plugin.event.HookTestStep;
+import io.cucumber.plugin.event.TestStep;
+import io.cucumber.plugin.event.TestStepFinished;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -25,12 +25,9 @@ import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import ru.alfabank.alfatest.cucumber.annotations.Screenshot;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
-import ru.alfabank.alfatest.cucumber.api.AnnotationScanner;
-import ru.alfabank.alfatest.cucumber.utils.Reflection;
 
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
@@ -41,7 +38,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
  * Скриншот так же будет сниматься после каждого метода, помеченного аннотацией @Screenshot
  */
 @Slf4j
-public class StepFormatter implements Formatter {
+public class StepFormatter implements EventListener {
     public final String SCREENSHOT_AFTER_STEPS = "takeScreenshotAfterSteps";
 
     @Override
@@ -54,8 +51,8 @@ public class StepFormatter implements Formatter {
     }
 
     private void handleTestStepFinished(TestStepFinished event) {
-        if (!event.testStep.isHook()) {
-            afterStep(event.testStep);
+        if (!(event.getTestStep() instanceof HookTestStep)) {
+            afterStep(event.getTestStep());
         }
     }
 
@@ -83,7 +80,8 @@ public class StepFormatter implements Formatter {
 
         if (isScreenshotAnnotationPresent || isTakeScreenshotAfterStepsProperty) {
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
-            AkitaScenario.getInstance().getScenario().embed(screenshot, "image/png");
+            AkitaScenario.getInstance().getScenario().attach(screenshot, "image/png", "screenshot");
         }
     }
+
 }

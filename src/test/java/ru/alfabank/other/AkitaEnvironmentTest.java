@@ -12,7 +12,7 @@
  */
 package ru.alfabank.other;
 
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;

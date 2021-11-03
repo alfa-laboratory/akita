@@ -272,9 +272,9 @@ public class BaseMethods {
      * @param mimeType - тип файла
      */
     @SneakyThrows
-    public static void embedFileToReport(File fileName, String mimeType) {
+    public static void attachFileToReport(File fileName, String mimeType, String name) {
         AkitaScenario.getInstance().getScenario()
-                .embed(FileUtils.readFileToByteArray(fileName), mimeType);
+                .attach(FileUtils.readFileToByteArray(fileName), mimeType, name);
     }
 
     @SneakyThrows
@@ -287,16 +287,16 @@ public class BaseMethods {
         LayoutReport report = Galen.checkLayout(getWebDriver(), SPECS_DIR_PATH + spec, tags);
         report.getFileStorage().copyAllFilesTo(new File(IMG_DIFF_PATH));
         if (report.errors() > 0) {
-            embedScreenshotAndFail(report);
+            attachScreenshotAndFail(report);
         }
     }
 
-    private void embedScreenshotAndFail(LayoutReport report) {
+    private void attachScreenshotAndFail(LayoutReport report) {
         Map<String, File> screenshots = report.getFileStorage().getFiles();
         screenshots.forEach((key, value) -> {
             if (key.contains("map") || key.contains("expected") || key.contains("actual")) {
                 akitaScenario.write(key);
-                embedFileToReport(value, "image/png");
+                attachFileToReport(value, "image/png", "screenshot");
             }
         });
         fail(report.getValidationErrorResults().toString());

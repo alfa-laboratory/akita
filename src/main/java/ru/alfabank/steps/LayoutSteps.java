@@ -12,8 +12,8 @@
  */
 package ru.alfabank.steps;
 
-import cucumber.api.java.en.Then;
-import cucumber.api.java.ru.Тогда;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.ru.Тогда;
 
 import java.util.ArrayList;
 import java.util.List;

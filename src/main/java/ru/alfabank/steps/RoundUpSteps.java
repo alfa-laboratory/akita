@@ -13,13 +13,13 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.Selenide;
-import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Когда;
-import cucumber.api.java.ru.Тогда;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.cucumber.java.ru.И;
+import io.cucumber.java.ru.Когда;
+import io.cucumber.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.Keys;
@@ -133,7 +133,8 @@ public class RoundUpSteps extends BaseMethods {
     @And("^screenshot of the current page has been taken$")
     public void takeScreenshot() {
         final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);
-        AkitaScenario.getInstance().getScenario().embed(screenshot, "image/png");
+        //TODO: name
+        AkitaScenario.getInstance().getScenario().attach(screenshot, "image/png", "namela");
     }
 
     /**
@@ -144,7 +145,7 @@ public class RoundUpSteps extends BaseMethods {
     public void fillTemplate(String templateName, String varName, DataTable table) {
         String template = loadValueFromFileOrPropertyOrVariableOrDefault(templateName);
         boolean error = false;
-        for (List<String> list : table.raw()) {
+        for (List<String> list : table.asLists()) {
             String regexp = list.get(0);
             String replacement = list.get(1);
             if (template.contains(regexp)) {

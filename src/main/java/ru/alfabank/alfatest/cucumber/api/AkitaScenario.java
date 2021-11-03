@@ -13,7 +13,7 @@
 package ru.alfabank.alfatest.cucumber.api;
 
 import com.codeborne.selenide.Selenide;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 

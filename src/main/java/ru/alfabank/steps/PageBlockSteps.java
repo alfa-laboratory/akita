@@ -13,8 +13,8 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.SelenideElement;
-import cucumber.api.java.en.And;
-import cucumber.api.java.ru.И;
+import io.cucumber.java.en.And;
+import io.cucumber.java.ru.И;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.stream.Collectors;

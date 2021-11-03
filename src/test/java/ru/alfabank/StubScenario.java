@@ -12,38 +12,40 @@
  */
 package ru.alfabank;
 
-import cucumber.api.Result;
-import cucumber.api.Scenario;
+
+import io.cucumber.java.Scenario;
+import io.cucumber.plugin.event.Result;
+
 
 import java.util.Collection;
 import java.util.List;
 
-public class StubScenario implements Scenario {
+public class StubScenario extends Scenario {
+
     @Override
     public Collection<String> getSourceTagNames() {
         return null;
     }
 
-    @Override
-    public Result.Type getStatus() {
-        return null;
-    }
-
+//    @Override
+//    public Result.Type getStatus() {
+//        return null;
+//    }
 
     @Override
     public boolean isFailed() {
         return false;
     }
 
-    @Override
-    public void embed(byte[] data, String mimeType) {
+//    @Override
+//    public void embed(byte[] data, String mimeType) {
+//
+//    }
 
-    }
-
-    @Override
-    public void write(String text) {
-
-    }
+//    @Override
+//    public void write(String text) {
+//
+//    }
 
     @Override
     public String getName() {
@@ -55,13 +57,13 @@ public class StubScenario implements Scenario {
         return null;
     }
 
-    @Override
-    public String getUri() {
-        return null;
-    }
+//    @Override
+//    public String getUri() {
+//        return null;
+//    }
 
-    @Override
-    public List<Integer> getLines() {
-        return null;
-    }
+//    @Override
+//    public List<Integer> getLines() {
+//        return null;
+//    }
 }
