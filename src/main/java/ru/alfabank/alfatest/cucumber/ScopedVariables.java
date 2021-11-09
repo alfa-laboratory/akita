@@ -113,7 +113,6 @@ public class ScopedVariables {
      */
     public static boolean isJSONValid(String jsonInString) {
         try {
-
             parseString(jsonInString);
         } catch (com.google.gson.JsonSyntaxException ex) {
             return false;
