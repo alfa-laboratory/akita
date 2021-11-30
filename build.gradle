@@ -50,7 +50,7 @@ description = """light testing framework Akita"""
 
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '6.0.3'
+    selenideVersion = '6.1.1'
 }
 
 dependencies {
