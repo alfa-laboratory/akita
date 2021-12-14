@@ -75,8 +75,6 @@ public class AkitaScenarioTest {
     void putGetPagesPositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         WebPageInteractionSteps wpis = new WebPageInteractionSteps();
-//        Scenario scenario = new StubScenario();
-//        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
@@ -108,8 +106,6 @@ public class AkitaScenarioTest {
     void getCurrentPagePositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         WebPageInteractionSteps wpis = new WebPageInteractionSteps();
-//        Scenario scenario = new StubScenario();
-//        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
