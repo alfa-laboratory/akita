@@ -12,14 +12,14 @@
  */
 package ru.alfabank.steps;
 
-import cucumber.api.DataTable;
-import cucumber.api.Scenario;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import ru.alfabank.util.DataTableUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
+import static org.mockito.Mockito.mock;
 
 public class RoundUpStepsTest {
 
@@ -38,11 +38,13 @@ public class RoundUpStepsTest {
     private static WebPageInteractionSteps wpis;
     private static RoundUpSteps rus;
     private static ElementsVerificationSteps elis;
+    private final DataTableUtils dataTableUtils = new DataTableUtils();
+
 
     @BeforeAll
     static void setup() {
         akitaScenario = AkitaScenario.getInstance();
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         wpis = new WebPageInteractionSteps();
         elis = new ElementsVerificationSteps();
@@ -160,7 +162,7 @@ public class RoundUpStepsTest {
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
         allLists.add(row2);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         rus.fillTemplate(templateName, varName, dataTable);
         assertEquals("{\"name\": \"Jack\", \"age\": 35}", akitaScenario.getVar(varName));

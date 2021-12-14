@@ -16,7 +16,6 @@ import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.steps.WebPageInteractionSteps;
@@ -25,7 +24,11 @@ import java.io.File;
 
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mock;
 
 public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
@@ -37,7 +40,7 @@ public class AkitaEnvironmentTest {
         env = new AkitaEnvironment();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         wpis = new WebPageInteractionSteps();
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();

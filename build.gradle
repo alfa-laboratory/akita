@@ -18,9 +18,6 @@ buildscript {
 }
 
 repositories {
-    maven {
-        url "http://dl.bintray.com/alfa-laboratory/maven-releases"
-    }
     mavenLocal()
     jcenter()
     mavenCentral()
@@ -51,10 +48,9 @@ description = """light testing framework Akita"""
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-//project.ext {
-//    cucumberVersion = '4.0.0'
-//    selenideVersion = '5.2.2'
-//}
+project.ext {
+    selenideVersion = '5.2.2'
+}
 
 dependencies {
     compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
@@ -63,7 +59,7 @@ dependencies {
     compile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
     compile group: 'com.codeborne', name: 'selenide', version: '5.2.2'
     compile group: 'io.cucumber', name: 'cucumber-java', version: '7.0.0'
-//    compile group: 'io.cucumber', name: 'cucumber-core', version: '4.0.0'
+    compile group: 'io.cucumber', name: 'cucumber-core', version: '7.0.0'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.21'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.2'
@@ -71,6 +67,7 @@ dependencies {
     compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     testCompile "org.mockito:mockito-core:2.13.0"
     testCompile "org.mockito:mockito-inline:2.13.0"
     testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
@@ -134,12 +131,13 @@ test {
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=chrome"
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
+    useJUnitPlatform()
+
 }
 
 bintrayUpload.onlyIf {
     !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
 }
-
 
 jacocoTestReport {
     reports {

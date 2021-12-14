@@ -15,10 +15,10 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
@@ -32,6 +32,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.mock;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 import static ru.alfabank.tests.core.rest.RequestParamType.PARAMETER;
@@ -50,7 +51,8 @@ public class ApiStepsTest {
 
         akitaScenario = AkitaScenario.getInstance();
         api = new ApiSteps();
-        akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
+        Scenario scenario = mock(Scenario.class);
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     @AfterAll

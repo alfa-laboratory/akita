@@ -13,10 +13,10 @@
 package ru.alfabank.other;
 
 import com.codeborne.selenide.WebDriverRunner;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -25,6 +25,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ScopedVariablesTest {
     private static ScopedVariables variables;
@@ -32,7 +34,8 @@ public class ScopedVariablesTest {
     @BeforeAll
     static void setup() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
+        Scenario scenario = mock(Scenario.class);
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         variables = new ScopedVariables();
     }
 

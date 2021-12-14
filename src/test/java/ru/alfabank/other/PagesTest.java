@@ -12,11 +12,10 @@
  */
 package ru.alfabank.other;
 
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -28,6 +27,7 @@ import java.io.File;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class PagesTest {
     private static Pages pages;
@@ -40,7 +40,7 @@ public class PagesTest {
 
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         WebPageInteractionSteps wpis = new WebPageInteractionSteps();
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();

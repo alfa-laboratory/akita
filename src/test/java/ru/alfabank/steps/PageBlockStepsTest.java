@@ -12,11 +12,10 @@
  */
 package ru.alfabank.steps;
 
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
@@ -24,6 +23,7 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 public class PageBlockStepsTest {
 
@@ -34,7 +34,7 @@ public class PageBlockStepsTest {
     @BeforeAll
     static void setup() {
         akitaScenario = AkitaScenario.getInstance();
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         wpis = new WebPageInteractionSteps();
         pbs = new PageBlockSteps();

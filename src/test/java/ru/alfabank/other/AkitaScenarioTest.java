@@ -13,13 +13,12 @@
 package ru.alfabank.other;
 
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
@@ -32,6 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 
 public class AkitaScenarioTest {
@@ -49,8 +49,9 @@ public class AkitaScenarioTest {
 
     @BeforeEach
     void prepare() {
-        Scenario scenario = new StubScenario();
-        AkitaPage akitaPageMock = mock(AkitaPage.class);
+        Scenario scenario = mock(Scenario.class);
+        when(scenario.getName())
+                .thenReturn("My scenario");
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
@@ -74,8 +75,8 @@ public class AkitaScenarioTest {
     void putGetPagesPositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         WebPageInteractionSteps wpis = new WebPageInteractionSteps();
-        Scenario scenario = new StubScenario();
-        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+//        Scenario scenario = new StubScenario();
+//        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
@@ -107,8 +108,8 @@ public class AkitaScenarioTest {
     void getCurrentPagePositive() {
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         WebPageInteractionSteps wpis = new WebPageInteractionSteps();
-        Scenario scenario = new StubScenario();
-        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+//        Scenario scenario = new StubScenario();
+//        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);

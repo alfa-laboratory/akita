@@ -15,13 +15,12 @@ package ru.alfabank.other;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
@@ -35,6 +34,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByName;
 
 public class AkitaPageTest {
@@ -47,7 +47,7 @@ public class AkitaPageTest {
         wpis = new WebPageInteractionSteps();
         akitaPageMock = new AkitaPageMock();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();
@@ -64,6 +64,11 @@ public class AkitaPageTest {
     @Test
     void getBlockPositive() {
         assertThat(page.getBlock("SearchBlock"), is(notNullValue()));
+    }
+
+    @Test
+    void waitElementsUntilPositive() {
+        page.waitElementsUntil(Condition.disappear, 1, "HiddenDiv");
     }
 
     @Test
@@ -146,11 +151,6 @@ public class AkitaPageTest {
     void getAnyElementsListTextsPositive() {
         assertThat(page.getAnyElementsListTexts("List").toString(),
                 equalTo("[Three, One, Two]"));
-    }
-
-    @Test
-    void waitElementsUntilPositive() {
-        page.waitElementsUntil(Condition.disappear, 1, "HiddenDiv");
     }
 
     @Test

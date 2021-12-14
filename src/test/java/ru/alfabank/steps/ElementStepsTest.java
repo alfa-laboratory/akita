@@ -13,13 +13,12 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
@@ -30,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class ElementStepsTest {
 
@@ -42,7 +42,7 @@ public class ElementStepsTest {
     @BeforeAll
     static void setup() {
         akitaScenario = AkitaScenario.getInstance();
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         elis = new ElementsInteractionSteps();
         elvs = new ElementsVerificationSteps();

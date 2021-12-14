@@ -107,7 +107,7 @@ public class ApiSteps extends BaseMethods {
         JsonParser parser = new JsonParser();
         ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
-        for (List<String> row : dataTable.asLists()) {
+        for (List<String> row : dataTable.asLists(String.class)) {
             String jsonPath = row.get(0);
             JsonElement actualJsonElement;
             try {
