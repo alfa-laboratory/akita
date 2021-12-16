@@ -30,6 +30,28 @@ application.properties
 Для указания дополнительных параметров или тестовых данных создайте в своем проекте файл application.properties
 в main/java/resources
 
+Хранение тестовых данных в YAML
+=======================
+Тестовые данные также можно хранить в Yaml-файлах. Положите yaml-файлы в папку ресурсов main/java/resources. 
+
+Использование данных без дополнительных Pojo-классов:
+```java
+JsonNode data = YamlDataLoader.readDataToJsonNode("testData.yml", "alfabank")
+String inn = data.at("/details/inn").asText();
+```
+
+Десериализация в экземпляр класс:
+```java
+BankInfo bankInfo = YamlDataLoader.readDataToClassType("testData.yml", BankInfo.class, "alfabank");
+```
+
+Чтение и обьединение данных из нескольких yaml-файлов:
+```java
+JsonNode commonSettings = YamlDataLoader.readDataToJsonNode("testData.yml", "settings");
+JsonNode devSettings = YamlDataLoader.readDataToJsonNode("testData_dev.yml", "settings");
+devSettings = YamlDataLoader.mergeNodes(commonSettings, devSettings);
+```
+
 Работа со страницами
 ====================
 Для работы с элементами страницы ее необходимо задать как текущую.
