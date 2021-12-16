@@ -1,0 +1,36 @@
+alfabank:
+  details:
+    address: "107078, улица Каланчевская, д.27"
+    bik: "044525593"
+    inn: "7728168971"
+    korr_account: "30101810200000000593"
+    kpp: "770801001"
+    license_date: "16.01.2015"
+    license_number: "1326"
+    name: 'АКЦИОНЕРНОЕ ОБЩЕСТВО "АЛЬФА-БАНК"'
+    name_short: 'АО "АЛЬФА-БАНК"'
+    ogrn: "1027700067328"
+    okpo: "09610444"
+    oktmo: "45378000"
+
+settings:
+  environment:
+    name: production
+    user: tester
+
+дефолтный запрос: &default_request
+  type: Other
+  issueType: Bank
+  clientInfo:
+    name: client name
+    inn: 1234567890
+    ogrn: 111222333444
+    kpp: 1001001001
+  feeType: Percent
+  bankPaymentInfo:
+    currency: RUR
+
+измененный запрос:
+  <<: *default_request
+  type: FNS
+  issueType: Electronic
