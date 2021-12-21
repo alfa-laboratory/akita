@@ -12,6 +12,7 @@
  */
 package ru.alfabank.steps;
 
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.ex.ElementShouldNot;
 import cucumber.api.Scenario;
@@ -51,10 +52,12 @@ public class WebPageStepsTest {
         wpis = new WebPageInteractionSteps();
         wpvs = new WebPageVerificationSteps();
         iis = new InputInteractionSteps();
+
         akitaScenario.setVar("Page", "file:///C:/Projects/akita/src/test/resources/AkitaPageMock.html");
         String inputFilePath2 = "src/test/resources/RedirectionPage.html";
         String url2 = new File(inputFilePath2).getAbsolutePath();
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
+
     }
 
     @BeforeEach
@@ -110,11 +113,34 @@ public class WebPageStepsTest {
 
     @Test
     void testLoadPagePositive() {
+        SelenideDriver selenideDriver = WebDriverRunner.getSelenideDriver();
+
+        selenideDriver.open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
+
+        Object page = akitaScenario.getVar("Page");
+
+        Thread thread = new Thread(() -> {
+            try {
+                System.out.println("start thread");
+                Thread.sleep(600L);
+                System.out.println("waiting complete");
+
+                selenideDriver.open(page.toString());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+        thread.start();
+
         wpis.loadPage("AkitaPageMock");
     }
 
     @Test
     void testLoadPageNegative() {
+        WebDriverRunner.getSelenideDriver().open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
+
         assertThrows(IllegalArgumentException.class, () ->
                 wpis.loadPage("thisPageDoesNotExists"));
     }
