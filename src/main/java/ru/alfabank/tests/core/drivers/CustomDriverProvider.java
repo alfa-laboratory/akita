@@ -22,10 +22,7 @@ import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.proxy.BlacklistEntry;
 import net.lightbody.bmp.proxy.CaptureType;
 import org.jetbrains.annotations.NotNull;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -122,7 +119,8 @@ public class CustomDriverProvider implements WebDriverProvider {
 
     @NotNull
     @Override
-    public WebDriver createDriver(@NotNull DesiredCapabilities capabilities) {
+    public WebDriver createDriver(@NotNull Capabilities capabilities) {
+        DesiredCapabilities desiredCapabilities = (DesiredCapabilities) capabilities;
         Configuration.browserSize = String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
                 loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
         String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, capabilities.getBrowserName());
@@ -130,27 +128,27 @@ public class CustomDriverProvider implements WebDriverProvider {
         BlackList blackList = new BlackList();
         boolean isProxyMode = loadSystemPropertyOrDefault(CapabilityType.PROXY, false);
         if (isProxyMode) {
-            enableProxy(capabilities);
+            enableProxy(desiredCapabilities);
         }
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(CapabilityType.BROWSER_VERSION));
 
         switch (expectedBrowser.toLowerCase()) {
             case (FIREFOX):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver(capabilities) : getRemoteDriver(getFirefoxDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver(desiredCapabilities) : getRemoteDriver(getFirefoxDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (MOBILE_DRIVER):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions(capabilities)) : getRemoteDriver(getMobileChromeOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions(desiredCapabilities)) : getRemoteDriver(getMobileChromeOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (OPERA):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(capabilities) : getRemoteDriver(getOperaRemoteDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(desiredCapabilities) : getRemoteDriver(getOperaRemoteDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (SAFARI):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver(capabilities) : getRemoteDriver(getSafariDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver(desiredCapabilities) : getRemoteDriver(getSafariDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (INTERNET_EXPLORER):
             case (IE):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(desiredCapabilities) : getRemoteDriver(getIEDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (EDGE):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createEdgeDriver(capabilities) : getRemoteDriver(getEdgeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createEdgeDriver(desiredCapabilities) : getRemoteDriver(getEdgeDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             default:
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createChromeDriver(capabilities) : getRemoteDriver(getChromeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createChromeDriver(desiredCapabilities) : getRemoteDriver(getChromeDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
 
         }
     }
@@ -400,6 +398,4 @@ public class CustomDriverProvider implements WebDriverProvider {
         Boolean isHeadlessSys = Boolean.parseBoolean(System.getProperty("selenide." + HEADLESS, "false"));
         return isHeadlessApp || isHeadlessSys;
     }
-
-
 }
