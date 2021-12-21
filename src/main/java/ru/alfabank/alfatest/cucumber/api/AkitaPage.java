@@ -287,7 +287,6 @@ public abstract class AkitaPage extends ElementsContainer {
     /**
      * Проверка того, что элементы, не помеченные аннотацией "Optional", отображаются,
      * а элементы, помеченные аннотацией "Hidden", скрыты.
-     * Вместо parallelStream используется обычный Iterable.forEach() из-за медленной работы IE
      */
     protected void isAppearedInIe() {
 
@@ -301,7 +300,6 @@ public abstract class AkitaPage extends ElementsContainer {
 
     /**
      * Проверка, что все элементы страницы, не помеченные аннотацией "Optional" или "Hidden", исчезли
-     * Вместо parallelStream используется stream из-за медленной работы IE
      */
     protected void isDisappearedInIe() {
         getPrimaryElements().forEach(elem ->
@@ -372,22 +370,6 @@ public abstract class AkitaPage extends ElementsContainer {
         }
         return null;
     }
-
-
-    /**
-     * Список всех элементов страницы
-     */
-    private Map<String, Object> namedElements;
-    /**
-     * Список элементов страницы, не помеченных аннотацией "Optional" или "Hidden"
-     */
-    private List<SelenideElement> primaryElements;
-
-    /**
-     * Список элементов страницы, помеченных аннотацией "Hidden"
-     */
-    private List<SelenideElement> hiddenElements;
-
 
 
     public AkitaPage initialize() {
