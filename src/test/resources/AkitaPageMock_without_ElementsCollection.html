@@ -1,0 +1,81 @@
+<!--
+
+    Copyright 2017 Alfa Laboratory
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        var HIDEnSHOW = function () {
+            var element = document.getElementById("ul");
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            }
+            else element.style.display = "none";
+        }
+    </script>
+</head>
+<body>
+<div id="mockId">Serious testing page</div>
+<div class="mockCss">
+    <a name="mockName">321</a>
+    <button onclick="HIDEnSHOW()" name="SUPERBUTTON">SUPERBUTTON</button>
+    <button onclick="this.disabled=true" name="goodButton">GoodButton</button>
+    <button onclick="this.disabled=true" name="mixedButton">English? Русский.</button>
+    <button disabled="true" id="permDisabledBtn">Disabled :p</button>
+    <div class="mockXpath">
+        <p id="ul" style="display: block">Serious testing page</p>
+    </div>
+    <div id="hiddenDiv" style="display: none">123</div>
+
+    <ul id="list">
+        <li><a href="#">Three</a></li>
+        <li><a href="#">One</a></li>
+        <li><a href="#">Two</a></li>
+    </ul>
+
+    <ul id="list2">
+        <li><a href="#">Item1</a></li>
+        <li><a href="#">item2</a></li>
+        <li><a href="#">item 3</a></li>
+    </ul>
+</div>
+<table id="t1" border="1">
+    <tr><th>First title</th><th>Second title</th></tr>
+    <tr><td>String 1, cell 1</td><td>String 1, cell 2</td></tr>
+    <tr><td>String 2, cell 1</td><td>String 2, cell 2</td></tr>
+</table>
+<form class="searchBlock">
+    <input type="text" name="searchInput">
+    <button onclick="this.disabled=true" name="searchButton">SearchButton</button>
+</form>
+<input type="text" name="normalField">
+<input type="text" name="disabledField" readonly disabled="true" value="text">
+<input type="text" name="fieldWithText" value="text1 text2 text3">
+<textarea type="textarea" name="normalTextAreaWithText"></textarea>
+<br><a href="RedirectionPage.html" id="link">LINK</a>
+<form>
+    <input type="email" id="login">
+    <input type="password" id="psw">
+    <input type="submit" id="submit">
+</form>
+<div id="innerText1">inner<p> text </p></div>
+<div class="action-buttons__send-to-bank"><button role="button" type="button" class="button button_disabled button_view_extra button_size_l button_width_available button_theme_alfa-on-white" tabindex="-1" disabled=""><span class="button__text">Подписать и отправить</span></button></div>
+<form id="multi-file-upload-form" action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" class="file" name="multiFile" multiple />
+    <input type="submit" class="submit"/>
+</form>
+</body>
+</html>
