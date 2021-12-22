@@ -139,7 +139,6 @@ public class WebPageStepsTest {
     @Test
     void testLoadPageNegative() {
         open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
-
         assertThrows(IllegalArgumentException.class, () ->
                 wpis.loadPage("thisPageDoesNotExists"));
     }

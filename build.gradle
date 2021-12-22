@@ -1,14 +1,12 @@
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
     }
 
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.25.3"
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 
         classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
         classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
@@ -18,11 +16,7 @@ buildscript {
 }
 
 repositories {
-    maven {
-        url "http://dl.bintray.com/alfa-laboratory/maven-releases"
-    }
     mavenLocal()
-    jcenter()
     mavenCentral()
 }
 
@@ -35,7 +29,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'distribution'
 
 // ==== nebula
@@ -96,38 +89,6 @@ publishing {
     }
 }
 
-ext {
-    bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
-    bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
-    bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
-}
-
-bintray {
-    user = bintrayUserName
-    key = bintrayPassword
-    publications = ['nebula']
-    dryRun = false
-    publish = true
-    pkg {
-        userOrg = 'alfa-laboratory'
-        repo = 'maven-releases'
-        name = 'akita'
-        desc = project.description
-        websiteUrl = 'https://github.com/alfa-laboratory/akita'
-        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita/issues'
-        vcsUrl = 'https://github.com/alfa-laboratory/akita.git'
-        licenses = ['Apache-2.0']
-        labels = ['gradle', 'nebula']
-        publicDownloadNumbers = true
-        attributes = [:]
-        version {
-            name = project.version
-            vcsTag = project.version
-            attributes = [:]
-        }
-    }
-}
-
 test {
     maxParallelForks = 1
     ignoreFailures = false
@@ -137,11 +98,6 @@ test {
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
     useJUnitPlatform()
 }
-
-bintrayUpload.onlyIf {
-    !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
-}
-
 
 jacocoTestReport {
     reports {

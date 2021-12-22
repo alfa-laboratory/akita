@@ -72,6 +72,7 @@ public class WebPageInteractionSteps extends BaseMethods {
         String address = loadProperty(urlOrName, resolveVars(urlOrName));
         akitaScenario.write(" url = " + address);
         open(address);
+        sleep(1000);
         loadPage(pageName);
     }
 
