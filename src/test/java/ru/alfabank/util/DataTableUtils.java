@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,7 @@ public class DataTableUtils {
         List<PickleRow> rows = new ArrayList<>();
         lists.forEach(list -> {
             List<PickleCell> cells = new ArrayList<>();
-            list.forEach(string -> {
-                cells.add(new PickleCell(null,string));
-            });
+            list.forEach(string -> cells.add(new PickleCell(null, string)));
             rows.add(new PickleRow(cells));
         });
         return new DataTable(new PickleTable(rows), null);

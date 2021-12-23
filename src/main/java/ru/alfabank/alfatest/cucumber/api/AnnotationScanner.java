@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import java.util.Set;
  */
 public class AnnotationScanner {
 
-    private static Reflections reflection = new Reflections();
+    private static final Reflections REFLECTION = new Reflections();
 
     public Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotation) {
-        return reflection.getTypesAnnotatedWith(annotation);
+        return REFLECTION.getTypesAnnotatedWith(annotation);
     }
 
 }

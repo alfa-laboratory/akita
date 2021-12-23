@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  */
 package ru.alfabank.steps;
 
-import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.ex.ElementShouldNot;
 import cucumber.api.Scenario;
@@ -27,8 +26,10 @@ import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import java.io.File;
+import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
+import static com.codeborne.selenide.Selenide.open;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,7 +44,7 @@ public class WebPageStepsTest {
 
 
     @BeforeAll
-    static void setup() {
+    static void setup() throws IOException {
         mbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = new StubScenario();
@@ -51,18 +52,13 @@ public class WebPageStepsTest {
         wpis = new WebPageInteractionSteps();
         wpvs = new WebPageVerificationSteps();
         iis = new InputInteractionSteps();
-        addPage("Page", "src/test/resources/AkitaPageMock.html");
-        addPage("Page_without_ElementsCollection", "src/test/resources/AkitaPageMock_without_ElementsCollection.html");
-        addPage("RedirectionPage", "src/test/resources/RedirectionPage.html");
-    }
 
-    private static void addPage(String name, String htmlFile) {
-        String absolutePath = new File(htmlFile).getAbsolutePath();
+        String absolutePath = new File("src/test/resources/AkitaPageMock.html").getAbsolutePath();
+        akitaScenario.setVar("Page", absolutePath);
+        String inputFilePath2 = "src/test/resources/RedirectionPage.html";
+        String url2 = new File(inputFilePath2).getAbsolutePath();
+        akitaScenario.setVar("RedirectionPage", "file://" + url2);
 
-        akitaScenario.setVar(
-                name,
-                "file://" + absolutePath
-        );
     }
 
     @BeforeEach
@@ -118,9 +114,7 @@ public class WebPageStepsTest {
 
     @Test
     void testLoadPagePositive() {
-        SelenideDriver selenideDriver = WebDriverRunner.getSelenideDriver();
-
-        selenideDriver.open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
+        open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
 
         Object page = akitaScenario.getVar("Page");
 
@@ -130,7 +124,7 @@ public class WebPageStepsTest {
                 Thread.sleep(600L);
                 System.out.println("waiting complete");
 
-                selenideDriver.open(page.toString());
+                open(page.toString());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -144,8 +138,7 @@ public class WebPageStepsTest {
 
     @Test
     void testLoadPageNegative() {
-        WebDriverRunner.getSelenideDriver().open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
-
+        open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
         assertThrows(IllegalArgumentException.class, () ->
                 wpis.loadPage("thisPageDoesNotExists"));
     }

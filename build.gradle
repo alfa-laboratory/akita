@@ -1,14 +1,12 @@
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
     }
 
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.9"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.25.3"
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
 
         classpath 'com.netflix.nebula:nebula-release-plugin:4.1.0'
         classpath 'com.netflix.nebula:gradle-info-plugin:3.2.1'
@@ -18,11 +16,7 @@ buildscript {
 }
 
 repositories {
-    maven {
-        url "http://dl.bintray.com/alfa-laboratory/maven-releases"
-    }
     mavenLocal()
-    jcenter()
     mavenCentral()
 }
 
@@ -35,7 +29,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'distribution'
 
 // ==== nebula
@@ -48,15 +41,14 @@ group = 'ru.alfabank.tests'
 
 description = """light testing framework Akita"""
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 project.ext {
     cucumberVersion = '2.4.0'
-    selenideVersion = '5.2.2'
+    selenideVersion = '6.1.1'
 }
 
 dependencies {
+    implementation 'com.qaprosoft:carina-proxy:7.2.14'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
     compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
     compile group: 'org.codehaus.groovy', name: 'groovy', version: '2.4.8'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
@@ -70,10 +62,12 @@ dependencies {
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.galenframework', name: 'galen-java-support', version: '2.3.6'
     compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
+    compile group: 'net.lightbody.bmp', name: 'browsermob-proxy', version: '2.0.0'
 
-    testCompile "org.mockito:mockito-core:2.13.0"
-    testCompile "org.mockito:mockito-inline:2.13.0"
-    testCompile "com.github.tomakehurst:wiremock-standalone:2.15.0"
+    testCompile 'org.mockito:mockito-core:4.1.0'
+    testCompile 'org.mockito:mockito-inline:4.1.0'
+    testCompile 'com.github.tomakehurst:wiremock-standalone:2.27.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -95,38 +89,6 @@ publishing {
     }
 }
 
-ext {
-    bintrayUserName = (project.hasProperty('BINTRAY_USERNAME') ? project.findProperty('BINTRAY_USERNAME') : System.getenv()['BINTRAY_USERNAME'])
-    bintrayPassword = (project.hasProperty('BINTRAY_PASSWORD') ? project.findProperty('BINTRAY_PASSWORD') : System.getenv()['BINTRAY_PASSWORD'])
-    bintrayRepository = (project.hasProperty('BINTRAY_REPOSITORY') ? project.findProperty('BINTRAY_REPOSITORY') : System.getenv()['BINTRAY_REPOSITORY'])
-}
-
-bintray {
-    user = bintrayUserName
-    key = bintrayPassword
-    publications = ['nebula']
-    dryRun = false
-    publish = true
-    pkg {
-        userOrg = 'alfa-laboratory'
-        repo = 'maven-releases'
-        name = 'akita'
-        desc = project.description
-        websiteUrl = 'https://github.com/alfa-laboratory/akita'
-        issueTrackerUrl = 'https://github.com/alfa-laboratory/akita/issues'
-        vcsUrl = 'https://github.com/alfa-laboratory/akita.git'
-        licenses = ['Apache-2.0']
-        labels = ['gradle', 'nebula']
-        publicDownloadNumbers = true
-        attributes = [:]
-        version {
-            name = project.version
-            vcsTag = project.version
-            attributes = [:]
-        }
-    }
-}
-
 test {
     maxParallelForks = 1
     ignoreFailures = false
@@ -134,12 +96,8 @@ test {
     jvmArgs += "-Dfile.encoding=UTF-8"
     jvmArgs += "-Dbrowser=chrome"
     jvmArgs += "-Dselenide.pageLoadStrategy=none"
+    useJUnitPlatform()
 }
-
-bintrayUpload.onlyIf {
-    !project.version.toString().toUpperCase().endsWith("-SNAPSHOT") && !project.version.toString().toUpperCase().contains("-DEV")
-}
-
 
 jacocoTestReport {
     reports {
