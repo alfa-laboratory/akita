@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,11 @@ public class AkitaEnvironment {
      * Переменные, объявленные пользователем внутри сценария
      * ThreadLocal обеспечивает отсутствие коллизий при многопоточном запуске
      */
-    private ThreadLocal<ScopedVariables> variables = new ThreadLocal<>();
+    private final ThreadLocal<ScopedVariables> variables = new ThreadLocal<>();
     /**
      * Список веб-страниц, заданных пользователем, доступных для использования в сценариях
      */
-    private Pages pages = new Pages();
+    private final Pages pages = new Pages();
 
     public AkitaEnvironment(Scenario scenario) {
         this.scenario = scenario;
@@ -78,7 +78,7 @@ public class AkitaEnvironment {
         return Arrays.stream(c.getAnnotationsByType(Name.class))
                 .findAny()
                 .map(Name::value)
-                .orElseThrow(() -> new AssertionError("Не найдены аннотации AkitaPage.Name в класса " + c.getClass().getName()));
+                .orElseThrow(() -> new AssertionError("Не найдены аннотации AkitaPage.Name в класса " + c.getName()));
     }
 
     /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class ManageBrowserCookieStepsTest {
 
     @Test
     void saveAllCookiesTest() {
-        Set set = new HashSet();
+        Set<Cookie> set = new HashSet<>();
         when(webDriver.manage().getCookies()).thenReturn(set);
         dmbs.saveAllCookies("var2");
         assertEquals(set, akitaScenario.getVar("var2"));

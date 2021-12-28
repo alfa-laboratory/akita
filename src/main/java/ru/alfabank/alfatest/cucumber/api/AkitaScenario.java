@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 @Slf4j
 public final class AkitaScenario {
 
-    private static AkitaScenario instance = new AkitaScenario();
+    private static final AkitaScenario INSTANCE = new AkitaScenario();
 
     /**
      * Среда прогона тестов, хранит в себе: Cucumber.Scenario,
@@ -38,7 +38,7 @@ public final class AkitaScenario {
     }
 
     public static AkitaScenario getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     public AkitaEnvironment getEnvironment() {
@@ -122,7 +122,7 @@ public final class AkitaScenario {
     /**
      * Получение переменной по имени, заданного пользователем, из пула переменных "variables" в AkitaEnvironment
      *
-     * @param name - имя переменной, для которй необходимо получить ранее сохраненное значение
+     * @param name - имя переменной, для которой необходимо получить ранее сохраненное значение
      */
     public Object getVar(String name) {
         Object obj = this.getEnvironment().getVar(name);
@@ -180,7 +180,7 @@ public final class AkitaScenario {
     /**
      * Добавление переменной в пул "variables" в классе AkitaEnvironment
      *
-     * @param name   имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AkitaEnvironment
+     * @param name   Имя переменной заданное пользователем, для которого сохраняется значение. Является ключом в пуле variables в классе AkitaEnvironment
      * @param object значение, которое нужно сохранить в переменную
      */
     public void setVar(String name, Object object) {

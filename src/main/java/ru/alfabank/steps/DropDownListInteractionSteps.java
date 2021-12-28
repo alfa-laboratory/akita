@@ -1,12 +1,9 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +32,7 @@ public class DropDownListInteractionSteps extends BaseMethods {
      */
     @Тогда("^в выпадающем списке \"([^\"]*)\" выбран элемент с текстом \"([^\"]*)\"$")
     @Then("^in drop down list named \"([^\"]*)\" element with text \"([^\"]*)\" had been selected$")
-    public void selectELementFromDropDownListWithText (String listName, String expectedText) {
+    public void selectElementFromDropDownListWithText(String listName, String expectedText) {
         final String text = getPropertyOrStringVariableOrValue(expectedText);
         SelenideElement list = akitaScenario.getCurrentPage().getElement(listName);
         list.selectOption(text);
@@ -47,7 +44,7 @@ public class DropDownListInteractionSteps extends BaseMethods {
      */
     @Тогда("^в выпадающем списке \"([^\"]*)\" выбран элемент со значением \"([^\"]*)\"$")
     @Then("^in drop down list named \"([^\"]*)\" element with value \"([^\"]*)\" had been selected$")
-    public void selectElementFromDropDownListWithValue (String listName, String expectedValue) {
+    public void selectElementFromDropDownListWithValue(String listName, String expectedValue) {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         SelenideElement list = akitaScenario.getCurrentPage().getElement(listName);
         list.selectOptionByValue(value);
@@ -59,9 +56,9 @@ public class DropDownListInteractionSteps extends BaseMethods {
      */
     @Тогда("^выбран (\\d+)-й элемент в выпадающем списке \"([^\"]*)\"$")
     @Then("^selected the (\\d+)(st|nd|rd|th) element from the drop down list named \"([^\"]*)\"$")
-    public void selectElementNumberFromDropDownList (int elementNumber, String listName) {
+    public void selectElementNumberFromDropDownList(int elementNumber, String listName) {
         Select list = new Select(akitaScenario.getCurrentPage().getElement(listName));
-        Integer selectedElementNumber = elementNumber - 1;
+        int selectedElementNumber = elementNumber - 1;
         if (selectedElementNumber < 0 || selectedElementNumber >= list.getOptions().size()) {
             throw new IndexOutOfBoundsException(
                     String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
@@ -76,7 +73,7 @@ public class DropDownListInteractionSteps extends BaseMethods {
      */
     @Тогда("^в выпадающем списке \"([^\"]*)\" выбран элемент содержащий текст \"([^\"]*)\"$")
     @Then("^in drop down list named \"([^\"]*)\" element containing text \"([^\"]*)\" had been selected$")
-    public void selectELementFromDropDownListContainingText (String listName, String expectedText) {
+    public void selectElementFromDropDownListContainingText(String listName, String expectedText) {
         final String text = getPropertyOrStringVariableOrValue(expectedText);
         SelenideElement list = akitaScenario.getCurrentPage().getElement(listName);
         list.selectOptionContainingText(text);

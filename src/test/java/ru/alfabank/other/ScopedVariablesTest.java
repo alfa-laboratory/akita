@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ public class ScopedVariablesTest {
         String inputJsonString = "{\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"{bodyWithParams1}\", \"age\": {bodyWithParams2}}, " +
                 "\"object\": {\"var1\": 1}, " +
-                "\"length\": {resolve.Переменная-1_2}}";
+                "\"length\": {variable-1_2}}";
         String expectedJsonString = "{\"object1\": {\"var1\": 1}, " +
                 "\"person\": {\"name\": \"Jack\", \"age\": 35}, " +
                 "\"object\": {\"var1\": 1}, " +

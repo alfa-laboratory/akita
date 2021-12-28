@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import com.codeborne.selenide.WebDriverRunner;
 import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.alfabank.AkitaPageMock;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
@@ -40,11 +39,10 @@ import static ru.alfabank.alfatest.cucumber.api.AkitaPage.getButtonFromListByNam
 public class AkitaPageTest {
     private static AkitaPageMock akitaPageMock;
     private static AkitaPage page;
-    private static WebPageInteractionSteps wpis;
 
     @BeforeAll
     static void setup() {
-        wpis = new WebPageInteractionSteps();
+        WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         akitaPageMock = new AkitaPageMock();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
         Scenario scenario = mock(Scenario.class);
@@ -104,7 +102,7 @@ public class AkitaPageTest {
 
     @Test
     void getAnyElementsListTextsNegative() {
-        assertThrows(NullPointerException.class, () ->akitaPageMock.getAnyElementsListTexts("test"));
+        assertThrows(NullPointerException.class, () -> akitaPageMock.getAnyElementsListTexts("test"));
     }
 
     @Test
@@ -154,9 +152,9 @@ public class AkitaPageTest {
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void getButtonFromListByNamePositive() {
-        SelenideElement selenideElement = akitaPageMock.getGoodButton();
+        SelenideElement selenideElement = page.getElement("GoodButton");
         List<SelenideElement> list = new LinkedList<>();
         list.add(selenideElement);
         assertThat(getButtonFromListByName(list, "GoodButton"), is(notNullValue()));

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,7 +154,7 @@ public class RoundUpStepsTest {
     }
 
     @Test
-    void testfillTemplate() {
+    void testFillTemplate() {
         String templateName = "strTemplate";
         String varName = "varName";
         List<String> row1 = new ArrayList<>(Arrays.asList("_name_", "Jack"));

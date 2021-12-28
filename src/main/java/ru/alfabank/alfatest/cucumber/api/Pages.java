@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  */
 package ru.alfabank.alfatest.cucumber.api;
 
-import com.codeborne.selenide.ElementsContainer;
 import com.codeborne.selenide.Selenide;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
@@ -27,9 +26,9 @@ import java.util.function.Consumer;
 public final class Pages {
 
     /**
-     * Страницы, на которых будет производится тестирование < Имя, Страница >
+     * Страницы, на которых будет производиться тестирование < Имя, Страница >
      */
-    private Map<String, AkitaPage> pages;
+    private final Map<String, AkitaPage> pages;
 
     /**
      * Страница, на которой в текущий момент производится тестирование

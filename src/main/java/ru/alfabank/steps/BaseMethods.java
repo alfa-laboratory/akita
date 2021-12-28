@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,7 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.rest.RequestParam;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -165,7 +162,7 @@ public class BaseMethods {
      * Возвращает значение из property файла, если отсутствует, то из пользовательских переменных,
      * если и оно отсутствует, то возвращает значение переданной на вход переменной
      *
-     * @return
+     * @return propertyCheck
      */
     public String getPropertyOrStringVariableOrValue(String propertyNameOrVariableNameOrValue) {
         String propertyValue = tryLoadProperty(propertyNameOrVariableNameOrValue);
@@ -190,7 +187,7 @@ public class BaseMethods {
     /**
      * Возвращает каталог "Downloads" в домашней директории
      *
-     * @return
+     * @return downloadFile
      */
     public File getDownloadsDir() {
         String homeDir = System.getProperty("user.home");
@@ -204,7 +201,11 @@ public class BaseMethods {
      */
     public void deleteFiles(File[] filesToDelete) {
         for (File file : filesToDelete) {
-            file.delete();
+            if (file.delete()) {
+                akitaScenario.write("Файл: " + file + " удален");
+            } else {
+                akitaScenario.write("Проблемы с удалением файла: " + file);
+            }
         }
     }
 
@@ -257,17 +258,16 @@ public class BaseMethods {
      * Возвращает локатор для поиска по нормализованному(без учета регистра) тексту
      */
     public String getTranslateNormalizeSpaceText(String expectedText) {
-        StringBuilder text = new StringBuilder();
-        text.append("//*[contains(translate(normalize-space(text()), ");
-        text.append("'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', ");
-        text.append("'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхчшщъыьэюя'), '");
-        text.append(expectedText.toLowerCase());
-        text.append("')]");
-        return text.toString();
+        return "//*[contains(translate(normalize-space(text()), " +
+                "'ABCDEFGHIJKLMNOPQRSTUVWXYZАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ', " +
+                "'abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхчшщъыьэюя'), '" +
+                expectedText.toLowerCase() +
+                "')]";
     }
 
     /**
      * Прикрепляет файл к текущему сценарию в cucumber отчете
+     *
      * @param fileName - название файла
      * @param mimeType - тип файла
      */
@@ -278,9 +278,9 @@ public class BaseMethods {
     }
 
     @SneakyThrows
-    /**
+    /*
      * Проверяет соответствие текущей страницы ее описанию в .spec файле.
-     * Скриншоты с расходениями в дизайне сохраняются в /build/results-img/ и прикрепояются к cucumber отчету
+     * Скриншоты с расхождениями в дизайне сохраняются в /build/results-img/ и прикрепляются к cucumber отчету
      * Путь /build/results-img/ можно переопределить, задав системную переменную imgDiff
      */
     public void checkLayoutAccordingToSpec(String spec, List<String> tags) {
@@ -314,14 +314,14 @@ public class BaseMethods {
         Keys removeKey = isIE() ? Keys.BACK_SPACE : Keys.DELETE;
         do {
             valueInput.shouldNotBe(readonly, disabled).doubleClick().sendKeys(removeKey);
-        } while (valueInput.getValue().length() != 0);
+        } while (Objects.requireNonNull(valueInput.getValue()).length() != 0);
     }
 
     /**
      * Выдергиваем число из строки
      */
     public int getCounterFromString(String variableName) {
-        return Integer.parseInt(variableName.replaceAll("[^0-9]",""));
+        return Integer.parseInt(variableName.replaceAll("[^0-9]", ""));
     }
 
     public void checkPageTitle(String pageTitleName) {

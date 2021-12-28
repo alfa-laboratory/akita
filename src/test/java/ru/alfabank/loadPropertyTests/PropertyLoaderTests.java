@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
 public class PropertyLoaderTests {
-    private static AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    private static final AkitaScenario AKITA_SCENARIO = AkitaScenario.getInstance();
 
     @BeforeAll
     static void init() {
@@ -37,7 +37,7 @@ public class PropertyLoaderTests {
     @BeforeEach
     void prepare() {
         Scenario scenario = mock(Scenario.class);
-        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
+        AKITA_SCENARIO.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     @AfterAll
@@ -47,8 +47,8 @@ public class PropertyLoaderTests {
 
     @Test
     void someValuesFromMap() {
-        akitaScenario.setVar("first", "pervoe");
-        akitaScenario.setVar("second", "ne_rabotaet");
+        AKITA_SCENARIO.setVar("first", "pervoe");
+        AKITA_SCENARIO.setVar("second", "ne_rabotaet");
         String expected = "pervoe ne_rabotaet";
         String actual = resolveVars("{first} {second}");
         assertEquals(expected, actual, "Итоговый URL не равен 'pervoe ne_rabotaet'");
@@ -56,32 +56,32 @@ public class PropertyLoaderTests {
 
     @Test
     void getValueFromPropertyFile() {
-        akitaScenario.setVar("first", "alfalab");
-        akitaScenario.setVar("second", "/ru/credit");
+        AKITA_SCENARIO.setVar("first", "alfalab");
+        AKITA_SCENARIO.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}");
         assertEquals("caramba", actual, "Итоговый URL не равен 'caramba'");
     }
 
     @Test
     void getSomeValuesFromPropertyFile() {
-        akitaScenario.setVar("first", "alfalab");
-        akitaScenario.setVar("second", "/ru/credit");
+        AKITA_SCENARIO.setVar("first", "alfalab");
+        AKITA_SCENARIO.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}/{varFromPropertyFile2}");
         assertEquals("caramba/kumkvat", actual, "Итоговый URL не равен 'caramba/kumkvat'");
     }
 
     @Test
     void getSomeValuesFromPropAndMap() {
-        akitaScenario.setVar("first", "alfalab");
-        akitaScenario.setVar("second", "/ru/credit");
+        AKITA_SCENARIO.setVar("first", "alfalab");
+        AKITA_SCENARIO.setVar("second", "/ru/credit");
         String actual = resolveVars("{varFromPropertyFile1}/{first}");
         assertEquals("caramba/alfalab", actual, "Итоговый URL не равен 'caramba/alfalab'");
     }
 
     @Test
     void getSomeValuesFromPropAndMapAndSpec() {
-        akitaScenario.setVar("first", "alfalab");
-        akitaScenario.setVar("second", "/ru/credit");
+        AKITA_SCENARIO.setVar("first", "alfalab");
+        AKITA_SCENARIO.setVar("second", "/ru/credit");
         String actual = resolveVars("/{second}/{varFromPropertyFile1}/{first}/");
         assertEquals("//ru/credit/caramba/alfalab/", actual, "Итоговый URL не равен '//ru/credit/caramba/alfalab/'");
     }
@@ -94,16 +94,14 @@ public class PropertyLoaderTests {
 
     @Test
     void getValueFromMapByNameWithDot() {
-        akitaScenario.setVar("user.login", "superLogin");
-        String resolvedString = akitaScenario.replaceVariables("{user.login}");
-        assertEquals("superLogin", resolvedString,"успешно разрезолвилась переменная с .");
+        AKITA_SCENARIO.setVar("user.login", "superLogin");
+        String resolvedString = AKITA_SCENARIO.replaceVariables("{user.login}");
+        assertEquals("superLogin", resolvedString, "успешно разрезолвилась переменная с .");
     }
 
     @Test
     void getNotExistingValue() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            resolveVars("{RandomTestVariable3321}");
-        });
+        assertThrows(IllegalArgumentException.class, () -> resolveVars("{RandomTestVariable3321}"));
     }
 
     @Test
@@ -120,7 +118,7 @@ public class PropertyLoaderTests {
 
     @Test
     void testVariableWhenLoadValueFromFileOrPropertyOrVariableOrDefault3() {
-        akitaScenario.setVar("varName", "testVariable");
+        AKITA_SCENARIO.setVar("varName", "testVariable");
         assertEquals("testVariable", loadValueFromFileOrPropertyOrVariableOrDefault("varName"));
     }
 

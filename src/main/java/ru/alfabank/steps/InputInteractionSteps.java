@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class InputInteractionSteps extends BaseMethods {
     }
 
     /**
-     * Добавление строки (в приоритете: из property, из переменной сценария, значение аргумента) в поле к уже заполненой строке
+     * Добавление строки (в приоритете: из property, из переменной сценария, значение аргумента) в поле к уже заполненной строке
      */
     @Когда("^в элемент \"([^\"]*)\" дописывается значение \"(.*)\"$")
     @When("^element named \"([^\"]*)\" has been suplemented with value of \"(.*)\"$")
@@ -66,6 +66,7 @@ public class InputInteractionSteps extends BaseMethods {
         value = getPropertyOrStringVariableOrValue(value);
         SelenideElement field = akitaScenario.getCurrentPage().getElement(elementName);
         String oldValue = field.getValue();
+        assert oldValue != null;
         if (oldValue.isEmpty()) {
             oldValue = field.getText();
         }
@@ -86,7 +87,7 @@ public class InputInteractionSteps extends BaseMethods {
             currentStringDate = new SimpleDateFormat(dateFormat).format(date);
         } catch (IllegalArgumentException ex) {
             currentStringDate = new SimpleDateFormat("dd.MM.yyyy").format(date);
-            log.error("Неверный формат даты. Будет использоваться значание по умолчанию в формате dd.MM.yyyy");
+            log.error("Неверный формат даты. Будет использоваться значение по умолчанию в формате dd.MM.yyyy");
         }
         SelenideElement valueInput = akitaScenario.getCurrentPage().getElement(fieldName);
         valueInput.setValue("");

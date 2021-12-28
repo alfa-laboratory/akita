@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,13 +40,13 @@ public class ListInteractionSteps extends BaseMethods {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsText = listOfElementsFromPage.stream()
-            .map(element -> element.getText().trim())
-            .collect(toList());
+                .map(element -> element.getText().trim())
+                .collect(toList());
         listOfElementsFromPage.stream()
-            .filter(element -> element.getText().trim().equalsIgnoreCase(value))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
-            .click();
+                .filter(element -> element.getText().trim().equalsIgnoreCase(value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsText)))
+                .click();
     }
 
     /**
@@ -60,13 +60,13 @@ public class ListInteractionSteps extends BaseMethods {
         final String value = getPropertyOrStringVariableOrValue(expectedValue);
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         List<String> elementsListText = listOfElementsFromPage.stream()
-            .map(element -> element.getText().trim().toLowerCase())
-            .collect(toList());
+                .map(element -> element.getText().trim().toLowerCase())
+                .collect(toList());
         listOfElementsFromPage.stream()
-            .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
-            .click();
+                .filter(element -> element.getText().trim().toLowerCase().contains(value.toLowerCase()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Элемент [%s] не найден в списке %s: [%s] ", value, listName, elementsListText)))
+                .click();
     }
 
     /**
@@ -80,7 +80,7 @@ public class ListInteractionSteps extends BaseMethods {
         element.shouldBe(Condition.visible).click();
         akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(element).trim());
         akitaScenario.write(String.format("Переменной [%s] присвоено значение [%s] из списка [%s]", varName,
-            akitaScenario.getVar(varName), listName));
+                akitaScenario.getVar(varName), listName));
     }
 
     /**
@@ -90,16 +90,7 @@ public class ListInteractionSteps extends BaseMethods {
     @Когда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\"$")
     @When("^selected the (\\d+)(st|nd|rd|th) element from the \"([^\"]*)\" list$")
     public void selectElementNumberFromList(Integer elementNumber, String listName) {
-        List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
-        SelenideElement elementToSelect;
-        Integer selectedElementNumber = elementNumber - 1;
-        if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
-            throw new IndexOutOfBoundsException(
-                String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
-                    listName, elementNumber, listOfElementsFromPage.size()));
-        }
-        elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
-        elementToSelect.shouldBe(Condition.visible).click();
+        getListOfElementsFromPage(elementNumber, listName);
     }
 
     /**
@@ -110,7 +101,7 @@ public class ListInteractionSteps extends BaseMethods {
     public void selectRandomElementFromList(String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         listOfElementsFromPage.get(getRandom(listOfElementsFromPage.size()))
-            .shouldBe(Condition.visible).click();
+                .shouldBe(Condition.visible).click();
         akitaScenario.write("Выбран случайный элемент: " + listOfElementsFromPage);
     }
 
@@ -121,16 +112,21 @@ public class ListInteractionSteps extends BaseMethods {
     @Тогда("^выбран (\\d+)-й элемент в списке \"([^\"]*)\" и его значение сохранено в переменную \"([^\"]*)\"$")
     @When("^selected the (\\d+)(st|nd|rd|th) element from the \"([^\"]*)\" list and its value has been saved to the \"([^\"]*)\" variable$")
     public void selectElementNumberFromListAndSaveToVar(Integer elementNumber, String listName, String varName) {
+        SelenideElement elementToSelect = getListOfElementsFromPage(elementNumber, listName);
+        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(elementToSelect).trim());
+    }
+
+    private SelenideElement getListOfElementsFromPage(Integer elementNumber, String listName) {
         List<SelenideElement> listOfElementsFromPage = akitaScenario.getCurrentPage().getElementsList(listName);
         SelenideElement elementToSelect;
-        Integer selectedElementNumber = elementNumber - 1;
+        int selectedElementNumber = elementNumber - 1;
         if (selectedElementNumber < 0 || selectedElementNumber >= listOfElementsFromPage.size()) {
             throw new IndexOutOfBoundsException(
-                String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
-                    listName, elementNumber, listOfElementsFromPage.size()));
+                    String.format("В списке %s нет элемента с номером %s. Количество элементов списка = %s",
+                            listName, elementNumber, listOfElementsFromPage.size()));
         }
         elementToSelect = listOfElementsFromPage.get(selectedElementNumber);
         elementToSelect.shouldBe(Condition.visible).click();
-        akitaScenario.setVar(varName, akitaScenario.getCurrentPage().getAnyElementText(elementToSelect).trim());
+        return elementToSelect;
     }
 }

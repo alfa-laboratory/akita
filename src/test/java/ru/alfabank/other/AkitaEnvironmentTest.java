@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,15 +32,14 @@ import static org.mockito.Mockito.mock;
 
 public class AkitaEnvironmentTest {
     private static AkitaEnvironment env;
-    private static WebPageInteractionSteps wpis;
 
     @BeforeAll
-    static void prepare() {
+     static void prepare() {
 
         env = new AkitaEnvironment();
         AkitaScenario akitaScenario = AkitaScenario.getInstance();
-        wpis = new WebPageInteractionSteps();
         Scenario scenario = mock(Scenario.class);
+        WebPageInteractionSteps wpis = new WebPageInteractionSteps();
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         String inputFilePath = "src/test/resources/AkitaPageMock.html";
         String url = new File(inputFilePath).getAbsolutePath();

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 /**
- * При подключении StepFormatter к проеку с тестами, становится достуна опция снятия скриншотов
+ * При подключении StepFormatter к проекту с тестами, становится доступна опция снятия скриншотов
  * после каждого шага. Для этого необходимо задать системную переменную takeScreenshotAfterSteps=true
  * Скриншот так же будет сниматься после каждого метода, помеченного аннотацией @Screenshot
  */
@@ -57,26 +57,26 @@ public class StepFormatter implements EventListener {
     }
 
     /**
-     * Метод осуществляет снятие скришота и прикрепление его к cucumber отчету.
+     * Метод осуществляет снятие скриншота и прикрепление его к cucumber отчету.
      * Скриншот снимается после шагов, помеченных аннотацией @Screenshot,
      * либо после каждого шага, если задана системная переменная takeScreenshotAfterSteps=true
-     * @param testStep - текущий шаг
      *
+     * @param testStep - текущий шаг
      */
     private void afterStep(TestStep testStep) {
         String fullMethodLocation = testStep.getCodeLocation();
         String currentMethodName = fullMethodLocation.substring(fullMethodLocation.indexOf('.') + 1, fullMethodLocation.indexOf('('));
 
         List<Method> methodsWithScreenshotAnnotation = new Reflections(new MethodAnnotationsScanner())
-            .getMethodsAnnotatedWith(Screenshot.class)
-            .stream()
-            .filter(m -> m.getName().contains(currentMethodName))
-            .collect(Collectors.toList());
+                .getMethodsAnnotatedWith(Screenshot.class)
+                .stream()
+                .filter(m -> m.getName().contains(currentMethodName))
+                .collect(Collectors.toList());
 
         boolean isScreenshotAnnotationPresent = methodsWithScreenshotAnnotation.size() > 0;
 
-        boolean isTakeScreenshotAfterStepsProperty = System.getProperty(SCREENSHOT_AFTER_STEPS) != null
-            ? Boolean.valueOf(System.getProperty(SCREENSHOT_AFTER_STEPS)) : false;
+        boolean isTakeScreenshotAfterStepsProperty =
+                System.getProperty(SCREENSHOT_AFTER_STEPS) != null && Boolean.parseBoolean(System.getProperty(SCREENSHOT_AFTER_STEPS));
 
         if (isScreenshotAnnotationPresent || isTakeScreenshotAfterStepsProperty) {
             final byte[] screenshot = ((TakesScreenshot) getWebDriver()).getScreenshotAs(OutputType.BYTES);

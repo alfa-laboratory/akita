@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElementStepsTest {
 
@@ -51,8 +52,8 @@ public class ElementStepsTest {
         String url = new File(inputFilePath).getAbsolutePath();
         akitaScenario.setVar("Page", "file://" + url);
         String inputFilePath2 = "src/test/resources/RedirectionPage.html";
-        String url2 = new File(inputFilePath2).getAbsolutePath();
-        akitaScenario.setVar("RedirectionPage", "file://" + url2);
+        String url2 = new File(inputFilePath2).getName();
+        akitaScenario.setVar("RedirectionPage", url2);
     }
 
     @BeforeEach
@@ -88,8 +89,8 @@ public class ElementStepsTest {
     void findElementPositive() {
         elis.findElement("LINK");
         sleep(500);
-        assertThat(WebDriverRunner.getWebDriver().getCurrentUrl(),
-                equalTo(akitaScenario.getVar("RedirectionPage")));
+        assertTrue(WebDriverRunner.getWebDriver().getCurrentUrl().
+                contains(akitaScenario.getVar("RedirectionPage").toString()));
     }
 
     @Test
@@ -217,14 +218,14 @@ public class ElementStepsTest {
     }
 
     @Test
-    void elementDisapperaredAndAppearedComplex() {
+    void elementDisappearedAndAppearedComplex() {
         elvs.testElementAppeared("ul", 1);
         elis.clickOnElement("SUPERBUTTON");
-        elvs.elemDisappered("ul");
+        elvs.elemDisappeared("ul");
     }
 
     @Test
-    void testCheckFieldsize() {
+    void testCheckFieldSize() {
         elvs.checkFieldSymbolsCount("ul", 20);
     }
 

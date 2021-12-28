@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ public class WebPageInteractionSteps extends BaseMethods {
         String address = loadProperty(urlOrName, resolveVars(urlOrName));
         akitaScenario.write(" url = " + address);
         open(address);
+        sleep(1000);
         loadPage(pageName);
     }
 
@@ -88,13 +89,13 @@ public class WebPageInteractionSteps extends BaseMethods {
 
     /**
      * Шаг авторизации.
-     * Для того, чтобы шаг работал, на текущей странице должны быть указаны элементы
+     * Для того чтобы шаг работал, на текущей странице должны быть указаны элементы
      * со значениями аннотации @Name:
      * "Логин" - для поля ввода логина,
      * "Пароль" - для поля ввода пароля и
      * "Войти" - для кнопки входа.
      * Также должны быть указаны логин и пароль в файле application.properties.
-     * Например для шага: "Пусть пользователь user ввел логин и пароль"
+     * Например, для шага: "Пусть пользователь user ввел логин и пароль"
      * логин и пароль должны быть указаны со следующими ключами:
      * user.login - для логина и
      * user.password - для пароля
@@ -139,7 +140,7 @@ public class WebPageInteractionSteps extends BaseMethods {
     @И("^страница прокручена до появления элемента \"([^\"]*)\"$")
     @When("^page has been scrolled down till the \"([^\"]*)\" element is appeared$")
     public void scrollWhileElemNotFoundOnPage(String elementName) {
-        SelenideElement el = null;
+        SelenideElement el;
         do {
             el = akitaScenario.getCurrentPage().getElement(elementName);
             if (el.exists()) {
@@ -158,7 +159,7 @@ public class WebPageInteractionSteps extends BaseMethods {
     @И("^страница прокручена до появления элемента с текстом \"([^\"]*)\"$")
     @When("^page has been scrolled down till the element with text \"([^\"]*)\" is appeared$")
     public void scrollWhileElemWithTextNotFoundOnPage(String expectedValue) {
-        SelenideElement el = null;
+        SelenideElement el;
         do {
             el = $(By.xpath(getTranslateNormalizeSpaceText(getPropertyOrStringVariableOrValue(expectedValue))));
             if (el.exists()) {
@@ -171,7 +172,7 @@ public class WebPageInteractionSteps extends BaseMethods {
     }
 
     /**
-     *  Переключение на вкладку браузера с заголовком
+     * Переключение на вкладку браузера с заголовком
      */
     @Когда("^выполнено переключение на вкладку с заголовком \"([^\"]*)\"$")
     @When("^switched to a tab with the title \"([^\"]*)\"$")
@@ -181,7 +182,7 @@ public class WebPageInteractionSteps extends BaseMethods {
     }
 
     /**
-     *  Производится сохранение заголовка страницы в переменную
+     * Производится сохранение заголовка страницы в переменную
      */
     @И("^заголовок страницы сохранен в переменную \"([^\"]*)\"$")
     @And("^page's header has been saved to the \"([^\"]*)\" variable$")

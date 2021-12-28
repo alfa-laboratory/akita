@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrP
 
 /**
  * Шаги для взаимодействия с элементами страницы, доступные по умолчанию в каждом новом проекте
- * */
+ */
 
 @Slf4j
 public class ElementsInteractionSteps extends BaseMethods {
@@ -71,10 +71,10 @@ public class ElementsInteractionSteps extends BaseMethods {
     }
 
     /**
-    * Выполняется нажатие на кнопку и подгружается указанный файл
-    * Селектор кнопки должны быть строго на input элемента
-    * Можно указать путь до файла. Например, src/test/resources/example.pdf
-    */
+     * Выполняется нажатие на кнопку и подгружается указанный файл
+     * Селектор кнопки должны быть строго на input элемента
+     * Можно указать путь до файла. Например, src/test/resources/example.pdf
+     */
     @Когда("^выполнено нажатие на кнопку \"([^\"]*)\" и загружен файл \"([^\"]*)\"$")
     @When("^clicked on button named \"([^\"]*)\" and file named \"([^\"]*)\" has been loaded$")
     public void clickOnButtonAndUploadFile(String buttonName, String fileName) {
