@@ -54,10 +54,12 @@ public class WebPageStepsTest {
         iis = new InputInteractionSteps();
 
         String absolutePath = new File("src/test/resources/AkitaPageMock.html").getAbsolutePath();
-        akitaScenario.setVar("Page", absolutePath);
+        akitaScenario.setVar("Page", "file://" + absolutePath);
         String inputFilePath2 = "src/test/resources/RedirectionPage.html";
         String url2 = new File(inputFilePath2).getAbsolutePath();
         akitaScenario.setVar("RedirectionPage", "file://" + url2);
+        String absolutePathAkitaPageMockWithoutElementsCollection = new File("src/test/resources/AkitaPageMock_without_ElementsCollection.html").getAbsolutePath();
+        akitaScenario.setVar("AkitaPageMock_without_ElementsCollection", "file://" + absolutePathAkitaPageMockWithoutElementsCollection);
 
     }
 
@@ -114,7 +116,7 @@ public class WebPageStepsTest {
 
     @Test
     void testLoadPagePositive() {
-        open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
+        open(akitaScenario.getVar("AkitaPageMock_without_ElementsCollection").toString());
 
         Object page = akitaScenario.getVar("Page");
 
@@ -138,7 +140,7 @@ public class WebPageStepsTest {
 
     @Test
     void testLoadPageNegative() {
-        open(akitaScenario.getVar("Page_without_ElementsCollection").toString());
+        open(akitaScenario.getVar("AkitaPageMock_without_ElementsCollection").toString());
         assertThrows(IllegalArgumentException.class, () ->
                 wpis.loadPage("thisPageDoesNotExists"));
     }

@@ -12,6 +12,17 @@
  */
 package ru.alfabank.tests.core.drivers;
 
+import com.github.kklisura.cdt.protocol.commands.Fetch;
+import com.github.kklisura.cdt.protocol.types.fetch.RequestPattern;
+import com.github.kklisura.cdt.protocol.types.network.ErrorReason;
+import com.github.kklisura.cdt.services.ChromeDevToolsService;
+import com.github.kklisura.cdt.services.WebSocketService;
+import com.github.kklisura.cdt.services.config.ChromeDevToolsServiceConfiguration;
+import com.github.kklisura.cdt.services.exceptions.WebSocketServiceException;
+import com.github.kklisura.cdt.services.impl.ChromeDevToolsServiceImpl;
+import com.github.kklisura.cdt.services.impl.WebSocketServiceImpl;
+import com.github.kklisura.cdt.services.invocation.CommandInvocationHandler;
+import com.github.kklisura.cdt.services.utils.ProxyUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import net.lightbody.bmp.BrowserMobProxy;
 import com.codeborne.selenide.Configuration;
@@ -43,11 +54,14 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.codeborne.selenide.Browsers.*;
 import static org.openqa.selenium.remote.CapabilityType.*;
@@ -89,6 +103,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     private final static String SELENOID_SESSION_NAME = "selenoidSessionName";
     public final static int DEFAULT_WIDTH = 1920;
     public final static int DEFAULT_HEIGHT = 1080;
+    private final List<String> abortedNetworkRequestsList = new ArrayList<>();
 
     private static final BrowserMobProxy PROXY = new BrowserMobProxyServer();
     private final String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
@@ -120,7 +135,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     @NotNull
     @Override
     public WebDriver createDriver(@NotNull Capabilities capabilities) {
-        DesiredCapabilities desiredCapabilities = (DesiredCapabilities) capabilities;
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(capabilities);
         Configuration.browserSize = String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
                 loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
         String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, capabilities.getBrowserName());
@@ -153,8 +168,13 @@ public class CustomDriverProvider implements WebDriverProvider {
         }
     }
 
+    public void setAbortedNetworkRequestsList(String requestsList) {
+        abortedNetworkRequestsList.addAll(Arrays.asList(requestsList.replaceAll(" ", "").split(",")));
+    }
+
     /**
      * Задает capabilities для запуска Remote драйвера для Selenoid
+     * Определяет нужно ли блокировть запросы браузера через devTools
      *
      * @param capabilities - capabilities для установленного браузера
      * @param remoteUrl    - url для запуска тестов, например http://remoteIP:4444/wd/hub
@@ -178,10 +198,86 @@ public class CustomDriverProvider implements WebDriverProvider {
                     capabilities
             );
             remoteWebDriver.setFileDetector(new LocalFileDetector());
+
+            if(abortedNetworkRequestsList.isEmpty()) {
+                abortedNetworkRequestsList.addAll(Arrays.asList(loadSystemPropertyOrDefault("abortedNetworkRequestsList", "")
+                        .replaceAll(" ", "")
+                        .split(",")));
+                if(!abortedNetworkRequestsList.isEmpty()) {
+                    setAbortedNetworkRequests(remoteWebDriver, remoteUrl, abortedNetworkRequestsList);
+                }
+            }
+            else {
+                setAbortedNetworkRequests(remoteWebDriver, remoteUrl, abortedNetworkRequestsList);
+            }
+
             return remoteWebDriver;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Получает доступ к devTools через webSocket и передает запросы которые нужно блокировать
+     * @param remoteWebDriver - проинициализированный драйвер
+     * @param remoteUrl - url для запуска тестов, например http://remoteIP:4444/wd/hub
+     * @param abortedNetworkRequestsList - список запросов которые нужно блокировать
+     */
+
+    private static void setAbortedNetworkRequests(RemoteWebDriver remoteWebDriver, String remoteUrl, List<String> abortedNetworkRequestsList) {
+        ChromeDevToolsService devTools = getDevTools(remoteWebDriver, remoteUrl);
+        log.info("---------------Aborted Requests---------------------");
+        abortedNetworkRequestsList.forEach(log::info);
+        Fetch fetch = devTools.getFetch();
+        fetch.onRequestPaused(
+                e -> fetch.failRequest(e.getRequestId(), ErrorReason.FAILED)
+        );
+        List<RequestPattern> requestPatternList = new ArrayList<>();
+        abortedNetworkRequestsList.forEach(request -> {
+            RequestPattern requestPattern = new RequestPattern();
+            requestPattern.setUrlPattern(request);
+            requestPatternList.add(requestPattern);
+        });
+        fetch.enable(requestPatternList, true);
+    }
+
+    /**
+     * Получает доступ к devTools через webSocket
+     * @param remoteWebDriver - проинициализированный драйвер
+     * @param remoteUrl - url для запуска тестов, например http://remoteIP:4444/wd/hub
+     * @return - возвращает экземпляр ChromeDevToolsService для дальнейшей работы с ним
+     */
+
+    private static ChromeDevToolsService getDevTools(RemoteWebDriver remoteWebDriver, String remoteUrl) {
+        ChromeDevToolsService devtools;
+        WebSocketService webSocketService = null;
+
+        Pattern pattern = Pattern.compile("([a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+:[0-9]+");
+        Matcher matcher = pattern.matcher(remoteUrl);
+        matcher.find();
+
+        try {
+            webSocketService = WebSocketServiceImpl.create(new URI(String.format("ws://" + matcher.group() +
+                    "/devtools/%s/page", remoteWebDriver.getSessionId())));
+        } catch (WebSocketServiceException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+        CommandInvocationHandler commandInvocationHandler = new CommandInvocationHandler();
+        Map<Method, Object> commandsCache = new ConcurrentHashMap<>();
+        devtools =
+                ProxyUtils.createProxyFromAbstract(
+                        ChromeDevToolsServiceImpl.class,
+                        new Class[] { WebSocketService.class, ChromeDevToolsServiceConfiguration.class },
+                        new Object[] { webSocketService, new ChromeDevToolsServiceConfiguration() },
+                        (unused, method, args) ->
+                                commandsCache.computeIfAbsent(
+                                        method,
+                                        key -> {
+                                            Class<?> returnType = method.getReturnType();
+                                            return ProxyUtils.createProxy(returnType, commandInvocationHandler);
+                                        }));
+        commandInvocationHandler.setChromeDevToolsService(devtools);
+        return devtools;
     }
 
     /**
