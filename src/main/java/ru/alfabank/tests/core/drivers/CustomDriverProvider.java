@@ -89,21 +89,21 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  */
 @Slf4j
 public class CustomDriverProvider implements WebDriverProvider {
-    public final static String MOBILE_DRIVER = "mobile";
-    public final static String BROWSER = "browser";
-    public final static String REMOTE_URL = "remoteUrl";
-    public final static String HEADLESS = "headless";
-    public final static String WINDOW_WIDTH = "width";
-    public final static String WINDOW_HEIGHT = "height";
-    public final static String VERSION_LATEST = "latest";
-    public final static String LOCAL = "local";
-    public final static String TRUST_ALL_SERVERS = "trustAllServers";
-    public final static String NEW_HAR = "har";
-    public final static String SELENOID = "selenoid";
-    private final static String SELENOID_SESSION_NAME = "selenoidSessionName";
-    public final static int DEFAULT_WIDTH = 1920;
-    public final static int DEFAULT_HEIGHT = 1080;
-    private final List<String> abortedNetworkRequestsList = new ArrayList<>();
+    public static final String MOBILE_DRIVER = "mobile";
+    public static final String BROWSER = "browser";
+    public static final String REMOTE_URL = "remoteUrl";
+    public static final String HEADLESS = "headless";
+    public static final String WINDOW_WIDTH = "width";
+    public static final String WINDOW_HEIGHT = "height";
+    public static final String VERSION_LATEST = "latest";
+    public static final String LOCAL = "local";
+    public static final String TRUST_ALL_SERVERS = "trustAllServers";
+    public static final String NEW_HAR = "har";
+    public static final String SELENOID = "selenoid";
+    private static final String SELENOID_SESSION_NAME = "selenoidSessionName";
+    public static final int DEFAULT_WIDTH = 1920;
+    public static final int DEFAULT_HEIGHT = 1080;
+    public static final List<String> ABORTED_NETWORK_REQUESTS_LIST = new ArrayList<>();
 
     private static final BrowserMobProxy PROXY = new BrowserMobProxyServer();
     private final String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
@@ -168,10 +168,6 @@ public class CustomDriverProvider implements WebDriverProvider {
         }
     }
 
-    public void setAbortedNetworkRequestsList(String requestsList) {
-        abortedNetworkRequestsList.addAll(Arrays.asList(requestsList.replaceAll(" ", "").split(",")));
-    }
-
     /**
      * Задает capabilities для запуска Remote драйвера для Selenoid
      * Определяет нужно ли блокировть запросы браузера через devTools
@@ -198,19 +194,12 @@ public class CustomDriverProvider implements WebDriverProvider {
                     capabilities
             );
             remoteWebDriver.setFileDetector(new LocalFileDetector());
-
-            if(abortedNetworkRequestsList.isEmpty()) {
-                abortedNetworkRequestsList.addAll(Arrays.asList(loadSystemPropertyOrDefault("abortedNetworkRequestsList", "")
-                        .replaceAll(" ", "")
-                        .split(",")));
-                if(!abortedNetworkRequestsList.isEmpty()) {
-                    setAbortedNetworkRequests(remoteWebDriver, remoteUrl, abortedNetworkRequestsList);
-                }
+            ABORTED_NETWORK_REQUESTS_LIST.addAll(Arrays.asList(loadSystemPropertyOrDefault("abortedNetworkRequestsList", "")
+                    .replace(" ", "")
+                    .split(",")));
+            if(!ABORTED_NETWORK_REQUESTS_LIST.isEmpty()) {
+                setAbortedNetworkRequests(remoteWebDriver, remoteUrl);
             }
-            else {
-                setAbortedNetworkRequests(remoteWebDriver, remoteUrl, abortedNetworkRequestsList);
-            }
-
             return remoteWebDriver;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -221,19 +210,18 @@ public class CustomDriverProvider implements WebDriverProvider {
      * Получает доступ к devTools через webSocket и передает запросы которые нужно блокировать
      * @param remoteWebDriver - проинициализированный драйвер
      * @param remoteUrl - url для запуска тестов, например http://remoteIP:4444/wd/hub
-     * @param abortedNetworkRequestsList - список запросов которые нужно блокировать
      */
 
-    private static void setAbortedNetworkRequests(RemoteWebDriver remoteWebDriver, String remoteUrl, List<String> abortedNetworkRequestsList) {
+    private static void setAbortedNetworkRequests(RemoteWebDriver remoteWebDriver, String remoteUrl) {
         ChromeDevToolsService devTools = getDevTools(remoteWebDriver, remoteUrl);
         log.info("---------------Aborted Requests---------------------");
-        abortedNetworkRequestsList.forEach(log::info);
+        ABORTED_NETWORK_REQUESTS_LIST.forEach(log::info);
         Fetch fetch = devTools.getFetch();
         fetch.onRequestPaused(
                 e -> fetch.failRequest(e.getRequestId(), ErrorReason.FAILED)
         );
         List<RequestPattern> requestPatternList = new ArrayList<>();
-        abortedNetworkRequestsList.forEach(request -> {
+        ABORTED_NETWORK_REQUESTS_LIST.forEach(request -> {
             RequestPattern requestPattern = new RequestPattern();
             requestPattern.setUrlPattern(request);
             requestPatternList.add(requestPattern);
@@ -254,11 +242,12 @@ public class CustomDriverProvider implements WebDriverProvider {
 
         Pattern pattern = Pattern.compile("([a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+:[0-9]+");
         Matcher matcher = pattern.matcher(remoteUrl);
-        matcher.find();
 
         try {
-            webSocketService = WebSocketServiceImpl.create(new URI(String.format("ws://" + matcher.group() +
-                    "/devtools/%s/page", remoteWebDriver.getSessionId())));
+            if(matcher.find()) {
+                webSocketService = WebSocketServiceImpl.create(new URI(String.format("ws://%s/devtools/%s/page", matcher.group(), remoteWebDriver.getSessionId())));
+            }
+            else throw new InvalidArgumentException("something wrong with remoteUrl, please check your gradle.properties file. Your remoteUrl: " + remoteUrl);
         } catch (WebSocketServiceException | URISyntaxException e) {
             e.printStackTrace();
         }
