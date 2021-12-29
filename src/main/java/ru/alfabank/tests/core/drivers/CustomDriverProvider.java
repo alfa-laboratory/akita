@@ -100,10 +100,11 @@ public class CustomDriverProvider implements WebDriverProvider {
     public static final String TRUST_ALL_SERVERS = "trustAllServers";
     public static final String NEW_HAR = "har";
     public static final String SELENOID = "selenoid";
+    public static final String ABORTED_NETWORK_REQUESTS_LIST_PROPERTY = "abortedNetworkRequestsList";
     private static final String SELENOID_SESSION_NAME = "selenoidSessionName";
     public static final int DEFAULT_WIDTH = 1920;
     public static final int DEFAULT_HEIGHT = 1080;
-    public static final List<String> ABORTED_NETWORK_REQUESTS_LIST = new ArrayList<>();
+    private final List<String> abortedNetworkRequestsList = new ArrayList<>();
 
     private static final BrowserMobProxy PROXY = new BrowserMobProxyServer();
     private final String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
@@ -194,11 +195,11 @@ public class CustomDriverProvider implements WebDriverProvider {
                     capabilities
             );
             remoteWebDriver.setFileDetector(new LocalFileDetector());
-            ABORTED_NETWORK_REQUESTS_LIST.addAll(Arrays.asList(loadSystemPropertyOrDefault("abortedNetworkRequestsList", "")
+            abortedNetworkRequestsList.addAll(Arrays.asList(loadSystemPropertyOrDefault(ABORTED_NETWORK_REQUESTS_LIST_PROPERTY, "")
                     .replace(" ", "")
                     .split(",")));
-            if(!ABORTED_NETWORK_REQUESTS_LIST.isEmpty()) {
-                setAbortedNetworkRequests(remoteWebDriver, remoteUrl);
+            if(!abortedNetworkRequestsList.isEmpty()) {
+                setAbortedNetworkRequests(remoteWebDriver, remoteUrl, abortedNetworkRequestsList);
             }
             return remoteWebDriver;
         } catch (MalformedURLException e) {
@@ -212,16 +213,16 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @param remoteUrl - url для запуска тестов, например http://remoteIP:4444/wd/hub
      */
 
-    private static void setAbortedNetworkRequests(RemoteWebDriver remoteWebDriver, String remoteUrl) {
+    private static void setAbortedNetworkRequests(RemoteWebDriver remoteWebDriver, String remoteUrl, List<String> abortedNetworkRequestsList) {
         ChromeDevToolsService devTools = getDevTools(remoteWebDriver, remoteUrl);
         log.info("---------------Aborted Requests---------------------");
-        ABORTED_NETWORK_REQUESTS_LIST.forEach(log::info);
+        abortedNetworkRequestsList.forEach(log::info);
         Fetch fetch = devTools.getFetch();
         fetch.onRequestPaused(
                 e -> fetch.failRequest(e.getRequestId(), ErrorReason.FAILED)
         );
         List<RequestPattern> requestPatternList = new ArrayList<>();
-        ABORTED_NETWORK_REQUESTS_LIST.forEach(request -> {
+        abortedNetworkRequestsList.forEach(request -> {
             RequestPattern requestPattern = new RequestPattern();
             requestPattern.setUrlPattern(request);
             requestPatternList.add(requestPattern);
@@ -242,15 +243,13 @@ public class CustomDriverProvider implements WebDriverProvider {
 
         Pattern pattern = Pattern.compile("([a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+:[0-9]+");
         Matcher matcher = pattern.matcher(remoteUrl);
-
-        try {
-            if(matcher.find()) {
+        if(matcher.find()) {
+            try {
                 webSocketService = WebSocketServiceImpl.create(new URI(String.format("ws://%s/devtools/%s/page", matcher.group(), remoteWebDriver.getSessionId())));
+            } catch (WebSocketServiceException | URISyntaxException e) {
+                e.printStackTrace();
             }
-            else throw new InvalidArgumentException("something wrong with remoteUrl, please check your gradle.properties file. Your remoteUrl: " + remoteUrl);
-        } catch (WebSocketServiceException | URISyntaxException e) {
-            e.printStackTrace();
-        }
+        } else throw new InvalidArgumentException("something wrong with remoteUrl, please check your gradle.properties file. Your remoteUrl: " + remoteUrl);
         CommandInvocationHandler commandInvocationHandler = new CommandInvocationHandler();
         Map<Method, Object> commandsCache = new ConcurrentHashMap<>();
         devtools =
