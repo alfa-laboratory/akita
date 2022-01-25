@@ -47,6 +47,7 @@ project.ext {
 }
 
 dependencies {
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.13.0'
     implementation 'com.qaprosoft:carina-proxy:7.2.14'
     implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.58'
     compile group: 'org.hamcrest', name: 'hamcrest-library', version: '2.1'
