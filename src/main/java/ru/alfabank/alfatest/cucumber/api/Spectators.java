@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 public final class Spectators {
 
@@ -32,10 +34,10 @@ public final class Spectators {
      * @param selenideCondition Selenide.Condition
      * @param timeout           максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
      * @param selenideElements  произвольное количество selenide-элементов
-     * @see SelenideElement#waitUntil(Condition, long)
+     * @see SelenideElement#shouldBe(Condition, Duration)
      */
     public static void waitElementsUntil(Condition selenideCondition, int timeout, SelenideElement... selenideElements) {
-        Arrays.stream(selenideElements).forEach(e -> e.waitUntil(selenideCondition, timeout));
+        Arrays.stream(selenideElements).forEach(e -> e.shouldBe(selenideCondition, Duration.ofMillis(timeout)));
     }
 
     /**
@@ -46,19 +48,19 @@ public final class Spectators {
      * @param selenideElements  ElementsCollection
      */
     public static void waitElementsUntil(Condition selenideCondition, int timeout, ElementsCollection selenideElements) {
-        selenideElements.shouldBe(conditionToConditionCollection(selenideCondition), timeout);
+        selenideElements.shouldBe(Objects.requireNonNull(conditionToConditionCollection(selenideCondition)), Duration.ofMillis(timeout));
     }
 
     /**
-     * Обертка над Selenide waitUntil для работы с колекцией элементов
+     * Обертка над Selenide waitUntil для работы с коллекцией элементов
      *
      * @param selenideCondition Selenide.Condition
      * @param timeout           максимальное время ожидания в миллисекундах для перехода элементов в заданное состояние
      * @param selenideElements  коллекция selenide-элементов
-     * @see SelenideElement#waitUntil(Condition, long)
+     * @see SelenideElement#shouldNotBe(Condition, Duration)
      */
     public static void waitElementsUntil(Condition selenideCondition, int timeout, Collection<SelenideElement> selenideElements) {
-        selenideElements.forEach(e -> e.waitUntil(selenideCondition, timeout));
+        selenideElements.forEach(e -> e.shouldBe(selenideCondition, Duration.ofMillis(timeout)));
     }
 
     private static CollectionCondition conditionToConditionCollection(Condition selenideCondition) {

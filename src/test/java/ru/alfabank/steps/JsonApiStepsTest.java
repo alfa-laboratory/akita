@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import cucumber.api.DataTable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.google.gson.JsonParser.parseString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
@@ -170,8 +170,7 @@ public class JsonApiStepsTest {
     }
 
     private String createJsonElementAndReturnString(String element) {
-        JsonParser parser = new JsonParser();
-        JsonElement jsonElement = parser.parse(element);
+        JsonElement jsonElement = parseString(element);
         return jsonElement.toString();
     }
 }

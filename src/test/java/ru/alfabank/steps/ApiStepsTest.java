@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,59 +60,59 @@ public class ApiStepsTest {
     }
 
     @Test
-    void getURLwithPathParamsCalculatedSimple() {
+    void getUrlWithPathParamsCalculatedSimple() {
         assertThat(resolveVars("alfabank.ru"),
-            equalTo("alfabank.ru"));
+                equalTo("alfabank.ru"));
     }
 
     @Test
-    void sendHttpRequestGET() throws Exception {
+    void sendHttpRequestGET() {
         stubFor(get(urlEqualTo("/get/resource"))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBody("TEST_BODY")));
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY")));
         api.sendHttpRequestWithoutParams("GET", "/get/resource", "RESPONSE_GET_BODY");
         assertThat(akitaScenario.getVar("RESPONSE_GET_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
-    void sendHttpRequestPost() throws Exception {
+    void sendHttpRequestPost() {
         stubFor(post(urlEqualTo("/post/resource"))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBody("TEST_BODY")));
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY")));
         api.sendHttpRequestWithoutParams("POST", "/post/resource", "RESPONSE_POST_BODY");
         assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
-    void sendHttpRequestWithVarsPost() throws Exception {
+    void sendHttpRequestWithVarsPost() {
         String body = "testBodyValue";
         String bodyVarName = "testBodyName";
         akitaScenario.setVar(bodyVarName, body);
 
         stubFor(post(urlEqualTo("/post/resource"))
-            .withRequestBody(WireMock.equalTo(body))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBody("TEST_BODY")));
+                .withRequestBody(WireMock.equalTo(body))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY")));
 
         List<RequestParam> params = Collections.singletonList(
-            RequestParam.builder()
-                .name("body")
-                .type(RequestParamType.BODY)
-                .value("{" + bodyVarName + "}")
-                .build());
+                RequestParam.builder()
+                        .name("body")
+                        .type(RequestParamType.BODY)
+                        .value("{" + bodyVarName + "}")
+                        .build());
 
         api.sendHttpRequestSaveResponse("POST", "/post/resource", "RESPONSE_POST_BODY", params);
         assertThat(akitaScenario.getVar("RESPONSE_POST_BODY"), equalTo("TEST_BODY"));
     }
 
     @Test
-    void sendHttpRequestFromFileWithVarsPost() throws Exception {
+    void sendHttpRequestFromFileWithVarsPost() {
         String body = "{\"person\": {\"name\": \"Jack\", \"age\": 35}, \"object\": {\"var1\": 1}}";
         String bodyFileName = "/src/test/resources/bodyWithParams.json";
 
@@ -134,72 +134,72 @@ public class ApiStepsTest {
     }
 
     @Test
-    void sendHttpRequestSaveResponseTest() throws Exception {
+    void sendHttpRequestSaveResponseTest() {
         stubFor(post(urlEqualTo("/post/saveWithTable"))
-            .willReturn(aResponse()
-                .withStatus(201)
-                .withHeader("Content-Type", "text/xml")
-                .withBody("TEST_BODY_1")));
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "text/xml")
+                        .withBody("TEST_BODY_1")));
         List<RequestParam> paramTable = new ArrayList<>();
         RequestParam requestParamHeader = RequestParam.builder()
-            .type(RequestParamType.HEADER)
-            .name("Accept")
-            .value("text/plain")
-            .build();
+                .type(RequestParamType.HEADER)
+                .name("Accept")
+                .value("text/plain")
+                .build();
         RequestParam requestParamBody = RequestParam.builder()
-            .type(RequestParamType.BODY)
-            .name("TEST_BODY_PARAM")
-            .value("TEST")
-            .build();
+                .type(RequestParamType.BODY)
+                .name("TEST_BODY_PARAM")
+                .value("TEST")
+                .build();
         paramTable.add(requestParamHeader);
         paramTable.add(requestParamBody);
         api.sendHttpRequestSaveResponse("POST", "/post/saveWithTable",
-            "TEST_HTTP", paramTable);
+                "TEST_HTTP", paramTable);
         assertThat(akitaScenario.getVar("TEST_HTTP"), equalTo("TEST_BODY_1"));
     }
 
     @Test
-    void checkResponseCodeWithoutParamsTest() throws Exception {
+    void checkResponseCodeWithoutParamsTest() {
         stubFor(get(urlEqualTo("/get/resource"))
-            .willReturn(aResponse()
-                .withStatus(200)));
+                .willReturn(aResponse()
+                        .withStatus(200)));
         api.checkResponseCodeWithoutParams("GET", "/get/resource", 200);
     }
 
     @Test
-    void checkResponseCodeTest() throws Exception {
+    void checkResponseCodeTest() {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=test"))
-            .willReturn(aResponse()
-                .withStatus(404)
-                .withHeader("Content-Type", "text/xml")));
+                .willReturn(aResponse()
+                        .withStatus(404)
+                        .withHeader("Content-Type", "text/xml")));
         List<RequestParam> paramTable = new ArrayList<>();
         RequestParam requestParam = RequestParam.builder()
-            .type(PARAMETER)
-            .name("param")
-            .value("test")
-            .build();
+                .type(PARAMETER)
+                .name("param")
+                .value("test")
+                .build();
         paramTable.add(requestParam);
         api.checkResponseCode("GET", "/get/responseWithTable",
-            404, paramTable);
+                404, paramTable);
     }
 
     @Test
-    void shouldCreateRequestForEqualsParamNamesTest() throws Exception {
+    void shouldCreateRequestForEqualsParamNamesTest() {
         stubFor(get(urlEqualTo("/get/responseWithTable?param=first&param=second"))
-            .willReturn(aResponse()
-                .withStatus(200)));
+                .willReturn(aResponse()
+                        .withStatus(200)));
         List<RequestParam> paramTable = asList(
-            new RequestParam(PARAMETER, "param", "first"),
-            new RequestParam(PARAMETER, "param", "second")
+                new RequestParam(PARAMETER, "param", "first"),
+                new RequestParam(PARAMETER, "param", "second")
         );
         api.checkResponseCode("GET", "/get/responseWithTable", 200, paramTable);
     }
 
     @Test
-    void shouldSendPutRequest() throws Exception {
+    void shouldSendPutRequest() {
         stubFor(put(urlEqualTo("/put/someInfo"))
-            .willReturn(aResponse()
-                .withStatus(205)));
+                .willReturn(aResponse()
+                        .withStatus(205)));
         api.checkResponseCode("PUT", "/put/someInfo", 205, new ArrayList<>());
     }
 

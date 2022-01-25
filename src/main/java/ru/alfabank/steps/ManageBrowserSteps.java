@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class ManageBrowserSteps extends BaseMethods {
      */
     @Когда("^cookies приложения очищены$")
     @When("^cleared application's cookies$")
-    public void deleteCookies(){
+    public void deleteCookies() {
         clearBrowserCookies();
     }
 
@@ -48,7 +48,7 @@ public class ManageBrowserSteps extends BaseMethods {
      */
     @Когда("^cookie с именем \"([^\"]*)\" сохранена в переменную \"([^\"]*)\"$")
     @When("^cookie with name \"([^\"]*)\" has been saved to the variable \"([^\"]*)\"$")
-    public void saveCookieToVar(String nameCookie, String cookieVar){
+    public void saveCookieToVar(String nameCookie, String cookieVar) {
         String cookieName = resolveVars(nameCookie);
         Cookie var = getWebDriver().manage().getCookieNamed(cookieName);
         akitaScenario.setVar(cookieVar, var);
@@ -59,8 +59,8 @@ public class ManageBrowserSteps extends BaseMethods {
      */
     @Когда("^cookies сохранены в переменную \"([^\"]*)\"$")
     @When("^cookies have been saved to the variable \"([^\"]*)\"$")
-    public void saveAllCookies(String variableName){
-        Set cookies = getWebDriver().manage().getCookies();
+    public void saveAllCookies(String variableName) {
+        Set<Cookie> cookies = getWebDriver().manage().getCookies();
         akitaScenario.setVar(variableName, cookies);
     }
 
@@ -69,14 +69,14 @@ public class ManageBrowserSteps extends BaseMethods {
      */
     @Когда("^добавлена cookie с именем \"([^\"]*)\" и значением \"([^\"]*)\"$")
     @When("^cookie with name \"([^\"]*)\" and value \"([^\"]*)\" has been added$")
-    public void replaceCookie(String cookieName, String cookieValue){
+    public void replaceCookie(String cookieName, String cookieValue) {
         String nameCookie = resolveVars(cookieName);
         String valueCookie = resolveVars(cookieValue);
         getWebDriver().manage().addCookie(new Cookie(nameCookie, valueCookie));
     }
 
     /**
-     *  Переключение на следующую вкладку браузера
+     * Переключение на следующую вкладку браузера
      */
     @Когда("выполнено переключение на следующую вкладку")
     @When("^switched to the next tab$")
@@ -87,7 +87,7 @@ public class ManageBrowserSteps extends BaseMethods {
     }
 
     /**
-     *  Производится закрытие текущей вкладки
+     * Производится закрытие текущей вкладки
      */
     @И("выполнено закрытие текущей вкладки")
     @And("^closed current tab$")

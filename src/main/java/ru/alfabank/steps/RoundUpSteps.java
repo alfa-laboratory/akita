@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class RoundUpSteps extends BaseMethods {
      * Эмулирует нажатие сочетания клавиш на клавиатуре.
      * Допустим, чтобы эмулировать нажатие на Ctrl+A, в таблице должны быть следующие значения
      * | CONTROL |
-     * | a       |
+     * | a |
      *
      * @param keyNames название клавиши
      */
@@ -114,7 +114,7 @@ public class RoundUpSteps extends BaseMethods {
         }
     }
 
-     /**
+    /**
      * Выполняется запуск js-скрипта с указанием в js.executeScript его логики
      * Скрипт можно передать как аргумент метода или значение из application.properties
      */
@@ -127,7 +127,6 @@ public class RoundUpSteps extends BaseMethods {
 
     /**
      * Метод осуществляет снятие скриншота и прикрепление его к cucumber отчету.
-     *
      */
     @И("^снят скриншот текущей страницы$")
     @And("^screenshot of the current page has been taken$")
@@ -194,8 +193,8 @@ public class RoundUpSteps extends BaseMethods {
         File downloads = getDownloadsDir();
         File[] expectedFiles = downloads.listFiles((files, file) -> file.contains(fileName));
         assertNotNull(expectedFiles, "Ошибка поиска файла");
-        assertFalse( expectedFiles.length == 0, "Файл не загрузился");
-        assertTrue(expectedFiles.length == 1,
+        assertFalse(expectedFiles.length == 0, "Файл не загрузился");
+        assertEquals(1, expectedFiles.length,
                 String.format("В папке присутствуют более одного файла с одинаковым названием, содержащим текст [%s]", fileName));
         deleteFiles(expectedFiles);
     }
@@ -205,9 +204,9 @@ public class RoundUpSteps extends BaseMethods {
      */
     @Тогда("^значения из переменной \"([^\"]*)\" и из property файла \"([^\"]*)\" совпадают$")
     @Then("^values of \"([^\"]*)\" variable and \"([^\"]*)\" key from property file are equal$")
-    public void checkIfValueFromVariableEqualPropertyVariable(String envVarible, String propertyVariable) {
-        assertThat("Переменные " + envVarible + " и " + propertyVariable + " не совпадают",
-                (String) akitaScenario.getVar(envVarible), equalToIgnoringCase(loadProperty(propertyVariable)));
+    public void checkIfValueFromVariableEqualPropertyVariable(String envVariable, String propertyVariable) {
+        assertThat("Переменные " + envVariable + " и " + propertyVariable + " не совпадают",
+                (String) akitaScenario.getVar(envVariable), equalToIgnoringCase(loadProperty(propertyVariable)));
     }
 
     /**

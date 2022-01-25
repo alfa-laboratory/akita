@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@ package ru.alfabank.steps;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
@@ -31,6 +30,7 @@ import ru.alfabank.tests.core.rest.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.gson.JsonParser.parseString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
@@ -41,22 +41,22 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrP
 @Slf4j
 public class ApiSteps extends BaseMethods {
 
-    private AkitaScenario akitaScenario = AkitaScenario.getInstance();
+    private final AkitaScenario akitaScenario = AkitaScenario.getInstance();
 
     /**
-     * Посылается http запрос по заданному урлу без параметров и BODY.
+     * Посылается http запрос по-заданному урлу без параметров и BODY.
      * Результат сохраняется в заданную переменную
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\". Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" has been executed. Response has been saved to the variable named \"([^\"]*)\"$")
-    public void sendHttpRequestWithoutParams(String method, String address, String variableName) throws Exception {
+    public void sendHttpRequestWithoutParams(String method, String address, String variableName) {
         Response response = sendRequest(method, address, new ArrayList<>());
         getBodyAndSaveToVariable(variableName, response);
     }
 
     /**
-     * Посылается http запрос по заданному урлу с заданными параметрами.
+     * Посылается http запрос по-заданному урлу с заданными параметрами.
      * И в URL, и в значениях в таблице можно использовать переменные и из application.properties, и из хранилища переменных
      * из AlfaScenario. Для этого достаточно заключить переменные в фигурные скобки, например: http://{hostname}?user={username}.
      * Content-Type при необходимости должен быть указан в качестве header.
@@ -64,38 +64,38 @@ public class ApiSteps extends BaseMethods {
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Полученный ответ сохранен в переменную \"([^\"]*)\"$")
     @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" with headers and parametres from the table has been executed. Response has been saved to the variable named \"([^\"]*)\"$")
-    public void sendHttpRequestSaveResponse(String method, String address, String variableName, List<RequestParam> paramsTable) throws Exception {
+    public void sendHttpRequestSaveResponse(String method, String address, String variableName, List<RequestParam> paramsTable) {
         Response response = sendRequest(method, address, paramsTable);
         getBodyAndSaveToVariable(variableName, response);
     }
 
     /**
-     * Посылается http запрос по заданному урлу без параметров и BODY.
+     * Посылается http запрос по-заданному урлу без параметров и BODY.
      * Проверяется, что код ответа соответствует ожиданиям.
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\". Ожидается код ответа: (\\d+)$")
     @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" has been executed. Expected response code: (\\d+)$")
-    public void checkResponseCodeWithoutParams(String method, String address, int expectedStatusCode) throws Exception {
+    public void checkResponseCodeWithoutParams(String method, String address, int expectedStatusCode) {
         Response response = sendRequest(method, address, new ArrayList<>());
         assertTrue(checkStatusCode(response, expectedStatusCode));
     }
 
     /**
-     * Посылается http запрос по заданному урлу с заданными параметрами.
+     * Посылается http запрос по-заданному урлу с заданными параметрами.
      * Проверяется, что код ответа соответствует ожиданиям.
      * URL можно задать как напрямую в шаге, так и указав в application.properties
      * Content-Type при необходимости должен быть указан в качестве header.
      */
     @И("^выполнен (GET|POST|PUT|DELETE) запрос на URL \"([^\"]*)\" с headers и parameters из таблицы. Ожидается код ответа: (\\d+)$")
     @And("^(GET|POST|PUT|DELETE) request to URL \"([^\"]*)\" with headers and parametres from the table has been executed. Expected response code: (\\d+)$")
-    public void checkResponseCode(String method, String address, int expectedStatusCode, List<RequestParam> paramsTable) throws Exception {
+    public void checkResponseCode(String method, String address, int expectedStatusCode, List<RequestParam> paramsTable) {
         Response response = sendRequest(method, address, paramsTable);
         assertTrue(checkStatusCode(response, expectedStatusCode));
     }
 
     /**
-     * В json строке, сохраннённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
+     * В json строке, сохранённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
      * Полученные значения сравниваются с ожидаемым значением во втором столбце таблицы.
      * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, литералы true, false и null.
      */
@@ -104,7 +104,6 @@ public class ApiSteps extends BaseMethods {
     public void checkValuesInJsonAsString(String jsonVar, DataTable dataTable) {
         String strJson = loadValueFromFileOrPropertyOrVariableOrDefault(jsonVar);
         Gson gsonObject = new Gson();
-        JsonParser parser = new JsonParser();
         ReadContext ctx = JsonPath.parse(strJson, createJsonPathConfiguration());
         boolean error = false;
         for (List<String> row : dataTable.raw()) {
@@ -116,7 +115,7 @@ public class ApiSteps extends BaseMethods {
                 error = true;
                 continue;
             }
-            JsonElement expectedJsonElement = parser.parse(row.get(1));
+            JsonElement expectedJsonElement = parseString(row.get(1));
             if (!actualJsonElement.equals(expectedJsonElement)) {
                 error = true;
             }
@@ -127,7 +126,7 @@ public class ApiSteps extends BaseMethods {
     }
 
     /**
-     * В json строке, сохраннённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
+     * В json строке, сохранённой в переменной, происходит поиск значений по jsonpath из первого столбца таблицы.
      * Полученные значения сохраняются в переменных. Название переменной указывается во втором столбце таблицы.
      * Шаг работает со всеми типами json элементов: объекты, массивы, строки, числа, литералы true, false и null.
      */

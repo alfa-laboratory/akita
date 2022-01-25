@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,18 +12,28 @@
  */
 package ru.alfabank.tests.core.drivers;
 
+import com.github.kklisura.cdt.protocol.commands.Fetch;
+import com.github.kklisura.cdt.protocol.types.fetch.RequestPattern;
+import com.github.kklisura.cdt.protocol.types.network.ErrorReason;
+import com.github.kklisura.cdt.services.ChromeDevToolsService;
+import com.github.kklisura.cdt.services.WebSocketService;
+import com.github.kklisura.cdt.services.config.ChromeDevToolsServiceConfiguration;
+import com.github.kklisura.cdt.services.exceptions.WebSocketServiceException;
+import com.github.kklisura.cdt.services.impl.ChromeDevToolsServiceImpl;
+import com.github.kklisura.cdt.services.impl.WebSocketServiceImpl;
+import com.github.kklisura.cdt.services.invocation.CommandInvocationHandler;
+import com.github.kklisura.cdt.services.utils.ProxyUtils;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import net.lightbody.bmp.BrowserMobProxy;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverProvider;
 import lombok.extern.slf4j.Slf4j;
-import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.proxy.BlacklistEntry;
 import net.lightbody.bmp.proxy.CaptureType;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
+import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -44,13 +54,16 @@ import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.tests.core.helpers.BlackList;
 import ru.alfabank.tests.core.helpers.PropertyLoader;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static com.codeborne.selenide.WebDriverRunner.*;
+import static com.codeborne.selenide.Browsers.*;
 import static org.openqa.selenium.remote.CapabilityType.*;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadProperty;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOrDefault;
@@ -58,7 +71,7 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
 /**
  * Провайдер драйверов, который позволяет запускать тесты локально или удаленно, используя Selenoid
  * Параметры запуска можно задавать, как системные переменные.
- *
+ * <p>
  * Например, можно указать браузер, версию браузера, remote Url(где будут запущены тесты), ширину и высоту окна браузера,
  * при удаленном запуске имя сессии в Selenoid UI:
  * -Dbrowser=chrome -DbrowserVersion=63.0 -DremoteUrl=http://some/url -Dwidth=1200 -Dheight=800
@@ -76,84 +89,89 @@ import static ru.alfabank.tests.core.helpers.PropertyLoader.loadSystemPropertyOr
  */
 @Slf4j
 public class CustomDriverProvider implements WebDriverProvider {
-    public final static String MOBILE_DRIVER = "mobile";
-    public final static String BROWSER = "browser";
-    public final static String REMOTE_URL = "remoteUrl";
-    public final static String HEADLESS = "headless";
-    public final static String WINDOW_WIDTH = "width";
-    public final static String WINDOW_HEIGHT = "height";
-    public final static String VERSION_LATEST = "latest";
-    public final static String LOCAL = "local";
-    public final static String TRUST_ALL_SERVERS = "trustAllServers";
-    public final static String NEW_HAR = "har";
-    public final static String SELENOID = "selenoid";
-    private final static String SELENOID_SESSION_NAME = "selenoidSessionName";
-    public final static int DEFAULT_WIDTH = 1920;
-    public final static int DEFAULT_HEIGHT = 1080;
+    public static final String MOBILE_DRIVER = "mobile";
+    public static final String BROWSER = "browser";
+    public static final String REMOTE_URL = "remoteUrl";
+    public static final String HEADLESS = "headless";
+    public static final String WINDOW_WIDTH = "width";
+    public static final String WINDOW_HEIGHT = "height";
+    public static final String VERSION_LATEST = "latest";
+    public static final String LOCAL = "local";
+    public static final String TRUST_ALL_SERVERS = "trustAllServers";
+    public static final String NEW_HAR = "har";
+    public static final String SELENOID = "selenoid";
+    public static final String ABORTED_NETWORK_REQUESTS_LIST_PROPERTY = "abortedNetworkRequestsList";
+    private static final String SELENOID_SESSION_NAME = "selenoidSessionName";
+    public static final int DEFAULT_WIDTH = 1920;
+    public static final int DEFAULT_HEIGHT = 1080;
+    private final List<String> abortedNetworkRequestsList = new ArrayList<>();
 
-    private static BrowserMobProxy proxy = new BrowserMobProxyServer();
-    private String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
+    private static final BrowserMobProxy PROXY = new BrowserMobProxyServer();
+    private final String[] options = loadSystemPropertyOrDefault("options", "").split(" ");
 
     public static BrowserMobProxy getProxy() {
-        return proxy;
+        return PROXY;
     }
 
     /**
      * если установлен -Dproxy=true стартует прокси
      * har для прослушки указывается в application.properties
-     * @param capabilities
+     *
+     * @param capabilities Капибилити для драйвера
      */
     private void enableProxy(DesiredCapabilities capabilities) {
-        proxy.setTrustAllServers(Boolean.valueOf(loadProperty(TRUST_ALL_SERVERS, "true")));
-        proxy.start();
+        PROXY.setTrustAllServers(Boolean.parseBoolean(loadProperty(TRUST_ALL_SERVERS, "true")));
+        PROXY.start();
 
-        Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
+        Proxy seleniumProxy = ClientUtil.createSeleniumProxy(PROXY);
 
-        capabilities.setCapability(PROXY, seleniumProxy);
+        capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
         capabilities.setCapability(ACCEPT_SSL_CERTS, Boolean.valueOf(loadProperty(ACCEPT_SSL_CERTS, "true")));
         capabilities.setCapability(SUPPORTS_JAVASCRIPT, Boolean.valueOf(loadProperty(SUPPORTS_JAVASCRIPT, "true")));
 
-        proxy.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_CONTENT, CaptureType.RESPONSE_HEADERS);
-        proxy.newHar(loadProperty(NEW_HAR));
+        PROXY.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.REQUEST_HEADERS, CaptureType.RESPONSE_CONTENT, CaptureType.RESPONSE_HEADERS);
+        PROXY.newHar(loadProperty(NEW_HAR));
     }
 
+    @NotNull
     @Override
-    public WebDriver createDriver(DesiredCapabilities capabilities) {
+    public WebDriver createDriver(@NotNull Capabilities capabilities) {
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(capabilities);
         Configuration.browserSize = String.format("%sx%s", loadSystemPropertyOrDefault(WINDOW_WIDTH, DEFAULT_WIDTH),
                 loadSystemPropertyOrDefault(WINDOW_HEIGHT, DEFAULT_HEIGHT));
-        String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, CHROME);
+        String expectedBrowser = loadSystemPropertyOrDefault(BROWSER, capabilities.getBrowserName());
         String remoteUrl = loadSystemPropertyOrDefault(REMOTE_URL, LOCAL);
         BlackList blackList = new BlackList();
-        boolean isProxyMode = loadSystemPropertyOrDefault(PROXY, false);
+        boolean isProxyMode = loadSystemPropertyOrDefault(CapabilityType.PROXY, false);
         if (isProxyMode) {
-            enableProxy(capabilities);
+            enableProxy(desiredCapabilities);
         }
 
         log.info("remoteUrl=" + remoteUrl + " expectedBrowser= " + expectedBrowser + " BROWSER_VERSION=" + System.getProperty(CapabilityType.BROWSER_VERSION));
 
         switch (expectedBrowser.toLowerCase()) {
             case (FIREFOX):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver(capabilities) : getRemoteDriver(getFirefoxDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createFirefoxDriver(desiredCapabilities) : getRemoteDriver(getFirefoxDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (MOBILE_DRIVER):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions(capabilities)) : getRemoteDriver(getMobileChromeOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? new ChromeDriver(getMobileChromeOptions(desiredCapabilities)) : getRemoteDriver(getMobileChromeOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (OPERA):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(capabilities) : getRemoteDriver(getOperaRemoteDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createOperaDriver(desiredCapabilities) : getRemoteDriver(getOperaRemoteDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (SAFARI):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver(capabilities) : getRemoteDriver(getSafariDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createSafariDriver(desiredCapabilities) : getRemoteDriver(getSafariDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (INTERNET_EXPLORER):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
             case (IE):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(capabilities) : getRemoteDriver(getIEDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createIEDriver(desiredCapabilities) : getRemoteDriver(getIEDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             case (EDGE):
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createEdgeDriver(capabilities) : getRemoteDriver(getEdgeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createEdgeDriver(desiredCapabilities) : getRemoteDriver(getEdgeDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
             default:
-                return LOCAL.equalsIgnoreCase(remoteUrl) ? createChromeDriver(capabilities) : getRemoteDriver(getChromeDriverOptions(capabilities), remoteUrl, blackList.getBlacklistEntries());
+                return LOCAL.equalsIgnoreCase(remoteUrl) ? createChromeDriver(desiredCapabilities) : getRemoteDriver(getChromeDriverOptions(desiredCapabilities), remoteUrl, blackList.getBlacklistEntries());
 
         }
     }
 
     /**
      * Задает capabilities для запуска Remote драйвера для Selenoid
+     * Определяет нужно ли блокировть запросы браузера через devTools
      *
      * @param capabilities - capabilities для установленного браузера
      * @param remoteUrl    - url для запуска тестов, например http://remoteIP:4444/wd/hub
@@ -173,10 +191,16 @@ public class CustomDriverProvider implements WebDriverProvider {
         }
         try {
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(
-                URI.create(remoteUrl).toURL(),
-                capabilities
+                    URI.create(remoteUrl).toURL(),
+                    capabilities
             );
             remoteWebDriver.setFileDetector(new LocalFileDetector());
+            abortedNetworkRequestsList.addAll(Arrays.asList(loadSystemPropertyOrDefault(ABORTED_NETWORK_REQUESTS_LIST_PROPERTY, "")
+                    .replace(" ", "")
+                    .split(",")));
+            if(!abortedNetworkRequestsList.isEmpty()) {
+                setAbortedNetworkRequests(remoteWebDriver, remoteUrl, abortedNetworkRequestsList);
+            }
             return remoteWebDriver;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -184,17 +208,78 @@ public class CustomDriverProvider implements WebDriverProvider {
     }
 
     /**
+     * Получает доступ к devTools через webSocket и передает запросы которые нужно блокировать
+     * @param remoteWebDriver - проинициализированный драйвер
+     * @param remoteUrl - url для запуска тестов, например http://remoteIP:4444/wd/hub
+     */
+
+    private static void setAbortedNetworkRequests(RemoteWebDriver remoteWebDriver, String remoteUrl, List<String> abortedNetworkRequestsList) {
+        ChromeDevToolsService devTools = getDevTools(remoteWebDriver, remoteUrl);
+        log.info("---------------Aborted Requests---------------------");
+        abortedNetworkRequestsList.forEach(log::info);
+        Fetch fetch = devTools.getFetch();
+        fetch.onRequestPaused(
+                e -> fetch.failRequest(e.getRequestId(), ErrorReason.FAILED)
+        );
+        List<RequestPattern> requestPatternList = new ArrayList<>();
+        abortedNetworkRequestsList.forEach(request -> {
+            RequestPattern requestPattern = new RequestPattern();
+            requestPattern.setUrlPattern(request);
+            requestPatternList.add(requestPattern);
+        });
+        fetch.enable(requestPatternList, true);
+    }
+
+    /**
+     * Получает доступ к devTools через webSocket
+     * @param remoteWebDriver - проинициализированный драйвер
+     * @param remoteUrl - url для запуска тестов, например http://remoteIP:4444/wd/hub
+     * @return - возвращает экземпляр ChromeDevToolsService для дальнейшей работы с ним
+     */
+
+    private static ChromeDevToolsService getDevTools(RemoteWebDriver remoteWebDriver, String remoteUrl) {
+        ChromeDevToolsService devtools;
+        WebSocketService webSocketService = null;
+
+        Pattern pattern = Pattern.compile("([a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+:[0-9]+");
+        Matcher matcher = pattern.matcher(remoteUrl);
+        if(matcher.find()) {
+            try {
+                webSocketService = WebSocketServiceImpl.create(new URI(String.format("ws://%s/devtools/%s/page", matcher.group(), remoteWebDriver.getSessionId())));
+            } catch (WebSocketServiceException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        } else throw new InvalidArgumentException("something wrong with remoteUrl, please check your gradle.properties file. Your remoteUrl: " + remoteUrl);
+        CommandInvocationHandler commandInvocationHandler = new CommandInvocationHandler();
+        Map<Method, Object> commandsCache = new ConcurrentHashMap<>();
+        devtools =
+                ProxyUtils.createProxyFromAbstract(
+                        ChromeDevToolsServiceImpl.class,
+                        new Class[] { WebSocketService.class, ChromeDevToolsServiceConfiguration.class },
+                        new Object[] { webSocketService, new ChromeDevToolsServiceConfiguration() },
+                        (unused, method, args) ->
+                                commandsCache.computeIfAbsent(
+                                        method,
+                                        key -> {
+                                            Class<?> returnType = method.getReturnType();
+                                            return ProxyUtils.createProxy(returnType, commandInvocationHandler);
+                                        }));
+        commandInvocationHandler.setChromeDevToolsService(devtools);
+        return devtools;
+    }
+
+    /**
      * Задает capabilities для запуска Remote драйвера для Selenoid
      * со списком соответствующих URL, которые добавляются в Blacklist
      * URL для добавления в Blacklist могут быть указаны в формате регулярных выражений
      *
-     * @param capabilities
-     * @param remoteUrl
+     * @param capabilities Капибилити для драйвера
+     * @param remoteUrl Ссылка для удаленного запуска
      * @param blacklistEntries - список url для добавления в Blacklist
      * @return WebDriver
      */
     private WebDriver getRemoteDriver(MutableCapabilities capabilities, String remoteUrl, List<BlacklistEntry> blacklistEntries) {
-        proxy.setBlacklist(blacklistEntries);
+        PROXY.setBlacklist(blacklistEntries);
         return getRemoteDriver(capabilities, remoteUrl);
     }
 
@@ -208,7 +293,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------run CustomMobileDriver---------------------");
         String mobileDeviceName = loadSystemPropertyOrDefault("device", "Nexus 5");
         ChromeOptions chromeOptions = new ChromeOptions().addArguments("disable-extensions",
-            "test-type", "no-default-browser-check", "ignore-certificate-errors");
+                "test-type", "no-default-browser-check", "ignore-certificate-errors");
 
         Map<String, String> mobileEmulation = new HashMap<>();
         chromeOptions.setHeadless(getHeadless());
@@ -288,7 +373,7 @@ public class CustomDriverProvider implements WebDriverProvider {
     private InternetExplorerOptions getIEDriverOptions(DesiredCapabilities capabilities) {
         log.info("---------------IE Driver---------------------");
         InternetExplorerOptions internetExplorerOptions = !options[0].equals("") ? new InternetExplorerOptions().addCommandSwitches(options) : new InternetExplorerOptions();
-        internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        // internetExplorerOptions.setCapability(CapabilityType.BROWSER_VERSION, "11");
         internetExplorerOptions.setCapability("ie.usePerProcessProxy", "true");
         internetExplorerOptions.setCapability("requireWindowFocus", "false");
         internetExplorerOptions.setCapability("ie.browserCommandLineSwitches", "-private");
@@ -307,6 +392,7 @@ public class CustomDriverProvider implements WebDriverProvider {
         log.info("---------------Edge Driver---------------------");
         EdgeOptions edgeOptions = new EdgeOptions();
         edgeOptions.setCapability(CapabilityType.BROWSER_VERSION, loadSystemPropertyOrDefault(CapabilityType.BROWSER_VERSION, VERSION_LATEST));
+        capabilities.setPlatform(Platform.WINDOWS);
         edgeOptions.merge(capabilities);
         return edgeOptions;
     }
@@ -331,8 +417,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createChromeDriver(DesiredCapabilities capabilities) {
-        ChromeDriver chromeDriver = new ChromeDriver(getChromeDriverOptions(capabilities));
-        return chromeDriver;
+        WebDriverManager.chromedriver().setup();
+        return new ChromeDriver(getChromeDriverOptions(capabilities));
     }
 
     /**
@@ -341,8 +427,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createFirefoxDriver(DesiredCapabilities capabilities) {
-        FirefoxDriver firefoxDriver = new FirefoxDriver(getFirefoxDriverOptions(capabilities));
-        return firefoxDriver;
+        WebDriverManager.firefoxdriver().setup();
+        return new FirefoxDriver(getFirefoxDriverOptions(capabilities));
     }
 
     /**
@@ -351,8 +437,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createOperaDriver(DesiredCapabilities capabilities) {
-        OperaDriver operaDriver = new OperaDriver(getOperaDriverOptions(capabilities));
-        return operaDriver;
+        WebDriverManager.operadriver().setup();
+        return new OperaDriver(getOperaDriverOptions(capabilities));
     }
 
     /**
@@ -361,8 +447,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createIEDriver(DesiredCapabilities capabilities) {
-        InternetExplorerDriver internetExplorerDriver = new InternetExplorerDriver(getIEDriverOptions(capabilities));
-        return internetExplorerDriver;
+        WebDriverManager.iedriver().setup();
+        return new InternetExplorerDriver(getIEDriverOptions(capabilities));
     }
 
     /**
@@ -371,8 +457,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createEdgeDriver(DesiredCapabilities capabilities) {
-        EdgeDriver edgeDriver = new EdgeDriver(getEdgeDriverOptions(capabilities));
-        return edgeDriver;
+        WebDriverManager.edgedriver().setup();
+        return new EdgeDriver(getEdgeDriverOptions(capabilities));
     }
 
     /**
@@ -381,8 +467,8 @@ public class CustomDriverProvider implements WebDriverProvider {
      * @return WebDriver
      */
     private WebDriver createSafariDriver(DesiredCapabilities capabilities) {
-        SafariDriver safariDriver = new SafariDriver(getSafariDriverOptions(capabilities));
-        return safariDriver;
+        WebDriverManager.safaridriver().setup();
+        return new SafariDriver(getSafariDriverOptions(capabilities));
     }
 
     /**
@@ -396,6 +482,4 @@ public class CustomDriverProvider implements WebDriverProvider {
         Boolean isHeadlessSys = Boolean.parseBoolean(System.getProperty("selenide." + HEADLESS, "false"));
         return isHeadlessApp || isHeadlessSys;
     }
-
-
 }

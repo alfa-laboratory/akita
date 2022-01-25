@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Alfa Laboratory
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import ru.alfabank.AkitaPageMock;
 import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
-import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 import ru.alfabank.steps.WebPageInteractionSteps;
 
@@ -32,7 +31,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 public class AkitaScenarioTest {
     private static AkitaScenario akitaScenario;
@@ -50,7 +48,6 @@ public class AkitaScenarioTest {
     @BeforeEach
     void prepare() {
         Scenario scenario = new StubScenario();
-        AkitaPage akitaPageMock = mock(AkitaPage.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
@@ -134,7 +131,7 @@ public class AkitaScenarioTest {
         akitaScenario.setVar("1", "1");
         akitaScenario.setVar("2", "2");
         ScopedVariables scopedVariables = akitaScenario.getVars();
-        assertThat((String) scopedVariables.get("1") + (String) scopedVariables.get("2"),
+        assertThat(scopedVariables.get("1") + (String) scopedVariables.get("2"),
                 equalTo("12"));
     }
 
