@@ -13,13 +13,12 @@
 package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
@@ -40,7 +39,7 @@ public class ManageBrowserCookieStepsTest {
     static void setup() {
         dmbs = new ManageBrowserSteps();
         akitaScenario = AkitaScenario.getInstance();
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
         wpis = new WebPageInteractionSteps();
         webDriver = mock(WebDriver.class);

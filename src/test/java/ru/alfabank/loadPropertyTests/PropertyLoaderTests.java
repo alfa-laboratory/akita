@@ -13,17 +13,17 @@
 package ru.alfabank.loadPropertyTests;
 
 import com.codeborne.selenide.WebDriverRunner;
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static ru.alfabank.alfatest.cucumber.ScopedVariables.resolveVars;
 import static ru.alfabank.tests.core.helpers.PropertyLoader.loadValueFromFileOrPropertyOrVariableOrDefault;
 
@@ -36,7 +36,7 @@ public class PropertyLoaderTests {
 
     @BeforeEach
     void prepare() {
-        Scenario scenario = new StubScenario();
+        Scenario scenario = mock(Scenario.class);
         AKITA_SCENARIO.setEnvironment(new AkitaEnvironment(scenario));
     }
 

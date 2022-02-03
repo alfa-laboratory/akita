@@ -12,22 +12,21 @@
  */
 package ru.alfabank.util;
 
-import cucumber.api.DataTable;
-import gherkin.pickles.PickleCell;
-import gherkin.pickles.PickleRow;
-import gherkin.pickles.PickleTable;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableTypeRegistry;
+import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 
 public class DataTableUtils {
-    public static DataTable dataTableFromLists(List<List<String>> lists) {
-        List<PickleRow> rows = new ArrayList<>();
-        lists.forEach(list -> {
-            List<PickleCell> cells = new ArrayList<>();
-            list.forEach(string -> cells.add(new PickleCell(null, string)));
-            rows.add(new PickleRow(cells));
-        });
-        return new DataTable(new PickleTable(rows), null);
+
+    private final DataTableTypeRegistry registry = new DataTableTypeRegistry(Locale.ENGLISH);
+    private final DataTable.TableConverter tableConverter = new DataTableTypeRegistryTableConverter(registry);
+
+    public DataTable dataTableFromLists(List<List<String>> lists) {
+        return DataTable.create(lists, tableConverter);
     }
+
 }

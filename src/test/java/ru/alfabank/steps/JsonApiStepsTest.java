@@ -14,13 +14,14 @@ package ru.alfabank.steps;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.gson.JsonElement;
-import cucumber.api.DataTable;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Scenario;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.alfabank.StubScenario;
 import ru.alfabank.alfatest.cucumber.api.AkitaEnvironment;
 import ru.alfabank.alfatest.cucumber.api.AkitaScenario;
+import ru.alfabank.util.DataTableUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,17 +30,19 @@ import java.util.List;
 import static com.google.gson.JsonParser.parseString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.alfabank.util.DataTableUtils.dataTableFromLists;
+import static org.mockito.Mockito.mock;
 
 public class JsonApiStepsTest {
     private static ApiSteps api;
     private static AkitaScenario akitaScenario;
+    private final DataTableUtils dataTableUtils = new DataTableUtils();
 
     @BeforeAll
     static void setup() {
         akitaScenario = AkitaScenario.getInstance();
         api = new ApiSteps();
-        akitaScenario.setEnvironment(new AkitaEnvironment(new StubScenario()));
+        Scenario scenario = mock(Scenario.class);
+        akitaScenario.setEnvironment(new AkitaEnvironment(scenario));
     }
 
     @AfterAll
@@ -58,7 +61,8 @@ public class JsonApiStepsTest {
         allLists.add(row2);
         allLists.add(row3);
         allLists.add(row4);
-        DataTable dataTable = dataTableFromLists(allLists);
+
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         api.checkValuesInJsonAsString("strJson", dataTable);
     }
@@ -68,7 +72,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object1", "   { \"innerObject\":\n {\"str\": \"qwer\"}, \"array\" : [\"stringInArray\",   0.003, true, false, null] }"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
         api.checkValuesInJsonAsString("strJson", dataTable);
     }
 
@@ -77,7 +81,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "[0.003, -3579.09]"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
         api.checkValuesInJsonAsString("strJson", dataTable);
     }
 
@@ -86,7 +90,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object1.array", "[\"stringInArray\",0.003,true,false,null]"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         api.checkValuesInJsonAsString("strJson", dataTable);
     }
@@ -96,7 +100,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "[0.003, -3579.09, 4]"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         assertThrows(RuntimeException.class, () ->
                 api.checkValuesInJsonAsString("strJson", dataTable));
@@ -107,7 +111,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object1.farebea", "0.003"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         assertThrows(RuntimeException.class, () ->
                 api.checkValuesInJsonAsString("strJson", dataTable));
@@ -124,7 +128,7 @@ public class JsonApiStepsTest {
         allLists.add(row2);
         allLists.add(row3);
         allLists.add(row4);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         api.getValuesFromJsonAsString("strJson", dataTable);
 
@@ -139,7 +143,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$..number", "numbers"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         api.getValuesFromJsonAsString("strJson", dataTable);
 
@@ -151,7 +155,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object1.array", "array"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         api.getValuesFromJsonAsString("strJson", dataTable);
 
@@ -163,7 +167,7 @@ public class JsonApiStepsTest {
         List<String> row1 = new ArrayList<>(Arrays.asList("$.object3.dsfbfsb", "number1"));
         List<List<String>> allLists = new ArrayList<>();
         allLists.add(row1);
-        DataTable dataTable = dataTableFromLists(allLists);
+        DataTable dataTable = dataTableUtils.dataTableFromLists(allLists);
 
         assertThrows(RuntimeException.class, () ->
                 api.getValuesFromJsonAsString("strJson", dataTable));

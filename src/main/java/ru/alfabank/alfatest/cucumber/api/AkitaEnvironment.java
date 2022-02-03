@@ -12,7 +12,7 @@
  */
 package ru.alfabank.alfatest.cucumber.api;
 
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.alfabank.alfatest.cucumber.ScopedVariables;
@@ -85,7 +85,7 @@ public class AkitaEnvironment {
      * Выводит дополнительный информационный текст в отчет (уровень логирования INFO)
      */
     public void write(Object object) {
-        scenario.write(String.valueOf(object));
+        scenario.log(String.valueOf(object));
     }
 
     public ScopedVariables getVars() {

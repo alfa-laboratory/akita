@@ -15,9 +15,9 @@ package ru.alfabank.steps;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import cucumber.api.java.en.When;
-import cucumber.api.java.ru.И;
-import cucumber.api.java.ru.Тогда;
+import io.cucumber.java.en.When;
+import io.cucumber.java.ru.И;
+import io.cucumber.java.ru.Тогда;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
